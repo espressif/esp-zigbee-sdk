@@ -1,0 +1,6 @@
+version: "0.1.0"
+description: esp-zigbee library component
+url: https://github.com/espressif/esp-zigbee-lib
+dependencies:
+  idf:
+    version: ">=5.0"

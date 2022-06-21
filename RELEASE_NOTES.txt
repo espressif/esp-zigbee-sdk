@@ -1,0 +1,35 @@
+# 28-July-2022
+
+Versions
+--------
+Initial version release of ESP-ZIGBEE-SDK
+
+Features
+--------
+
+-ZCL:
+	Standard Home Automation devices setting and build up
+	Provide the ZCL common and cluster specific command
+-ZDO:
+	Varieties of the ZDO command
+-SECURITY
+	Zigbee security support to install code related function
+-NWK:
+	Zigbee stack related function to support ZC, ZR and ZED
+-CORE:
+	Zigbee device hardware platform configuration setting related function
+	Customized attribute, cluster and endpoint API
+
+
+Known Issues
+------------
+
+-ZDO binding currently only support 64-bit ieee address
+
+New Changes
+-----------
+
+
+Bug Fixes
+---------
+
