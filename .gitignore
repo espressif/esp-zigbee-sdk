@@ -1,0 +1,18 @@
+.cache
+compile_commands.json
+*.swp
+# ESP-IDF default build directory name
+build
+build/
+sdkconfig
+sdkconfig.old
+dependencies.lock
+managed_components
+__pycache__/
+out/
+_build/
+# VS Code Settings
+.vscode/
+# clangd set
+.clangd
+compile_commands.json
