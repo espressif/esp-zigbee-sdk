@@ -34,3 +34,9 @@ More new details see examples's [Readme](examples/README.md)
 ## Documentation  
 
 Refer [ESP Zigbee SDK Guide](https://docs.espressif.com/projects/esp-zigbee-sdk/en/main/) for the latest version of the documentation.  
+
+## Copyright Notes
+
+All original content of this repository is Copyright (c) 2022 Espressif Systems (Shanghai) Co. Ltd and licensed under Apache 2.0 license, as described in file LICENSE
+Example applications supplied in this repository depend on esp-zboss-lib library, which is distributed under a different license, found here [LICENSE](https://github.com/espressif/esp-zboss-lib/blob/master/LICENSE).
+Users developing applications based on this SDK have to comply with the terms of both licenses, the license conditions do not prevent development of commercial products.
