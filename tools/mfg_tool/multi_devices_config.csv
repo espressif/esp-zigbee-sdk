@@ -1,0 +1,4 @@
+id,installcode,mac_address,channel_mask_page0,manufacturer_name,manufacturer_code
+1,966b9f3ef98ae6041e19,CAFEBEEF50C0FFEE,0x00008000,Espressif,0x131B
+2,966b9f3ef98ae6059708,CAFEBEEF50C0FFED,0x00008000,Espressif,0x131B
+3,NULL,CAFEBEEF50C0FFEC,0x00008000,Espressif,0x131B
