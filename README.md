@@ -2,7 +2,7 @@
 
 ## Introduction  
   
-ESP-ZIGBEE-SDK is the official Zigbee development framework for Esspresif's ESP32-H2 and ESP32 series SOCs. It provides varieties of APIs aimed to simplify the development process of Zigbee products and enable the users to go to production in the shortest possible time. More details of the sdk see the [esp-zigbee-sdk components](#### esp-zigbee components)  
+ESP-ZIGBEE-SDK is the official Zigbee development framework for Esspresif's ESP32-H2 and ESP32 series SOCs. It provides varieties of APIs aimed to simplify the development process of Zigbee products and enable the users to go to production in the shortest possible time. More details of the sdk see the [esp-zigbee-sdk components](components/esp-zigbee-lib/)  
 
 ## Get esp-zigbee-sdk  
 
@@ -29,7 +29,7 @@ More new details see examples's [Readme](examples/README.md)
 
 #### esp-zigbee components
 - Check the component (esp-zboss-lib) should be downloaded automatically from managment component under each esp-zigbee-sdk example, it includes Zigbee stack static library for supporting Esspresif's ESP32-H2 and ESP32 series SOCs.
-- Check the component [esp-zigbee-lib](components/esp-zigbee-lib/) that includes SDK's API to build own projects. More details see the [readme](components/esp-zigbee-lib/README.md) under esp-zigbee-lib component.
+- Check the component [esp-zigbee-lib](components/esp-zigbee-lib/) that includes SDK's API to build own projects. More details see the [Readme](components/esp-zigbee-lib/README.md) under esp-zigbee-lib component.
 
 ## Documentation  
 
@@ -37,6 +37,7 @@ Refer [ESP Zigbee SDK Guide](https://docs.espressif.com/projects/esp-zigbee-sdk/
 
 ## Copyright Notes
 
-All original content of this repository is Copyright (c) 2022 Espressif Systems (Shanghai) Co. Ltd and licensed under Apache 2.0 license, as described in file LICENSE
-Example applications supplied in this repository depend on esp-zboss-lib library, which is distributed under a different license, found here [LICENSE](https://github.com/espressif/esp-zboss-lib/blob/master/LICENSE).
+- All original content of this repository is Copyright (c) 2022 Espressif Systems (Shanghai) Co. Ltd and licensed under Apache 2.0 license, as described in file LICENSE.
+- Example applications supplied in this repository depend on esp-zboss-lib library, which is distributed under a different license, found here [LICENSE](https://github.com/espressif/esp-zboss-lib/blob/master/LICENSE).
+
 Users developing applications based on this SDK have to comply with the terms of both licenses, the license conditions do not prevent development of commercial products.
