@@ -2,7 +2,7 @@
 
 ## Introduction  
   
-ESP-ZIGBEE-SDK is the official Zigbee development framework for Esspresif's ESP32-H2 and ESP32 series SOCs. It provides varieties of APIs aimed to simplify the development process of Zigbee products and enable the users to go to production in the shortest possible time. More details of the sdk see the [esp-zigbee-sdk components](components/esp-zigbee-lib/)  
+ESP-Zigbee-SDK is the official Zigbee development framework for Esspresif's ESP32-H2 and ESP32 series SOCs. It provides varieties of APIs aimed to simplify the development process of Zigbee products and enable the users to go to production in the shortest possible time. More details of the sdk see the [esp-zigbee-sdk components](components/esp-zigbee-lib/)
 
 ## Get esp-zigbee-sdk  
 
@@ -34,6 +34,10 @@ More new details see examples's [Readme](examples/README.md)
 ## Documentation  
 
 Refer [ESP Zigbee SDK Guide](https://docs.espressif.com/projects/esp-zigbee-sdk/en/main/) for the latest version of the documentation.  
+
+## Tools
+
+Refer [mfg_tool](tools/mfg_tool/README.md) for user to configure Zigbee manufacture related binary file to Zigbee product.
 
 ## Copyright Notes
 

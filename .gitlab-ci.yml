@@ -1,0 +1,194 @@
+stages:
+    - build
+    - docs
+
+variables:
+    IDF_PATH: "$CI_PROJECT_DIR/esp-idf"
+    GIT_STRATEGY: fetch
+    GIT_SUBMODULE_STRATEGY: none
+    ESP_ZIGBEE_SDK_PATH: "$CI_PROJECT_DIR"
+
+before_script:
+  - mkdir -p ~/.ssh
+  - chmod 700 ~/.ssh
+  - echo -n "${GITLAB_KEY}" >~/.ssh/id_rsa_base64
+  - base64 --decode --ignore-garbage ~/.ssh/id_rsa_base64 >~/.ssh/id_rsa
+  - chmod 600 ~/.ssh/id_rsa
+  - echo -e "Host gitlab.espressif.cn\n\tStrictHostKeyChecking no\n" >>~/.ssh/config
+
+.setup_idf: &setup_idf
+  - cd $CI_PROJECT_DIR
+  - git clone --recursive -b master ssh://git@gitlab.espressif.cn:27227/espressif/esp-idf.git
+  - cd esp-idf
+  - git checkout --track origin/$CI_COMMIT_REF_NAME || git branch
+  - git submodule sync --recursive
+  - git submodule update --recursive --init
+  - ./install.sh
+  - . ./export.sh
+
+.submodule_update: &submodule_update
+  - cd ${ESP_ZIGBEE_SDK_PATH}
+  - git submodule sync --recursive
+  - git submodule update --init --recursive
+
+.build_esp_zigbee_sdk_example_gateway_template:
+    stage: build
+    image: ${CI_DOCKER_REGISTRY}/esp-env-v5.0:2
+    variables:
+        TARGET_NAME: ""
+        EXAMPLE_PATH: ""
+    allow_failure: false
+    script:
+        - *setup_idf
+        - *submodule_update
+        - cd ${ESP_ZIGBEE_SDK_PATH}/"${EXAMPLE_PATH}"
+        - idf.py fullclean
+        - idf.py set-target "${TARGET_NAME}"
+        - idf.py build
+
+.build_esp_zigbee_sdk_example_zigbee_template:
+    stage: build
+    image: ${CI_DOCKER_REGISTRY}/esp-env-v5.0:2
+    variables:
+        TARGET_NAME: "esp32h2"
+        EXAMPLE_PATH: ""
+    allow_failure: false
+    script:
+        - *setup_idf
+        - *submodule_update
+        - cd ${ESP_ZIGBEE_SDK_PATH}/"${EXAMPLE_PATH}"
+        - idf.py fullclean
+        - idf.py --preview set-target "${TARGET_NAME}"
+        - idf.py build
+
+# build esp_zigbee_gateway for esp32/esp32c3/esp32s2/esp32s3
+build_esp32_zigbee_gateway_examples:
+  extends: .build_esp_zigbee_sdk_example_gateway_template
+  variables:
+    TARGET_NAME: "esp32"
+    EXAMPLE_PATH: "examples/esp_zigbee_gateway"
+
+# build esp_zigbee_gateway for esp32/esp32c3/esp32s2/esp32s3
+build_esp32s3_zigbee_gateway_examples:
+  extends: .build_esp_zigbee_sdk_example_gateway_template
+  variables:
+    TARGET_NAME: "esp32s3"
+    EXAMPLE_PATH: "examples/esp_zigbee_gateway"
+
+# build esp_zigbee_gateway for esp32/esp32c3/esp32s2/esp32s3
+build_esp32c3_zigbee_gateway_examples:
+  extends: .build_esp_zigbee_sdk_example_gateway_template
+  variables:
+    TARGET_NAME: "esp32c3"
+    EXAMPLE_PATH: "examples/esp_zigbee_gateway"
+
+# build esp_zigbee_gateway for esp32/esp32c3/esp32s2/esp32s3
+build_esp32s2_zigbee_gateway_examples:
+  extends: .build_esp_zigbee_sdk_example_gateway_template
+  variables:
+    TARGET_NAME: "esp32s2"
+    EXAMPLE_PATH: "examples/esp_zigbee_gateway"
+
+#build esp_zigbee rcp for esp32h2beta2
+build_esp32h2_beta2_zigbee_rcp_examples:
+  extends: .build_esp_zigbee_sdk_example_zigbee_template
+  variables:
+    TARGET_NAME: "esp32h2"
+    EXAMPLE_PATH: "examples/esp_zigbee_rcp"
+
+#build esp_zigbee customized_client for esp32h2beta2
+build_esp32h2_beta2_zigbee_customized_client_examples:
+  extends: .build_esp_zigbee_sdk_example_zigbee_template
+  variables:
+    TARGET_NAME: "esp32h2"
+    EXAMPLE_PATH: "examples/esp_zigbee_customized_devices/customized_client"
+
+#build esp_zigbee customized_server for esp32h2beta2
+build_esp32h2_beta2_zigbee_customized_server_examples:
+  extends: .build_esp_zigbee_sdk_example_zigbee_template
+  variables:
+    TARGET_NAME: "esp32h2"
+    EXAMPLE_PATH: "examples/esp_zigbee_customized_devices/customized_server"
+
+#build esp_zigbee HA color dimmable light for esp32h2beta2
+build_esp32h2_beta2_zigbee_color_dimmable_light_examples:
+  extends: .build_esp_zigbee_sdk_example_zigbee_template
+  variables:
+    TARGET_NAME: "esp32h2"
+    EXAMPLE_PATH: "examples/esp_zigbee_HA_sample/HA_color_dimmable_light"
+
+#build esp_zigbee HA color dimmable switch for esp32h2beta2
+build_esp32h2_beta2_zigbee_color_dimmable_switch_examples:
+  extends: .build_esp_zigbee_sdk_example_zigbee_template
+  variables:
+    TARGET_NAME: "esp32h2"
+    EXAMPLE_PATH: "examples/esp_zigbee_HA_sample/HA_color_dimmable_switch"
+
+#build esp_zigbee HA on_off light for esp32h2beta2
+build_esp32h2_beta2_zigbee_on_off_light_examples:
+  extends: .build_esp_zigbee_sdk_example_zigbee_template
+  variables:
+    TARGET_NAME: "esp32h2"
+    EXAMPLE_PATH: "examples/esp_zigbee_HA_sample/HA_on_off_light"
+
+#build esp_zigbee HA color dimmable light for esp32h2beta2
+build_esp32h2_beta2_zigbee_on_off_switch_examples:
+  extends: .build_esp_zigbee_sdk_example_zigbee_template
+  variables:
+    TARGET_NAME: "esp32h2"
+    EXAMPLE_PATH: "examples/esp_zigbee_HA_sample/HA_on_off_switch"
+
+build_docs:
+    stage: build
+    image: $CI_DOCKER_REGISTRY/esp-idf-doc-env-v5.0:2-3
+    variables:
+        ESP_DOCS_LATEST_BRANCH_NAME: "main"
+    artifacts:
+        when: always
+        paths:
+            - docs/_build/*/*/*.txt
+            - docs/_build/*/*/html/*
+        expire_in: 1 days
+    script:
+        - cd docs
+        - pip install -r requirements.txt
+        - build-docs -t esp32 esp32c3 esp32h2 esp32s3 -l en
+
+
+.deploy_docs_template:
+    stage: docs
+    image: $CI_DOCKER_REGISTRY/esp-idf-doc-env-v5.0:2-3
+    needs:
+        - build_docs
+    variables:
+        ESP_DOCS_LATEST_BRANCH_NAME: "main"
+    script:
+        - source ${CI_PROJECT_DIR}/docs/utils.sh
+        - add_doc_server_ssh_keys $DOCS_DEPLOY_PRIVATEKEY $DOCS_DEPLOY_SERVER $DOCS_DEPLOY_SERVER_USER
+        - export GIT_VER=$(git describe --always)
+        - pip install -r ${CI_PROJECT_DIR}/docs/requirements.txt
+        - deploy-docs
+
+deploy_docs_preview:
+    extends:
+        - .deploy_docs_template
+    variables:
+        TYPE: "preview"
+        DOCS_BUILD_DIR: "${CI_PROJECT_DIR}/docs/_build/"
+        DOCS_DEPLOY_PRIVATEKEY: "$DOCS_PREVIEW_DEPLOY_KEY"
+        DOCS_DEPLOY_SERVER: "$DOCS_PREVIEW_SERVER"
+        DOCS_DEPLOY_SERVER_USER: "$DOCS_PREVIEW_SERVER_USER"
+        DOCS_DEPLOY_PATH: "$DOCS_PREVIEW_PATH"
+        DOCS_DEPLOY_URL_BASE: "https://$DOCS_PREVIEW_SERVER_URL/docs/esp-zigbee-sdk"
+
+deploy_docs_production:
+    extends:
+        - .deploy_docs_template
+    variables:
+        TYPE: "production"
+        DOCS_BUILD_DIR: "${CI_PROJECT_DIR}/docs/_build/"
+        DOCS_DEPLOY_PRIVATEKEY: "$DOCS_PROD_DEPLOY_KEY"
+        DOCS_DEPLOY_SERVER: "$DOCS_PROD_SERVER"
+        DOCS_DEPLOY_SERVER_USER: "$DOCS_PROD_SERVER_USER"
+        DOCS_DEPLOY_PATH: "$DOCS_PROD_PATH"
+        DOCS_DEPLOY_URL_BASE: "https://docs.espressif.com/projects/esp-zigbee-sdk"

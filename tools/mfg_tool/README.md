@@ -63,4 +63,4 @@ Please note that `esp_zb_mfg_tool.py` only generates manufacturing binary images
 ```
 esptool.py -p <serial_port> write_flash <address> path/tool/mfg_tool/bin/xxx.bin
 ```
-`<address>` : User can find section `zb_fct` in each project `partitions.csv`, which shows the address. For example [partition_table](../../examples/light_sample/light_bulb/partitions.csv).
+`<address>` : User can find section `zb_fct` in each project `partitions.csv`, which shows the address. For example [partition_table](../../examples/esp_zigbee_HA_sample/HA_color_dimmable_light/partitions.csv).

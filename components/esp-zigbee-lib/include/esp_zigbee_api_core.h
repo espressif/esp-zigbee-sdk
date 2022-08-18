@@ -16,7 +16,7 @@ extern "C" {
 #include "esp_zigbee_api_secur.h"
 
 /** Enum of the Zigbee network device type
- *
+ * @anchor esp_zb_nwk_device_type_t
  */
 typedef enum {
     ESP_ZB_DEVICE_TYPE_COORDINATOR = 0x0,       /*!<  Device - Coordinator */
@@ -45,7 +45,7 @@ typedef void (*esp_zb_set_attr_callback_t)(uint8_t status, uint8_t endpoint, uin
  *
  * @note The Zigbee device callback is default ZCL cluster handlers to notify the application about a certain event
  * like all clusters / attributes are set to default.
- * @note By using @ref esp_zb_zcl_get_attribute(), user could check the specific cluster / attribute value, certain device action may apply based on user
+ * @note By using refer to esp_zb_zcl_get_attribute(), user could check the specific cluster / attribute value, certain device action may apply based on user
  * application.
  */
 typedef void (*esp_zb_basic_reset_callback_t)(uint8_t status, uint8_t endpoint);
@@ -58,7 +58,7 @@ typedef void (*esp_zb_basic_reset_callback_t)(uint8_t status, uint8_t endpoint);
  * @param[in] ep  An endpoint which comes from report device
  * @param[in] cluster_id Cluster id that reported
  * @param[in] attr_id  Attribute id that reported
- * @param[in] attr_type Attribute data type @ref zb_zcl_common.h zcl_attr_type
+ * @param[in] attr_type Attribute data type refer to zb_zcl_common.h zcl_attr_type
  * @param[in] value A pointer to the attribute data value
  *
  */
@@ -69,9 +69,9 @@ typedef void (*esp_zb_report_attr_callback_t)(
  *
  * @brief A read attribute callback for user to get read info.
  *
- * @param[in] status   Status of the read attribute response @ref zb_zcl_common.h 0 - status success
+ * @param[in] status   Status of the read attribute response refer to zb_zcl_common.h 0 - status success
  * @param[in] attr_id  Attribute id that reported
- * @param[in] attr_type Attribute data type @ref zb_zcl_common.h zcl_attr_type
+ * @param[in] attr_type Attribute data type refer to zb_zcl_common.h zcl_attr_type
  * @param[in] value A pointer to the attribute data value
  *
  */
@@ -105,13 +105,13 @@ typedef struct {
  * @brief The Zigbee device configuration.
  * @note  For esp_zb_role please refer defined by @ref esp_zb_nwk_device_type_t.
  */
-typedef struct {
+typedef struct esp_zb_cfg_s{
     esp_zb_nwk_device_type_t esp_zb_role;           /*!< The nwk device type */
     bool   install_code_policy;                     /*!< Allow install code security policy or not */
     union {
         esp_zb_zczr_cfg_t   zczr_cfg;               /*!< The Zigbee zc/zr device configuration */
         esp_zb_zed_cfg_t    zed_cfg;                /*!< The Zigbee zed device configuration */
-    } nwk_cfg;
+    } nwk_cfg;                                      /*!< Union of the network configuration */
 } esp_zb_cfg_t;
 
 /* attribute list */
@@ -151,11 +151,11 @@ typedef struct esp_zb_ep_list_s {
  * @brief  Zigbee stack initialization.
  *
  * @note To be called inside the application's main cycle at start.
- * @note Default network channel is set to 13, if @ref esp_zb_set_network_channel not called or
- * no product config setting @ref tools/mfg_tool.
+ * @note Default network channel is set to 13, if esp_zb_set_network_channel() not called or
+ * no product config setting refer to tools/mfg_tool.
  * @note Default is no NVRAM erase from start up, user could call factory reset for erase NVRAM and other action please refer esp_zb_factory_reset().
- * @note Make sure to use correct corresponding nwk_cfg with your device type @ref esp_zb_cfg_t.
- *
+ * @note Make sure to use correct corresponding nwk_cfg with your device type @ref esp_zb_cfg_s.
+ * @anchor esp_zb_init
  * @param[in] nwk_cfg   The pointer to the initialization Zigbee configuration
  *
  */
@@ -164,8 +164,8 @@ void esp_zb_init(esp_zb_cfg_t *nwk_cfg);
 /**
  * @brief   Set the Zigbee device network channel.
  *
- * @note  This function should be run AFTER esp_zb_init() is called, if the user wants to set a specific channel
- * without reading channel setting from flash @ref tools/mfg_tool.
+ * @note  This function should be run AFTER @ref esp_zb_init is called, if the user wants to set a specific channel
+ * without reading channel setting from flash refer to tools/mfg_tool.
  * @note  Default network channel is set to 13, if esp_zb_set_network_channel is not called.
  *
  * @param[in] channel Enabling which channel ranging from 11 - 26, frequency ranging from 2405 MHz to 2480 MHz
@@ -176,8 +176,8 @@ esp_err_t esp_zb_set_network_channel(uint8_t channel);
 /**
  * @brief   Set the Zigbee device long address.
  *
- * @note  Set this function AFTER esp_zb_init() called, if user wants to set specific address
- * without reading MAC address from flash @ref tools/mfg_tool or eFUSE.
+ * @note  Set this function AFTER @ref esp_zb_init called, if user wants to set specific address
+ * without reading MAC address from flash refer to tools/mfg_tool or eFUSE.
  *
  * @param[in] addr Pointer of long address
  * @return 0 - ESP_OK
@@ -223,7 +223,7 @@ uint16_t esp_zb_get_pan_id(void);
 /**
  * @brief  Start top level commissioning procedure with specified mode mask.
  *
- * @param[in] mode_mask - commissioning modes @ref ZB_BDB_SIGNAL_STEERING @ref ZB_BDB_SIGNAL_FORMATION
+ * @param[in] mode_mask - commissioning modes refer to ZB_BDB_SIGNAL_STEERING and ZB_BDB_SIGNAL_FORMATION
  *
  * @return - ESP_OK on success
  *
@@ -236,9 +236,9 @@ esp_err_t esp_zb_bdb_start_top_level_commissioning(uint8_t mode_mask);
  *  frame counter and application datasets (if any). The device will perform ZCL clusters reset to factory.
  *  The Zigbee NVRAM store will be erased.
  *
- *  @note The reset can be performed at any time once the device is started (see @ref esp_zb_start).
- *  After the reset, the application itself will receive the @ref ZB_ZDO_SIGNAL_LEAVE signal.
- *  the remote coordinator will receive the @ref ZB_ZDO_SIGNAL_LEAVE_INDICATION signal. Further action could apply
+ *  @note The reset can be performed at any time once the device is started (see esp_zb_start()).
+ *  After the reset, the application itself will receive the refer to ZB_ZDO_SIGNAL_LEAVE signal.
+ *  the remote coordinator will receive the refer to ZB_ZDO_SIGNAL_LEAVE_INDICATION signal. Further action could apply
  *  based on different circumstances.
  *
  *  @note After factory reset, the system reset will be performed.
@@ -253,7 +253,7 @@ void esp_zb_factory_reset(void);
  *
  * @note Autostart mode: It initializes, load some parameters from NVRAM and proceed with startup.
  * Startup means either Formation (for ZC), rejoin or discovery/association join.  After startup
- * complete @ref zboss_signal_handler callback is called, so application will know when to do
+ * complete, zboss_signal_handler callback() is called, so application will know when to do
  * some useful things.
  *
  * @note No-autostart mode: It initializes scheduler and buffers pool, but not MAC and upper layers.
@@ -264,15 +264,15 @@ void esp_zb_factory_reset(void);
  * or any other devices on periphery to work with them before starting working in a network. It's
  * also useful if you want to run something locally during joining.
  *
- * @note Precondition: stack must be initialized by @ref esp_zb_init() call. @ref esp_zb_init() sets default IB
+ * @note Precondition: stack must be initialized by @ref esp_zb_init call. @ref esp_zb_init sets default IB
  * parameters, so caller has a chance to change some of them. Note that NVRAM and product config will be
  * loaded after esp_zb_start() call.
  *
  * @note Zigbee stack is not looped in this routine. Instead, it schedules callback and returns.  Caller
- * must run @ref esp_zb_main_loop_iteration() after this routine.
+ * must run  esp_zb_main_loop_iteration() after this routine.
  *
  * @note Application should later call Zigbee commissioning initiation - for instance,
- * @ref esp_zb_bdb_start_top_level_commissioning().
+ * esp_zb_bdb_start_top_level_commissioning().
  *
  * @return - ESP_OK on success
  *
@@ -293,7 +293,7 @@ void esp_zb_main_loop_iteration(void);
  * @brief   Add set ZCL attribute change device callback.
  * @note    User is able to enabling some device action based on the callback arguments.
  *
- * @param[in] cb A device callback that user used @ref esp_zb_set_attr_callback_t
+ * @param[in] cb A device callback that user used refer to esp_zb_set_attr_callback_t
  *
  */
 void esp_zb_device_add_set_attr_value_cb(esp_zb_set_attr_callback_t cb);
@@ -305,7 +305,7 @@ void esp_zb_device_add_set_attr_value_cb(esp_zb_set_attr_callback_t cb);
  * All ZCL clusters and attributes are reset to the default value by stack itself.
  * By getting which endpoint, cluster and attributes are changed, user is able to enabling
  * some device action like light physical change.
- * @param[in] cb A device callback that user used @ref esp_zb_basic_reset_callback_t
+ * @param[in] cb A device callback that user used refer to esp_zb_basic_reset_callback_t
  *
  */
 void esp_zb_device_add_basic_reset_default_cb(esp_zb_basic_reset_callback_t cb);
@@ -316,7 +316,7 @@ void esp_zb_device_add_basic_reset_default_cb(esp_zb_basic_reset_callback_t cb);
  * @note  Set a callback being called on receive attribute report. The callback will
  *  be provided with all data necessary for correct attribute handling.
  *
- * @param[in] cb A report attribute callback that user used @ref esp_zb_report_attr_callback_t
+ * @param[in] cb A report attribute callback that user used refer to esp_zb_report_attr_callback_t
  *
  */
 void esp_zb_device_add_report_attr_cb(esp_zb_report_attr_callback_t cb);
@@ -326,8 +326,8 @@ void esp_zb_device_add_report_attr_cb(esp_zb_report_attr_callback_t cb);
  *
  * @note  Set a callback being called on receive read attribute response. The callback will
  *  be provided with all data necessary for correct attribute handling.
- *
- * @param[in] cb A read attribute callback that user used @ref esp_zb_read_attr_resp_callback_t
+ * @param[in] endpoint A specific endpoint
+ * @param[in] cb A read attribute callback that user used refer to esp_zb_read_attr_resp_callback_t
  *
  */
 void esp_zb_add_read_attr_resp_cb(uint8_t endpoint, esp_zb_read_attr_resp_callback_t cb);
@@ -355,7 +355,7 @@ void esp_zb_add_identify_notify_cb(uint8_t endpoint, esp_zb_identify_notify_call
  * @param[in] cluster_role Cluster role of this cluster, either server or client role
  * @param[in] attr_id Attribute id
  *
- * @return pointer to  @ref esp_zb_zcl_attr_t
+ * @return pointer to  @ref esp_zb_zcl_attr_s
  *
  */
 esp_zb_zcl_attr_t *esp_zb_zcl_get_attribute(uint8_t endpoint, uint16_t cluster_id, uint8_t cluster_role, uint16_t attr_id);
@@ -369,7 +369,7 @@ esp_zb_zcl_attr_t *esp_zb_zcl_get_attribute(uint8_t endpoint, uint16_t cluster_i
  * @param[in] cluster_id The cluster id for attribute list
  * @param[in] cluster_role The cluster role of this cluster, either server or client role
  *
- * @return pointer to  @ref esp_zb_zcl_cluster_t
+ * @return pointer to  @ref esp_zb_zcl_cluster_s
  *
  */
 esp_zb_zcl_cluster_t *esp_zb_zcl_get_cluster(uint8_t endpoint, uint16_t cluster_id, uint8_t cluster_role);
@@ -377,12 +377,12 @@ esp_zb_zcl_cluster_t *esp_zb_zcl_get_cluster(uint8_t endpoint, uint16_t cluster_
 /**
  * @brief  Create an empty attribute list.
  *
- * @note  This attribute list is ready for certain cluster id to add / update attribute @ref esp_zb_cluster_add_attr @ref esp_zb_cluster_update_attr.
+ * @note  This attribute list is ready for certain cluster id to add / update attribute refer to esp_zb_cluster_add_attr() and esp_zb_cluster_update_attr().
  * @note  Attribute list groups up a cluster.
  *
  * @param[in] cluster_id The cluster id for attribute list
  *
- * @return pointer to  @ref esp_zb_attribute_list_t
+ * @return pointer to  @ref esp_zb_attribute_list_s
  *
  */
 esp_zb_attribute_list_t *esp_zb_zcl_attr_list_create(uint16_t cluster_id);
@@ -390,8 +390,8 @@ esp_zb_attribute_list_t *esp_zb_zcl_attr_list_create(uint16_t cluster_id);
 /**
  * @brief  Create an empty cluster list.
  *
- * @note  This cluster list is ready to add / update cluster @ref esp_zb_cluster_list_add_cluster @ref esp_zb_cluster_list_update_cluster.
- * @return pointer to  @ref esp_zb_cluster_list_t
+ * @note  This cluster list is ready to add / update cluster refer to esp_zb_cluster_list_add_cluster() and esp_zb_cluster_list_update_cluster().
+ * @return pointer to  @ref esp_zb_cluster_list_s
  *
  */
 esp_zb_cluster_list_t *esp_zb_zcl_cluster_list_create(void);
@@ -399,8 +399,8 @@ esp_zb_cluster_list_t *esp_zb_zcl_cluster_list_create(void);
 /**
  * @brief  Create an empty endpoint list.
  *
- * @note This endpoint list is ready to add endpoint @ref esp_zb_ep_list_add_ep.
- * @return pointer to  @ref esp_zb_ep_list_t
+ * @note This endpoint list is ready to add endpoint refer @ref esp_zb_ep_list_add_ep.
+ * @return pointer to  @ref esp_zb_ep_list_s
  *
  */
 esp_zb_ep_list_t *esp_zb_ep_list_create(void);
@@ -408,7 +408,7 @@ esp_zb_ep_list_t *esp_zb_ep_list_create(void);
 /**
  * @brief Add an attribute in a specific cluster.
  *
- * @param[in] esp_zb_attr_list A pointer to attribute list @ref esp_zb_attribute_list_t
+ * @param[in] esp_zb_attr_list A pointer to attribute list @ref esp_zb_attribute_list_s
  * @param[in] esp_zb_attr_id  An attribute id to be added
  * @param[in] value_p A pointer to attribute value wants to add
  *
@@ -422,7 +422,7 @@ esp_err_t esp_zb_cluster_add_attr(esp_zb_attribute_list_t *esp_zb_attr_list, uin
 /**
  * @brief Update an attribute in a specific cluster.
  *
- * @param[in] esp_zb_attr_list A pointer to attribute list @ref esp_zb_attribute_list_t
+ * @param[in] esp_zb_attr_list A pointer to attribute list @ref esp_zb_attribute_list_s
  * @param[in] esp_zb_attr_id  An attribute id which wants to update
  * @param[in] value_p A pointer to attribute value wants to update
  *
@@ -437,7 +437,7 @@ esp_err_t esp_zb_cluster_update_attr(esp_zb_attribute_list_t *esp_zb_attr_list, 
 /**
  * @brief Add an cluster (attribute list) in a cluster list.
  *
- * @param[in] esp_zb_cluster_list A pointer to cluster list @ref esp_zb_cluster_list_t
+ * @param[in] esp_zb_cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] esp_zb_attr_list  An attribute list which wants to add
  * @param[in] role_mask  A role of server or client for this cluster (attribute list)
  *
@@ -451,7 +451,7 @@ esp_err_t esp_zb_cluster_list_add_cluster(esp_zb_cluster_list_t *esp_zb_cluster_
 /**
  * @brief Update an cluster (attribute list) in a cluster list.
  *
- * @param[in] esp_zb_cluster_list A pointer to cluster list @ref esp_zb_cluster_list_t
+ * @param[in] esp_zb_cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] esp_zb_attr_list  An attribute list which wants to update
  * @param[in] role_mask  A role of server or client for this cluster (attribute list)
  *
@@ -465,12 +465,12 @@ esp_err_t esp_zb_cluster_list_update_cluster(esp_zb_cluster_list_t *esp_zb_clust
 /**
  * @brief Add an endpoint (which includes cluster list) in a endpoint list.
  *
- * @param[in] esp_zb_ep_list A pointer to endpoint list @ref esp_zb_ep_list_t
+ * @param[in] esp_zb_ep_list A pointer to endpoint list @ref esp_zb_ep_list_s
  * @param[in] esp_zb_cluster_list  An cluster list which wants to add to endpoint
  * @param[in] endpoint  A specific endpoint (cluster list)
  * @param[in] profile_id  A profile id
  * @param[in] device_id  A device id for this device
- *
+ * @anchor esp_zb_ep_list_add_ep
  * @return
  *      - ESP_OK on success
  *      - ESP_ERR_INVALID_ARG if endpoint list not initialized
@@ -481,7 +481,7 @@ esp_err_t esp_zb_ep_list_add_ep(esp_zb_ep_list_t *esp_zb_ep_list, esp_zb_cluster
 /**
  * @brief Register a Zigbee device.
  *
- * @param[in] esp_zb_ep_list  An endpoint list which wants to register @ref esp_zb_ep_list_t
+ * @param[in] esp_zb_ep_list  An endpoint list which wants to register @ref esp_zb_ep_list_s
  *
  * @return
  *      - ESP_OK on success

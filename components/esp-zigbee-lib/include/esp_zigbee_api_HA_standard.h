@@ -5,18 +5,18 @@
  */
 
 #pragma once
-
-#include "esp_zigbee_api_core.h"
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#include "esp_zigbee_api_core.h"
 /**
  * @brief Zigbee standard mandatory attribute for basic cluster.
  *
  */
 typedef struct esp_zb_basic_cluster_cfg_s{
-    uint8_t  zcl_version;
-    uint8_t  power_source;
+    uint8_t  zcl_version;                       /*!<  ZCL version */
+    uint8_t  power_source;                      /*!<  The sources of power available to the device */
 } esp_zb_basic_cluster_cfg_t;
 
 /**
@@ -24,7 +24,7 @@ typedef struct esp_zb_basic_cluster_cfg_s{
  *
  */
 typedef struct esp_zb_identify_cluster_cfg_s{
-    uint16_t  identify_time;
+    uint16_t  identify_time;                    /*!<  The remaining length of the time that identify itself */
 } esp_zb_identify_cluster_cfg_t;
 
 /**
@@ -32,7 +32,7 @@ typedef struct esp_zb_identify_cluster_cfg_s{
  *
  */
 typedef struct esp_zb_groups_cluster_cfg_s{
-    uint8_t  groups_name_support_id;
+    uint8_t  groups_name_support_id;            /*!<  The indication of group names are supported or not */
 } esp_zb_groups_cluster_cfg_t;
 
 /**
@@ -40,11 +40,11 @@ typedef struct esp_zb_groups_cluster_cfg_s{
  *
  */
 typedef struct esp_zb_scenes_cluster_cfg_s{
-    uint8_t  scenes_count;
-    uint8_t  current_scene;
-    uint16_t current_group;
-    bool  scene_valid;
-    uint8_t  name_support;
+    uint8_t  scenes_count;                      /*!<  The number of scenes currently in the scene table */
+    uint8_t  current_scene;                     /*!<  Scene ID that invoked */
+    uint16_t current_group;                     /*!<  Group ID that invoked */
+    bool  scene_valid;                          /*!<  Indication of the associated with current scene and group valid or not*/
+    uint8_t  name_support;                      /*!<  The indication of group names are supported or not */
 } esp_zb_scenes_cluster_cfg_t;
 
 /**
@@ -52,7 +52,7 @@ typedef struct esp_zb_scenes_cluster_cfg_s{
  *
  */
 typedef struct esp_zb_on_off_cluster_cfg_s{
-    bool  on_off;
+    bool  on_off;                               /*!<  On Off state of the device */
 } esp_zb_on_off_cluster_cfg_t;
 
 /**
@@ -60,7 +60,7 @@ typedef struct esp_zb_on_off_cluster_cfg_s{
  *
  */
 typedef struct esp_zb_level_cluster_cfg_s{
-    uint8_t  current_level;
+    uint8_t  current_level;                     /*!<  Current level of the device */
 } esp_zb_level_cluster_cfg_t;
 
 /**
@@ -68,12 +68,12 @@ typedef struct esp_zb_level_cluster_cfg_s{
  *
  */
 typedef struct esp_zb_color_cluster_cfg_s{
-    uint16_t current_x;
-    uint16_t current_y;
-    uint8_t  color_mode;
-    uint8_t  options;
-    uint8_t  enhanced_color_mode;
-    uint16_t color_capabilities;
+    uint16_t current_x;                         /*!<  The current value of the normalized chromaticity value x */
+    uint16_t current_y;                         /*!<  The current value of the normalized chromaticity value y */
+    uint8_t  color_mode;                        /*!<  The mode which attribute determines the color of the device */
+    uint8_t  options;                           /*!<  The bitmap determines behavior of some cluster commands */
+    uint8_t  enhanced_color_mode;               /*!<  The enhanced-mode which attribute determines the color of the device */
+    uint16_t color_capabilities;                /*!<  Specifying the color capabilities of the device support the color control cluster */
 } esp_zb_color_cluster_cfg_t;
 
 /**
@@ -81,11 +81,11 @@ typedef struct esp_zb_color_cluster_cfg_s{
  *
  */
 typedef struct esp_zb_on_off_light_cfg_s{
-    esp_zb_basic_cluster_cfg_t      basic_cfg;
-    esp_zb_identify_cluster_cfg_t   identify_cfg;
-    esp_zb_groups_cluster_cfg_t     groups_cfg;
-    esp_zb_scenes_cluster_cfg_t     scenes_cfg;
-    esp_zb_on_off_cluster_cfg_t     on_off_cfg;
+    esp_zb_basic_cluster_cfg_t      basic_cfg;      /*!<  Basic cluster configuration */
+    esp_zb_identify_cluster_cfg_t   identify_cfg;   /*!<  Identify cluster configuration */
+    esp_zb_groups_cluster_cfg_t     groups_cfg;     /*!<  Groups cluster configuration */
+    esp_zb_scenes_cluster_cfg_t     scenes_cfg;     /*!<  Scenes cluster configuration */
+    esp_zb_on_off_cluster_cfg_t     on_off_cfg;     /*!<  On off cluster configuration */
 } esp_zb_on_off_light_cfg_t;
 
 /**
@@ -93,8 +93,8 @@ typedef struct esp_zb_on_off_light_cfg_s{
  *
  */
 typedef struct esp_zb_on_off_switch_cfg_s{
-    esp_zb_basic_cluster_cfg_t      basic_cfg;
-    esp_zb_identify_cluster_cfg_t   identify_cfg;
+    esp_zb_basic_cluster_cfg_t      basic_cfg;      /*!<  Basic cluster configuration */
+    esp_zb_identify_cluster_cfg_t   identify_cfg;   /*!<  Identify cluster configuration */
 } esp_zb_on_off_switch_cfg_t;
 
 /**
@@ -102,13 +102,13 @@ typedef struct esp_zb_on_off_switch_cfg_s{
  *
  */
 typedef struct esp_zb_color_dimmable_light_cfg_s{
-    esp_zb_basic_cluster_cfg_t      basic_cfg;
-    esp_zb_identify_cluster_cfg_t   identify_cfg;
-    esp_zb_groups_cluster_cfg_t     groups_cfg;
-    esp_zb_scenes_cluster_cfg_t     scenes_cfg;
-    esp_zb_on_off_cluster_cfg_t     on_off_cfg;
-    esp_zb_level_cluster_cfg_t      level_cfg;
-    esp_zb_color_cluster_cfg_t      color_cfg;
+    esp_zb_basic_cluster_cfg_t      basic_cfg;      /*!<  Basic cluster configuration */
+    esp_zb_identify_cluster_cfg_t   identify_cfg;   /*!<  Identify cluster configuration */
+    esp_zb_groups_cluster_cfg_t     groups_cfg;     /*!<  Groups cluster configuration */
+    esp_zb_scenes_cluster_cfg_t     scenes_cfg;     /*!<  Scenes cluster configuration */
+    esp_zb_on_off_cluster_cfg_t     on_off_cfg;     /*!<  On off cluster configuration */
+    esp_zb_level_cluster_cfg_t      level_cfg;      /*!<  Level cluster configuration */
+    esp_zb_color_cluster_cfg_t      color_cfg;      /*!<  Color cluster configuration */
 } esp_zb_color_dimmable_light_cfg_t;
 
 /**
@@ -116,8 +116,8 @@ typedef struct esp_zb_color_dimmable_light_cfg_s{
  *
  */
 typedef struct esp_zb_color_dimmable_switch_cfg_s{
-    esp_zb_basic_cluster_cfg_t      basic_cfg;
-    esp_zb_identify_cluster_cfg_t   identify_cfg;
+    esp_zb_basic_cluster_cfg_t      basic_cfg;      /*!<  Basic cluster configuration */
+    esp_zb_identify_cluster_cfg_t   identify_cfg;   /*!<  Identify cluster configuration */
 } esp_zb_color_dimmable_switch_cfg_t;
 
 /**
@@ -380,7 +380,7 @@ esp_zb_ep_list_t *esp_zb_on_off_light_ep_create(uint8_t endpoint_id, esp_zb_on_o
  * @param[in] endpoint_id The specific endpoint
  * @param[in] switch_cfg  Configuration parameters for this cluster lists defined by @ref esp_zb_on_off_switch_cfg_s
  *
- * @note This function adds a single endpoint to a cluster list. To add several endpoints to the cluster list use @ref esp_zb_ep_list_add_epp.
+ * @note This function adds a single endpoint to a cluster list. To add several endpoints to the cluster list use @ref esp_zb_ep_list_add_ep.
  *
  * @return Pointer to esp_zb_ep_list_t @ref esp_zb_ep_list_s
  *
@@ -412,6 +412,7 @@ esp_zb_ep_list_t *esp_zb_color_dimmable_light_ep_create(uint8_t endpoint_id, esp
  *
  */
 esp_zb_ep_list_t *esp_zb_color_dimmable_switch_ep_create(uint8_t endpoint_id, esp_zb_color_dimmable_switch_cfg_t *switch_cfg);
+
 #ifdef __cplusplus
 }
 #endif

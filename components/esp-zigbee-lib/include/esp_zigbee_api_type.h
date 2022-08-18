@@ -26,6 +26,7 @@ typedef union {
 
 /** Enum of the Zigbee ZCL address type
  * @brief Possible address types of devices from which ZCL message is received.
+ * @anchor esp_zb_zcl_address_type_t
  */
 typedef enum {
     ESP_ZB_ZCL_ADDR_TYPE_SHORT = 0U,
@@ -36,7 +37,7 @@ typedef enum {
 
 /**
  * @brief Type to represent source address of ZCL message
- * @note Address type @ref enum esp_zb_zcl_address_type_t
+ * @note Address type refer @ref esp_zb_zcl_address_type_t
  */
 typedef struct esp_zb_zcl_addr_s {
     esp_zb_zcl_address_type_t addr_type;            /*!< address type see esp_zb_zcl_address_type_t */
@@ -44,13 +45,13 @@ typedef struct esp_zb_zcl_addr_s {
         uint16_t short_addr;            /*!< Zigbee short address */
         uint32_t src_id;                /*!< Source ID of ZGPD */
         esp_zb_ieee_addr_t ieee_addr;   /*!< Full IEEE-address of ZGPD */
-    } u;
+    } u;                                /*!< Union of the address */
 } ESP_ZB_PACKED_STRUCT
 esp_zb_zcl_addr_t;
 
 /**
  * @brief Type to represent ZCL attribute definition structure
- * @note Access define @ref zcl_attr_access
+ * @note Access define refer to zcl_attr_access
  */
 typedef struct esp_zb_zcl_attr_s {
     uint16_t id;                        /*!< Attribute id */
@@ -62,7 +63,7 @@ esp_zb_zcl_attr_t;
 
 /**
  * @brief Type to represent ZCL cluster definition structure
- * @note Cluster id @ref zcl_cluster_id and attribute define see @ref esp_zb_zcl_attr_s
+ * @note Cluster id refer to zcl_cluster_id and attribute define see @ref esp_zb_zcl_attr_s
  */
 typedef struct esp_zb_zcl_cluster_s {
     uint16_t cluster_id;                        /*!< ZCL 16-bit cluster id. Refer zcl_cluster_id */
@@ -160,14 +161,14 @@ typedef struct esp_zb_zcl_reporting_info_s {
         recv_info; /*!< recv_info is stored on cluster client side (as usual) and describes how
                  attribute report is received */
     }
-    u;
+    u;            /*!< Union of the report info*/
 
     struct {
         uint16_t short_addr; /*!< Destination short address */
         uint8_t  endpoint;   /*!< Destination endpoint */
         uint16_t profile_id; /*!< Profile id */
     }
-    dst;
+    dst;        /*!< Union of the ZCL destination */
 }
 esp_zb_zcl_reporting_info_t;
 
@@ -220,6 +221,7 @@ typedef struct esp_zb_endpoint_s {
     esp_zb_zcl_cvc_alarm_variables_t *cvc_alarm_info;   /*!< pointer to the cvc alarm structure */
 } ESP_ZB_PACKED_STRUCT
 esp_zb_endpoint_t;
+
 #ifdef __cplusplus
 }
 #endif

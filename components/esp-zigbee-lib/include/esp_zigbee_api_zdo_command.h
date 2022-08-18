@@ -5,11 +5,11 @@
  */
 
 #pragma once
-
-#include "esp_zigbee_api_type.h"
 #ifdef __cplusplus
 extern "C" {
 #endif
+#include "esp_zigbee_api_type.h"
+
 /* MATCH DESC REQ ZCL configuration */
 #define ESP_ZB_MATCH_DESC_REQ_TIMEOUT              (5 * ESP_ZB_TIME_ONE_SECOND)            /* timeout for finding */
 #define ESP_ZB_MATCH_DESC_REQ_ROLE                 ESP_ZB_NWK_BROADCAST_RX_ON_WHEN_IDLE    /* find non-sleep Zigbee device, 0xFFFD */
@@ -20,7 +20,7 @@ extern "C" {
  *
  * @note User's callback get response from the remote device that local node wants to find a particular device on endpoint.
  *
- * @param[in] zdo_status A ZDO response feedback status, 0 - response status success @ref zboss_api_zdo.h zdp_status
+ * @param[in] zdo_status A ZDO response feedback status, 0 - response status success refer to zboss_api_zdo.h zdp_status
  * @param[in] addr  A short address of the device response, 0xFFFF - invalid address
  * @param[in] endpoint An endpoint of the device response, 0xFF - invalid endpoint
  *
@@ -33,7 +33,7 @@ typedef void (*esp_zb_zdo_match_desc_callback_t)(uint8_t zdo_status, uint16_t ad
  *
  * @note User's callback get response from the remote device that local node wants to get ieee address.
  *
- * @param[in] zdo_status A ZDO response feedback status, 0 - response status success @ref zboss_api_zdo.h zdp_status
+ * @param[in] zdo_status A ZDO response feedback status, 0 - response status success refer to zboss_api_zdo.h zdp_status
  * @param[in] ieee_addr  A ieee address of the device response, 0xFFFF FFFF FFFF FFFF - invalid ieee address
  *
  */
@@ -45,7 +45,7 @@ typedef void (*esp_zb_zdo_ieee_addr_callback_t)(uint8_t zdo_status, esp_zb_ieee_
  *
  * @note user's callback get response from the remote device that local node wants to bind.
  *
- * @param[in] zdo_status A ZDO response feedback status, 0 - response status success @ref zboss_api_zdo.h zdp_status
+ * @param[in] zdo_status A ZDO response feedback status, 0 - response status success refer to zboss_api_zdo.h zdp_status
  *
  */
 typedef void (*esp_zb_zdo_bind_callback_t)(uint8_t zdo_status);
@@ -56,7 +56,7 @@ typedef void (*esp_zb_zdo_bind_callback_t)(uint8_t zdo_status);
  *
  * @note User's callback get response from the remote device that local node wants to get active endpoint.
  *
- * @param[in] zdo_status A ZDO response feedback status, 0 - response status success @ref zboss_api_zdo.h zdp_status
+ * @param[in] zdo_status A ZDO response feedback status, 0 - response status success refer to zboss_api_zdo.h zdp_status
  * @param[in] ep_count  A number of active endpoint
  * @param[in] ep_id_list A pointer of the endpoint id list
  *
@@ -69,8 +69,8 @@ typedef void (*esp_zb_zdo_active_ep_callback_t)(uint8_t zdo_status, uint8_t ep_c
  *
  * @note User's callback get response from the remote device that local node wants to get simple desc.
  *
- * @param[in] zdo_status A ZDO response feedback status, 0 - response status success @ref zboss_api_zdo.h zdp_status
- * @param[in] simple_desc  A pointer to the simple desc @ref esp_zb_af_simple_desc_1_1_t
+ * @param[in] zdo_status A ZDO response feedback status, 0 - response status success refer to zboss_api_zdo.h zdp_status
+ * @param[in] simple_desc  A pointer to the simple desc @ref esp_zb_af_simple_desc_1_1_s
  *
  */
 typedef void (*esp_zb_zdo_simple_desc_callback_t)(uint8_t zdo_status, esp_zb_af_simple_desc_1_1_t *simple_desc);
@@ -81,7 +81,7 @@ typedef void (*esp_zb_zdo_simple_desc_callback_t)(uint8_t zdo_status, esp_zb_af_
  *
  * @note User's callback get response from the node requested to permit join.
  *
- * @param[in] zdo_status A ZDO response feedback status, 0 - response status success @ref zboss_api_zdo.h zdp_status
+ * @param[in] zdo_status A ZDO response feedback status, 0 - response status success refer to zboss_api_zdo.h zdp_status
  *
  */
 typedef void (*esp_zb_zdo_permit_join_callback_t)(uint8_t zdo_status);
@@ -92,7 +92,7 @@ typedef void (*esp_zb_zdo_permit_join_callback_t)(uint8_t zdo_status);
  *
  * @note User's callback get response from the device that wants to leave.
  *
- * @param[in] zdo_status A ZDO response feedback status, 0 - response status success @ref zboss_api_zdo.h zdp_status
+ * @param[in] zdo_status A ZDO response feedback status, 0 - response status success refer to zboss_api_zdo.h zdp_status
  *
  */
 typedef void (*esp_zb_zdo_leave_callback_t)(uint8_t zdo_status);
@@ -114,7 +114,7 @@ typedef struct esp_zb_zdo_bind_req_param_s {
     esp_zb_addr_u dst_address_u;                        /*!< The destination address for the binding entry */
     uint8_t dst_endp;                                   /*!< This field shall be present only if the
                                                          * DstAddrMode field has a value of
-                                                         * @ref ZB_BIND_DST_ADDR_MODE_64_BIT_EXTENDED @ref bind_dst_addr_mode
+                                                         * refer to ZB_BIND_DST_ADDR_MODE_64_BIT_EXTENDED refer to bind_dst_addr_mode
                                                          * and, if present, shall be the
                                                          * destination endpoint for the binding entry. */
     uint16_t req_dst_addr;                              /*!< Destination address of the request send to */
@@ -187,8 +187,8 @@ typedef struct esp_zb_zdo_mgmt_leave_req_param_s {
 /**
  * @brief   Send bind device request command
  *
- * @param[in] cmd_req  Pointer to the bind request command @ref esp_zb_zdo_bind_req_param_t
- * @param[in] user_cb  A user callback that will be called if received bind response @ref esp_zb_zdo_bind_callback_t
+ * @param[in] cmd_req  Pointer to the bind request command @ref esp_zb_zdo_bind_req_param_s
+ * @param[in] user_cb  A user callback that will be called if received bind response refer to esp_zb_zdo_bind_callback_t
  *
  * @note Current implementation of API only support bind address mode ZB_APS_ADDR_MODE_64_ENDP_PRESENT for addressing.
  *
@@ -199,7 +199,7 @@ void esp_zb_zdo_device_bind_req(esp_zb_zdo_bind_req_param_t *cmd_req, esp_zb_zdo
  * @brief   Send find on-off device request command
  *
  * @param[in] cmd_req  Pointer to the find request command @ref esp_zb_zdo_match_desc_req_param_s
- * @param[in] user_cb  A user callback that will be called if received find response @ref esp_zb_zdo_match_desc_callback_t
+ * @param[in] user_cb  A user callback that will be called if received find response refer to esp_zb_zdo_match_desc_callback_t
  *
  */
 void esp_zb_zdo_find_on_off_light(esp_zb_zdo_match_desc_req_param_t *cmd_req, esp_zb_zdo_match_desc_callback_t user_cb);
@@ -208,7 +208,7 @@ void esp_zb_zdo_find_on_off_light(esp_zb_zdo_match_desc_req_param_t *cmd_req, es
  * @brief   Send find color_dimmable device request command
  *
  * @param[in] cmd_req  Pointer to the find request command @ref esp_zb_zdo_match_desc_req_param_s
- * @param[in] user_cb  A user callback that will be called if received find response @ref esp_zb_zdo_match_desc_callback_t
+ * @param[in] user_cb  A user callback that will be called if received find response refer to esp_zb_zdo_match_desc_callback_t
  *
  */
 void esp_zb_zdo_find_color_dimmable_light(esp_zb_zdo_match_desc_req_param_t *cmd_req, esp_zb_zdo_match_desc_callback_t user_cb);
@@ -216,8 +216,8 @@ void esp_zb_zdo_find_color_dimmable_light(esp_zb_zdo_match_desc_req_param_t *cmd
 /**
  * @brief   Send ieee request command
  *
- * @param[in] cmd_req  Pointer to the ieee address request command @ref esp_zb_zdo_ieee_addr_req_param_t
- * @param[in] user_cb  A user callback that will be called if received ieee address response @ref esp_zb_zdo_ieee_addr_callback_t
+ * @param[in] cmd_req  Pointer to the ieee address request command @ref esp_zb_zdo_ieee_addr_req_param_s
+ * @param[in] user_cb  A user callback that will be called if received ieee address response refer to esp_zb_zdo_ieee_addr_callback_t
  *
  */
 void esp_zb_zdo_ieee_addr_req(esp_zb_zdo_ieee_addr_req_param_t *cmd_req, esp_zb_zdo_ieee_addr_callback_t user_cb);
@@ -225,8 +225,8 @@ void esp_zb_zdo_ieee_addr_req(esp_zb_zdo_ieee_addr_req_param_t *cmd_req, esp_zb_
 /**
  * @brief   Send simple descriptor request command
  *
- * @param[in] cmd_req  Pointer to the simple descriptor request command @ref esp_zb_zdo_simple_desc_req_param_t
- * @param[in] user_cb  A user callback that will be called if received simple desc response @ref esp_zb_zdo_simple_desc_callback_t
+ * @param[in] cmd_req  Pointer to the simple descriptor request command @ref esp_zb_zdo_simple_desc_req_param_s
+ * @param[in] user_cb  A user callback that will be called if received simple desc response refer to esp_zb_zdo_simple_desc_callback_t
  *
  */
 void esp_zb_zdo_simple_desc_req(esp_zb_zdo_simple_desc_req_param_t *cmd_req, esp_zb_zdo_simple_desc_callback_t user_cb);
@@ -234,8 +234,8 @@ void esp_zb_zdo_simple_desc_req(esp_zb_zdo_simple_desc_req_param_t *cmd_req, esp
 /**
  * @brief   Send active endpoint request command
  *
- * @param[in] cmd_req  Pointer to the active endpoint request command @ref esp_zb_zdo_active_ep_req_param_t
- * @param[in] user_cb  A user callback that will be called if received active ep response @ref esp_zb_zdo_active_ep_callback_t
+ * @param[in] cmd_req  Pointer to the active endpoint request command @ref esp_zb_zdo_active_ep_req_param_s
+ * @param[in] user_cb  A user callback that will be called if received active ep response refer to esp_zb_zdo_active_ep_callback_t
  *
  */
 void esp_zb_zdo_active_ep_req(esp_zb_zdo_active_ep_req_param_t *cmd_req, esp_zb_zdo_active_ep_callback_t user_cb);
@@ -243,8 +243,8 @@ void esp_zb_zdo_active_ep_req(esp_zb_zdo_active_ep_req_param_t *cmd_req, esp_zb_
 /**
  * @brief   Send leave request command
  *
- * @param[in] cmd_req  Pointer to the leave request command @ref esp_zb_zdo_mgmt_leave_req_param_t
- * @param[in] user_cb  A user callback that will be called if received leave response @ref esp_zb_zdo_leave_callback_t
+ * @param[in] cmd_req  Pointer to the leave request command @ref esp_zb_zdo_mgmt_leave_req_param_s
+ * @param[in] user_cb  A user callback that will be called if received leave response refer to esp_zb_zdo_leave_callback_t
  *
  */
 void esp_zb_zdo_device_leave_req(esp_zb_zdo_mgmt_leave_req_param_t *cmd_req, esp_zb_zdo_leave_callback_t user_cb);
@@ -252,11 +252,12 @@ void esp_zb_zdo_device_leave_req(esp_zb_zdo_mgmt_leave_req_param_t *cmd_req, esp
 /**
  * @brief   Send permit join request command
  *
- * @param[in] cmd_req  Pointer to the permit join request command @ref esp_zb_zdo_permit_joining_req_param_t
- * @param[in] user_cb  A user callback that will be called if received permit join response @ref esp_zb_zdo_permit_join_callback_t
+ * @param[in] cmd_req  Pointer to the permit join request command @ref esp_zb_zdo_permit_joining_req_param_s
+ * @param[in] user_cb  A user callback that will be called if received permit join response refer to esp_zb_zdo_permit_join_callback_t
  *
  */
 void esp_zb_zdo_permit_joining_req(esp_zb_zdo_permit_joining_req_param_t *cmd_req, esp_zb_zdo_permit_join_callback_t user_cb);
+
 #ifdef __cplusplus
 }
 #endif
