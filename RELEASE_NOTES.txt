@@ -7,8 +7,9 @@ Initial version release of ESP-ZIGBEE-SDK
 Features
 --------
 
--ZCL:
+-HA standard:
 	Standard Home Automation devices setting and build up
+-ZCL:
 	Provide the ZCL common and cluster specific command
 -ZDO:
 	Varieties of the ZDO command
