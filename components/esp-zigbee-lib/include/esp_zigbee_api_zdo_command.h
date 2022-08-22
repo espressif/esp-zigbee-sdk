@@ -7,7 +7,9 @@
 #pragma once
 
 #include "esp_zigbee_api_type.h"
-
+#ifdef __cplusplus
+extern "C" {
+#endif
 /* MATCH DESC REQ ZCL configuration */
 #define ESP_ZB_MATCH_DESC_REQ_TIMEOUT              (5 * ESP_ZB_TIME_ONE_SECOND)            /* timeout for finding */
 #define ESP_ZB_MATCH_DESC_REQ_ROLE                 ESP_ZB_NWK_BROADCAST_RX_ON_WHEN_IDLE    /* find non-sleep Zigbee device, 0xFFFD */
@@ -255,3 +257,6 @@ void esp_zb_zdo_device_leave_req(esp_zb_zdo_mgmt_leave_req_param_t *cmd_req, esp
  *
  */
 void esp_zb_zdo_permit_joining_req(esp_zb_zdo_permit_joining_req_param_t *cmd_req, esp_zb_zdo_permit_join_callback_t user_cb);
+#ifdef __cplusplus
+}
+#endif

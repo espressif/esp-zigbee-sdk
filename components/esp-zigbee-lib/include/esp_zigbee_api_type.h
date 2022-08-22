@@ -5,7 +5,9 @@
  */
 
 #pragma once
-
+#ifdef __cplusplus
+extern "C" {
+#endif
 #define ESP_ZB_PACKED_STRUCT __attribute__ ((packed))
 
 typedef uint8_t esp_zb_64bit_addr_t[8];
@@ -218,3 +220,6 @@ typedef struct esp_zb_endpoint_s {
     esp_zb_zcl_cvc_alarm_variables_t *cvc_alarm_info;   /*!< pointer to the cvc alarm structure */
 } ESP_ZB_PACKED_STRUCT
 esp_zb_endpoint_t;
+#ifdef __cplusplus
+}
+#endif

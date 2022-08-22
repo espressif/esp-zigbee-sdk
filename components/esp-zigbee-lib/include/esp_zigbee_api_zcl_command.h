@@ -7,7 +7,9 @@
 #pragma once
 
 #include "esp_zigbee_api_type.h"
-
+#ifdef __cplusplus
+extern "C" {
+#endif
 /** Enum of the Zigbee ZCL address mode
  * @note Defined the ZCL command of address_mode.
  */
@@ -397,3 +399,6 @@ void esp_zb_zcl_color_step_color_cmd_req(esp_zb_zcl_color_step_color_cmd_t *cmd_
  *
  */
 void esp_zb_zcl_color_stop_move_step_cmd_req(esp_zb_zcl_color_stop_move_step_cmd_t *cmd_req);
+#ifdef __cplusplus
+}
+#endif
