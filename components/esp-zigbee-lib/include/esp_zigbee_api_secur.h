@@ -7,7 +7,9 @@
 #pragma once
 
 #include "esp_zigbee_api_type.h"
-
+#ifdef __cplusplus
+extern "C" {
+#endif
 /** Enum of the Zigbee secure install code type
  * @note It is formed with 6/8/12/16 bytes IC (install code) + 2 bytes of CRC
  */
@@ -105,3 +107,6 @@ esp_err_t esp_zb_secur_ic_remove_req(esp_zb_ieee_addr_t address);
  * @return - ESP_OK on success @ref esp_err_t
  */
 esp_err_t esp_zb_secur_ic_remove_all_req(void);
+#ifdef __cplusplus
+}
+#endif

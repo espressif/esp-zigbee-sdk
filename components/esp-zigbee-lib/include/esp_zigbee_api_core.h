@@ -5,6 +5,9 @@
  */
 
 #pragma once
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #include "zboss_api.h"
 #include "esp_zigbee_api_type.h"
@@ -485,3 +488,7 @@ esp_err_t esp_zb_ep_list_add_ep(esp_zb_ep_list_t *esp_zb_ep_list, esp_zb_cluster
  *
  */
 esp_err_t esp_zb_device_register(esp_zb_ep_list_t *esp_zb_ep_list);
+
+#ifdef __cplusplus
+}
+#endif

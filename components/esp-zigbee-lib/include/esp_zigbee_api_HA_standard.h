@@ -7,6 +7,9 @@
 #pragma once
 
 #include "esp_zigbee_api_core.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 /**
  * @brief Zigbee standard mandatory attribute for basic cluster.
  *
@@ -409,3 +412,6 @@ esp_zb_ep_list_t *esp_zb_color_dimmable_light_ep_create(uint8_t endpoint_id, esp
  *
  */
 esp_zb_ep_list_t *esp_zb_color_dimmable_switch_ep_create(uint8_t endpoint_id, esp_zb_color_dimmable_switch_cfg_t *switch_cfg);
+#ifdef __cplusplus
+}
+#endif
