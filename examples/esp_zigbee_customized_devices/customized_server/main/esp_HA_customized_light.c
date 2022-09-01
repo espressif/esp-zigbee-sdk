@@ -16,7 +16,7 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "esp_HA_customized_light.h"
-#include "esp_zigbee_api_HA_standard.h"
+#include "esp_zigbee_ha_standard.h"
 
 static const char *TAG = "ESP_HA_ON_OFF_LIGHT";
 /********************* Define functions **************************/
@@ -121,15 +121,15 @@ static void esp_zb_task(void *pvParameters)
     test_attr2 = 3;
     /* basic cluster create with fully customized */
     esp_zb_attribute_list_t *esp_zb_basic_cluster = esp_zb_zcl_attr_list_create(ZB_ZCL_CLUSTER_ID_BASIC);
-    esp_zb_cluster_add_attr(esp_zb_basic_cluster, ZB_ZCL_ATTR_BASIC_ZCL_VERSION_ID, &test_attr);
-    esp_zb_cluster_add_attr(esp_zb_basic_cluster, ZB_ZCL_ATTR_BASIC_POWER_SOURCE_ID, &test_attr);
+    esp_zb_basic_cluster_add_attr(esp_zb_basic_cluster, ZB_ZCL_ATTR_BASIC_ZCL_VERSION_ID, &test_attr);
+    esp_zb_basic_cluster_add_attr(esp_zb_basic_cluster, ZB_ZCL_ATTR_BASIC_POWER_SOURCE_ID, &test_attr);
     esp_zb_cluster_update_attr(esp_zb_basic_cluster, ZB_ZCL_ATTR_BASIC_ZCL_VERSION_ID, &test_attr2);
     /* identify cluster create with fully customized */
     esp_zb_attribute_list_t *esp_zb_identify_cluster = esp_zb_zcl_attr_list_create(ZB_ZCL_CLUSTER_ID_IDENTIFY);
-    esp_zb_cluster_add_attr(esp_zb_identify_cluster, ZB_ZCL_ATTR_IDENTIFY_IDENTIFY_TIME_ID, &test_attr);
+    esp_zb_identify_cluster_add_attr(esp_zb_identify_cluster, ZB_ZCL_ATTR_IDENTIFY_IDENTIFY_TIME_ID, &test_attr);
     /* group cluster create with fully customized */
     esp_zb_attribute_list_t *esp_zb_groups_cluster = esp_zb_zcl_attr_list_create(ZB_ZCL_CLUSTER_ID_GROUPS);
-    esp_zb_cluster_add_attr(esp_zb_groups_cluster, ZB_ZCL_ATTR_GROUPS_NAME_SUPPORT_ID, &test_attr);
+    esp_zb_groups_cluster_add_attr(esp_zb_groups_cluster, ZB_ZCL_ATTR_GROUPS_NAME_SUPPORT_ID, &test_attr);
     /* scenes cluster create with standard cluster + customized */
     esp_zb_attribute_list_t *esp_zb_scenes_cluster = esp_zb_scenes_cluster_create(NULL);
     esp_zb_cluster_update_attr(esp_zb_scenes_cluster, ZB_ZCL_ATTR_SCENES_NAME_SUPPORT_ID, &test_attr);
@@ -139,13 +139,13 @@ static void esp_zb_task(void *pvParameters)
     esp_zb_attribute_list_t *esp_zb_on_off_cluster = esp_zb_on_off_cluster_create(&on_off_cfg);
     /* create cluster lists for this endpoint */
     esp_zb_cluster_list_t *esp_zb_cluster_list = esp_zb_zcl_cluster_list_create();
-    esp_zb_cluster_list_add_cluster(esp_zb_cluster_list, esp_zb_basic_cluster, ZB_ZCL_CLUSTER_SERVER_ROLE);
+    esp_zb_cluster_list_add_basic_cluster(esp_zb_cluster_list, esp_zb_basic_cluster, ZB_ZCL_CLUSTER_SERVER_ROLE);
     /* update basic cluster in the existed cluster list */
-    esp_zb_cluster_list_update_cluster(esp_zb_cluster_list, esp_zb_basic_cluster_create(NULL), ZB_ZCL_CLUSTER_SERVER_ROLE);
-    esp_zb_cluster_list_add_cluster(esp_zb_cluster_list, esp_zb_identify_cluster, ZB_ZCL_CLUSTER_SERVER_ROLE);
-    esp_zb_cluster_list_add_cluster(esp_zb_cluster_list, esp_zb_groups_cluster, ZB_ZCL_CLUSTER_SERVER_ROLE);
-    esp_zb_cluster_list_add_cluster(esp_zb_cluster_list, esp_zb_scenes_cluster, ZB_ZCL_CLUSTER_SERVER_ROLE);
-    esp_zb_cluster_list_add_cluster(esp_zb_cluster_list, esp_zb_on_off_cluster, ZB_ZCL_CLUSTER_SERVER_ROLE);
+    esp_zb_cluster_list_update_basic_cluster(esp_zb_cluster_list, esp_zb_basic_cluster_create(NULL), ZB_ZCL_CLUSTER_SERVER_ROLE);
+    esp_zb_cluster_list_add_identify_cluster(esp_zb_cluster_list, esp_zb_identify_cluster, ZB_ZCL_CLUSTER_SERVER_ROLE);
+    esp_zb_cluster_list_add_groups_cluster(esp_zb_cluster_list, esp_zb_groups_cluster, ZB_ZCL_CLUSTER_SERVER_ROLE);
+    esp_zb_cluster_list_add_scenes_cluster(esp_zb_cluster_list, esp_zb_scenes_cluster, ZB_ZCL_CLUSTER_SERVER_ROLE);
+    esp_zb_cluster_list_add_on_off_cluster(esp_zb_cluster_list, esp_zb_on_off_cluster, ZB_ZCL_CLUSTER_SERVER_ROLE);
 
     esp_zb_ep_list_t *esp_zb_ep_list = esp_zb_ep_list_create();
     /* add created endpoint (cluster_list) to endpoint list */

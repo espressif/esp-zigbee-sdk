@@ -8,7 +8,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-#include "esp_zigbee_api_type.h"
+#include "esp_zigbee_type.h"
 
 /** Enum of the Zigbee ZCL address mode
  * @note Defined the ZCL command of address_mode.

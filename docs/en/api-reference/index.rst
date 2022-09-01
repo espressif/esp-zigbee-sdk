@@ -6,9 +6,12 @@ This section provides the ESP Zigbee SDK's APIs that support different kind of s
 .. toctree::
    :maxdepth: 1
 
-   esp_zigbee_api_core
-   esp_zigbee_api_HA_standard
-   esp_zigbee_api_secur
-   esp_zigbee_api_type
-   esp_zigbee_api_zcl_command
-   esp_zigbee_api_zdo_command
+   esp_zigbee_core
+   esp_zigbee_ha_standard
+   esp_zigbee_attribute
+   esp_zigbee_cluster
+   esp_zigbee_endpoint
+   esp_zigbee_secur
+   esp_zigbee_type
+   esp_zigbee_zcl_command
+   esp_zigbee_zdo_command

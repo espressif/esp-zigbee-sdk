@@ -16,7 +16,7 @@ The installation code itself is a random value installed on the joining device a
 
 With the creation of the Zigbee 3.0 standard in late 2016, all Zigbee devices capable of joining networks (as opposed to forming them) must support the use of installation codes during joining, as this is a requirement for Zigbee 3.0 compliance.
 
-ESP Zigbee SDK provide :project:`tools <tools/mfg_tool>` to configuration in the manufacturing time and security related `APIs <https://docs.espressif.com/projects/esp-zigbee-sdk/en/main/esp32/api-reference/esp_zigbee_api_secur.html>`__ for set/add/remove install code.
+ESP Zigbee SDK provide :project:`tools <tools/mfg_tool>` to configuration in the manufacturing time and security related `APIs <https://docs.espressif.com/projects/esp-zigbee-sdk/en/main/esp32/api-reference/esp_zigbee_secur.html>`__ for set/add/remove install code.
 
 
 - **MAC address**

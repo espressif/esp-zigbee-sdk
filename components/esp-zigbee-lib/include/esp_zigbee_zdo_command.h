@@ -8,7 +8,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-#include "esp_zigbee_api_type.h"
+#include "esp_zigbee_type.h"
 
 /* MATCH DESC REQ ZCL configuration */
 #define ESP_ZB_MATCH_DESC_REQ_TIMEOUT              (5 * ESP_ZB_TIME_ONE_SECOND)            /* timeout for finding */

@@ -239,21 +239,21 @@ static void esp_zb_task(void *pvParameters)
     test_attr = 0;
     /* basic cluster create with fully customized */
     esp_zb_attribute_list_t *esp_zb_basic_cluster = esp_zb_zcl_attr_list_create(ZB_ZCL_CLUSTER_ID_BASIC);
-    esp_zb_cluster_add_attr(esp_zb_basic_cluster, ZB_ZCL_ATTR_BASIC_ZCL_VERSION_ID, &test_attr);
-    esp_zb_cluster_add_attr(esp_zb_basic_cluster, ZB_ZCL_ATTR_BASIC_POWER_SOURCE_ID, &test_attr);
+    esp_zb_basic_cluster_add_attr(esp_zb_basic_cluster, ZB_ZCL_ATTR_BASIC_ZCL_VERSION_ID, &test_attr);
+    esp_zb_basic_cluster_add_attr(esp_zb_basic_cluster, ZB_ZCL_ATTR_BASIC_POWER_SOURCE_ID, &test_attr);
     esp_zb_cluster_update_attr(esp_zb_basic_cluster, ZB_ZCL_ATTR_BASIC_ZCL_VERSION_ID, &test_attr);
     /* identify cluster create with fully customized */
     esp_zb_attribute_list_t *esp_zb_identify_cluster = esp_zb_zcl_attr_list_create(ZB_ZCL_CLUSTER_ID_IDENTIFY);
-    esp_zb_cluster_add_attr(esp_zb_identify_cluster, ZB_ZCL_ATTR_IDENTIFY_IDENTIFY_TIME_ID, &test_attr);
+    esp_zb_identify_cluster_add_attr(esp_zb_identify_cluster, ZB_ZCL_ATTR_IDENTIFY_IDENTIFY_TIME_ID, &test_attr);
     /* create client role of the cluster */
     esp_zb_attribute_list_t *esp_zb_on_off_client_cluster = esp_zb_zcl_attr_list_create(ZB_ZCL_CLUSTER_ID_ON_OFF);
     esp_zb_attribute_list_t *esp_zb_identify_client_cluster = esp_zb_zcl_attr_list_create(ZB_ZCL_CLUSTER_ID_IDENTIFY);
     /* create cluster lists for this endpoint */
     esp_zb_cluster_list_t *esp_zb_cluster_list = esp_zb_zcl_cluster_list_create();
-    esp_zb_cluster_list_add_cluster(esp_zb_cluster_list, esp_zb_basic_cluster, ZB_ZCL_CLUSTER_SERVER_ROLE);
-    esp_zb_cluster_list_add_cluster(esp_zb_cluster_list, esp_zb_identify_cluster, ZB_ZCL_CLUSTER_SERVER_ROLE);
-    esp_zb_cluster_list_add_cluster(esp_zb_cluster_list, esp_zb_on_off_client_cluster, ZB_ZCL_CLUSTER_CLIENT_ROLE);
-    esp_zb_cluster_list_add_cluster(esp_zb_cluster_list, esp_zb_identify_client_cluster, ZB_ZCL_CLUSTER_CLIENT_ROLE);
+    esp_zb_cluster_list_add_basic_cluster(esp_zb_cluster_list, esp_zb_basic_cluster, ZB_ZCL_CLUSTER_SERVER_ROLE);
+    esp_zb_cluster_list_add_identify_cluster(esp_zb_cluster_list, esp_zb_identify_cluster, ZB_ZCL_CLUSTER_SERVER_ROLE);
+    esp_zb_cluster_list_add_on_off_cluster(esp_zb_cluster_list, esp_zb_on_off_client_cluster, ZB_ZCL_CLUSTER_CLIENT_ROLE);
+    esp_zb_cluster_list_add_identify_cluster(esp_zb_cluster_list, esp_zb_identify_client_cluster, ZB_ZCL_CLUSTER_CLIENT_ROLE);
 
     esp_zb_ep_list_t *esp_zb_ep_list = esp_zb_ep_list_create();
     esp_zb_ep_list_add_ep(esp_zb_ep_list, esp_zb_cluster_list, HA_ONOFF_SWITCH_ENDPOINT, ZB_AF_HA_PROFILE_ID, ZB_HA_ON_OFF_SWITCH_DEVICE_ID);

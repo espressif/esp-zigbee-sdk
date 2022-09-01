@@ -8,7 +8,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-#include "esp_zigbee_api_type.h"
+#include "esp_zigbee_type.h"
 
 /** Enum of the Zigbee secure install code type
  * @note It is formed with 6/8/12/16 bytes IC (install code) + 2 bytes of CRC

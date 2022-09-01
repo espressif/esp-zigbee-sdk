@@ -15,7 +15,7 @@
 #include "esp_log.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-#include "esp_zigbee_api_HA_standard.h"
+#include "esp_zigbee_ha_standard.h"
 #include "esp_zb_light.h"
 
 /**

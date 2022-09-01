@@ -222,6 +222,38 @@ typedef struct esp_zb_endpoint_s {
 } ESP_ZB_PACKED_STRUCT
 esp_zb_endpoint_t;
 
+/* attribute list */
+/**
+ * @brief The esp-zigbee data model of list of attribute.
+ *
+ * @note An attribute list groups up a single cluster.
+ */
+typedef struct esp_zb_attribute_list_s {
+    esp_zb_zcl_attr_t   attribute;              /*!< A single attribute */
+    uint16_t     cluster_id;                    /*!< A cluster id assigned to this attribute */
+    struct esp_zb_attribute_list_s *next;       /*!< A pointer to next attribute */
+} esp_zb_attribute_list_t;
+
+/* cluster list */
+/**
+ * @brief The esp-zigbee data model of list of cluster.
+ *
+ */
+typedef struct esp_zb_cluster_list_s {
+    esp_zb_zcl_cluster_t cluster;               /*!< A single cluster */
+    struct esp_zb_cluster_list_s *next;         /*!< A pointer to next cluster */
+} esp_zb_cluster_list_t;
+
+/* endpoint list */
+/**
+ * @brief The esp-zigbee data model of list of endpoint.
+ *
+ */
+typedef struct esp_zb_ep_list_s {
+    esp_zb_endpoint_t endpoint;                 /*!< A single endpoint */
+    struct esp_zb_ep_list_s *next;              /*!< A pointer to next endpoint */
+} esp_zb_ep_list_t;
+
 #ifdef __cplusplus
 }
 #endif

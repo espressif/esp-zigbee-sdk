@@ -33,7 +33,7 @@ More new details see examples's [Readme](examples/README.md)
 
 ## Documentation  
 
-Refer [ESP Zigbee SDK Guide](https://docs.espressif.com/projects/esp-zigbee-sdk/en/main/) for the latest version of the documentation.  
+Refer [ESP Zigbee SDK Guide](https://docs.espressif.com/projects/esp-zigbee-sdk/en/latest) for the latest version of the documentation.  
 
 ## Tools
 
