@@ -12,7 +12,7 @@
  * CONDITIONS OF ANY KIND, either express or implied.
  */
 
-#include "esp_zigbee_api_core.h"
+#include "esp_zigbee_core.h"
 #include "light_driver.h"
 
 /* Zigbee configuration */

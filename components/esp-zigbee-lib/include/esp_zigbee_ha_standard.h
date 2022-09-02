@@ -9,7 +9,7 @@
 extern "C" {
 #endif
 
-#include "esp_zigbee_api_core.h"
+#include "esp_zigbee_core.h"
 /**
  * @brief Zigbee standard mandatory attribute for basic cluster.
  *
@@ -367,7 +367,7 @@ esp_zb_cluster_list_t  *esp_zb_color_dimmable_switch_clusters_create(esp_zb_colo
  * @param[in] endpoint_id The specific endpoint
  * @param[in] light_cfg  Configuration parameters for this cluster lists defined by @ref esp_zb_on_off_light_cfg_s
  *
- * @note This function adds a single endpoint to a cluster list. To add several endpoints to the cluster list use @ref esp_zb_ep_list_add_ep.
+ * @note This function adds a single endpoint to a cluster list.
  *
  * @return Pointer to esp_zb_ep_list_t @ref esp_zb_ep_list_s
  *
@@ -380,7 +380,7 @@ esp_zb_ep_list_t *esp_zb_on_off_light_ep_create(uint8_t endpoint_id, esp_zb_on_o
  * @param[in] endpoint_id The specific endpoint
  * @param[in] switch_cfg  Configuration parameters for this cluster lists defined by @ref esp_zb_on_off_switch_cfg_s
  *
- * @note This function adds a single endpoint to a cluster list. To add several endpoints to the cluster list use @ref esp_zb_ep_list_add_ep.
+ * @note This function adds a single endpoint to a cluster list.
  *
  * @return Pointer to esp_zb_ep_list_t @ref esp_zb_ep_list_s
  *
@@ -393,7 +393,7 @@ esp_zb_ep_list_t *esp_zb_on_off_switch_ep_create(uint8_t endpoint_id, esp_zb_on_
  * @param[in] endpoint_id The specific endpoint
  * @param[in] light_cfg  Configuration parameters for this cluster lists defined by @ref esp_zb_color_dimmable_light_cfg_s
  *
- * @note This function adds a single endpoint to a cluster list. To add several endpoints to the cluster list use @ref esp_zb_ep_list_add_ep.
+ * @note This function adds a single endpoint to a cluster list.
  *
  * @return Pointer to esp_zb_ep_list_t @ref esp_zb_ep_list_s
  *
@@ -406,7 +406,7 @@ esp_zb_ep_list_t *esp_zb_color_dimmable_light_ep_create(uint8_t endpoint_id, esp
  * @param[in] endpoint_id The specific endpoint
  * @param[in] switch_cfg  Configuration parameters for this cluster lists defined by @ref esp_zb_color_dimmable_switch_cfg_s
  *
- * @note This function adds a single endpoint to a cluster list. To add several endpoints to the cluster list use @ref esp_zb_ep_list_add_ep.
+ * @note This function adds a single endpoint to a cluster list.
  *
  * @return Pointer to esp_zb_ep_list_t @ref esp_zb_ep_list_s
  *

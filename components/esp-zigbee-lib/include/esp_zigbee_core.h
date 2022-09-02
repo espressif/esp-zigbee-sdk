@@ -10,10 +10,13 @@ extern "C" {
 #endif
 
 #include "zboss_api.h"
-#include "esp_zigbee_api_type.h"
-#include "esp_zigbee_api_zcl_command.h"
-#include "esp_zigbee_api_zdo_command.h"
-#include "esp_zigbee_api_secur.h"
+#include "esp_zigbee_type.h"
+#include "esp_zigbee_attribute.h"
+#include "esp_zigbee_cluster.h"
+#include "esp_zigbee_endpoint.h"
+#include "esp_zigbee_zcl_command.h"
+#include "esp_zigbee_zdo_command.h"
+#include "esp_zigbee_secur.h"
 
 /** Enum of the Zigbee network device type
  * @anchor esp_zb_nwk_device_type_t
@@ -114,38 +117,6 @@ typedef struct esp_zb_cfg_s{
     } nwk_cfg;                                      /*!< Union of the network configuration */
 } esp_zb_cfg_t;
 
-/* attribute list */
-/**
- * @brief The esp-zigbee data model of list of attribute.
- *
- * @note An attribute list groups up a single cluster.
- */
-typedef struct esp_zb_attribute_list_s {
-    esp_zb_zcl_attr_t   attribute;              /*!< A single attribute */
-    uint16_t     cluster_id;                    /*!< A cluster id assigned to this attribute */
-    struct esp_zb_attribute_list_s *next;       /*!< A pointer to next attribute */
-} esp_zb_attribute_list_t;
-
-/* cluster list */
-/**
- * @brief The esp-zigbee data model of list of cluster.
- *
- */
-typedef struct esp_zb_cluster_list_s {
-    esp_zb_zcl_cluster_t cluster;               /*!< A single cluster */
-    struct esp_zb_cluster_list_s *next;         /*!< A pointer to next cluster */
-} esp_zb_cluster_list_t;
-
-/* endpoint list */
-/**
- * @brief The esp-zigbee data model of list of endpoint.
- *
- */
-typedef struct esp_zb_ep_list_s {
-    esp_zb_endpoint_t endpoint;                 /*!< A single endpoint */
-    struct esp_zb_ep_list_s *next;              /*!< A pointer to next endpoint */
-} esp_zb_ep_list_t;
-
 /********************* Declare functions **************************/
 /**
  * @brief  Zigbee stack initialization.
@@ -232,9 +203,7 @@ esp_err_t esp_zb_bdb_start_top_level_commissioning(uint8_t mode_mask);
 
 /**
  *  @brief Perform "Factory reset" procedure.
- *  @note The device will perform the NLME leave and clean all Zigbee persistent data except the outgoing NWK
- *  frame counter and application datasets (if any). The device will perform ZCL clusters reset to factory.
- *  The Zigbee NVRAM store will be erased.
+ *  @note The device will perform leave Zigbee network. The NVRAM store will be erased.
  *
  *  @note The reset can be performed at any time once the device is started (see esp_zb_start()).
  *  After the reset, the application itself will receive the refer to ZB_ZDO_SIGNAL_LEAVE signal.
@@ -299,18 +268,6 @@ void esp_zb_main_loop_iteration(void);
 void esp_zb_device_add_set_attr_value_cb(esp_zb_set_attr_callback_t cb);
 
 /**
- * @brief   Add ZCL basic cluster reset to factory default device callback.
- *
- * @note User could use this callback to get notification when ZCL basic reset command received.
- * All ZCL clusters and attributes are reset to the default value by stack itself.
- * By getting which endpoint, cluster and attributes are changed, user is able to enabling
- * some device action like light physical change.
- * @param[in] cb A device callback that user used refer to esp_zb_basic_reset_callback_t
- *
- */
-void esp_zb_device_add_basic_reset_default_cb(esp_zb_basic_reset_callback_t cb);
-
-/**
  * @brief   Set the ZCL report attribute device callback.
  *
  * @note  Set a callback being called on receive attribute report. The callback will
@@ -346,148 +303,15 @@ void esp_zb_add_identify_notify_cb(uint8_t endpoint, esp_zb_identify_notify_call
 /* ZCL attribute, cluster, endpoint, device related */
 
 /**
- * @brief  Get ZCL attribute descriptor.
- *
- * @note  Getting the local attribute from the specific endpoint and cluster.
- *
- * @param[in] endpoint The endpoint
- * @param[in] cluster_id Cluster id for attribute list
- * @param[in] cluster_role Cluster role of this cluster, either server or client role
- * @param[in] attr_id Attribute id
- *
- * @return pointer to  @ref esp_zb_zcl_attr_s
- *
- */
-esp_zb_zcl_attr_t *esp_zb_zcl_get_attribute(uint8_t endpoint, uint16_t cluster_id, uint8_t cluster_role, uint16_t attr_id);
-
-/**
- * @brief  Get ZCL cluster descriptor.
- *
- * @note  Getting the local cluster from the specific endpoint.
- *
- * @param[in] endpoint The endpoint
- * @param[in] cluster_id The cluster id for attribute list
- * @param[in] cluster_role The cluster role of this cluster, either server or client role
- *
- * @return pointer to  @ref esp_zb_zcl_cluster_s
- *
- */
-esp_zb_zcl_cluster_t *esp_zb_zcl_get_cluster(uint8_t endpoint, uint16_t cluster_id, uint8_t cluster_role);
-
-/**
- * @brief  Create an empty attribute list.
- *
- * @note  This attribute list is ready for certain cluster id to add / update attribute refer to esp_zb_cluster_add_attr() and esp_zb_cluster_update_attr().
- * @note  Attribute list groups up a cluster.
- *
- * @param[in] cluster_id The cluster id for attribute list
- *
- * @return pointer to  @ref esp_zb_attribute_list_s
- *
- */
-esp_zb_attribute_list_t *esp_zb_zcl_attr_list_create(uint16_t cluster_id);
-
-/**
- * @brief  Create an empty cluster list.
- *
- * @note  This cluster list is ready to add / update cluster refer to esp_zb_cluster_list_add_cluster() and esp_zb_cluster_list_update_cluster().
- * @return pointer to  @ref esp_zb_cluster_list_s
- *
- */
-esp_zb_cluster_list_t *esp_zb_zcl_cluster_list_create(void);
-
-/**
- * @brief  Create an empty endpoint list.
- *
- * @note This endpoint list is ready to add endpoint refer @ref esp_zb_ep_list_add_ep.
- * @return pointer to  @ref esp_zb_ep_list_s
- *
- */
-esp_zb_ep_list_t *esp_zb_ep_list_create(void);
-
-/**
- * @brief Add an attribute in a specific cluster.
- *
- * @param[in] esp_zb_attr_list A pointer to attribute list @ref esp_zb_attribute_list_s
- * @param[in] esp_zb_attr_id  An attribute id to be added
- * @param[in] value_p A pointer to attribute value wants to add
- *
- * @return
- *      - ESP_OK on success
- *      - ESP_ERR_INVALID_ARG if attribute is existed or unsupported
- *
- */
-esp_err_t esp_zb_cluster_add_attr(esp_zb_attribute_list_t *esp_zb_attr_list, uint16_t esp_zb_attr_id, void *value_p);
-
-/**
- * @brief Update an attribute in a specific cluster.
- *
- * @param[in] esp_zb_attr_list A pointer to attribute list @ref esp_zb_attribute_list_s
- * @param[in] esp_zb_attr_id  An attribute id which wants to update
- * @param[in] value_p A pointer to attribute value wants to update
- *
- * @return
- *      - ESP_OK on success
- *      - ESP_ERR_INVALID_ARG if attribute list not initialized
- *      - ESP_ERR_NOT_FOUND the request update attribute is not found
- *
- */
-esp_err_t esp_zb_cluster_update_attr(esp_zb_attribute_list_t *esp_zb_attr_list, uint16_t esp_zb_attr_id, void *value_p);
-
-/**
- * @brief Add an cluster (attribute list) in a cluster list.
- *
- * @param[in] esp_zb_cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
- * @param[in] esp_zb_attr_list  An attribute list which wants to add
- * @param[in] role_mask  A role of server or client for this cluster (attribute list)
- *
- * @return
- *      - ESP_OK on success
- *      - ESP_ERR_INVALID_ARG if cluster list not initialized
- *
- */
-esp_err_t esp_zb_cluster_list_add_cluster(esp_zb_cluster_list_t *esp_zb_cluster_list, esp_zb_attribute_list_t *esp_zb_attr_list, uint8_t role_mask);
-
-/**
- * @brief Update an cluster (attribute list) in a cluster list.
- *
- * @param[in] esp_zb_cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
- * @param[in] esp_zb_attr_list  An attribute list which wants to update
- * @param[in] role_mask  A role of server or client for this cluster (attribute list)
- *
- * @return
- *      - ESP_OK on success
- *      - ESP_ERR_INVALID_ARG if cluster list not initialized
- *
- */
-esp_err_t esp_zb_cluster_list_update_cluster(esp_zb_cluster_list_t *esp_zb_cluster_list, esp_zb_attribute_list_t *esp_zb_attr_list, uint8_t role_mask);
-
-/**
- * @brief Add an endpoint (which includes cluster list) in a endpoint list.
- *
- * @param[in] esp_zb_ep_list A pointer to endpoint list @ref esp_zb_ep_list_s
- * @param[in] esp_zb_cluster_list  An cluster list which wants to add to endpoint
- * @param[in] endpoint  A specific endpoint (cluster list)
- * @param[in] profile_id  A profile id
- * @param[in] device_id  A device id for this device
- * @anchor esp_zb_ep_list_add_ep
- * @return
- *      - ESP_OK on success
- *      - ESP_ERR_INVALID_ARG if endpoint list not initialized
- *
- */
-esp_err_t esp_zb_ep_list_add_ep(esp_zb_ep_list_t *esp_zb_ep_list, esp_zb_cluster_list_t *esp_zb_cluster_list, uint8_t endpoint, uint16_t profile_id, uint16_t device_id);
-
-/**
  * @brief Register a Zigbee device.
  *
- * @param[in] esp_zb_ep_list  An endpoint list which wants to register @ref esp_zb_ep_list_s
+ * @param[in] ep_list  An endpoint list which wants to register @ref esp_zb_ep_list_s
  *
  * @return
  *      - ESP_OK on success
  *
  */
-esp_err_t esp_zb_device_register(esp_zb_ep_list_t *esp_zb_ep_list);
+esp_err_t esp_zb_device_register(esp_zb_ep_list_t *ep_list);
 
 #ifdef __cplusplus
 }

@@ -216,7 +216,7 @@ Above is the endpoint list we created, then we use :cpp:func:`esp_zb_device_regi
 
 2.3.2.2 ZCL commands
 ^^^^^^^^^^^^^^^^^^^^
-Varieties of ZCL commands is provided in the :project_file:`esp_zigbee_api_zcl_command <components/esp-zigbee-lib/include/esp_zigbee_api_zcl_command.h>`.
+Varieties of ZCL commands is provided in the :project_file:`esp_zigbee_zcl_command <components/esp-zigbee-lib/include/esp_zigbee_zcl_command.h>`.
 
 In this example we demonstrate a ZCL on_off_toggle command.
 

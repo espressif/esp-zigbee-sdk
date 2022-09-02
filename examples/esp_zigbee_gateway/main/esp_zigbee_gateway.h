@@ -13,7 +13,7 @@
  */
 
 #include "esp_err.h"
-#include "esp_zigbee_api_core.h"
+#include "esp_zigbee_core.h"
 
 /* Zigbee Configuration */
 #define MAX_CHILDREN                    10          /* the max amount of connected devices */
