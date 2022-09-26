@@ -19,6 +19,12 @@
 #define MAX_CHILDREN                    10          /* the max amount of connected devices */
 #define INSTALLCODE_POLICY_ENABLE       false    /* enable the install code policy for security */
 
+#define RCP_VERSION_MAX_SIZE            80
+#define HOST_RESET_PIN_TO_RCP_RESET     CONFIG_PIN_TO_RCP_RESET
+#define HOST_BOOT_PIN_TO_RCP_BOOT       CONFIG_PIN_TO_RCP_BOOT
+#define HOST_RX_PIN_TO_RCP_TX           CONFIG_PIN_TO_RCP_TX
+#define HOST_TX_PIN_TO_RCP_RX           CONFIG_PIN_TO_RCP_RX
+
 #define ESP_ZB_ZC_CONFIG()                                                              \
     {                                                                                   \
         .esp_zb_role = ESP_ZB_DEVICE_TYPE_COORDINATOR,                                  \
@@ -43,12 +49,19 @@
                     .rx_flow_ctrl_thresh = 0,                   \
                     .source_clk = UART_SCLK_DEFAULT,            \
                 },                                              \
-            .rx_pin = 4,                                        \
-            .tx_pin = 5,                                        \
+            .rx_pin = HOST_RX_PIN_TO_RCP_TX,                    \
+            .tx_pin = HOST_TX_PIN_TO_RCP_RX,                    \
         },                                                      \
     }
 
 #define ESP_ZB_DEFAULT_HOST_CONFIG()                            \
     {                                                           \
         .host_connection_mode = HOST_CONNECTION_MODE_NONE,      \
+    }
+
+#define ESP_ZB_RCP_UPDATE_CONFIG()                                                                                                  \
+    {                                                                                                                               \
+        .rcp_type = RCP_TYPE_ESP32H2_UART, .uart_rx_pin = HOST_RX_PIN_TO_RCP_TX, .uart_tx_pin = HOST_TX_PIN_TO_RCP_RX,              \
+        .uart_port = 1, .uart_baudrate = 115200, .reset_pin = HOST_RESET_PIN_TO_RCP_RESET, .boot_pin = HOST_BOOT_PIN_TO_RCP_BOOT,   \
+        .update_baudrate = 460800, .firmware_dir = "/rcp_fw/ot_rcp", .target_chip = ESP32H2_CHIP,                                   \
     }

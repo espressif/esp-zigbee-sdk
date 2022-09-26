@@ -41,6 +41,9 @@ before_script:
     script:
         - *setup_idf
         - *submodule_update
+        - cd ${ESP_ZIGBEE_SDK_PATH}/examples/esp_zigbee_rcp
+        - idf.py --preview set-target esp32h2
+        - idf.py build
         - cd ${ESP_ZIGBEE_SDK_PATH}/"${EXAMPLE_PATH}"
         - idf.py fullclean
         - idf.py set-target "${TARGET_NAME}"
