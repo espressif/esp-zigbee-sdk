@@ -80,6 +80,16 @@ typedef void (*esp_zb_report_attr_callback_t)(
  */
 typedef void (*esp_zb_read_attr_resp_callback_t)(uint8_t status, uint16_t attr_id, uint8_t attr_type, void *value);
 
+/** Customized cluster command callback
+ *
+ * @brief A customized cluster command callback for user to get value info
+ *
+ * @param[in] status Status of the custom command request
+ * @param[in] value A pointer to the attribute data value
+ *
+ */
+typedef void (*esp_zb_custom_cluster_cmd_callback_t)(uint8_t status, void *value);
+
 /** Identify callback
  *
  * @param[in] identify_on A indication that need start identify or stop
@@ -288,6 +298,18 @@ void esp_zb_device_add_report_attr_cb(esp_zb_report_attr_callback_t cb);
  *
  */
 void esp_zb_add_read_attr_resp_cb(uint8_t endpoint, esp_zb_read_attr_resp_callback_t cb);
+
+/**
+ * @brief   Set the ZCL customized cluster command request callback for specific endpoint.
+ *
+ * @note  Set a callback being called on receive customized cluster command request. The callback will
+ *  be provided with all data necessary for correct attribute handling.
+ * @param[in] endpoint A specific endpoint
+ * @param[in] cluster_id A customized cluster id
+ * @param[in] cb A read attribute callback that user used refer to esp_zb_custom_cluster_cmd_callback_t
+ *
+ */
+void esp_zb_add_custom_cluster_command_cb(uint8_t endpoint, uint16_t cluster_id, esp_zb_custom_cluster_cmd_callback_t cb);
 
 /**
  * @brief   Set the ZCL identify notify callback for specific endpoint.

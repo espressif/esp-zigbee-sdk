@@ -137,6 +137,78 @@ esp_err_t esp_zb_level_cluster_add_attr(esp_zb_attribute_list_t *attr_list, uint
 esp_err_t esp_zb_color_control_cluster_add_attr(esp_zb_attribute_list_t *attr_list, uint16_t attr_id, void *value_p);
 
 /**
+ * @brief Add an attribute in time cluster.
+ *
+ * @param[in] attr_list A pointer to attribute list @ref esp_zb_attribute_list_s
+ * @param[in] attr_id  An attribute id to be added
+ * @param[in] value_p A pointer to attribute value wants to add
+ *
+ * @return
+ *      - ESP_OK on success
+ *      - ESP_ERR_INVALID_ARG if attribute is existed or unsupported
+ *
+ */
+esp_err_t esp_zb_time_cluster_add_attr(esp_zb_attribute_list_t *attr_list, uint16_t attr_id, void *value_p);
+
+/**
+ * @brief Add an attribute in shade config cluster.
+ *
+ * @param[in] attr_list A pointer to attribute list @ref esp_zb_attribute_list_s
+ * @param[in] attr_id  An attribute id to be added
+ * @param[in] value_p A pointer to attribute value wants to add
+ *
+ * @return
+ *      - ESP_OK on success
+ *      - ESP_ERR_INVALID_ARG if attribute is existed or unsupported
+ *
+ */
+esp_err_t esp_zb_shade_config_cluster_add_attr(esp_zb_attribute_list_t *attr_list, uint16_t attr_id, void *value_p);
+
+/**
+ * @brief Add an attribute in door lock cluster.
+ *
+ * @param[in] attr_list A pointer to attribute list @ref esp_zb_attribute_list_s
+ * @param[in] attr_id  An attribute id to be added
+ * @param[in] value_p A pointer to attribute value wants to add
+ *
+ * @return
+ *      - ESP_OK on success
+ *      - ESP_ERR_INVALID_ARG if attribute is existed or unsupported
+ *
+ */
+esp_err_t esp_zb_door_lock_cluster_add_attr(esp_zb_attribute_list_t *attr_list, uint16_t attr_id, void *value_p);
+
+/**
+ * @brief Add an attribute in temperature measurement cluster.
+ *
+ * @param[in] attr_list A pointer to attribute list @ref esp_zb_attribute_list_s
+ * @param[in] attr_id  An attribute id to be added
+ * @param[in] value_p A pointer to attribute value wants to add
+ *
+ * @return
+ *      - ESP_OK on success
+ *      - ESP_ERR_INVALID_ARG if attribute is existed or unsupported
+ *
+ */
+esp_err_t esp_zb_temperature_meas_cluster_add_attr(esp_zb_attribute_list_t *attr_list, uint16_t attr_id, void *value_p);
+
+/**
+* @brief Add customized attribute in customized cluster.
+*
+* @param[in] attr_list A pointer to attribute list @ref esp_zb_attribute_list_s
+* @param[in] attr_id An attribute id to be added
+* @param[in] attr_type Type of attribute to be added
+* @param[in] attr_access Access type of attribute to be added
+* @param[in] value_p A pointer to attribute value wants to add
+*
+* @return
+* - ESP_OK on success
+* - ESP_ERR_INVALID_ARG if attribute is existed or unsupported
+*
+*/
+esp_err_t esp_zb_custom_cluster_add_custom_attr(esp_zb_attribute_list_t *attr_list, uint16_t attr_id, uint8_t attr_type, uint8_t attr_access, void *value_p);
+
+/**
  * @brief Update an attribute in a specific cluster.
  *
  * @param[in] attr_list A pointer to attribute list @ref esp_zb_attribute_list_s
