@@ -222,7 +222,7 @@ typedef struct esp_zb_endpoint_s {
 } ESP_ZB_PACKED_STRUCT
 esp_zb_endpoint_t;
 
-/* attribute list */
+/******************* attribute list *******************/
 /**
  * @brief The esp-zigbee data model of list of attribute.
  *
@@ -234,7 +234,7 @@ typedef struct esp_zb_attribute_list_s {
     struct esp_zb_attribute_list_s *next;       /*!< A pointer to next attribute */
 } esp_zb_attribute_list_t;
 
-/* cluster list */
+/******************* cluster list *******************/
 /**
  * @brief The esp-zigbee data model of list of cluster.
  *
@@ -244,7 +244,7 @@ typedef struct esp_zb_cluster_list_s {
     struct esp_zb_cluster_list_s *next;         /*!< A pointer to next cluster */
 } esp_zb_cluster_list_t;
 
-/* endpoint list */
+/******************* endpoint list *******************/
 /**
  * @brief The esp-zigbee data model of list of endpoint.
  *
@@ -253,6 +253,223 @@ typedef struct esp_zb_ep_list_s {
     esp_zb_endpoint_t endpoint;                 /*!< A single endpoint */
     struct esp_zb_ep_list_s *next;              /*!< A pointer to next endpoint */
 } esp_zb_ep_list_t;
+
+/****************** standard clusters *********************/
+/**
+ * @brief Zigbee standard mandatory attribute for basic cluster.
+ *
+ */
+typedef struct esp_zb_basic_cluster_cfg_s {
+    uint8_t  zcl_version;                       /*!<  ZCL version */
+    uint8_t  power_source;                      /*!<  The sources of power available to the device */
+} esp_zb_basic_cluster_cfg_t;
+
+/**
+ * @brief Zigbee standard mandatory attribute for identify cluster.
+ *
+ */
+typedef struct esp_zb_identify_cluster_cfg_s {
+    uint16_t  identify_time;                    /*!<  The remaining length of the time that identify itself */
+} esp_zb_identify_cluster_cfg_t;
+
+/**
+ * @brief Zigbee standard mandatory attribute for groups cluster.
+ *
+ */
+typedef struct esp_zb_groups_cluster_cfg_s {
+    uint8_t  groups_name_support_id;            /*!<  The indication of group names are supported or not */
+} esp_zb_groups_cluster_cfg_t;
+
+/**
+ * @brief Zigbee standard mandatory attribute for scenes cluster.
+ *
+ */
+typedef struct esp_zb_scenes_cluster_cfg_s {
+    uint8_t  scenes_count;                      /*!<  The number of scenes currently in the scene table */
+    uint8_t  current_scene;                     /*!<  Scene ID that invoked */
+    uint16_t current_group;                     /*!<  Group ID that invoked */
+    bool  scene_valid;                          /*!<  Indication of the associated with current scene and group valid or not*/
+    uint8_t  name_support;                      /*!<  The indication of group names are supported or not */
+} esp_zb_scenes_cluster_cfg_t;
+
+/**
+ * @brief Zigbee standard mandatory attribute for on_off cluster.
+ *
+ */
+typedef struct esp_zb_on_off_cluster_cfg_s {
+    bool  on_off;                               /*!<  On Off state of the device */
+} esp_zb_on_off_cluster_cfg_t;
+
+/**
+ * @brief Zigbee standard mandatory attribute for level cluster.
+ *
+ */
+typedef struct esp_zb_level_cluster_cfg_s {
+    uint8_t  current_level;                     /*!<  Current level of the device */
+} esp_zb_level_cluster_cfg_t;
+
+/**
+ * @brief Zigbee standard mandatory attribute for color cluster.
+ *
+ */
+typedef struct esp_zb_color_cluster_cfg_s {
+    uint16_t current_x;                         /*!<  The current value of the normalized chromaticity value x */
+    uint16_t current_y;                         /*!<  The current value of the normalized chromaticity value y */
+    uint8_t  color_mode;                        /*!<  The mode which attribute determines the color of the device */
+    uint8_t  options;                           /*!<  The bitmap determines behavior of some cluster commands */
+    uint8_t  enhanced_color_mode;               /*!<  The enhanced-mode which attribute determines the color of the device */
+    uint16_t color_capabilities;                /*!<  Specifying the color capabilities of the device support the color control cluster */
+} esp_zb_color_cluster_cfg_t;
+
+/**
+ * @brief Zigbee standard mandatory attribute for time cluster.
+ *
+ */
+typedef struct esp_zb_time_cluster_cfg_s {
+    uint16_t time;                              /*!<  The time value of the a real time clock */
+    uint16_t time_status;                       /*!<  The time status holds a number of bit field of status */
+} esp_zb_time_cluster_cfg_t;
+
+/**
+ * @brief Zigbee standard mandatory attribute for shade config cluster.
+ *
+ */
+typedef struct esp_zb_shade_config_cluster_cfg_s {
+    uint8_t     status;                             /*!<  The status attribute indicates the status of a number of shade function */
+    uint16_t    closed_limit;                       /*!<  The attribute indicates most closed position that shade can move to */
+    uint8_t     mode;                               /*!<  The attribute indicates the current operating mode */
+} esp_zb_shade_config_cluster_cfg_t;
+
+/**
+ * @brief Zigbee standard mandatory attribute for door lock cluster.
+ *
+ */
+typedef struct esp_zb_door_lock_cluster_cfg_s {
+    uint8_t lock_state;                         /*!<  The attribute indicates the state of lock */
+    uint8_t lock_type;                          /*!<  The attribute indicates different type of the lock type */
+    bool    actuator_enabled;                   /*!<  The attribute indicates if the lock is currently able (Enabled) or not able (Disabled) to process remote lock */
+} esp_zb_door_lock_cluster_cfg_t;
+
+/**
+ * @brief Zigbee standard mandatory attribute for temperature measurement cluster.
+ *
+ */
+typedef struct esp_zb_temperature_meas_cluster_cfg_s {
+    int16_t measured_value;                     /*!<  The attribute indicates the temperature in degrees Celsius */
+    int16_t min_value;                          /*!<  The attribute indicates minimum value of the measured value */
+    int16_t max_value;                          /*!<  The attribute indicates maximum value of the measured value */
+} esp_zb_temperature_meas_cluster_cfg_t;
+
+/****************** standard device config *********************/
+/**
+ * @brief Zigbee HA standard on-off light device clusters.
+ *
+ */
+typedef struct esp_zb_on_off_light_cfg_s {
+    esp_zb_basic_cluster_cfg_t      basic_cfg;      /*!<  Basic cluster configuration */
+    esp_zb_identify_cluster_cfg_t   identify_cfg;   /*!<  Identify cluster configuration */
+    esp_zb_groups_cluster_cfg_t     groups_cfg;     /*!<  Groups cluster configuration */
+    esp_zb_scenes_cluster_cfg_t     scenes_cfg;     /*!<  Scenes cluster configuration */
+    esp_zb_on_off_cluster_cfg_t     on_off_cfg;     /*!<  On off cluster configuration */
+} esp_zb_on_off_light_cfg_t;
+
+/**
+ * @brief Zigbee HA standard on-off switch device clusters.
+ *
+ */
+typedef struct esp_zb_on_off_switch_cfg_s {
+    esp_zb_basic_cluster_cfg_t      basic_cfg;      /*!<  Basic cluster configuration */
+    esp_zb_identify_cluster_cfg_t   identify_cfg;   /*!<  Identify cluster configuration */
+} esp_zb_on_off_switch_cfg_t;
+
+/**
+ * @brief Zigbee HA standard color dimmable light device clusters.
+ *
+ */
+typedef struct esp_zb_color_dimmable_light_cfg_s {
+    esp_zb_basic_cluster_cfg_t      basic_cfg;      /*!<  Basic cluster configuration */
+    esp_zb_identify_cluster_cfg_t   identify_cfg;   /*!<  Identify cluster configuration */
+    esp_zb_groups_cluster_cfg_t     groups_cfg;     /*!<  Groups cluster configuration */
+    esp_zb_scenes_cluster_cfg_t     scenes_cfg;     /*!<  Scenes cluster configuration */
+    esp_zb_on_off_cluster_cfg_t     on_off_cfg;     /*!<  On off cluster configuration */
+    esp_zb_level_cluster_cfg_t      level_cfg;      /*!<  Level cluster configuration */
+    esp_zb_color_cluster_cfg_t      color_cfg;      /*!<  Color cluster configuration */
+} esp_zb_color_dimmable_light_cfg_t;
+
+/**
+ * @brief Zigbee HA standard color dimmable switch device clusters.
+ *
+ */
+typedef struct esp_zb_color_dimmable_switch_cfg_s {
+    esp_zb_basic_cluster_cfg_t      basic_cfg;      /*!<  Basic cluster configuration */
+    esp_zb_identify_cluster_cfg_t   identify_cfg;   /*!<  Identify cluster configuration */
+} esp_zb_color_dimmable_switch_cfg_t;
+
+/**
+ * @brief Zigbee HA standard mains power outlet clusters.
+ *
+ */
+typedef struct esp_zb_mains_power_outlet_cfg_s {
+    esp_zb_basic_cluster_cfg_t      basic_cfg;      /*!<  Basic cluster configuration */
+    esp_zb_identify_cluster_cfg_t   identify_cfg;   /*!<  Identify cluster configuration */
+    esp_zb_groups_cluster_cfg_t     groups_cfg;     /*!<  Groups cluster configuration */
+    esp_zb_scenes_cluster_cfg_t     scenes_cfg;     /*!<  Scenes cluster configuration */
+    esp_zb_on_off_cluster_cfg_t     on_off_cfg;     /*!<  On off cluster configuration */
+} esp_zb_mains_power_outlet_cfg_t;
+
+/**
+ * @brief Zigbee HA standard shade clusters.
+ *
+ */
+typedef struct esp_zb_shade_cfg_s {
+    esp_zb_basic_cluster_cfg_t          basic_cfg;          /*!<  Basic cluster configuration */
+    esp_zb_identify_cluster_cfg_t       identify_cfg;       /*!<  Identify cluster configuration */
+    esp_zb_groups_cluster_cfg_t         groups_cfg;         /*!<  Groups cluster configuration */
+    esp_zb_scenes_cluster_cfg_t         scenes_cfg;         /*!<  Scenes cluster configuration */
+    esp_zb_on_off_cluster_cfg_t         on_off_cfg;         /*!<  On off cluster configuration */
+    esp_zb_level_cluster_cfg_t          level_cfg;          /*!<  Level cluster configuration */
+    esp_zb_shade_config_cluster_cfg_t   shade_cfg;          /*!<  Shade config cluster configuration */
+} esp_zb_shade_cfg_t;
+
+/**
+ * @brief Zigbee HA standard shade controller device clusters.
+ *
+ */
+typedef struct esp_zb_shade_controller_cfg_s {
+    esp_zb_basic_cluster_cfg_t      basic_cfg;      /*!<  Basic cluster configuration */
+    esp_zb_identify_cluster_cfg_t   identify_cfg;   /*!<  Identify cluster configuration */
+} esp_zb_shade_controller_cfg_t;
+
+/**
+ * @brief Zigbee HA standard door lock clusters.
+ *
+ */
+typedef struct esp_zb_door_lock_cfg_s {
+    esp_zb_basic_cluster_cfg_t      basic_cfg;          /*!<  Basic cluster configuration */
+    esp_zb_identify_cluster_cfg_t   identify_cfg;       /*!<  Identify cluster configuration */
+    esp_zb_groups_cluster_cfg_t     groups_cfg;         /*!<  Groups cluster configuration */
+    esp_zb_scenes_cluster_cfg_t     scenes_cfg;         /*!<  Scenes cluster configuration */
+    esp_zb_door_lock_cluster_cfg_t  door_lock_cfg;      /*!<  Door Lock cluster configuration */
+} esp_zb_door_lock_cfg_t;
+
+/**
+ * @brief Zigbee HA standard door lock controller clusters.
+ *
+ */
+typedef struct esp_zb_door_lock_controller_cfg_s {
+    esp_zb_basic_cluster_cfg_t      basic_cfg;          /*!<  Basic cluster configuration */
+    esp_zb_identify_cluster_cfg_t   identify_cfg;       /*!<  Identify cluster configuration */
+} esp_zb_door_lock_controller_cfg_t;
+
+/**
+ * @brief Zigbee HA standard temperature sensor clusters.
+ *
+ */
+typedef struct esp_zb_temperature_sensor_cfg_s {
+    esp_zb_basic_cluster_cfg_t                  basic_cfg;          /*!<  Basic cluster configuration */
+    esp_zb_identify_cluster_cfg_t               identify_cfg;       /*!<  Identify cluster configuration */
+    esp_zb_temperature_meas_cluster_cfg_t       temp_meas_cfg;      /*!<  Temperature measurement cluster configuration */
+} esp_zb_temperature_sensor_cfg_t;
 
 #ifdef __cplusplus
 }

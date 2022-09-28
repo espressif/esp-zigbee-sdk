@@ -243,6 +243,52 @@ typedef struct esp_zb_zcl_color_stop_move_step_cmd_s {
     esp_zb_zcl_address_mode_t address_mode;                 /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
 } esp_zb_zcl_color_stop_move_step_cmd_t;
 
+/**
+ * @brief The Zigbee ZCL lock/unlock door command struct
+ *
+ * @note Lock and Unlock door will set enable ZCL response by default, later will support enable/disable this feature.
+ *
+ * @note Profile id set to HA profile by default, later SDK will support others.
+ *
+ */
+typedef struct esp_zb_zcl_lock_unlock_door_cmd_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;                   /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode;                 /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+} esp_zb_zcl_lock_unlock_door_cmd_t;
+
+/**
+ * @brief The Zigbee ZCL custom cluster command struct
+ *
+ * @note Profile id set to HA profile by default, later SDK will support others.
+ *
+ * @note Support only u8, s8, u16, s16, u32, s32, string  data types.
+ *
+ * @note For string data type, the first byte should be the length of string.
+ *
+ */
+typedef struct esp_zb_zcl_custom_cluster_cmd_req_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;                   /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode;                 /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+    void *value;                                            /*!< Pointer to value */
+    uint8_t data_type;                                      /*!< Data type to be used */
+    uint16_t cluster_id;                                    /*!< Cluster id */
+    uint16_t custom_cmd_id;                                 /*!< Custom command id */
+} esp_zb_zcl_custom_cluster_cmd_req_t;
+
+/**
+ * @brief The Zigbee ZCL custom cluster command response struct
+ *
+ * @note Profile id set to HA profile by default, later SDK will support others.
+ *
+ */
+typedef struct esp_zb_zcl_custom_cluster_cmd_resp_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;                   /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode;                 /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+    uint8_t status;                                         /*!< Status value */
+    uint16_t cluster_id;                                    /*!< Cluster id */
+    uint16_t custom_cmd_resp_id;                            /*!< Custom command response id */
+} esp_zb_zcl_custom_cluster_cmd_resp_t;
+
 /********************* Declare functions **************************/
 
 /* read attribute, write attribute, config report and more general command will support later */
@@ -400,6 +446,38 @@ void esp_zb_zcl_color_step_color_cmd_req(esp_zb_zcl_color_step_color_cmd_t *cmd_
  *
  */
 void esp_zb_zcl_color_stop_move_step_cmd_req(esp_zb_zcl_color_stop_move_step_cmd_t *cmd_req);
+
+/**
+ * @brief   Send lock door command
+ *
+ * @param[in]  cmd_req  pointer to the stop color command @ref esp_zb_zcl_lock_unlock_door_cmd_s
+ *
+ */
+void esp_zb_zcl_lock_door_cmd_req(esp_zb_zcl_lock_unlock_door_cmd_t *cmd_req);
+
+/**
+ * @brief   Send unlock door command
+ *
+ * @param[in]  cmd_req  pointer to the stop color command @ref esp_zb_zcl_lock_unlock_door_cmd_s
+ *
+ */
+void esp_zb_zcl_unlock_door_cmd_req(esp_zb_zcl_lock_unlock_door_cmd_t *cmd_req);
+
+/**
+ * @brief   Send custom cluster command request
+ *
+ * @param[in]  cmd_req  pointer to the send custom cluster command request @ref esp_zb_zcl_custom_cluster_cmd_req_s
+ *
+ */
+void esp_zb_zcl_custom_cluster_cmd_req(esp_zb_zcl_custom_cluster_cmd_req_t *cmd_req);
+
+/**
+ * @brief   Send custom cluster command response
+ *
+ * @param[in]  cmd_req  pointer to the send custom cluster command response @ref esp_zb_zcl_custom_cluster_cmd_resp_s
+ *
+ */
+void esp_zb_zcl_custom_cluster_cmd_resp(esp_zb_zcl_custom_cluster_cmd_resp_t *cmd_req);
 
 #ifdef __cplusplus
 }
