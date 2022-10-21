@@ -64,6 +64,7 @@ void app_main(void)
         .host_config = ESP_ZB_DEFAULT_HOST_CONFIG(),
     };
     /* load Zigbee rcp platform config to initialization */
+    esp_zb_macsplit_set_version(RCP_COMPILE_DEFINE);
     ESP_ERROR_CHECK(esp_zb_platform_config(&config));
     xTaskCreate(esp_zb_task, "Zigbee_main", 4096, NULL, 5, NULL);
 }

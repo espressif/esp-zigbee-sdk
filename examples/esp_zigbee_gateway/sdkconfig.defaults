@@ -33,3 +33,17 @@ CONFIG_ZB_ZCZR=y
 CONFIG_ZB_RADIO_MACSPLIT_UART=y
 # end of Zboss
 # end of Component config
+
+#
+# ESP Zigbee gateway rcp update
+#
+CONFIG_ZIGBEE_GW_AUTO_UPDATE_RCP=y
+#
+# Board Configuration
+#
+CONFIG_PIN_TO_RCP_RESET=7
+CONFIG_PIN_TO_RCP_BOOT=8
+CONFIG_PIN_TO_RCP_TX=17
+CONFIG_PIN_TO_RCP_RX=18
+
+# end of ESP Zigbee gateway rcp update
