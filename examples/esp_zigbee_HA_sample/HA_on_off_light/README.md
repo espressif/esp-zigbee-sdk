@@ -1,4 +1,4 @@
-| Supported Targets | ESP32-H4 |
+| Supported Targets | ESP32-H2 |
 | ----------------- | -------- |
 
 # Light Bulb Example 
@@ -7,13 +7,13 @@ This test code shows how to configure Zigbee end device and use it as HA on/off 
 
 ## Hardware Required
 
-* One development board with ESP32-H4 SoC acting as Zigbee end-device (loaded with HA_on_off_light example)
+* One development board with ESP32-H2 SoC acting as Zigbee end-device (loaded with HA_on_off_light example)
 * A USB cable for power supply and programming
-* Choose another ESP32-H4 as Zigbee coordinator (see [HA_on_off_switch example](../HA_on_off_switch/))
+* Choose another ESP32-H2 as Zigbee coordinator (see [HA_on_off_switch example](../HA_on_off_switch/))
 
 ## Configure the project
 
-Before project configuration and build, make sure to set the correct chip target using `idf.py set-target esp32h4`.
+Before project configuration and build, make sure to set the correct chip target using `idf.py set-target esp32h2`.
 
 ## Erase the NVRAM 
 
@@ -30,24 +30,25 @@ Build the project, flash it to the board, and start the monitor tool to view the
 
 As you run the example, you will see the following log:
 
-light bulb:
-I (307) gpio: GPIO[8]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0   
-I (317) system_api: Base MAC address is not set  
-I (317) system_api: read default base MAC address from EFUSE  
-I (407) phy: libbtbb version: 6c47ec3, Mar 16 2022, 18:54:24  
-I (407) phy: phy_version: 101, bb2a234, Mar 16 2022, 18:54:11  
-I (737) ESP_ZB_ON_OFF_LIGHT: status: 255  
-I (737) ESP_ZB_ON_OFF_LIGHT: Zigbee stack initialized  
-I (737) ESP_ZB_ON_OFF_LIGHT: Start network steering  
-I (2397) ESP_ZB_ON_OFF_LIGHT: Joined network successfully (Extended PAN ID: ff:fc:7c:c0:f0:bd:97:10, PAN ID: 0x0000)  
-I (7707) ESP_ZB_ON_OFF_LIGHT: on/off light set to 1  
-I (8447) ESP_ZB_ON_OFF_LIGHT: on/off light set to 0  
-I (8977) ESP_ZB_ON_OFF_LIGHT: on/off light set to 1  
-I (9427) ESP_ZB_ON_OFF_LIGHT: on/off light set to 0  
+```
+I (307) gpio: GPIO[8]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0
+I (317) system_api: Base MAC address is not set
+I (317) system_api: read default base MAC address from EFUSE
+I (407) phy: libbtbb version: 6c47ec3, Mar 16 2022, 18:54:24
+I (407) phy: phy_version: 101, bb2a234, Mar 16 2022, 18:54:11
+I (737) ESP_ZB_ON_OFF_LIGHT: status: 255
+I (737) ESP_ZB_ON_OFF_LIGHT: Zigbee stack initialized
+I (737) ESP_ZB_ON_OFF_LIGHT: Start network steering
+I (2397) ESP_ZB_ON_OFF_LIGHT: Joined network successfully (Extended PAN ID: ff:fc:7c:c0:f0:bd:97:10, PAN ID: 0x0000)
+I (7707) ESP_ZB_ON_OFF_LIGHT: on/off light set to 1
+I (8447) ESP_ZB_ON_OFF_LIGHT: on/off light set to 0
+I (8977) ESP_ZB_ON_OFF_LIGHT: on/off light set to 1
+I (9427) ESP_ZB_ON_OFF_LIGHT: on/off light set to 0
+```
 
 ## Light Control Functions
 
- * By toggling the switch button (BOOT) on the ESP32-H4 board loaded with the `HA_on_off_switch` example, the LED on this board loaded with `HA_on_off_light` example will be on and off.
+ * By toggling the switch button (BOOT) on the ESP32-H2 board loaded with the `HA_on_off_switch` example, the LED on this board loaded with `HA_on_off_light` example will be on and off.
 
 ## Troubleshooting
 

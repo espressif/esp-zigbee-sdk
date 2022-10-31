@@ -1,5 +1,5 @@
-ZDO Command
-===========
+ZDO Command API
+===============
 
 Zigbee Device Object (ZDO) commands related APIs for ESP Zigbee SDK.
 

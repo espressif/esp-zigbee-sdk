@@ -2,7 +2,7 @@
 
 ## Introduction  
   
-ESP-Zigbee-SDK is the official Zigbee development framework for Esspresif's ESP32-H4 and ESP32 series SOCs. It provides varieties of APIs aimed to simplify the development process of Zigbee products and enable the users to go to production in the shortest possible time. More details of the sdk see the [esp-zigbee-sdk components](components/esp-zigbee-lib/)
+ESP-Zigbee-SDK is the official Zigbee development framework for Esspresif's ESP32-H2 and ESP32 series SOCs. It provides varieties of APIs aimed to simplify the development process of Zigbee products and enable the users to go to production in the shortest possible time. More details of the sdk see the [esp-zigbee-sdk components](components/esp-zigbee-lib/)
 
 ## Get esp-zigbee-sdk  
 
@@ -29,7 +29,7 @@ git clone --recursive https://github.com/espressif/esp-zigbee-sdk.git
 More new details see examples's [Readme](examples/README.md)
 
 #### esp-zigbee components
-- Check the component (esp-zboss-lib) should be downloaded automatically from managment component under each esp-zigbee-sdk example, it includes Zigbee stack static library for supporting Esspresif's ESP32-H4 and ESP32 series SOCs.
+- Check the component (esp-zboss-lib) should be downloaded automatically from managment component under each esp-zigbee-sdk example, it includes Zigbee stack static library for supporting Esspresif's ESP32-H2 and ESP32 series SOCs.
 - Check the component [esp-zigbee-lib](components/esp-zigbee-lib/) that includes SDK's API to build own projects. More details see the [Readme](components/esp-zigbee-lib/README.md) under esp-zigbee-lib component.
 
 ## Documentation  
