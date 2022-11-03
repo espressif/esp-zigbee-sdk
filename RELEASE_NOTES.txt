@@ -34,3 +34,36 @@ New Changes
 Bug Fixes
 ---------
 
+
+# 14-Dec-2022
+
+Versions
+--------
+0.4.0 version release of ESP-ZIGBEE-SDK
+
+Features
+--------
+
+-esp-zigbee-lib version updated to 0.4.0
+-Add example for ota upgrade process
+-Add README.md for ota upgrade process
+-Add docs for ota api-reference
+-Add ota example in CI test
+
+
+Known Issues
+------------
+
+-Currently zcl time cluster is not supported for ota upgrade process
+
+New Changes
+-----------
+
+-Add scene cluster commands
+-Update the template file for MR process
+-Add APIs for ota upgrade cluster to ensure the ota upgrade process
+
+Bug Fixes
+---------
+
+-Bug fixed for buffer length issue on customized cluster command

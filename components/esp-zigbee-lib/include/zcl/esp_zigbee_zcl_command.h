@@ -301,6 +301,121 @@ typedef struct esp_zb_zcl_groups_get_group_membership_cmd_s {
 } esp_zb_zcl_groups_get_group_membership_cmd_t;
 
 /**
+ * @brief The Zigbee ZCL scenes extension field struct
+ *
+ */
+typedef struct esp_zb_zcl_scenes_extension_field_s {
+    uint16_t cluster_id;                                   /*!< Cluster id */
+    uint8_t length;                                        /*!< Length of scenes_extension_field */
+    uint8_t *extension_field_attribute_value_list;         /*!< Extension field attribute value list */
+    struct esp_zb_zcl_scenes_extension_field_s* next;      /*!< A pointer to next scenes extension field */
+} esp_zb_zcl_scenes_extension_field_t;
+
+/**
+ * @brief The Zigbee ZCL scenes add scene command struct
+ *
+ * @note Send add scene will set enable ZCL response by default, later will support enable/disable this feature.
+ *
+ * @note Profile id set to HA profile by default, later SDK will support others. If you have more cluster, please realloc buffer.
+ * The maximum number of scenes capable of being stored in the table is 10.
+ */
+typedef struct esp_zb_zcl_scenes_add_scene_cmd_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;                        /*!< Basic command info */
+    uint16_t group_id;                                           /*!< Group id */
+    uint8_t scene_id;                                            /*!< Scene id */
+    uint16_t transition_time;                                    /*!< Time wants to transition tenths of a second */
+    uint16_t extension_field_total;                              /*!< Extension field total cluster, by default is 1 */
+    esp_zb_zcl_scenes_extension_field_t extension_field[1];      /*!< If you have more cluster of extension field, please realloc size of extension_field array corresponding to the extension_field_total */
+} esp_zb_zcl_scenes_add_scene_cmd_t;
+
+/**
+ * @brief The Zigbee ZCL scenes remove scene command struct
+ *
+ * @note Send remove scene will set enable ZCL response by default, later will support enable/disable this feature.
+ *
+ * @note Profile id set to HA profile by default, later SDK will support others.
+ *
+ */
+typedef struct esp_zb_zcl_scenes_remove_scene_cmd_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;               /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode;             /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+    uint16_t group_id;                                  /*!< Group id */
+    uint8_t scene_id;                                   /*!< Scene id */
+} esp_zb_zcl_scenes_remove_scene_cmd_t;
+
+/**
+ * @brief The Zigbee ZCL scenes remove all scenes command struct
+ *
+ * @note Send remove all scenes will set enable ZCL response by default, later will support enable/disable this feature.
+ *
+ * @note Profile id set to HA profile by default, later SDK will support others.
+ *
+ */
+typedef struct esp_zb_zcl_scenes_remove_all_scenes_cmd_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;               /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode;             /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+    uint16_t group_id;                                  /*!< Group id */
+} esp_zb_zcl_scenes_remove_all_scenes_cmd_t;
+
+/**
+ * @brief The Zigbee ZCL scenes view scene command struct
+ *
+ * @note Send view scene will set enable ZCL response by default, later will support enable/disable this feature.
+ *
+ * @note Profile id set to HA profile by default, later SDK will support others.
+ *
+ */
+typedef struct esp_zb_zcl_scenes_view_scene_cmd_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;               /*!< Basic command info */
+    uint16_t group_id;                                  /*!< Group id */
+    uint8_t scene_id;                                   /*!< Scene id */
+} esp_zb_zcl_scenes_view_scene_cmd_t;
+
+/**
+ * @brief The Zigbee ZCL scenes store scene command struct
+ *
+ * @note Send store scene will set enable ZCL response by default, later will support enable/disable this feature.
+ *
+ * @note Profile id set to HA profile by default, later SDK will support others.
+ *
+ */
+typedef struct esp_zb_zcl_scenes_store_scene_cmd_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;                      /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode;                    /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+    uint16_t group_id;                                         /*!< Group id */
+    uint8_t scene_id;                                          /*!< Scene id */
+} esp_zb_zcl_scenes_store_scene_cmd_t;
+
+/**
+ * @brief The Zigbee ZCL scenes recall scene command struct
+ *
+ * @note Send recall scene will set enable ZCL response by default, later will support enable/disable this feature.
+ *
+ * @note Profile id set to HA profile by default, later SDK will support others.
+ *
+ */
+typedef struct esp_zb_zcl_scenes_recall_scene_cmd_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;                 /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode;               /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+    uint16_t group_id;                                    /*!< Group id */
+    uint8_t scene_id;                                     /*!< Scene id */
+} esp_zb_zcl_scenes_recall_scene_cmd_t;
+
+/**
+ * @brief The Zigbee ZCL scenes get scene membership command struct
+ *
+ * @note Send get scene membership will set enable ZCL response by default, later will support enable/disable this feature.
+ *
+ * @note Profile id set to HA profile by default, later SDK will support others.
+ *
+ */
+typedef struct esp_zb_zcl_scenes_get_scene_membership_cmd_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;               /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode;             /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+    uint16_t group_id;                                  /*!< Group id */
+} esp_zb_zcl_scenes_get_scene_membership_cmd_t;
+
+/**
  * @brief The Zigbee ZCL custom cluster command struct
  *
  * @note Profile id set to HA profile by default, later SDK will support others.
@@ -314,7 +429,7 @@ typedef struct esp_zb_zcl_custom_cluster_cmd_req_s {
     esp_zb_zcl_basic_cmd_t zcl_basic_cmd;                   /*!< Basic command info */
     esp_zb_zcl_address_mode_t address_mode;                 /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
     void *value;                                            /*!< Pointer to value */
-    uint8_t data_type;                                      /*!< Data type to be used */
+    esp_zb_zcl_attr_type_t data_type;                       /*!< Data type to be used */
     uint16_t cluster_id;                                    /*!< Cluster id */
     uint16_t custom_cmd_id;                                 /*!< Custom command id */
 } esp_zb_zcl_custom_cluster_cmd_req_t;
@@ -546,6 +661,62 @@ void esp_zb_zcl_groups_view_group_cmd_req(esp_zb_zcl_groups_add_group_cmd_t *cmd
  *
  */
 void esp_zb_zcl_groups_get_group_membership_cmd_req(esp_zb_zcl_groups_get_group_membership_cmd_t *cmd_req);
+
+/**
+ * @brief   Send add scene command
+ *
+ * @param[in]  cmd_req  pointer to the add scene command  @ref esp_zb_zcl_scenes_add_scene_cmd_s
+ *
+ */
+void esp_zb_zcl_scenes_add_scene_cmd_req(esp_zb_zcl_scenes_add_scene_cmd_t *cmd_req);
+
+/**
+ * @brief   Send remove scene command
+ *
+ * @param[in]  cmd_req  pointer to the remove scene command  @ref esp_zb_zcl_scenes_remove_scene_cmd_s
+ *
+ */
+void esp_zb_zcl_scenes_remove_scene_cmd_req(esp_zb_zcl_scenes_remove_scene_cmd_t *cmd_req);
+
+/**
+ * @brief   Send remove all scenes command
+ *
+ * @param[in]  cmd_req  pointer to the add scenes command  @ref esp_zb_zcl_scenes_remove_all_scenes_cmd_s
+ *
+ */
+void esp_zb_zcl_scenes_remove_all_scenes_cmd_req(esp_zb_zcl_scenes_remove_all_scenes_cmd_t *cmd_req);
+
+/**
+ * @brief   Send view scene command
+ *
+ * @param[in]  cmd_req  pointer to the view scene command  @ref esp_zb_zcl_scenes_view_scene_cmd_s
+ *
+ */
+void esp_zb_zcl_scenes_view_scene_cmd_req(esp_zb_zcl_scenes_view_scene_cmd_t *cmd_req);
+
+/**
+ * @brief   Send store scene command
+ *
+ * @param[in]  cmd_req  pointer to the store scene command  @ref esp_zb_zcl_scenes_store_scene_cmd_s
+ *
+ */
+void esp_zb_zcl_scenes_store_scene_cmd_req(esp_zb_zcl_scenes_store_scene_cmd_t *cmd_req);
+
+/**
+ * @brief   Send recall scene command
+ *
+ * @param[in]  cmd_req  pointer to the recall scene command  @ref esp_zb_zcl_scenes_recall_scene_cmd_s
+ *
+ */
+void esp_zb_zcl_scenes_recall_scene_cmd_req(esp_zb_zcl_scenes_recall_scene_cmd_t *cmd_req);
+
+/**
+ * @brief   Send get scene membership command
+ *
+ * @param[in]  cmd_req  pointer to the get scene membership command  @ref esp_zb_zcl_scenes_get_scene_membership_cmd_s
+ *
+ */
+void esp_zb_zcl_scenes_get_scene_membership_cmd_req(esp_zb_zcl_scenes_get_scene_membership_cmd_t *cmd_req);
 
 /**
  * @brief   Send custom cluster command request

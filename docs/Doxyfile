@@ -25,6 +25,7 @@ INPUT = \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/esp_zigbee_secur.h                        \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/esp_zigbee_attribute.h                    \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/esp_zigbee_cluster.h                      \
+    $(PROJECT_PATH)/components/esp-zigbee-lib/include/esp_zigbee_ota.h                          \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/esp_zigbee_endpoint.h                     \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/esp_zigbee_type.h                         \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/ha/esp_zigbee_ha_standard.h               \
@@ -38,6 +39,7 @@ INPUT = \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_level.h                \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_on_off.h               \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_scenes.h               \
+    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_ota.h                  \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_shade_config.h         \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_temperature_meas.h     \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_time.h                 \

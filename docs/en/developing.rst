@@ -43,6 +43,8 @@ Build following examples in the esp-zigbee-sdk environment which implemented wit
 -  :project:`esp_zigbee_HA_sample <examples/esp_zigbee_HA_sample>`
 -  :project:`esp_zigbee_customized_client_devices <examples/esp_zigbee_customized_devices/customized_client>`
 -  :project:`esp_zigbee_customized_client_server <examples/esp_zigbee_customized_devices/customized_server>`
+-  :project:`esp_zigbee_ota_client <examples/esp_zigbee_ota/ota_client>`
+-  :project:`esp_zigbee_ota_server <examples/esp_zigbee_ota/ota_server>`
 -  :project:`esp_zigbee_gateway <examples/esp_zigbee_gateway>`
 -  :project:`esp_zigbee_rcp <examples/esp_zigbee_rcp>`
 

@@ -21,6 +21,7 @@ extern "C" {
 #include "esp_zigbee_zcl_shade_config.h"
 #include "esp_zigbee_zcl_door_lock.h"
 #include "esp_zigbee_zcl_temperature_meas.h"
+#include "esp_zigbee_zcl_ota.h"
 
 /** HA profile ID*/
 #define ESP_ZB_AF_HA_PROFILE_ID       0x0104U

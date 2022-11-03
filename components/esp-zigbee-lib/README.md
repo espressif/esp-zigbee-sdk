@@ -12,7 +12,7 @@ In this component it provides:
     + More to come ... ...  
 
 ## User guide
-For a demonstration of the library use, see the examples folder [examples](../../examples/)  
-For information on how to program Espressif SoCs, see [ESP-IDF Programming Guide](https://docs.espressif.com/projects/esp-idf)  
-For esp-zigbee-lib related user guide and documents, see [docs](../../docs/).
+For a demonstration of the library use, see the examples folder [examples](https://github.com/espressif/esp-zigbee-sdk/tree/main/examples).
+For information on how to program Espressif SoCs, see [ESP-IDF Programming Guide](https://docs.espressif.com/projects/esp-idf).
+For esp-zigbee-lib related user guide and documents, see [docs](https://docs.espressif.com/projects/esp-zigbee-sdk/).
 
