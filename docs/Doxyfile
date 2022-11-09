@@ -27,9 +27,9 @@ INPUT = \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/esp_zigbee_cluster.h                  \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/esp_zigbee_endpoint.h                 \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/esp_zigbee_type.h                     \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/esp_zigbee_ha_standard.h              \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/esp_zigbee_zcl_command.h              \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/esp_zigbee_zdo_command.h              \
+    $(PROJECT_PATH)/components/esp-zigbee-lib/include/ha/esp_zigbee_ha_standard.h              \
+    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_command.h              \
+    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zdo/esp_zigbee_zdo_command.h              \
 
 
 ## Get warnings for functions that have no documentation for their parameters or return value

@@ -25,8 +25,8 @@ esp_zb_cluster_list_t *esp_zb_zcl_cluster_list_create(void);
  * @note  Getting the local cluster from the specific endpoint.
  *
  * @param[in] endpoint The endpoint
- * @param[in] cluster_id The cluster id for attribute list
- * @param[in] cluster_role The cluster role of this cluster, either server or client role
+ * @param[in] cluster_id The cluster id for attribute list refer to esp_zb_zcl_cluster_id
+ * @param[in] cluster_role The cluster role of this cluster, either server or client role refer to esp_zb_zcl_cluster_role
  *
  * @return pointer to  @ref esp_zb_zcl_cluster_s
  *
@@ -162,7 +162,7 @@ esp_zb_attribute_list_t *esp_zb_temperature_meas_cluster_create(esp_zb_temperatu
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to add
- * @param[in] role_mask  A role of server or client for this cluster (attribute list)
+ * @param[in] role_mask  A role of server or client for this cluster (attribute list) refer to esp_zb_zcl_cluster_role
  *
  * @return
  *      - ESP_OK on success
@@ -176,7 +176,7 @@ esp_err_t esp_zb_cluster_list_add_basic_cluster(esp_zb_cluster_list_t *cluster_l
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to add
- * @param[in] role_mask  A role of server or client for this cluster (attribute list)
+ * @param[in] role_mask  A role of server or client for this cluster (attribute list) refer to esp_zb_zcl_cluster_role
  *
  * @return
  *      - ESP_OK on success
@@ -190,7 +190,7 @@ esp_err_t esp_zb_cluster_list_add_identify_cluster(esp_zb_cluster_list_t *cluste
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to add
- * @param[in] role_mask  A role of server or client for this cluster (attribute list)
+ * @param[in] role_mask  A role of server or client for this cluster (attribute list) refer to esp_zb_zcl_cluster_role
  *
  * @return
  *      - ESP_OK on success
@@ -204,7 +204,7 @@ esp_err_t esp_zb_cluster_list_add_groups_cluster(esp_zb_cluster_list_t *cluster_
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to add
- * @param[in] role_mask  A role of server or client for this cluster (attribute list)
+ * @param[in] role_mask  A role of server or client for this cluster (attribute list) refer to esp_zb_zcl_cluster_role
  *
  * @return
  *      - ESP_OK on success
@@ -218,7 +218,7 @@ esp_err_t esp_zb_cluster_list_add_scenes_cluster(esp_zb_cluster_list_t *cluster_
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to add
- * @param[in] role_mask  A role of server or client for this cluster (attribute list)
+ * @param[in] role_mask  A role of server or client for this cluster (attribute list) refer to esp_zb_zcl_cluster_role
  *
  * @return
  *      - ESP_OK on success
@@ -232,7 +232,7 @@ esp_err_t esp_zb_cluster_list_add_on_off_cluster(esp_zb_cluster_list_t *cluster_
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to add
- * @param[in] role_mask  A role of server or client for this cluster (attribute list)
+ * @param[in] role_mask  A role of server or client for this cluster (attribute list) refer to esp_zb_zcl_cluster_role
  *
  * @return
  *      - ESP_OK on success
@@ -246,7 +246,7 @@ esp_err_t esp_zb_cluster_list_add_level_cluster(esp_zb_cluster_list_t *cluster_l
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to add
- * @param[in] role_mask  A role of server or client for this cluster (attribute list)
+ * @param[in] role_mask  A role of server or client for this cluster (attribute list) refer to esp_zb_zcl_cluster_role
  *
  * @return
  *      - ESP_OK on success
@@ -260,7 +260,7 @@ esp_err_t esp_zb_cluster_list_add_color_control_cluster(esp_zb_cluster_list_t *c
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to add
- * @param[in] role_mask  A role of server or client for this cluster (attribute list)
+ * @param[in] role_mask  A role of server or client for this cluster (attribute list) refer to esp_zb_zcl_cluster_role
  *
  * @return
  *      - ESP_OK on success
@@ -274,7 +274,7 @@ esp_err_t esp_zb_cluster_list_add_time_cluster(esp_zb_cluster_list_t *cluster_li
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to add
- * @param[in] role_mask  A role of server or client for this cluster (attribute list)
+ * @param[in] role_mask  A role of server or client for this cluster (attribute list) refer to esp_zb_zcl_cluster_role
  *
  * @return
  *      - ESP_OK on success
@@ -288,7 +288,7 @@ esp_err_t esp_zb_cluster_list_add_shade_config_cluster(esp_zb_cluster_list_t *cl
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to add
- * @param[in] role_mask  A role of server or client for this cluster (attribute list)
+ * @param[in] role_mask  A role of server or client for this cluster (attribute list) refer to esp_zb_zcl_cluster_role
  *
  * @return
  *      - ESP_OK on success
@@ -302,7 +302,7 @@ esp_err_t esp_zb_cluster_list_add_door_lock_cluster(esp_zb_cluster_list_t *clust
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to add
- * @param[in] role_mask  A role of server or client for this cluster (attribute list)
+ * @param[in] role_mask  A role of server or client for this cluster (attribute list) refer to esp_zb_zcl_cluster_role
  *
  * @return
  *      - ESP_OK on success
@@ -316,7 +316,7 @@ esp_err_t esp_zb_cluster_list_add_temperature_meas_cluster(esp_zb_cluster_list_t
 *
 * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
 * @param[in] attr_list An attribute list which wants to add
-* @param[in] role_mask A role of server or client for this cluster (attribute list)
+* @param[in] role_mask A role of server or client for this cluster (attribute list) refer to esp_zb_zcl_cluster_role
 *
 * @note The customized cluster id should not be same as already existing zcl cluster id refer to zb_zcl_common.h
 *
@@ -333,7 +333,7 @@ esp_err_t esp_zb_cluster_list_add_custom_cluster(esp_zb_cluster_list_t *cluster_
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to update
- * @param[in] role_mask  A role of server or client for this cluster (attribute list)
+ * @param[in] role_mask  A role of server or client for this cluster (attribute list) refer to esp_zb_zcl_cluster_role
  *
  * @return
  *      - ESP_OK on success
@@ -347,7 +347,7 @@ esp_err_t esp_zb_cluster_list_update_basic_cluster(esp_zb_cluster_list_t *cluste
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to update
- * @param[in] role_mask  A role of server or client for this cluster (attribute list)
+ * @param[in] role_mask  A role of server or client for this cluster (attribute list) refer to esp_zb_zcl_cluster_role
  *
  * @return
  *      - ESP_OK on success
@@ -361,7 +361,7 @@ esp_err_t esp_zb_cluster_list_update_identify_cluster(esp_zb_cluster_list_t *clu
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to update
- * @param[in] role_mask  A role of server or client for this cluster (attribute list)
+ * @param[in] role_mask  A role of server or client for this cluster (attribute list) refer to esp_zb_zcl_cluster_role
  *
  * @return
  *      - ESP_OK on success
@@ -375,7 +375,7 @@ esp_err_t esp_zb_cluster_list_update_groups_cluster(esp_zb_cluster_list_t *clust
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to update
- * @param[in] role_mask  A role of server or client for this cluster (attribute list)
+ * @param[in] role_mask  A role of server or client for this cluster (attribute list) refer to esp_zb_zcl_cluster_role
  *
  * @return
  *      - ESP_OK on success
@@ -389,7 +389,7 @@ esp_err_t esp_zb_cluster_list_update_scenes_cluster(esp_zb_cluster_list_t *clust
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to update
- * @param[in] role_mask  A role of server or client for this cluster (attribute list)
+ * @param[in] role_mask  A role of server or client for this cluster (attribute list) refer to esp_zb_zcl_cluster_role
  *
  * @return
  *      - ESP_OK on success
@@ -403,7 +403,7 @@ esp_err_t esp_zb_cluster_list_update_on_off_cluster(esp_zb_cluster_list_t *clust
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to update
- * @param[in] role_mask  A role of server or client for this cluster (attribute list)
+ * @param[in] role_mask  A role of server or client for this cluster (attribute list) refer to esp_zb_zcl_cluster_role
  *
  * @return
  *      - ESP_OK on success
@@ -417,7 +417,7 @@ esp_err_t esp_zb_cluster_list_update_level_cluster(esp_zb_cluster_list_t *cluste
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to update
- * @param[in] role_mask  A role of server or client for this cluster (attribute list)
+ * @param[in] role_mask  A role of server or client for this cluster (attribute list) refer to esp_zb_zcl_cluster_role
  *
  * @return
  *      - ESP_OK on success
@@ -431,7 +431,7 @@ esp_err_t esp_zb_cluster_list_update_color_control_cluster(esp_zb_cluster_list_t
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to update
- * @param[in] role_mask  A role of server or client for this cluster (attribute list)
+ * @param[in] role_mask  A role of server or client for this cluster (attribute list) refer to esp_zb_zcl_cluster_role
  *
  * @return
  *      - ESP_OK on success
@@ -445,7 +445,7 @@ esp_err_t esp_zb_cluster_list_update_time_cluster(esp_zb_cluster_list_t *cluster
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to update
- * @param[in] role_mask  A role of server or client for this cluster (attribute list)
+ * @param[in] role_mask  A role of server or client for this cluster (attribute list) refer to esp_zb_zcl_cluster_role
  *
  * @return
  *      - ESP_OK on success
@@ -459,7 +459,7 @@ esp_err_t esp_zb_cluster_list_update_shade_config_cluster(esp_zb_cluster_list_t 
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to update
- * @param[in] role_mask  A role of server or client for this cluster (attribute list)
+ * @param[in] role_mask  A role of server or client for this cluster (attribute list) refer to esp_zb_zcl_cluster_role
  *
  * @return
  *      - ESP_OK on success
@@ -473,7 +473,7 @@ esp_err_t esp_zb_cluster_list_update_door_lock_cluster(esp_zb_cluster_list_t *cl
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to update
- * @param[in] role_mask  A role of server or client for this cluster (attribute list)
+ * @param[in] role_mask  A role of server or client for this cluster (attribute list) refer to esp_zb_zcl_cluster_role
  *
  * @return
  *      - ESP_OK on success
@@ -487,14 +487,14 @@ esp_err_t esp_zb_cluster_list_update_temperature_meas_cluster(esp_zb_cluster_lis
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to update
- * @param[in] role_mask  A role of server or client for this cluster (attribute list)
+ * @param[in] role_mask  A role of server or client for this cluster (attribute list) refer to esp_zb_zcl_cluster_role
  *
  * @return
  *      - ESP_OK on success
  *      - ESP_ERR_INVALID_ARG if cluster list not initialized
  *
  */
- esp_err_t esp_zb_cluster_list_update_custom_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
+esp_err_t esp_zb_cluster_list_update_custom_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 #ifdef __cplusplus
 }

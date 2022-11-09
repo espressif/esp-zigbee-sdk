@@ -186,6 +186,21 @@ typedef struct esp_zb_zcl_cvc_alarm_variables_s {
 esp_zb_zcl_cvc_alarm_variables_t;
 
 /**
+* @brief Struture of Node descriptor request of ZDO response
+*/
+typedef struct esp_zb_af_node_desc_s {
+    uint16_t          node_desc_flags;            /*!< node description */
+    uint8_t           mac_capability_flags;       /*!< mac capability */
+    uint16_t          manufacturer_code;          /*!< Manufacturer code */
+    uint8_t           max_buf_size;               /*!< Maximum buffer size */
+    uint16_t          max_incoming_transfer_size; /*!< Maximum incoming transfer size */
+    uint16_t          server_mask;                /*!< Server mask */
+    uint16_t          max_outgoing_transfer_size; /*!< Maximum outgoing transfer size */
+    uint8_t           desc_capability_field;      /*!< Descriptor capability field */
+} ESP_ZB_PACKED_STRUCT
+esp_zb_af_node_desc_t;
+
+/**
  * @brief Structure of simple descriptor request of ZCL command
  */
 typedef struct esp_zb_af_simple_desc_1_1_s {
@@ -197,7 +212,7 @@ typedef struct esp_zb_af_simple_desc_1_1_s {
     uint8_t    app_input_cluster_count;         /*!< Application input cluster count */
     uint8_t    app_output_cluster_count;        /*!< Application output cluster count */
     uint16_t   app_cluster_list[2];             /*!< Application input and output cluster list */
-} ZB_PACKED_STRUCT
+} ESP_ZB_PACKED_STRUCT
 esp_zb_af_simple_desc_1_1_t;
 
 /**
@@ -470,6 +485,15 @@ typedef struct esp_zb_temperature_sensor_cfg_s {
     esp_zb_identify_cluster_cfg_t               identify_cfg;       /*!<  Identify cluster configuration */
     esp_zb_temperature_meas_cluster_cfg_t       temp_meas_cfg;      /*!<  Temperature measurement cluster configuration */
 } esp_zb_temperature_sensor_cfg_t;
+
+/**
+ * @brief Zigbee HA standard configuration tool clusters.
+ *
+ */
+typedef struct esp_zb_configuration_tool_cfg_s {
+    esp_zb_basic_cluster_cfg_t      basic_cfg;          /*!<  Basic cluster configuration */
+    esp_zb_identify_cluster_cfg_t   identify_cfg;       /*!<  Identify cluster configuration */
+} esp_zb_configuration_tool_cfg_t;
 
 #ifdef __cplusplus
 }

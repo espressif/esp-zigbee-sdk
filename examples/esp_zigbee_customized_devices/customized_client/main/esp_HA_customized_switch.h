@@ -17,8 +17,8 @@
 
 /* Zigbee configuration */
 #define INSTALLCODE_POLICY_ENABLE       false    /* enable the install code policy for security */
-#define ED_AGING_TIMEOUT                ED_AGING_TIMEOUT_64MIN
-#define ED_KEEP_ALIVE                   ZB_MILLISECONDS_TO_BEACON_INTERVAL(3000)
+#define ED_AGING_TIMEOUT                ESP_ZB_ED_AGING_TIMEOUT_64MIN
+#define ED_KEEP_ALIVE                   3000    /* 3000 millisecond */
 #define HA_ONOFF_SWITCH_ENDPOINT        1           /* esp switch device endpoint */
 
 #define ESP_ZB_ZED_CONFIG()                                         \
