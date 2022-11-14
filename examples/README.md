@@ -8,6 +8,7 @@ The examples are grouped into subdirectories by category. Each category director
 - [esp_zigbee_gateway](esp_zigbee_gateway) Zigbee gateway example to demonstrate Wi-Fi SoCs such as ESP32, ESP32-C3 and ESP32-S3, with an 802.15.4 SoC like ESP32-H4
 - [esp_zigbee_rcp](esp_zigbee_rcp) Zigbee rcp (radio co-processor) device
 - [esp_zigbee_HA_sample](esp_zigbee_HA_sample) Zigbee HA sample examples
+- [esp_zigbee_CLI](esp_zigbee_cli) Zigbee CLI (Command line interface) examples
 
 ## Using Examples
 Please see the information on usage under each Zigbee examples folder.
