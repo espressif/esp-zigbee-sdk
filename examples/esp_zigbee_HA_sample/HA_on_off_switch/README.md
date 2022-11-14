@@ -1,4 +1,4 @@
-| Supported Targets | ESP32-H2 |
+| Supported Targets | ESP32-H4 |
 | ----------------- | -------- |
 
 # Light Switch Example 
@@ -7,13 +7,13 @@ This test code shows how to configure Zigbee Coordinator and use it as an HA on/
 
 ## Hardware Required
 
-* One development board with ESP32-H2 SoC acting as Zigbee Coordinator (loaded with HA_on_off_switch)
+* One development board with ESP32-H4 SoC acting as Zigbee Coordinator (loaded with HA_on_off_switch)
 * A USB cable for power supply and programming
-* Choose another ESP32-H2 as Zigbee end-device (see [HA_on_off_light](../HA_on_off_light/))
+* Choose another ESP32-H4 as Zigbee end-device (see [HA_on_off_light](../HA_on_off_light/))
 
 ## Configure the project
 
-Before project configuration and build, make sure to set the correct chip target using `idf.py set-target esp32h2`.
+Before project configuration and build, make sure to set the correct chip target using `idf.py set-target esp32h4`.
 
 ## Erase the NVRAM 
 

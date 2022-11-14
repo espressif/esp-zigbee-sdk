@@ -57,6 +57,7 @@ typedef struct esp_zb_zcl_attr_s {
     uint16_t id;                        /*!< Attribute id */
     uint8_t type;                       /*!< Attribute type see zcl_attr_type */
     uint8_t access;                     /*!< Attribute access options according to zcl_attr_access */
+    uint16_t manuf_code;                /*!< Manufacture specific id */
     void *data_p;                       /*!< Pointer to attribute data */
 } ESP_ZB_PACKED_STRUCT
 esp_zb_zcl_attr_t;

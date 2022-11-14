@@ -1,4 +1,4 @@
-| Supported Targets | ESP32-H2 |
+| Supported Targets | ESP32-H4 |
 | ----------------- | -------- |
 
 # Light Bulb Example 
@@ -7,13 +7,13 @@ This test code shows how to configure Zigbee end device and use it as a HA color
 
 ## Hardware Required
 
-* One development board with ESP32-H2 SoC acting as Zigbee end-device (loaded with HA_color_dimmable_light example)
+* One development board with ESP32-H4 SoC acting as Zigbee end-device (loaded with HA_color_dimmable_light example)
 * A USB cable for power supply and programming
-* Choose another ESP32-H2 as Zigbee coordinator (see [HA_color_dimmable_switch example](../HA_color_dimmable_switch/))
+* Choose another ESP32-H4 as Zigbee coordinator (see [HA_color_dimmable_switch example](../HA_color_dimmable_switch/))
 
 ## Configure the project
 
-Before project configuration and build, make sure to set the correct chip target using `idf.py set-target esp32h2`.
+Before project configuration and build, make sure to set the correct chip target using `idf.py set-target esp32h4`.
 
 ## Erase the NVRAM 
 
@@ -61,7 +61,7 @@ I (15928) ESP_ZB_COLOR_DIMM_LIGHT: Light color y change to:3932
  
 ## Light Control Functions
 
- * By toggling the switch button (BOOT) on the ESP32-H2 board loaded with the `HA_color_dimmable_switch` example, the LED on this board loaded with `HA_color_dimmable_light` example will change the color from red, green to blue and also light level will change.
+ * By toggling the switch button (BOOT) on the ESP32-H4 board loaded with the `HA_color_dimmable_switch` example, the LED on this board loaded with `HA_color_dimmable_light` example will change the color from red, green to blue and also light level will change.
 
 ## Troubleshooting
 

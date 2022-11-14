@@ -69,7 +69,7 @@ Choose IDF target.
 
       idf.py set-target {IDF_TARGET_PATH_NAME}
 
-.. only:: esp32h2
+.. only:: esp32h4
 
    ::
 
@@ -108,7 +108,7 @@ the device is helpful.
     
 Node
 ^^^^
-A node is a single ESP32-H2 based product. It represents a network node in the Zigbee network. A single node can expose multiple endpoints.
+A node is a single ESP32-H4 based product. It represents a network node in the Zigbee network. A single node can expose multiple endpoints.
 
 Endpoints
 ^^^^^^^^^
@@ -216,7 +216,7 @@ Above is the endpoint list we created, then we use :cpp:func:`esp_zb_device_regi
 
 2.3.2.2 ZCL commands
 ^^^^^^^^^^^^^^^^^^^^
-Varieties of ZCL commands is provided in the :project_file:`esp_zigbee_zcl_command <components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_command.h>`.
+Varieties of ZCL commands is provided in the :project_file:`esp_zigbee_zcl_command <components/esp-zigbee-lib/include/esp_zigbee_zcl_command.h>`.
 
 In this example we demonstrate a ZCL on_off_toggle command.
 

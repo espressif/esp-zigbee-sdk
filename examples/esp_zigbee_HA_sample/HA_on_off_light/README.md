@@ -1,4 +1,4 @@
-| Supported Targets | ESP32-H2 |
+| Supported Targets | ESP32-H4 |
 | ----------------- | -------- |
 
 # Light Bulb Example 
@@ -7,13 +7,13 @@ This test code shows how to configure Zigbee end device and use it as HA on/off 
 
 ## Hardware Required
 
-* One development board with ESP32-H2 SoC acting as Zigbee end-device (loaded with HA_on_off_light example)
+* One development board with ESP32-H4 SoC acting as Zigbee end-device (loaded with HA_on_off_light example)
 * A USB cable for power supply and programming
-* Choose another ESP32-H2 as Zigbee coordinator (see [HA_on_off_switch example](../HA_on_off_switch/))
+* Choose another ESP32-H4 as Zigbee coordinator (see [HA_on_off_switch example](../HA_on_off_switch/))
 
 ## Configure the project
 
-Before project configuration and build, make sure to set the correct chip target using `idf.py set-target esp32h2`.
+Before project configuration and build, make sure to set the correct chip target using `idf.py set-target esp32h4`.
 
 ## Erase the NVRAM 
 
@@ -47,7 +47,7 @@ I (9427) ESP_ZB_ON_OFF_LIGHT: on/off light set to 0
 
 ## Light Control Functions
 
- * By toggling the switch button (BOOT) on the ESP32-H2 board loaded with the `HA_on_off_switch` example, the LED on this board loaded with `HA_on_off_light` example will be on and off.
+ * By toggling the switch button (BOOT) on the ESP32-H4 board loaded with the `HA_on_off_switch` example, the LED on this board loaded with `HA_on_off_light` example will be on and off.
 
 ## Troubleshooting
 

@@ -1,4 +1,4 @@
-| Supported Targets | ESP32-H2 |
+| Supported Targets | ESP32-H4 |
 | ----------------- | -------- |
 
 # Light Bulb Example 
@@ -7,13 +7,13 @@ This test code shows how to customized add / update attribute, how to customized
 
 ## Hardware Required
 
-* One development board with ESP32-H2 SoC acting as Zigbee coordinator device (loaded with customized_server example)
+* One development board with ESP32-H4 SoC acting as Zigbee coordinator device (loaded with customized_server example)
 * A USB cable for power supply and programming
-* Choose another ESP32-H2 as Zigbee coordinator (see [customized_client](../customized_client/))
+* Choose another ESP32-H4 as Zigbee coordinator (see [customized_client](../customized_client/))
 
 ## Configure the project
 
-Before project configuration and build, make sure to set the correct chip target using `idf.py set-target esp32h2`.
+Before project configuration and build, make sure to set the correct chip target using `idf.py set-target esp32h4`.
 
 ## Erase the NVRAM 
 
@@ -59,7 +59,7 @@ I (25650) ESP_HA_ON_OFF_LIGHT: on/off light set to 0
 
 ## Light Control Functions
 
- * By toggling the switch button (BOOT) on the ESP32-H2 board loaded with the `customized_client` example, the LED on this board loaded with `customized_server` example will be on and off.
+ * By toggling the switch button (BOOT) on the ESP32-H4 board loaded with the `customized_client` example, the LED on this board loaded with `customized_server` example will be on and off.
 
 ## Troubleshooting
 

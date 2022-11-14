@@ -3,17 +3,17 @@
 
 # Gateway Example
 
-This example demonstrates how to build a Zigbee Gateway device. It runs on a Wi-Fi SoC such as ESP32, ESP32-C3 and ESP32-S3, with an 802.15.4 SoC like ESP32-H2 running [esp_zigbee_rcp](../esp_zigbee_rcp) to provide 802.15.4 radio.
+This example demonstrates how to build a Zigbee Gateway device. It runs on a Wi-Fi SoC such as ESP32, ESP32-C3 and ESP32-S3, with an 802.15.4 SoC like ESP32-H4 running [esp_zigbee_rcp](../esp_zigbee_rcp) to provide 802.15.4 radio.
 
 ## Hardware Required
 
 * One development board with ESP32 or ESP32-S3 SoC acting as Zigbee gateway (loaded with esp_zigbee_gateway example)
 * A USB cable for power supply and programming
 * Five jumper wires for UART (TX, RX, RST, BOOT and GND)
-* Gateway doesn't function alone. Choose ESP32-H2 as Zigbee rcp (see [esp_zigbee_rcp example](../esp_zigbee_rcp))
-* **Flash** Zigbee rcp on the ESP32-H2 DevKitC first **before** connecting to Zigbee gateway, if auto rcp update feature is disable.
-* Connect the two SoCs via UART, below is an example setup with ESP32-DevKitC and ESP32-H2-DevKitC:
-![Zigbee_gateway](zigbee-gateway-esp32-esp32h2.jpg)
+* Gateway doesn't function alone. Choose ESP32-H4 as Zigbee rcp (see [esp_zigbee_rcp example](../esp_zigbee_rcp))
+* **Flash** Zigbee rcp on the ESP32-H4 DevKitC first **before** connecting to Zigbee gateway, if auto rcp update feature is disable.
+* Connect the two SoCs via UART, below is an example setup with ESP32-DevKitC and ESP32-H4-DevKitC:
+![Zigbee_gateway](zigbee-gateway-esp32-esp32h4.jpg)
 
 ## Configure the project
 
@@ -21,9 +21,9 @@ Before project configuration and build, make sure to set the correct chip target
 
 ### Standalone Modules
 
-The SDK supports manually connecting an ESP32-H2 RCP to an ESP32 series Wi-Fi SoC. Extra two jumper wires needed for RESET (RST) and BOOT based on the picture above. As one way of connection is following:
+The SDK supports manually connecting an ESP32-H4 RCP to an ESP32 series Wi-Fi SoC. Extra two jumper wires needed for RESET (RST) and BOOT based on the picture above. As one way of connection is following:
 
-ESP32 pin     | ESP32-H2 pin
+ESP32 pin     | ESP32-H4 pin
 ------------- |-------------
    GND        |    G
    GPIO4 (RX) |    TX
@@ -37,7 +37,7 @@ Other pin number is also available for user to configure if needed.
 
 ### ESP Thread Border Router Board
 
-The ESP Thread border router board provides an integrated module of an ESP32-S3 SoC and an ESP32-H2 RCP.
+The ESP Thread border router board provides an integrated module of an ESP32-S3 SoC and an ESP32-H4 RCP.
 
 ![br_dev_kit](../../docs/_static/esp-thread-border-router-board.png)
 
