@@ -176,6 +176,26 @@ typedef void (*esp_zb_scenes_recall_cmd_callback_t)(esp_zb_zcl_status_t status, 
  */
 typedef void (*esp_zb_ota_upgrade_status_callback_t)(esp_zb_zcl_ota_upgrade_status_t status);
 
+/** Scenes cluster store command callback
+ *
+ * @brief Store scenes state callback for user to save data entry.
+ *
+ * @param[in] status Status of the store scene command, success status - 0  invalid field status - 85
+ * @param[in] field_data A pointer to scenes extension field @ref esp_zb_zcl_scenes_extension_field_t
+ *
+ */
+typedef void (*esp_zb_scenes_store_cmd_callback_t)(uint8_t status, esp_zb_zcl_scenes_extension_field_t *field_data);
+
+/** Scenes cluster recall command callback
+ *
+ * @brief Recall scenes callback for user to recall specific entry.
+ *
+ * @param[in] status Status of the recall scene command, success status - 0  status not found - 139
+ * @param[in] field_data A pointer to scenes extension field @ref esp_zb_zcl_scenes_extension_field_t
+ *
+ */
+typedef void (*esp_zb_scenes_recall_cmd_callback_t)(uint8_t status, esp_zb_zcl_scenes_extension_field_t* field_data);
+
 /** Customized cluster command callback
  *
  * @brief A customized cluster command received from remote node and callback for user to get value info
