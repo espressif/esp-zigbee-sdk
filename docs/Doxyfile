@@ -21,15 +21,29 @@ PROJECT_NAME = "ESP Zigbee Programming Guide"
 ## and used to include in API reference documentation
 
 INPUT = \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/esp_zigbee_core.h                     \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/esp_zigbee_secur.h                    \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/esp_zigbee_attribute.h                \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/esp_zigbee_cluster.h                  \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/esp_zigbee_endpoint.h                 \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/esp_zigbee_type.h                     \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/esp_zigbee_ha_standard.h              \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/esp_zigbee_zcl_command.h              \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/esp_zigbee_zdo_command.h              \
+    $(PROJECT_PATH)/components/esp-zigbee-lib/include/esp_zigbee_core.h                         \
+    $(PROJECT_PATH)/components/esp-zigbee-lib/include/esp_zigbee_secur.h                        \
+    $(PROJECT_PATH)/components/esp-zigbee-lib/include/esp_zigbee_attribute.h                    \
+    $(PROJECT_PATH)/components/esp-zigbee-lib/include/esp_zigbee_cluster.h                      \
+    $(PROJECT_PATH)/components/esp-zigbee-lib/include/esp_zigbee_endpoint.h                     \
+    $(PROJECT_PATH)/components/esp-zigbee-lib/include/esp_zigbee_type.h                         \
+    $(PROJECT_PATH)/components/esp-zigbee-lib/include/ha/esp_zigbee_ha_standard.h               \
+    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_command.h              \
+    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_common.h               \
+    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_basic.h                \
+    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_color_control.h        \
+    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_door_lock.h            \
+    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_groups.h               \
+    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_identify.h             \
+    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_level.h                \
+    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_on_off.h               \
+    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_scenes.h               \
+    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_shade_config.h         \
+    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_temperature_meas.h     \
+    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_time.h                 \
+    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zdo/esp_zigbee_zdo_command.h              \
+    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zdo/esp_zigbee_zdo_common.h               \
+
 
 
 ## Get warnings for functions that have no documentation for their parameters or return value

@@ -171,9 +171,9 @@ It depends on user how to process those attribute changes based on different cir
 
    void attr_cb(uint8_t status, uint8_t endpoint, uint16_t cluster_id, uint16_t attr_id, void *new_value)
    {
-    if (cluster_id == ZB_ZCL_CLUSTER_ID_ON_OFF) {
+    if (cluster_id == ESP_ZB_ZCL_CLUSTER_ID_ON_OFF) {
         uint8_t value = *(uint8_t*)new_value;
-        if (attr_id == ZB_ZCL_ATTR_ON_OFF_ON_OFF_ID) {
+        if (attr_id == ESP_ZB_ZCL_ATTR_ON_OFF_ON_OFF_ID) {
             /* implemented light on/off control */
             ESP_LOGI(TAG, "on/off light set to %hd", value);
             light_driver_set_power((bool)value);
@@ -216,7 +216,7 @@ Above is the endpoint list we created, then we use :cpp:func:`esp_zb_device_regi
 
 2.3.2.2 ZCL commands
 ^^^^^^^^^^^^^^^^^^^^
-Varieties of ZCL commands is provided in the :project_file:`esp_zigbee_zcl_command <components/esp-zigbee-lib/include/esp_zigbee_zcl_command.h>`.
+Varieties of ZCL commands is provided in the :project_file:`esp_zigbee_zcl_command <components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_command.h>`.
 
 In this example we demonstrate a ZCL on_off_toggle command.
 
@@ -233,7 +233,7 @@ After button on the board is pressed, the :cpp:func:`esp_zb_buttons_handler` cre
            cmd_req.zcl_basic_cmd.dst_endpoint = on_off_light.endpoint;
            cmd_req.zcl_basic_cmd.src_endpoint = HA_ONOFF_SWITCH_ENDPOINT;
            cmd_req.address_mode = ESP_ZB_APS_ADDR_MODE_16_ENDP_PRESENT;
-           cmd_req.on_off_cmd_id = ZB_ZCL_CMD_ON_OFF_TOGGLE_ID;
+           cmd_req.on_off_cmd_id = ESP_ZB_ZCL_CMD_ON_OFF_TOGGLE_ID;
            ESP_EARLY_LOGI(TAG, "send 'on_off toggle' command");
            esp_zb_zcl_on_off_cmd_req(&cmd_req);
        }

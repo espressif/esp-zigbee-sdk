@@ -9,6 +9,7 @@
 extern "C" {
 #endif
 #include "esp_zigbee_type.h"
+#include "esp_zigbee_zcl_common.h"
 
 /** Enum of the Zigbee ZCL address mode
  * @note Defined the ZCL command of address_mode.
@@ -257,6 +258,49 @@ typedef struct esp_zb_zcl_lock_unlock_door_cmd_s {
 } esp_zb_zcl_lock_unlock_door_cmd_t;
 
 /**
+ * @brief The Zigbee ZCL groups add group command struct
+ *
+ * @note Add group will set enable ZCL response by default, later will support this feature
+ *
+ * @note Profile id set to HA profile by default, later will support others
+ *
+ * @note Group name currently is not supported, put empty string, Support of group names is optional, @@see ZCL specification, subclause  3.6.2.2.2
+ */
+typedef struct esp_zb_zcl_groups_add_group_cmd_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;                  /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode;                /*!< APS addressing mode constants @ref esp_zb_zcl_address_mode_t */
+    uint16_t group_id;                                     /*!< Group id */
+} esp_zb_zcl_groups_add_group_cmd_t;
+
+/**
+ * @brief The Zigbee ZCL groups remove all groups command struct
+ *
+ * @note Remove all groups will set enable ZCL response by default, later will support this feature
+ *
+ * @note Profile id set to HA profile by default, later will support others
+ *
+ */
+typedef struct esp_zb_zcl_groups_remove_all_groups_cmd_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;                  /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode;                /*!< APS addressing mode constants @ref esp_zb_zcl_address_mode_t */
+} esp_zb_zcl_groups_remove_all_groups_cmd_t;
+
+/**
+ * @brief The Zigbee ZCL groups get group membership command struct
+ *
+ * @note Get group membership will set enable ZCL response by default, later will support this feature
+ *
+ * @note Profile id set to HA profile by default, later will support others. Maximum group list size is 10
+ *
+ */
+typedef struct esp_zb_zcl_groups_get_group_membership_cmd_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;                  /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode;                /*!< APS addressing mode constants @ref esp_zb_zcl_address_mode_t */
+    uint8_t group_count;                                   /*!< Total group count */
+    uint16_t group_list[10];                               /*!< Maximum group list */
+} esp_zb_zcl_groups_get_group_membership_cmd_t;
+
+/**
  * @brief The Zigbee ZCL custom cluster command struct
  *
  * @note Profile id set to HA profile by default, later SDK will support others.
@@ -450,7 +494,7 @@ void esp_zb_zcl_color_stop_move_step_cmd_req(esp_zb_zcl_color_stop_move_step_cmd
 /**
  * @brief   Send lock door command
  *
- * @param[in]  cmd_req  pointer to the stop color command @ref esp_zb_zcl_lock_unlock_door_cmd_s
+ * @param[in]  cmd_req  pointer to the unlock door command @ref esp_zb_zcl_lock_unlock_door_cmd_s
  *
  */
 void esp_zb_zcl_lock_door_cmd_req(esp_zb_zcl_lock_unlock_door_cmd_t *cmd_req);
@@ -458,10 +502,50 @@ void esp_zb_zcl_lock_door_cmd_req(esp_zb_zcl_lock_unlock_door_cmd_t *cmd_req);
 /**
  * @brief   Send unlock door command
  *
- * @param[in]  cmd_req  pointer to the stop color command @ref esp_zb_zcl_lock_unlock_door_cmd_s
+ * @param[in]  cmd_req  pointer to the unlock door command @ref esp_zb_zcl_lock_unlock_door_cmd_s
  *
  */
 void esp_zb_zcl_unlock_door_cmd_req(esp_zb_zcl_lock_unlock_door_cmd_t *cmd_req);
+
+/**
+ * @brief   Send add group command
+ *
+ * @param[in]  cmd_req  pointer to the add group command @ref esp_zb_zcl_groups_add_group_cmd_s
+ *
+ */
+void esp_zb_zcl_groups_add_group_cmd_req(esp_zb_zcl_groups_add_group_cmd_t *cmd_req);
+
+/**
+ * @brief   Send remove group command
+ *
+ * @param[in]  cmd_req  pointer to the add group command @ref esp_zb_zcl_groups_add_group_cmd_s
+ *
+ */
+void esp_zb_zcl_groups_remove_group_cmd_req(esp_zb_zcl_groups_add_group_cmd_t *cmd_req);
+
+/**
+ * @brief   Send remove all groups command
+ *
+ * @param[in]  cmd_req  pointer to the remove all group command @ref esp_zb_zcl_groups_remove_all_groups_cmd_s
+ *
+ */
+void esp_zb_zcl_groups_remove_all_groups_cmd_req(esp_zb_zcl_groups_remove_all_groups_cmd_t *cmd_req);
+
+/**
+ * @brief   Send view group command
+ *
+ * @param[in]  cmd_req  pointer to the add group command @ref esp_zb_zcl_groups_add_group_cmd_s
+ *
+ */
+void esp_zb_zcl_groups_view_group_cmd_req(esp_zb_zcl_groups_add_group_cmd_t *cmd_req);
+
+/**
+ * @brief   Send get group memebership command
+ *
+ * @param[in]  cmd_req  pointer to the get group memebership command @ref esp_zb_zcl_groups_get_group_membership_cmd_s
+ *
+ */
+void esp_zb_zcl_groups_get_group_membership_cmd_req(esp_zb_zcl_groups_get_group_membership_cmd_t *cmd_req);
 
 /**
  * @brief   Send custom cluster command request

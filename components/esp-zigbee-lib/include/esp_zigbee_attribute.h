@@ -16,7 +16,7 @@ extern "C" {
  * @note  This attribute list is ready for certain cluster id to add / update attribute refer to esp_zb_xx_cluster_add_attr() and esp_zb_cluster_update_attr().
  * @note  Attribute list groups up a cluster.
  *
- * @param[in] cluster_id The cluster id for attribute list
+ * @param[in] cluster_id The cluster id for attribute list refer to esp_zb_zcl_cluster_id
  *
  * @return pointer to  @ref esp_zb_attribute_list_s
  *
@@ -29,8 +29,8 @@ esp_zb_attribute_list_t *esp_zb_zcl_attr_list_create(uint16_t cluster_id);
  * @note  Getting the local attribute from the specific endpoint and cluster.
  *
  * @param[in] endpoint The endpoint
- * @param[in] cluster_id Cluster id for attribute list
- * @param[in] cluster_role Cluster role of this cluster, either server or client role
+ * @param[in] cluster_id Cluster id for attribute list refer to esp_zb_zcl_cluster_id
+ * @param[in] cluster_role Cluster role of this cluster, either server or client role refer to esp_zb_zcl_cluster_role
  * @param[in] attr_id Attribute id
  *
  * @return pointer to  @ref esp_zb_zcl_attr_s
@@ -197,7 +197,7 @@ esp_err_t esp_zb_temperature_meas_cluster_add_attr(esp_zb_attribute_list_t *attr
 *
 * @param[in] attr_list A pointer to attribute list @ref esp_zb_attribute_list_s
 * @param[in] attr_id An attribute id to be added
-* @param[in] attr_type Type of attribute to be added
+* @param[in] attr_type Type of attribute to be added refer to esp_zb_zcl_attr_type
 * @param[in] attr_access Access type of attribute to be added
 * @param[in] value_p A pointer to attribute value wants to add
 *

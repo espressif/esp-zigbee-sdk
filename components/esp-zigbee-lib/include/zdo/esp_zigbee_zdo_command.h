@@ -9,6 +9,7 @@
 extern "C" {
 #endif
 #include "esp_zigbee_type.h"
+#include "esp_zigbee_zdo_common.h"
 
 /* MATCH DESC REQ ZCL configuration */
 #define ESP_ZB_MATCH_DESC_REQ_TIMEOUT              (5 * ESP_ZB_TIME_ONE_SECOND)            /* timeout for finding */
@@ -20,7 +21,7 @@ extern "C" {
  *
  * @note User's callback get response from the remote device that local node wants to find a particular device on endpoint.
  *
- * @param[in] zdo_status A ZDO response feedback status, 0 - response status success refer to zboss_api_zdo.h zdp_status
+ * @param[in] zdo_status A ZDO response feedback status, 0 - response status success refer to esp_zb_zdp_status
  * @param[in] addr  A short address of the device response, 0xFFFF - invalid address
  * @param[in] endpoint An endpoint of the device response, 0xFF - invalid endpoint
  *
@@ -33,11 +34,24 @@ typedef void (*esp_zb_zdo_match_desc_callback_t)(uint8_t zdo_status, uint16_t ad
  *
  * @note User's callback get response from the remote device that local node wants to get ieee address.
  *
- * @param[in] zdo_status A ZDO response feedback status, 0 - response status success refer to zboss_api_zdo.h zdp_status
+ * @param[in] zdo_status A ZDO response feedback status, 0 - response status success refer to esp_zb_zdp_status
  * @param[in] ieee_addr  A ieee address of the device response, 0xFFFF FFFF FFFF FFFF - invalid ieee address
  *
  */
 typedef void (*esp_zb_zdo_ieee_addr_callback_t)(uint8_t zdo_status, esp_zb_ieee_addr_t ieee_addr);
+
+/** Node descriptor callback
+ *
+ * @brief A ZDO Node descriptor request callback for user to get node desc info.
+ *
+ * @note User's callback get response from the remote device that local node wants to get node descriptor response.
+ *
+ * @param[in] zdo_status    A ZDO response feedback status, 0 - response status success refer to esp_zb_zdp_status
+ * @param[in] addr          A short address of the device response, 0xFFFF - invalid address
+ * @param[in] node_desc     A pointer to the node desc @ref esp_zb_af_node_desc_s
+ *
+ */
+typedef void (*esp_zb_zdo_node_desc_callback_t)(uint8_t zdo_status, uint16_t addr, esp_zb_af_node_desc_t *node_desc);
 
 /** Bind request callback
  *
@@ -45,7 +59,7 @@ typedef void (*esp_zb_zdo_ieee_addr_callback_t)(uint8_t zdo_status, esp_zb_ieee_
  *
  * @note user's callback get response from the remote device that local node wants to bind.
  *
- * @param[in] zdo_status A ZDO response feedback status, 0 - response status success refer to zboss_api_zdo.h zdp_status
+ * @param[in] zdo_status A ZDO response feedback status, 0 - response status success refer to esp_zb_zdp_status
  *
  */
 typedef void (*esp_zb_zdo_bind_callback_t)(uint8_t zdo_status);
@@ -56,7 +70,7 @@ typedef void (*esp_zb_zdo_bind_callback_t)(uint8_t zdo_status);
  *
  * @note User's callback get response from the remote device that local node wants to get active endpoint.
  *
- * @param[in] zdo_status A ZDO response feedback status, 0 - response status success refer to zboss_api_zdo.h zdp_status
+ * @param[in] zdo_status A ZDO response feedback status, 0 - response status success refer to esp_zb_zdp_status
  * @param[in] ep_count  A number of active endpoint
  * @param[in] ep_id_list A pointer of the endpoint id list
  *
@@ -69,7 +83,7 @@ typedef void (*esp_zb_zdo_active_ep_callback_t)(uint8_t zdo_status, uint8_t ep_c
  *
  * @note User's callback get response from the remote device that local node wants to get simple desc.
  *
- * @param[in] zdo_status A ZDO response feedback status, 0 - response status success refer to zboss_api_zdo.h zdp_status
+ * @param[in] zdo_status A ZDO response feedback status, 0 - response status success refer to esp_zb_zdp_status
  * @param[in] simple_desc  A pointer to the simple desc @ref esp_zb_af_simple_desc_1_1_s
  *
  */
@@ -81,7 +95,7 @@ typedef void (*esp_zb_zdo_simple_desc_callback_t)(uint8_t zdo_status, esp_zb_af_
  *
  * @note User's callback get response from the node requested to permit join.
  *
- * @param[in] zdo_status A ZDO response feedback status, 0 - response status success refer to zboss_api_zdo.h zdp_status
+ * @param[in] zdo_status A ZDO response feedback status, 0 - response status success refer to esp_zb_zdp_status
  *
  */
 typedef void (*esp_zb_zdo_permit_join_callback_t)(uint8_t zdo_status);
@@ -92,7 +106,7 @@ typedef void (*esp_zb_zdo_permit_join_callback_t)(uint8_t zdo_status);
  *
  * @note User's callback get response from the device that wants to leave.
  *
- * @param[in] zdo_status A ZDO response feedback status, 0 - response status success refer to zboss_api_zdo.h zdp_status
+ * @param[in] zdo_status A ZDO response feedback status, 0 - response status success refer to esp_zb_zdp_status
  *
  */
 typedef void (*esp_zb_zdo_leave_callback_t)(uint8_t zdo_status);
@@ -139,6 +153,14 @@ typedef struct esp_zb_zdo_ieee_addr_req_param_s {
     uint8_t    start_index;                             /*!< If the Request type for this command is Extended response, the StartIndex provides the
                                                          * starting index for the requested elements of the associated devices list */
 } esp_zb_zdo_ieee_addr_req_param_t;
+
+/**
+ * @brief The Zigbee ZDO node descriptor command struct
+ *
+ */
+typedef struct esp_zb_zdo_node_desc_req_param_s {
+    uint16_t    dst_nwk_addr;                           /*!< NWK address that is used for IEEE address mapping.  */
+} esp_zb_zdo_node_desc_req_param_t;
 
 /**
  * @brief The Zigbee ZDO simple descriptor command struct
@@ -221,6 +243,15 @@ void esp_zb_zdo_find_color_dimmable_light(esp_zb_zdo_match_desc_req_param_t *cmd
  *
  */
 void esp_zb_zdo_ieee_addr_req(esp_zb_zdo_ieee_addr_req_param_t *cmd_req, esp_zb_zdo_ieee_addr_callback_t user_cb);
+
+/**
+ * @brief   Send node descriptor request command
+ *
+ * @param[in] cmd_req  Pointer to the node descriptor request command @ref esp_zb_zdo_node_desc_req_param_s
+ * @param[in] user_cb  A user callback that will be called if received node desc response refer to esp_zb_zdo_node_desc_callback_t
+ *
+ */
+void esp_zb_zdo_node_desc_req(esp_zb_zdo_node_desc_req_param_t *cmd_req, esp_zb_zdo_node_desc_callback_t user_cb);
 
 /**
  * @brief   Send simple descriptor request command

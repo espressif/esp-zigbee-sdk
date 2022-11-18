@@ -24,6 +24,7 @@ git clone --recursive https://github.com/espressif/esp-zigbee-sdk.git
 - Check the [HA examples](examples/esp_zigbee_HA_sample) if you want to know more about Zigbee Home automation devices  
 - Check the [Customized device](examples/esp_zigbee_customized_devices) if you want to know more about customized Zigbee devices  
 - Check the [Gateway](examples/esp_zigbee_gateway) if you want to know the Zigbee Gateway  
+- Check the [CLI](examples/esp_zigbee_cli) if you want to know the Zigbee CLI command example
 
 More new details see examples's [Readme](examples/README.md)
 

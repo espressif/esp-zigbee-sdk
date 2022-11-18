@@ -7,11 +7,11 @@ This section provides the ESP Zigbee SDK's APIs that support different kind of s
    :maxdepth: 1
 
    esp_zigbee_core
-   esp_zigbee_ha_standard
+   ha/index
    esp_zigbee_attribute
    esp_zigbee_cluster
    esp_zigbee_endpoint
    esp_zigbee_secur
    esp_zigbee_type
-   esp_zigbee_zcl_command
-   esp_zigbee_zdo_command
+   zcl/index
+   zdo/index
