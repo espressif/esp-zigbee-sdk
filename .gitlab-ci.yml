@@ -114,11 +114,25 @@ build_esp32h4_beta2_zigbee_rcp_examples:
     TARGET_NAME: "esp32h4"
     EXAMPLE_PATH: "examples/esp_zigbee_rcp"
 
+#build esp_zigbee rcp for esp32c6
+build_esp32c6_zigbee_rcp_examples:
+  extends: .build_esp_zigbee_sdk_example_zigbee_template
+  variables:
+    TARGET_NAME: "esp32c6"
+    EXAMPLE_PATH: "examples/esp_zigbee_rcp"
+
 #build esp_zigbee cli for esp32h4beta2
 build_esp32h4_beta2_zigbee_cli_examples:
   extends: .build_esp_zigbee_sdk_example_zigbee_template
   variables:
     TARGET_NAME: "esp32h4"
+    EXAMPLE_PATH: "examples/esp_zigbee_cli"
+
+#build esp_zigbee cli for esp32c6
+build_esp32c6_zigbee_cli_examples:
+  extends: .build_esp_zigbee_sdk_example_zigbee_template
+  variables:
+    TARGET_NAME: "esp32c6"
     EXAMPLE_PATH: "examples/esp_zigbee_cli"
 
 #build esp_zigbee cli for esp32
@@ -148,11 +162,19 @@ build_esp32s3_zigbee_cli_examples:
   variables:
     TARGET_NAME: "esp32s3"
     EXAMPLE_PATH: "examples/esp_zigbee_cli"
+
 #build esp_zigbee customized_client for esp32h4beta2
 build_esp32h4_beta2_zigbee_customized_client_examples:
   extends: .build_esp_zigbee_sdk_example_zigbee_template
   variables:
     TARGET_NAME: "esp32h4"
+    EXAMPLE_PATH: "examples/esp_zigbee_customized_devices/customized_client"
+
+#build esp_zigbee customized_client for esp32c6
+build_esp32c6_zigbee_customized_client_examples:
+  extends: .build_esp_zigbee_sdk_example_zigbee_template
+  variables:
+    TARGET_NAME: "esp32c6"
     EXAMPLE_PATH: "examples/esp_zigbee_customized_devices/customized_client"
 
 #build esp_zigbee customized_server for esp32h4beta2
@@ -162,18 +184,39 @@ build_esp32h4_beta2_zigbee_customized_server_examples:
     TARGET_NAME: "esp32h4"
     EXAMPLE_PATH: "examples/esp_zigbee_customized_devices/customized_server"
 
+#build esp_zigbee customized_server for esp32c6
+build_esp32c6_zigbee_customized_server_examples:
+  extends: .build_esp_zigbee_sdk_example_zigbee_template
+  variables:
+    TARGET_NAME: "esp32c6"
+    EXAMPLE_PATH: "examples/esp_zigbee_customized_devices/customized_server"
+
 #build esp_zigbee ota_client for esp32h4beta2
-build_esp32h4_beta2_zigbee_customized_client_examples:
+build_esp32h4_beta2_zigbee_ota_client_examples:
   extends: .build_esp_zigbee_sdk_example_zigbee_template
   variables:
     TARGET_NAME: "esp32h4"
     EXAMPLE_PATH: "examples/esp_zigbee_ota/ota_client"
 
+#build esp_zigbee ota_client for esp32c6
+build_esp32c6_zigbee_ota_client_examples:
+  extends: .build_esp_zigbee_sdk_example_zigbee_template
+  variables:
+    TARGET_NAME: "esp32c6"
+    EXAMPLE_PATH: "examples/esp_zigbee_ota/ota_client"
+
 #build esp_zigbee ota_server for esp32h4beta2
-build_esp32h4_beta2_zigbee_customized_server_examples:
+build_esp32h4_beta2_zigbee_ota_server_examples:
   extends: .build_esp_zigbee_sdk_example_zigbee_template
   variables:
     TARGET_NAME: "esp32h4"
+    EXAMPLE_PATH: "examples/esp_zigbee_ota/ota_server"
+
+#build esp_zigbee ota_server for esp32c6
+build_esp32c6_zigbee_ota_server_examples:
+  extends: .build_esp_zigbee_sdk_example_zigbee_template
+  variables:
+    TARGET_NAME: "esp32c6"
     EXAMPLE_PATH: "examples/esp_zigbee_ota/ota_server"
 
 #build esp_zigbee HA color dimmable light for esp32h4beta2
@@ -183,11 +226,25 @@ build_esp32h4_beta2_zigbee_color_dimmable_light_examples:
     TARGET_NAME: "esp32h4"
     EXAMPLE_PATH: "examples/esp_zigbee_HA_sample/HA_color_dimmable_light"
 
+#build esp_zigbee HA color dimmable light for esp32c6
+build_esp32c6_zigbee_color_dimmable_light_examples:
+  extends: .build_esp_zigbee_sdk_example_zigbee_template
+  variables:
+    TARGET_NAME: "esp32c6"
+    EXAMPLE_PATH: "examples/esp_zigbee_HA_sample/HA_color_dimmable_light"
+
 #build esp_zigbee HA color dimmable switch for esp32h4beta2
 build_esp32h4_beta2_zigbee_color_dimmable_switch_examples:
   extends: .build_esp_zigbee_sdk_example_zigbee_template
   variables:
     TARGET_NAME: "esp32h4"
+    EXAMPLE_PATH: "examples/esp_zigbee_HA_sample/HA_color_dimmable_switch"
+
+#build esp_zigbee HA color dimmable switch for esp32c6
+build_esp32c6_zigbee_color_dimmable_switch_examples:
+  extends: .build_esp_zigbee_sdk_example_zigbee_template
+  variables:
+    TARGET_NAME: "esp32c6"
     EXAMPLE_PATH: "examples/esp_zigbee_HA_sample/HA_color_dimmable_switch"
 
 #build esp_zigbee HA on_off light for esp32h4beta2
@@ -197,11 +254,25 @@ build_esp32h4_beta2_zigbee_on_off_light_examples:
     TARGET_NAME: "esp32h4"
     EXAMPLE_PATH: "examples/esp_zigbee_HA_sample/HA_on_off_light"
 
+#build esp_zigbee HA on_off light for esp32c6
+build_esp32c6_zigbee_on_off_light_examples:
+  extends: .build_esp_zigbee_sdk_example_zigbee_template
+  variables:
+    TARGET_NAME: "esp32c6"
+    EXAMPLE_PATH: "examples/esp_zigbee_HA_sample/HA_on_off_light"
+
 #build esp_zigbee HA color dimmable light for esp32h4beta2
 build_esp32h4_beta2_zigbee_on_off_switch_examples:
   extends: .build_esp_zigbee_sdk_example_zigbee_template
   variables:
     TARGET_NAME: "esp32h4"
+    EXAMPLE_PATH: "examples/esp_zigbee_HA_sample/HA_on_off_switch"
+
+#build esp_zigbee HA color dimmable light for esp32c6
+build_esp32c6_zigbee_on_off_switch_examples:
+  extends: .build_esp_zigbee_sdk_example_zigbee_template
+  variables:
+    TARGET_NAME: "esp32c6"
     EXAMPLE_PATH: "examples/esp_zigbee_HA_sample/HA_on_off_switch"
 
 build_docs:

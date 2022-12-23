@@ -21,7 +21,7 @@
 #define MAX_CHILDREN                    10          /* the max amount of connected devices */
 #define INSTALLCODE_POLICY_ENABLE       true    /* enable the install code policy for security */
 
-#if CONFIG_IDF_TARGET_ESP32H4
+#if CONFIG_SOC_IEEE802154_SUPPORTED
 #define ESP_ZB_DEFAULT_RADIO_CONFIG()                         \
     {                                                         \
         .radio_mode = RADIO_MODE_NATIVE,                      \

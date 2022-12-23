@@ -1,5 +1,5 @@
-| Supported Targets | ESP32-H2 |
-| ----------------- | -------- |
+| Supported Targets | ESP32-H2 | ESP32-C6 |
+| ----------------- | -------- | -------- |
 
 # OTA Upgrade Example 
 
@@ -13,7 +13,7 @@ This example code shows how to add OTA server parameter, add OTA server cluster 
 
 ## Configure the project
 
-Before project configuration and build, set the correct chip target using `idf.py --preview set-target esp32h2`.
+Before project configuration and build, set the correct chip target using `idf.py --preview set-target TARGET` command.
 
 ## Erase the NVRAM 
 

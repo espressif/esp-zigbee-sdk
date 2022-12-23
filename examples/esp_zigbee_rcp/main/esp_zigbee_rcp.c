@@ -12,6 +12,7 @@
  * CONDITIONS OF ANY KIND, either express or implied.
  */
 
+#include "nvs_flash.h"
 #include "esp_log.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -48,6 +49,7 @@ void app_main(void)
         .radio_config = ESP_ZB_DEFAULT_RADIO_CONFIG(),
         .host_config = ESP_ZB_DEFAULT_HOST_CONFIG(),
     };
+    ESP_ERROR_CHECK(nvs_flash_init());
     /* load Zigbee rcp platform config to initialization */
     esp_zb_macsplit_set_version(RCP_COMPILE_DEFINE);
     ESP_ERROR_CHECK(esp_zb_platform_config(&config));

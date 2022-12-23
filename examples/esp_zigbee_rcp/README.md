@@ -1,5 +1,5 @@
-| Supported Targets | ESP32-H2 |
-| ----------------- | -------- |
+| Supported Targets | ESP32-H2 | ESP32-C6 |
+| ----------------- | -------- | -------- |
 
 # Rcp Example 
 
@@ -14,7 +14,7 @@ This test code shows how to configure Zigbee rcp (radio co-processor) device. Rc
 
 ## Configure the project
 
-Before project configuration and build, make sure to set the correct chip target using `idf.py --preview set-target esp32h2`
+Before project configuration and build, make sure to set the correct chip target using `idf.py --preview set-target TARGET` command.
 
 ## Erase the NVRAM 
 
