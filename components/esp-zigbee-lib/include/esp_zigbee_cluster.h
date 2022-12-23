@@ -156,6 +156,17 @@ esp_zb_attribute_list_t *esp_zb_door_lock_cluster_create(esp_zb_door_lock_cluste
  */
 esp_zb_attribute_list_t *esp_zb_temperature_meas_cluster_create(esp_zb_temperature_meas_cluster_cfg_t *temperature_cfg);
 
+/**
+ * @brief  Create a standard OTA cluster attribute list
+ *
+ * @note  This only contains the mandatory attribute
+ * @param[in] ota_cfg  Configuration parameters for this cluster defined by @ref esp_zb_ota_cluster_cfg_s
+ *
+ * @return pointer to attribute list @ref esp_zb_attribute_list_s
+ *
+ */
+esp_zb_attribute_list_t *esp_zb_ota_cluster_create(esp_zb_ota_cluster_cfg_t *ota_cfg);
+
 /**************************************** ADD CLUSTER ***********************************/
 /**
  * @brief Add basic cluster (attribute list) in a cluster list.
@@ -310,6 +321,20 @@ esp_err_t esp_zb_cluster_list_add_door_lock_cluster(esp_zb_cluster_list_t *clust
  *
  */
 esp_err_t esp_zb_cluster_list_add_temperature_meas_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
+
+/**
+ * @brief Add OTA cluster (attribute list) in a cluster list.
+ *
+ * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
+ * @param[in] attr_list  An attribute list which wants to add
+ * @param[in] role_mask  A role of server or client for this cluster (attribute list) refer to esp_zb_zcl_cluster_role
+ *
+ * @return
+ *      - ESP_OK on success
+ *      - ESP_ERR_INVALID_ARG if cluster list not initialized
+ *
+ */
+esp_err_t esp_zb_cluster_list_add_ota_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 /**
 * @brief Add customised cluster (attribute list) in a cluster list.
@@ -481,6 +506,20 @@ esp_err_t esp_zb_cluster_list_update_door_lock_cluster(esp_zb_cluster_list_t *cl
  *
  */
 esp_err_t esp_zb_cluster_list_update_temperature_meas_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
+
+/**
+ * @brief Update OTA cluster (attribute list) in a cluster list.
+ *
+ * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
+ * @param[in] attr_list  An attribute list which wants to update
+ * @param[in] role_mask  A role of server or client for this cluster (attribute list) refer to esp_zb_zcl_cluster_role
+ *
+ * @return
+ *      - ESP_OK on success
+ *      - ESP_ERR_INVALID_ARG if cluster list not initialized
+ *
+ */
+esp_err_t esp_zb_cluster_list_update_ota_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 /**
  * @brief Update Customised cluster (attribute list) in a cluster list.

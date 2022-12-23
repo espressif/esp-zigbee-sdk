@@ -101,8 +101,9 @@ typedef struct esp_zb_zdo_signal_leave_params_s {
  * @note Stack passes this parameter to application upon receipt of leave indication primitive.
  */
 typedef struct esp_zb_zdo_signal_leave_indication_params_s {
-    esp_zb_ieee_addr_t device_addr;       /*!< Long address of device requested to leave or leaving device*/
-    uint8_t rejoin;                       /*!< 1 if this was leave with rejoin; 0 - otherwise */
+    uint16_t short_addr;                    /*!< Short address of device requested to leave or leaving device*/
+    esp_zb_ieee_addr_t device_addr;         /*!< Long address of device requested to leave or leaving device*/
+    uint8_t rejoin;                         /*!< 1 if this was leave with rejoin; 0 - otherwise */
 } esp_zb_zdo_signal_leave_indication_params_t;
 
 /**

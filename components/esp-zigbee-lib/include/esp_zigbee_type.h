@@ -238,6 +238,27 @@ typedef struct esp_zb_endpoint_s {
 } ESP_ZB_PACKED_STRUCT
 esp_zb_endpoint_t;
 
+/**
+ * @brief The Zigbee ZCL OTA upgrade server parameter struct.
+ *
+ */
+typedef struct esp_zb_ota_upgrade_server_parameter_s {
+  uint8_t query_jitter;                     /*!< Query jitter */
+  uint32_t current_time;                    /*!< Current time of OTA server */
+} esp_zb_ota_upgrade_server_parameter_t;
+
+/**
+ * @brief The Zigbee ZCL OTA upgrade client parameter struct.
+ *
+ * @note Currently field control is set to bit mask 1, later will support the other bit mask
+ *
+ */
+typedef struct esp_zb_ota_upgrade_client_parameter_s {
+  uint16_t query_timer;                    /*!< Time interval for query next image request command */
+  uint16_t hardware_version;               /*!< Version of hardware */
+  uint8_t max_data_size;                   /*!< Maximum data size of query block image */
+} esp_zb_ota_upgrade_client_parameter_t;
+
 /******************* attribute list *******************/
 /**
  * @brief The esp-zigbee data model of list of attribute.
@@ -375,6 +396,21 @@ typedef struct esp_zb_temperature_meas_cluster_cfg_s {
     int16_t min_value;                          /*!<  The attribute indicates minimum value of the measured value */
     int16_t max_value;                          /*!<  The attribute indicates maximum value of the measured value */
 } esp_zb_temperature_meas_cluster_cfg_t;
+
+/**
+ * @brief Zigbee standard mandatory attribute for OTA client cluster.
+ *
+ */
+typedef struct esp_zb_ota_cluster_cfg_s {
+    uint32_t ota_upgrade_file_version;            /*!<  The attribute indicates the file version of the running firmware image on the device */
+    uint16_t ota_upgrade_manufacturer;            /*!<  The attribute indicates the value for the manufacturer of the device */
+    uint16_t ota_upgrade_image_type;              /*!<  The attribute indicates the the image type of the file that the client is currently downloading */
+    uint16_t ota_min_block_reque;                 /*!<  The attribute indicates the delay between Image Block Request commands in milliseconds */
+    uint32_t ota_upgrade_file_offset;             /*!<  The attribute indicates the the current location in the OTA upgrade image. */
+    uint32_t ota_upgrade_downloaded_file_ver;     /*!<  The attribute indicates the file version of the downloaded image on the device*/
+    esp_zb_ieee_addr_t ota_upgrade_server_id;     /*!<  The attribute indicates the address of the upgrade server */
+    uint8_t ota_image_upgrade_status;             /*!<  The attribute indicates the image upgrade status of the client device */
+} esp_zb_ota_cluster_cfg_t;
 
 /****************** standard device config *********************/
 /**

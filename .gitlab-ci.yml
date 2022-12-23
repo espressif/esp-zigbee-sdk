@@ -162,6 +162,20 @@ build_esp32h4_beta2_zigbee_customized_server_examples:
     TARGET_NAME: "esp32h4"
     EXAMPLE_PATH: "examples/esp_zigbee_customized_devices/customized_server"
 
+#build esp_zigbee ota_client for esp32h4beta2
+build_esp32h4_beta2_zigbee_customized_client_examples:
+  extends: .build_esp_zigbee_sdk_example_zigbee_template
+  variables:
+    TARGET_NAME: "esp32h4"
+    EXAMPLE_PATH: "examples/esp_zigbee_ota/ota_client"
+
+#build esp_zigbee ota_server for esp32h4beta2
+build_esp32h4_beta2_zigbee_customized_server_examples:
+  extends: .build_esp_zigbee_sdk_example_zigbee_template
+  variables:
+    TARGET_NAME: "esp32h4"
+    EXAMPLE_PATH: "examples/esp_zigbee_ota/ota_server"
+
 #build esp_zigbee HA color dimmable light for esp32h4beta2
 build_esp32h4_beta2_zigbee_color_dimmable_light_examples:
   extends: .build_esp_zigbee_sdk_example_zigbee_template

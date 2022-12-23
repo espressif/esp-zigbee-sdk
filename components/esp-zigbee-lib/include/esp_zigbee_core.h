@@ -18,6 +18,7 @@ extern "C" {
 #include "zcl/esp_zigbee_zcl_command.h"
 #include "zdo/esp_zigbee_zdo_command.h"
 #include "esp_zigbee_secur.h"
+#include "esp_zigbee_ota.h"
 
 /** Enum of the Zigbee network device type
  * @anchor esp_zb_nwk_device_type_t
@@ -107,53 +108,84 @@ typedef void (*esp_zb_read_attr_resp_callback_t)(uint8_t status, uint16_t attr_i
  *
  * @brief Add group cluster callback for user to get group id info
  *
- * @param[in] status Status of the add group cluster response
+ * @param[in] status Status of the add group cluster response, refer to esp_zb_zcl_status_t success status - 0  invalid value status - 135
  * @param[in] group_id Group id that added
  *
  */
-typedef void (*esp_zb_add_group_resp_callback_t)(uint8_t status, uint16_t group_id);
+typedef void (*esp_zb_add_group_resp_callback_t)(esp_zb_zcl_status_t status, uint16_t group_id);
 
 /** Groups cluster remove group response callback
  *
  * @brief Remove group cluster callback for user to get group id info
  *
- * @param[in] status Status of the remove group cluster response
+ * @param[in] status Status of the remove group cluster response, refer to esp_zb_zcl_status_t success status - 0  invalid value status - 135
  * @param[in] group_id Group id that removed
  *
  */
-typedef void (*esp_zb_remove_group_resp_callback_t)(uint8_t status, uint16_t group_id);
+typedef void (*esp_zb_remove_group_resp_callback_t)(esp_zb_zcl_status_t status, uint16_t group_id);
 
 /** Groups cluster view group response callback
  *
  * @brief View group cluster callback for user to get group id info
  *
- * @param[in] status Status of the view group cluster response
+ * @param[in] status Status of the view group cluster response, refer to esp_zb_zcl_status_t success status - 0  invalid value status - 135
  * @param[in] group_id Group id that to be viewed
  *
  */
-typedef void (*esp_zb_view_group_resp_callback_t)(uint8_t status, uint16_t group_id);
+typedef void (*esp_zb_view_group_resp_callback_t)(esp_zb_zcl_status_t status, uint16_t group_id);
 
 /** Groups cluster get group membership response callback
  *
  * @brief Get group cluster membership callback for user to get group info
  *
- * @param[in] status Status of the get membership group cluster response
+ * @param[in] status Status of the get membership group cluster response, refer to esp_zb_zcl_status_t success status - 0  fail status - 1
  * @param[in] group_table_capacity Group table capacity that reported
  * @param[in] group_count Group count that reported
  * @param[in] group_id_list Group id list that acquired
  *
  */
-typedef void (*esp_zb_get_group_membership_resp_callback_t)(uint8_t status, uint8_t group_table_capacity, uint8_t group_count, uint16_t *group_id_list);
+typedef void (*esp_zb_get_group_membership_resp_callback_t)(esp_zb_zcl_status_t status, uint8_t group_table_capacity, uint8_t group_count, uint16_t *group_id_list);
+
+/** Scenes cluster store command callback
+ *
+ * @brief Store scenes state callback for user to save data entry.
+ *
+ * @param[in] status Status of the store scene command, refer to esp_zb_zcl_status_t success status - 0  invalid field status - 133
+ * @param[in] field_data A pointer to scenes extension field @ref esp_zb_zcl_scenes_extension_field_s
+ *
+ */
+typedef void (*esp_zb_scenes_store_cmd_callback_t)(esp_zb_zcl_status_t status, esp_zb_zcl_scenes_extension_field_t *field_data);
+
+/** Scenes cluster recall command callback
+ *
+ * @brief Recall scenes callback for user to recall specific entry.
+ *
+ * @param[in] status Status of the recall scene command, refer to esp_zb_zcl_status_t success status - 0  status not found - 139
+ * @param[in] field_data A pointer to scenes extension field @ref esp_zb_zcl_scenes_extension_field_s
+ *
+ */
+typedef void (*esp_zb_scenes_recall_cmd_callback_t)(esp_zb_zcl_status_t status, esp_zb_zcl_scenes_extension_field_t* field_data);
+
+/** OTA upgrade status callback
+ *
+ * @brief OTA upgrade callback for user to get upgrade status
+ *
+ * @param[in] status Status of the OTA upgrade refer to esp_zb_zcl_ota_upgrade_status_t started OTA upgrade - 0
+ * received OTA upgrade - 2  finished OTA upgrade - 3
+ *
+ */
+typedef void (*esp_zb_ota_upgrade_status_callback_t)(esp_zb_zcl_ota_upgrade_status_t status);
 
 /** Customized cluster command callback
  *
- * @brief A customized cluster command callback for user to get value info
+ * @brief A customized cluster command received from remote node and callback for user to get value info
  *
  * @param[in] status Status of the custom command request
- * @param[in] value A pointer to the attribute data value
+ * @param[in] data_type Data type of the added data value refer to esp_zb_zcl_attr_type_t
+ * @param[in] value A pointer to the attribute data value based on supported data types @ref esp_zb_zcl_custom_cluster_cmd_req_s
  *
  */
-typedef void (*esp_zb_custom_cluster_cmd_callback_t)(uint8_t status, void *value);
+typedef void (*esp_zb_custom_cluster_cmd_callback_t)(uint8_t status, esp_zb_zcl_attr_type_t data_type, void *value);
 
 /** CLI response callback
  *
@@ -445,7 +477,7 @@ void esp_zb_device_add_report_attr_cb(esp_zb_report_attr_callback_t cb);
 void esp_zb_add_read_attr_resp_cb(uint8_t endpoint, esp_zb_read_attr_resp_callback_t cb);
 
 /**
- * @brief   Set the ZCL groups cluster add group response callback for specific endpoint.
+ * @brief   Set the ZCL groups cluster add group response callback for specific endpoint for client.
  *
  * @note  Set a callback being called on receive add group cluster response. The callback will
  *  be provided with all data necessary for correct attribute handling.
@@ -456,7 +488,7 @@ void esp_zb_add_read_attr_resp_cb(uint8_t endpoint, esp_zb_read_attr_resp_callba
 void esp_zb_groups_add_group_resp_cb(uint8_t endpoint, esp_zb_add_group_resp_callback_t cb);
 
 /**
- * @brief   Set the ZCL groups cluster remove group response callback for specific endpoint.
+ * @brief   Set the ZCL groups cluster remove group response callback for specific endpoint for client.
  *
  * @note  Set a callback being called on receive remove group cluster response. The callback will
  *  be provided with all data necessary for correct attribute handling.
@@ -467,7 +499,7 @@ void esp_zb_groups_add_group_resp_cb(uint8_t endpoint, esp_zb_add_group_resp_cal
 void esp_zb_groups_remove_group_resp_cb(uint8_t endpoint, esp_zb_remove_group_resp_callback_t cb);
 
 /**
- * @brief   Set the ZCL groups cluster view group response callback for specific endpoint.
+ * @brief   Set the ZCL groups cluster view group response callback for specific endpoint for client.
  *
  * @note  Set a callback being called on receive view group cluster response. The callback will
  *  be provided with all data necessary for correct attribute handling.
@@ -478,7 +510,7 @@ void esp_zb_groups_remove_group_resp_cb(uint8_t endpoint, esp_zb_remove_group_re
 void esp_zb_groups_view_group_resp_cb(uint8_t endpoint, esp_zb_view_group_resp_callback_t cb);
 
 /**
- * @brief   Set the ZCL groups cluster get group membership response callback for specific endpoint.
+ * @brief   Set the ZCL groups cluster get group membership response callback for specific endpoint for client.
  *
  * @note  Set a callback being called on receive get group cluster membership response. The callback will
  *  be provided with all data necessary for correct attribute handling.
@@ -487,6 +519,36 @@ void esp_zb_groups_view_group_resp_cb(uint8_t endpoint, esp_zb_view_group_resp_c
  *
  */
 void esp_zb_groups_get_group_membership_resp_cb(uint8_t endpoint, esp_zb_get_group_membership_resp_callback_t cb);
+
+/**
+ * @brief   Set the ZCL scenes cluster store command callback for server.
+ *
+ * @note  Set a callback (optional) being called on receive scenes store command. The callback provides the
+ *  content of exactly extension field stored to the scenes table.
+ * @param[in] cb A scenes cluster store callback that user used refer to esp_zb_scenes_store_cmd_callback_t
+ *
+ */
+void esp_zb_add_scenes_store_cmd_cb(esp_zb_scenes_store_cmd_callback_t cb);
+
+/**
+ * @brief   Set the ZCL scenes cluster recall command callback for server.
+ *
+ * @note  Set a callback (optional) being called on receive scenes recall command. The callback provides the
+ *  content of exactly extension field is recalled from the scenes table.
+ * @param[in] cb A scenes cluster recall callback that user used refer to esp_zb_scenes_recall_cmd_callback_t
+ *
+ */
+void esp_zb_add_scenes_recall_cmd_cb(esp_zb_scenes_recall_cmd_callback_t cb);
+
+/**
+ * @brief   Set the ZCL OTA upgrade status callback for client.
+ *
+ * @note  Set a callback being called on receive OTA upgrade response. The callback will
+ *  be provided with all data necessary for correct attribute handling.
+ * @param[in] cb A device callback that user used refer to esp_zb_ota_upgrade_status_callback_t
+ *
+ */
+void esp_zb_device_add_ota_upgrade_status_cb(esp_zb_ota_upgrade_status_callback_t cb);
 
 /**
  * @brief   Set the ZCL customized cluster command request callback for specific endpoint.
