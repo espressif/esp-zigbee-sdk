@@ -1,0 +1,67 @@
+# Documentation: .gitlab/ci/README.md#manifest-file-to-control-the-buildtest-apps
+
+examples/esp_zigbee_cli:
+  enable:
+    - if: IDF_TARGET in ["esp32", "esp32s2", "esp32c3", "esp32h4", "esp32s3"]
+      temporary: true
+      reason: the other targets are not tested yet
+
+examples/esp_zigbee_customized_devices/customized_client:
+  enable:
+    - if: IDF_TARGET in ["esp32h4", "esp32c6"]
+      temporary: true
+      reason: the other targets are not tested yet
+
+examples/esp_zigbee_customized_devices/customized_server:
+  enable:
+    - if: IDF_TARGET in ["esp32h4", "esp32c6"]
+      temporary: true
+      reason: the other targets are not tested yet
+
+examples/esp_zigbee_ota/ota_client:
+  enable:
+    - if: IDF_TARGET in ["esp32h4", "esp32c6"]
+      temporary: true
+      reason: the other targets are not tested yet
+
+examples/esp_zigbee_ota/ota_server:
+  enable:
+    - if: IDF_TARGET in ["esp32h4", "esp32c6"]
+      temporary: true
+      reason: the other targets are not tested yet
+
+examples/esp_zigbee_gateway:
+  enable:
+    - if: IDF_TARGET in ["esp32", "esp32s2", "esp32c3", "esp32s3"]
+      temporary: true
+      reason: the other targets are not tested yet
+
+examples/esp_zigbee_HA_sample/HA_color_dimmable_light:
+  enable:
+    - if: IDF_TARGET in ["esp32h4", "esp32c6"]
+      temporary: true
+      reason: the other targets are not tested yet
+
+examples/esp_zigbee_HA_sample/HA_color_dimmable_switch:
+  enable:
+    - if: IDF_TARGET in ["esp32h4", "esp32c6"]
+      temporary: true
+      reason: the other targets are not tested yet
+
+examples/esp_zigbee_HA_sample/HA_on_off_light:
+  enable:
+    - if: IDF_TARGET in ["esp32h4", "esp32c6"]
+      temporary: true
+      reason: the other targets are not tested yet
+
+examples/esp_zigbee_HA_sample/HA_on_off_switch:
+  enable:
+    - if: IDF_TARGET in ["esp32h4", "esp32c6"]
+      temporary: true
+      reason: the other targets are not tested yet
+
+examples/esp_zigbee_rcp:
+  enable:
+    - if: IDF_TARGET in ["esp32h4", "esp32c6"]
+      temporary: true
+      reason: the other targets are not tested yet

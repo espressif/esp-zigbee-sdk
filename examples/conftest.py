@@ -197,10 +197,6 @@ def junit_properties(
 def pytest_addoption(parser: pytest.Parser) -> None:
     base_group = parser.getgroup('idf')
     base_group.addoption(
-        '--sdkconfig',
-        help='sdkconfig postfix, like sdkconfig.ci.<config>. (Default: None, which would build all found apps)',
-    )
-    base_group.addoption(
         '--known-failure-cases-file', help='known failure cases file path'
     )
 
@@ -223,8 +219,6 @@ def pytest_configure(config: Config) -> None:
 
     config.stash[_idf_pytest_embedded_key] = IdfPytestEmbedded(
         target=target,
-        sdkconfig=config.getoption('sdkconfig'),
-        known_failure_cases_file=config.getoption('known_failure_cases_file'),
     )
     config.pluginmanager.register(config.stash[_idf_pytest_embedded_key])
 
@@ -240,16 +234,9 @@ class IdfPytestEmbedded:
     def __init__(
         self,
         target: Optional[str] = None,
-        sdkconfig: Optional[str] = None,
-        known_failure_cases_file: Optional[str] = None,
     ):
         # CLI options to filter the test cases
         self.target = target
-        self.sdkconfig = sdkconfig
-        self.known_failure_patterns = self._parse_known_failure_cases_file(
-            known_failure_cases_file
-        )
-
         self._failed_cases: List[
             Tuple[str, bool, bool]
         ] = []  # (test_case_name, is_known_failure_cases, is_xfail)
@@ -258,37 +245,13 @@ class IdfPytestEmbedded:
     def failed_cases(self) -> List[str]:
         return [
             case
-            for case, is_known, is_xfail in self._failed_cases
-            if not is_known and not is_xfail
+            for case, is_xfail in self._failed_cases
+            if not is_xfail
         ]
 
     @property
-    def known_failure_cases(self) -> List[str]:
-        return [case for case, is_known, _ in self._failed_cases if is_known]
-
-    @property
     def xfail_cases(self) -> List[str]:
-        return [case for case, _, is_xfail in self._failed_cases if is_xfail]
-
-    @staticmethod
-    def _parse_known_failure_cases_file(
-        known_failure_cases_file: Optional[str] = None,
-    ) -> List[str]:
-        if not known_failure_cases_file or not os.path.isfile(known_failure_cases_file):
-            return []
-
-        patterns = []
-        with open(known_failure_cases_file) as fr:
-            for line in fr.readlines():
-                if not line:
-                    continue
-                if not line.strip():
-                    continue
-                without_comments = line.split('#')[0].strip()
-                if without_comments:
-                    patterns.append(without_comments)
-
-        return patterns
+        return [case for case, is_xfail in self._failed_cases if is_xfail]
 
     @pytest.hookimpl(tryfirst=True)
     def pytest_sessionstart(self, session: Session) -> None:
@@ -349,31 +312,16 @@ class IdfPytestEmbedded:
                 item for item in items if self.target in item_marker_names(item)
             ]
 
-        # filter all the test cases with cli option "config"
-        if self.sdkconfig:
-            items[:] = [
-                item for item in items if _get_param_config(item) == self.sdkconfig
-            ]
-
     def pytest_runtest_makereport(
         self, item: Function, call: CallInfo[None]
     ) -> Optional[TestReport]:
         report = TestReport.from_item_and_call(item, call)
         if report.outcome == 'failed':
             test_case_name = item.funcargs.get('test_case_name', '')
-            is_known_failure = self._is_known_failure(test_case_name)
             is_xfail = report.keywords.get('xfail', False)
-            self._failed_cases.append((test_case_name, is_known_failure, is_xfail))
+            self._failed_cases.append((test_case_name, is_xfail))
 
         return report
-
-    def _is_known_failure(self, case_id: str) -> bool:
-        for pattern in self.known_failure_patterns:
-            if case_id == pattern:
-                return True
-            if fnmatch(case_id, pattern):
-                return True
-        return False
 
     @pytest.hookimpl(trylast=True)
     def pytest_runtest_teardown(self, item: Function) -> None:
@@ -407,14 +355,8 @@ class IdfPytestEmbedded:
         if exitstatus != 0:
             if exitstatus == ExitCode.NO_TESTS_COLLECTED:
                 session.exitstatus = 0
-            elif self.known_failure_cases and not self.failed_cases:
-                session.exitstatus = 0
 
     def pytest_terminal_summary(self, terminalreporter: TerminalReporter) -> None:
-        if self.known_failure_cases:
-            terminalreporter.section('Known failure cases', bold=True, yellow=True)
-            terminalreporter.line('\n'.join(self.known_failure_cases))
-
         if self.xfail_cases:
             terminalreporter.section('xfail cases', bold=True, yellow=True)
             terminalreporter.line('\n'.join(self.xfail_cases))

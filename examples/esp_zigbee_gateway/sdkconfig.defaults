@@ -37,7 +37,7 @@ CONFIG_ZB_RADIO_MACSPLIT_UART=y
 #
 # ESP Zigbee gateway rcp update
 #
-CONFIG_ZIGBEE_GW_AUTO_UPDATE_RCP=y
+CONFIG_ZIGBEE_GW_AUTO_UPDATE_RCP=n
 #
 # Board Configuration
 #
