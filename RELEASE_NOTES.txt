@@ -67,3 +67,32 @@ Bug Fixes
 ---------
 
 -Bug fixed for buffer length issue on customized cluster command
+
+
+# 23-Dec-2022
+
+Versions
+--------
+0.4.1 version release of ESP-ZIGBEE-SDK
+
+Features
+--------
+
+-esp-zigbee-lib version updated to 0.4.1
+-Add support for esp32c6
+-Update examples to support esp32c6
+-Add esp32c6 target in CI test
+
+
+Known Issues
+------------
+
+
+New Changes
+-----------
+
+
+Bug Fixes
+---------
+
+-Bug fixed for rcp_incompatible_switch_port

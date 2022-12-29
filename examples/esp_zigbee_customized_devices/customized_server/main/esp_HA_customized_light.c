@@ -16,6 +16,7 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "esp_HA_customized_light.h"
+#include "nvs_flash.h"
 
 static const char *TAG = "ESP_HA_ON_OFF_LIGHT";
 /********************* Define functions **************************/
@@ -150,6 +151,7 @@ void app_main(void)
         .radio_config = ESP_ZB_DEFAULT_RADIO_CONFIG(),
         .host_config = ESP_ZB_DEFAULT_HOST_CONFIG(),
     };
+    ESP_ERROR_CHECK(nvs_flash_init());
     /* load Zigbee platform config to initialization */
     ESP_ERROR_CHECK(esp_zb_platform_config(&config));
     /* hardware related and device init */
