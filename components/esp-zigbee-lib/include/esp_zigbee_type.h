@@ -50,6 +50,16 @@ typedef struct esp_zb_zcl_addr_s {
 esp_zb_zcl_addr_t;
 
 /**
+ * @brief Type to represent header info callback of ZCL message
+ */
+typedef struct esp_zb_zcl_cmd_cb_s {
+    esp_zb_zcl_addr_t zcl_addr_u;               /*!< ZCL command source node single short address, group address or ieee address */
+    uint8_t  dst_endpoint;                      /*!< ZCL command destination endpoint */
+    uint8_t  src_endpoint;                      /*!< ZCL command source endpoint */
+} ESP_ZB_PACKED_STRUCT
+esp_zb_zcl_cmd_cb_t;
+
+/**
  * @brief Type to represent ZCL attribute definition structure
  * @note Access define refer to zcl_attr_access
  */
@@ -243,8 +253,8 @@ esp_zb_endpoint_t;
  *
  */
 typedef struct esp_zb_ota_upgrade_server_parameter_s {
-  uint8_t query_jitter;                     /*!< Query jitter */
-  uint32_t current_time;                    /*!< Current time of OTA server */
+    uint8_t query_jitter;                     /*!< Query jitter */
+    uint32_t current_time;                    /*!< Current time of OTA server */
 } esp_zb_ota_upgrade_server_parameter_t;
 
 /**
@@ -254,9 +264,9 @@ typedef struct esp_zb_ota_upgrade_server_parameter_s {
  *
  */
 typedef struct esp_zb_ota_upgrade_client_parameter_s {
-  uint16_t query_timer;                    /*!< Time interval for query next image request command */
-  uint16_t hardware_version;               /*!< Version of hardware */
-  uint8_t max_data_size;                   /*!< Maximum data size of query block image */
+    uint16_t query_timer;                    /*!< Time interval for query next image request command */
+    uint16_t hardware_version;               /*!< Version of hardware */
+    uint8_t max_data_size;                   /*!< Maximum data size of query block image */
 } esp_zb_ota_upgrade_client_parameter_t;
 
 /******************* attribute list *******************/

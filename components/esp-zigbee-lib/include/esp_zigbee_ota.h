@@ -17,10 +17,10 @@ extern "C" {
  *
  */
 typedef struct esp_zb_ota_file_header_s {
-  uint16_t manufacturer_code;                /*!< OTA header manufacturer code */
-  uint16_t image_type;                       /*!< Image type value to distinguish the products */
-  uint32_t file_version;                     /*!< File version represents the release and build number of the image’s application and stack */
-  uint32_t image_size;                       /*!< Total image size in bytes transferred from the server to the client */
+    uint16_t manufacturer_code;                /*!< OTA header manufacturer code */
+    uint16_t image_type;                       /*!< Image type value to distinguish the products */
+    uint32_t file_version;                     /*!< File version represents the release and build number of the image’s application and stack */
+    uint32_t image_size;                       /*!< Total image size in bytes transferred from the server to the client */
 } esp_zb_ota_file_header_t;
 
 /**
@@ -50,7 +50,7 @@ void *esp_zb_ota_server_parameter(esp_zb_ota_upgrade_server_parameter_t *config)
  * @param[in]  esp_zb_ota_config  pointer to the OTA config @ref esp_zb_ota_cfg_s
  *
  */
-void esp_zb_ota_server_init(esp_zb_ota_cfg_t* esp_zb_ota_config);
+void esp_zb_ota_server_init(esp_zb_ota_cfg_t *esp_zb_ota_config);
 
 /**
  * @brief   Start OTA server

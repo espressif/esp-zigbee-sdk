@@ -15,18 +15,27 @@ extern "C" {
 #define ESP_ZB_MATCH_DESC_REQ_TIMEOUT              (5 * ESP_ZB_TIME_ONE_SECOND)            /* timeout for finding */
 #define ESP_ZB_MATCH_DESC_REQ_ROLE                 ESP_ZB_NWK_BROADCAST_RX_ON_WHEN_IDLE    /* find non-sleep Zigbee device, 0xFFFD */
 
+#define ESP_ZB_IEEE_ADDR_REQ_TIMEOUT                (5 * ESP_ZB_TIME_ONE_SECOND)            /* timeout for ieee address */
+#define ESP_ZB_NODE_DESC_REQ_TIMEOUT                (5 * ESP_ZB_TIME_ONE_SECOND)            /* timeout for node descriptor */
+#define ESP_ZB_BIND_DEVICE_REQ_TIMEOUT              (5 * ESP_ZB_TIME_ONE_SECOND)            /* timeout for binding */
+#define ESP_ZB_ACTIVE_EP_REQ_TIMEOUT                (5 * ESP_ZB_TIME_ONE_SECOND)            /* timeout for active endpoint */
+#define ESP_ZB_SIMPLE_DESC_REQ_TIMEOUT              (5 * ESP_ZB_TIME_ONE_SECOND)            /* timeout for simple descriptor */
+#define ESP_ZB_PERMIT_JOIN_REQ_TIMEOUT              (5 * ESP_ZB_TIME_ONE_SECOND)            /* timeout for permit join */
+#define ESP_ZB_DEVICE_LEAVE_REQ_TIMEOUT             (5 * ESP_ZB_TIME_ONE_SECOND)            /* timeout for device leave */
+
 /** Find device callback
  *
  * @brief A ZDO match desc request callback for user to get response info.
  *
  * @note User's callback get response from the remote device that local node wants to find a particular device on endpoint.
  *
- * @param[in] zdo_status A ZDO response feedback status, 0 - response status success refer to esp_zb_zdp_status
+ * @param[in] zdo_status  The ZDO response status, refer to `esp_zb_zdp_status`
  * @param[in] addr  A short address of the device response, 0xFFFF - invalid address
  * @param[in] endpoint An endpoint of the device response, 0xFF - invalid endpoint
+ * @param[in] user_ctx  User information context, set in `esp_zb_zdo_find_xxx()`
  *
  */
-typedef void (*esp_zb_zdo_match_desc_callback_t)(uint8_t zdo_status, uint16_t addr, uint8_t endpoint);
+typedef void (*esp_zb_zdo_match_desc_callback_t)(esp_zb_zdp_status_t zdo_status, uint16_t addr, uint8_t endpoint, void *user_ctx);
 
 /** IEEE address request callback
  *
@@ -34,11 +43,12 @@ typedef void (*esp_zb_zdo_match_desc_callback_t)(uint8_t zdo_status, uint16_t ad
  *
  * @note User's callback get response from the remote device that local node wants to get ieee address.
  *
- * @param[in] zdo_status A ZDO response feedback status, 0 - response status success refer to esp_zb_zdp_status
+ * @param[in] zdo_status The ZDO response status, refer to `esp_zb_zdp_status`
  * @param[in] ieee_addr  A ieee address of the device response, 0xFFFF FFFF FFFF FFFF - invalid ieee address
+ * @param[in] user_ctx  User information context, set in `esp_zb_zdo_ieee_addr_req()`
  *
  */
-typedef void (*esp_zb_zdo_ieee_addr_callback_t)(uint8_t zdo_status, esp_zb_ieee_addr_t ieee_addr);
+typedef void (*esp_zb_zdo_ieee_addr_callback_t)(esp_zb_zdp_status_t zdo_status, esp_zb_ieee_addr_t ieee_addr, void *user_ctx);
 
 /** Node descriptor callback
  *
@@ -46,12 +56,13 @@ typedef void (*esp_zb_zdo_ieee_addr_callback_t)(uint8_t zdo_status, esp_zb_ieee_
  *
  * @note User's callback get response from the remote device that local node wants to get node descriptor response.
  *
- * @param[in] zdo_status    A ZDO response feedback status, 0 - response status success refer to esp_zb_zdp_status
+ * @param[in] zdo_status    The ZDO response status, refer to `esp_zb_zdp_status`
  * @param[in] addr          A short address of the device response, 0xFFFF - invalid address
  * @param[in] node_desc     A pointer to the node desc @ref esp_zb_af_node_desc_s
+ * @param[in] user_ctx  User information context, set in `esp_zb_zdo_node_desc_req()`
  *
  */
-typedef void (*esp_zb_zdo_node_desc_callback_t)(uint8_t zdo_status, uint16_t addr, esp_zb_af_node_desc_t *node_desc);
+typedef void (*esp_zb_zdo_node_desc_callback_t)(esp_zb_zdp_status_t zdo_status, uint16_t addr, esp_zb_af_node_desc_t *node_desc, void *user_ctx);
 
 /** Bind request callback
  *
@@ -59,10 +70,11 @@ typedef void (*esp_zb_zdo_node_desc_callback_t)(uint8_t zdo_status, uint16_t add
  *
  * @note user's callback get response from the remote device that local node wants to bind.
  *
- * @param[in] zdo_status A ZDO response feedback status, 0 - response status success refer to esp_zb_zdp_status
+ * @param[in] zdo_status The ZDO response status, refer to `esp_zb_zdp_status`
+ * @param[in] user_ctx  User information context, set in `esp_zb_zdo_device_bind_req()`
  *
  */
-typedef void (*esp_zb_zdo_bind_callback_t)(uint8_t zdo_status);
+typedef void (*esp_zb_zdo_bind_callback_t)(esp_zb_zdp_status_t zdo_status, void *user_ctx);
 
 /** Active endpoint callback
  *
@@ -70,12 +82,13 @@ typedef void (*esp_zb_zdo_bind_callback_t)(uint8_t zdo_status);
  *
  * @note User's callback get response from the remote device that local node wants to get active endpoint.
  *
- * @param[in] zdo_status A ZDO response feedback status, 0 - response status success refer to esp_zb_zdp_status
+ * @param[in] zdo_status The ZDO response status, refer to `esp_zb_zdp_status`
  * @param[in] ep_count  A number of active endpoint
  * @param[in] ep_id_list A pointer of the endpoint id list
+ * @param[in] user_ctx  User information context, set in `esp_zb_zdo_active_ep_req()`
  *
  */
-typedef void (*esp_zb_zdo_active_ep_callback_t)(uint8_t zdo_status, uint8_t ep_count, uint8_t *ep_id_list);
+typedef void (*esp_zb_zdo_active_ep_callback_t)(esp_zb_zdp_status_t zdo_status, uint8_t ep_count, uint8_t *ep_id_list, void *user_ctx);
 
 /** Simple descriptor callback
  *
@@ -83,11 +96,12 @@ typedef void (*esp_zb_zdo_active_ep_callback_t)(uint8_t zdo_status, uint8_t ep_c
  *
  * @note User's callback get response from the remote device that local node wants to get simple desc.
  *
- * @param[in] zdo_status A ZDO response feedback status, 0 - response status success refer to esp_zb_zdp_status
+ * @param[in] zdo_status The ZDO response status, refer to `esp_zb_zdp_status`
  * @param[in] simple_desc  A pointer to the simple desc @ref esp_zb_af_simple_desc_1_1_s
+ * @param[in] user_ctx  User information context, set in `esp_zb_zdo_simple_desc_req()`
  *
  */
-typedef void (*esp_zb_zdo_simple_desc_callback_t)(uint8_t zdo_status, esp_zb_af_simple_desc_1_1_t *simple_desc);
+typedef void (*esp_zb_zdo_simple_desc_callback_t)(esp_zb_zdp_status_t zdo_status, esp_zb_af_simple_desc_1_1_t *simple_desc, void *user_ctx);
 
 /** Permit join request callback
  *
@@ -95,10 +109,11 @@ typedef void (*esp_zb_zdo_simple_desc_callback_t)(uint8_t zdo_status, esp_zb_af_
  *
  * @note User's callback get response from the node requested to permit join.
  *
- * @param[in] zdo_status A ZDO response feedback status, 0 - response status success refer to esp_zb_zdp_status
+ * @param[in] zdo_status The ZDO response status, refer to `esp_zb_zdp_status`
+ * @param[in] user_ctx  User information context, set in `esp_zb_zdo_permit_joining_req()`
  *
  */
-typedef void (*esp_zb_zdo_permit_join_callback_t)(uint8_t zdo_status);
+typedef void (*esp_zb_zdo_permit_join_callback_t)(esp_zb_zdp_status_t zdo_status, void *user_ctx);
 
 /** Leave request callback
  *
@@ -106,10 +121,11 @@ typedef void (*esp_zb_zdo_permit_join_callback_t)(uint8_t zdo_status);
  *
  * @note User's callback get response from the device that wants to leave.
  *
- * @param[in] zdo_status A ZDO response feedback status, 0 - response status success refer to esp_zb_zdp_status
+ * @param[in] zdo_status The ZDO response status, refer to `esp_zb_zdp_status`
+ * @param[in] user_ctx  User information context, set in `esp_zb_zdo_device_leave_req()`
  *
  */
-typedef void (*esp_zb_zdo_leave_callback_t)(uint8_t zdo_status);
+typedef void (*esp_zb_zdo_leave_callback_t)(esp_zb_zdp_status_t zdo_status, void *user_ctx);
 
 /**
  * @brief The Zigbee ZDO bind command struct
@@ -211,83 +227,91 @@ typedef struct esp_zb_zdo_mgmt_leave_req_param_s {
  *
  * @param[in] cmd_req  Pointer to the bind request command @ref esp_zb_zdo_bind_req_param_s
  * @param[in] user_cb  A user callback that will be called if received bind response refer to esp_zb_zdo_bind_callback_t
+ * @param[in] user_ctx A void pointer that contains the user defines additional information when callback trigger
  *
  * @note Current implementation of API only support bind address mode ZB_APS_ADDR_MODE_64_ENDP_PRESENT for addressing.
- *
  */
-void esp_zb_zdo_device_bind_req(esp_zb_zdo_bind_req_param_t *cmd_req, esp_zb_zdo_bind_callback_t user_cb);
+void esp_zb_zdo_device_bind_req(esp_zb_zdo_bind_req_param_t *cmd_req, esp_zb_zdo_bind_callback_t user_cb, void *user_ctx);
 
 /**
  * @brief   Send find on-off device request command
  *
  * @param[in] cmd_req  Pointer to the find request command @ref esp_zb_zdo_match_desc_req_param_s
  * @param[in] user_cb  A user callback that will be called if received find response refer to esp_zb_zdo_match_desc_callback_t
+ * @param[in] user_ctx A void pointer that contains the user defines additional information when callback trigger
  *
  */
-void esp_zb_zdo_find_on_off_light(esp_zb_zdo_match_desc_req_param_t *cmd_req, esp_zb_zdo_match_desc_callback_t user_cb);
+void esp_zb_zdo_find_on_off_light(esp_zb_zdo_match_desc_req_param_t *cmd_req, esp_zb_zdo_match_desc_callback_t user_cb, void *user_ctx);
 
 /**
  * @brief   Send find color_dimmable device request command
  *
  * @param[in] cmd_req  Pointer to the find request command @ref esp_zb_zdo_match_desc_req_param_s
  * @param[in] user_cb  A user callback that will be called if received find response refer to esp_zb_zdo_match_desc_callback_t
+ * @param[in] user_ctx A void pointer that contains the user defines additional information when callback trigger
  *
  */
-void esp_zb_zdo_find_color_dimmable_light(esp_zb_zdo_match_desc_req_param_t *cmd_req, esp_zb_zdo_match_desc_callback_t user_cb);
+void esp_zb_zdo_find_color_dimmable_light(esp_zb_zdo_match_desc_req_param_t *cmd_req, esp_zb_zdo_match_desc_callback_t user_cb, void *user_ctx);
 
 /**
  * @brief   Send ieee request command
  *
  * @param[in] cmd_req  Pointer to the ieee address request command @ref esp_zb_zdo_ieee_addr_req_param_s
  * @param[in] user_cb  A user callback that will be called if received ieee address response refer to esp_zb_zdo_ieee_addr_callback_t
+ * @param[in] user_ctx A void pointer that contains the user defines additional information when callback trigger
  *
  */
-void esp_zb_zdo_ieee_addr_req(esp_zb_zdo_ieee_addr_req_param_t *cmd_req, esp_zb_zdo_ieee_addr_callback_t user_cb);
+void esp_zb_zdo_ieee_addr_req(esp_zb_zdo_ieee_addr_req_param_t *cmd_req, esp_zb_zdo_ieee_addr_callback_t user_cb, void *user_ctx);
 
 /**
  * @brief   Send node descriptor request command
  *
  * @param[in] cmd_req  Pointer to the node descriptor request command @ref esp_zb_zdo_node_desc_req_param_s
  * @param[in] user_cb  A user callback that will be called if received node desc response refer to esp_zb_zdo_node_desc_callback_t
+ * @param[in] user_ctx A void pointer that contains the user defines additional information when callback trigger
  *
  */
-void esp_zb_zdo_node_desc_req(esp_zb_zdo_node_desc_req_param_t *cmd_req, esp_zb_zdo_node_desc_callback_t user_cb);
+void esp_zb_zdo_node_desc_req(esp_zb_zdo_node_desc_req_param_t *cmd_req, esp_zb_zdo_node_desc_callback_t user_cb, void *user_ctx);
 
 /**
  * @brief   Send simple descriptor request command
  *
  * @param[in] cmd_req  Pointer to the simple descriptor request command @ref esp_zb_zdo_simple_desc_req_param_s
  * @param[in] user_cb  A user callback that will be called if received simple desc response refer to esp_zb_zdo_simple_desc_callback_t
+ * @param[in] user_ctx A void pointer that contains the user defines additional information when callback trigger
  *
  */
-void esp_zb_zdo_simple_desc_req(esp_zb_zdo_simple_desc_req_param_t *cmd_req, esp_zb_zdo_simple_desc_callback_t user_cb);
+void esp_zb_zdo_simple_desc_req(esp_zb_zdo_simple_desc_req_param_t *cmd_req, esp_zb_zdo_simple_desc_callback_t user_cb, void *user_ctx);
 
 /**
  * @brief   Send active endpoint request command
  *
  * @param[in] cmd_req  Pointer to the active endpoint request command @ref esp_zb_zdo_active_ep_req_param_s
  * @param[in] user_cb  A user callback that will be called if received active ep response refer to esp_zb_zdo_active_ep_callback_t
+ * @param[in] user_ctx A void pointer that contains the user defines additional information when callback trigger
  *
  */
-void esp_zb_zdo_active_ep_req(esp_zb_zdo_active_ep_req_param_t *cmd_req, esp_zb_zdo_active_ep_callback_t user_cb);
+void esp_zb_zdo_active_ep_req(esp_zb_zdo_active_ep_req_param_t *cmd_req, esp_zb_zdo_active_ep_callback_t user_cb, void *user_ctx);
 
 /**
  * @brief   Send leave request command
  *
  * @param[in] cmd_req  Pointer to the leave request command @ref esp_zb_zdo_mgmt_leave_req_param_s
  * @param[in] user_cb  A user callback that will be called if received leave response refer to esp_zb_zdo_leave_callback_t
+ * @param[in] user_ctx A void pointer that contains the user defines additional information when callback trigger
  *
  */
-void esp_zb_zdo_device_leave_req(esp_zb_zdo_mgmt_leave_req_param_t *cmd_req, esp_zb_zdo_leave_callback_t user_cb);
+void esp_zb_zdo_device_leave_req(esp_zb_zdo_mgmt_leave_req_param_t *cmd_req, esp_zb_zdo_leave_callback_t user_cb, void *user_ctx);
 
 /**
  * @brief   Send permit join request command
  *
  * @param[in] cmd_req  Pointer to the permit join request command @ref esp_zb_zdo_permit_joining_req_param_s
  * @param[in] user_cb  A user callback that will be called if received permit join response refer to esp_zb_zdo_permit_join_callback_t
+ * @param[in] user_ctx A void pointer that contains the user defines additional information when callback trigger
  *
  */
-void esp_zb_zdo_permit_joining_req(esp_zb_zdo_permit_joining_req_param_t *cmd_req, esp_zb_zdo_permit_join_callback_t user_cb);
+void esp_zb_zdo_permit_joining_req(esp_zb_zdo_permit_joining_req_param_t *cmd_req, esp_zb_zdo_permit_join_callback_t user_cb, void *user_ctx);
 
 #ifdef __cplusplus
 }

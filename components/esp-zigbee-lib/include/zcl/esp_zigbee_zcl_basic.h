@@ -95,7 +95,7 @@ typedef enum {
 #define ESP_ZB_ZCL_BASIC_ALARM_MASK_DEFAULT_VALUE ((uint8_t)0x00)
 
 /** @brief Default value for Disable local config attribute */
-#define ZB_ZCL_BASIC_DISABLE_LOCAL_CONFIG_DEFAULT_VALUE ((uint8_t)0x00)
+#define ESP_ZB_ZCL_BASIC_DISABLE_LOCAL_CONFIG_DEFAULT_VALUE ((uint8_t)0x00)
 
 /**
  *  @brief Default value for SWBuildId attribute.

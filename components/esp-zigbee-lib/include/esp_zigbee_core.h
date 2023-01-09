@@ -55,7 +55,7 @@ typedef enum {
 /** ZCL set attribute callback
  *
  * @param[in] status The status for ZCL set attribute 0 - status success
- * @param[in] endpoint The endpoint of this cluster lists
+ * @param[in] endpoint The endpoint of this cluster lists to change
  * @param[in] cluster_id Cluster ID
  * @param[in] attr_id Attribute ID
  * @param[in] value The pointer of the attribute data
@@ -65,44 +65,34 @@ typedef enum {
  */
 typedef void (*esp_zb_set_attr_callback_t)(uint8_t status, uint8_t endpoint, uint16_t cluster_id, uint16_t attr_id, void *value);
 
-/** ZCL basic cluster command reset to factory default callback
- *
- * @param[in] status The status for ZCL reset factory 0 - status success
- * @param[in] endpoint The endpoint of this cluster lists
- *
- * @note The Zigbee device callback is default ZCL cluster handlers to notify the application about a certain event
- * like all clusters / attributes are set to default.
- * @note By using refer to esp_zb_zcl_get_attribute(), user could check the specific cluster / attribute value, certain device action may apply based on user
- * application.
- */
-typedef void (*esp_zb_basic_reset_callback_t)(uint8_t status, uint8_t endpoint);
 
 /** Report attribute callback
  *
  * @brief A report attribute callback for user to get report info
  *
  * @param[in] addr A struct of address contains short and ieee address @ref esp_zb_zcl_addr_s
- * @param[in] ep  An endpoint which comes from report device
+ * @param[in] endpoint  An endpoint which comes from report device
  * @param[in] cluster_id Cluster id that reported
  * @param[in] attr_id  Attribute id that reported
- * @param[in] attr_type Attribute data type refer to zb_zcl_common.h zcl_attr_type
+ * @param[in] attr_type Attribute data type refer to esp_zb_zcl_attr_type_t
  * @param[in] value A pointer to the attribute data value
  *
  */
 typedef void (*esp_zb_report_attr_callback_t)(
-    esp_zb_zcl_addr_t *addr, uint8_t ep, uint16_t cluster_id, uint16_t attr_id, uint8_t attr_type, void *value);
+    esp_zb_zcl_addr_t *addr, uint8_t endpoint, uint16_t cluster_id, uint16_t attr_id, esp_zb_zcl_attr_type_t attr_type, void *value);
 
-/** Read attribute callback
+/** Read attribute response callback
  *
- * @brief A read attribute callback for user to get read info.
+ * @brief A read attribute response callback for user to get read info.
  *
- * @param[in] status   Status of the read attribute response refer to esp_zb_zcl_status
- * @param[in] attr_id  Attribute id that reported
- * @param[in] attr_type Attribute data type refer to zb_zcl_common.h zcl_attr_type
+ * @param[in] status   Status of the read attribute response refer to esp_zb_zcl_status 0 - status success, 134 - unsupported attribute
+ * @param[in] cluster_id Cluster id that read
+ * @param[in] attr_id  Attribute id that read
+ * @param[in] attr_type Attribute data type refer to esp_zb_zcl_attr_type_t
  * @param[in] value A pointer to the attribute data value
  *
  */
-typedef void (*esp_zb_read_attr_resp_callback_t)(uint8_t status, uint16_t attr_id, uint8_t attr_type, void *value);
+typedef void (*esp_zb_read_attr_resp_callback_t)(esp_zb_zcl_status_t status, uint16_t cluster_id, uint16_t attr_id, esp_zb_zcl_attr_type_t attr_type, void *value);
 
 /** Groups cluster add group response callback
  *
@@ -164,7 +154,7 @@ typedef void (*esp_zb_scenes_store_cmd_callback_t)(esp_zb_zcl_status_t status, e
  * @param[in] field_data A pointer to scenes extension field @ref esp_zb_zcl_scenes_extension_field_s
  *
  */
-typedef void (*esp_zb_scenes_recall_cmd_callback_t)(esp_zb_zcl_status_t status, esp_zb_zcl_scenes_extension_field_t* field_data);
+typedef void (*esp_zb_scenes_recall_cmd_callback_t)(esp_zb_zcl_status_t status, esp_zb_zcl_scenes_extension_field_t *field_data);
 
 /** OTA upgrade status callback
  *

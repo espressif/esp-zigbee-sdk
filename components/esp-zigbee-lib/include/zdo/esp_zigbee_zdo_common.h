@@ -31,6 +31,7 @@ typedef enum {
     ESP_ZB_ZDP_STATUS_NOT_PERMITTED         = 0x8b,   /*!< The device is not in the proper state to support the requested operation. */
     ESP_ZB_ZDP_STATUS_TABLE_FULL            = 0x8c,   /*!< The device does not have table space to support the operation. */
     ESP_ZB_ZDP_STATUS_NOT_AUTHORIZED        = 0x8d,   /*!< The permissions configuration table on the target indicates that the request is not authorized from this device.*/
+    ESP_ZB_ZDP_STATUS_BINDING_TABLE_FULL    = 0x8e,   /*!< The device doesn't have binding table space to support the operation */
     ESP_ZB_ZDP_STATUS_INVALID_INDEX         = 0x8f,   /*!< The index in the received command is out of bounds. */
 } esp_zb_zdp_status_t;
 
