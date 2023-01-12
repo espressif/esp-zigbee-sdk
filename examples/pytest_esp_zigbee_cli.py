@@ -1,26 +1,19 @@
 # SPDX-FileCopyrightText: 2022 Espressif Systems (Shanghai) CO LTD
 
 # SPDX-License-Identifier: CC0-1.0
-import hashlib
-import logging
-from typing import Callable
+
 import pathlib
 import pytest
 import time
-import re
-import pexpect
 from typing import Tuple
 from pytest_embedded import Dut
-from pytest_embedded_idf.dut import IdfDut
-from pytest_embedded_qemu.app import QemuApp
-from pytest_embedded_qemu.dut import QemuDut
 
 CURRENT_DIR_CLI = str(pathlib.Path(__file__).parent)+'/esp_zigbee_cli'
 CURRENT_DIR_ON_OFF_LIGHT = str(pathlib.Path(__file__).parent)+'/esp_zigbee_HA_sample/HA_on_off_light'
 pytest_build_dir = CURRENT_DIR_CLI+'|'+CURRENT_DIR_ON_OFF_LIGHT
 
 #pre-requisite to config Zigbee network
-def config_zigbee_network(cli:IdfDut, light:IdfDut) -> Tuple[bool,str]:
+def config_zigbee_network(cli:Dut, light:Dut) -> Tuple[bool,str]:
     # set channel to default 13
     channel_number=13
     time.sleep(3)
@@ -49,13 +42,14 @@ def config_zigbee_network(cli:IdfDut, light:IdfDut) -> Tuple[bool,str]:
 #Case 1: Zigbee network connection
 @pytest.mark.order(1)
 @pytest.mark.esp32h4
+@pytest.mark.i154_zigbee_multi_dut
 @pytest.mark.parametrize(
     ' count, app_path, beta_target, target,erase_all', [
         ( 2, pytest_build_dir,'esp32h2beta2|esp32h2beta2', 'esp32h4|esp32h4','y'),
     ],
     indirect=True,
 )
-def test_h4_cli_zc_connection(dut: Tuple[IdfDut, IdfDut]) -> None:
+def test_h4_cli_zc_connection(dut: Tuple[Dut, Dut]) -> None:
     light =dut[1]
     cli = dut[0]
     result = config_zigbee_network(cli,light)
@@ -72,13 +66,14 @@ def test_h4_cli_zc_connection(dut: Tuple[IdfDut, IdfDut]) -> None:
 # #Case 2: Zigbee network finding-binding
 @pytest.mark.order(2)
 @pytest.mark.esp32h4
+@pytest.mark.i154_zigbee_multi_dut
 @pytest.mark.parametrize(
     ' count, app_path, beta_target, target, erase_all', [
         ( 2, pytest_build_dir,'esp32h2beta2|esp32h2beta2', 'esp32h4|esp32h4','y'),
     ],
     indirect=True,
 )
-def test_h4_cli_zc_finding_binding(dut: Tuple[IdfDut, IdfDut]) -> None:
+def test_h4_cli_zc_finding_binding(dut: Tuple[Dut, Dut]) -> None:
     light =dut[1]
     cli = dut[0]
     result = config_zigbee_network(cli,light)
@@ -109,13 +104,14 @@ def test_h4_cli_zc_finding_binding(dut: Tuple[IdfDut, IdfDut]) -> None:
 # #Case 3: Zigbee network ZCL command
 @pytest.mark.order(3)
 @pytest.mark.esp32h4
+@pytest.mark.i154_zigbee_multi_dut
 @pytest.mark.parametrize(
     ' count, app_path, beta_target, target, erase_all', [
         ( 2, pytest_build_dir,'esp32h2beta2|esp32h2beta2', 'esp32h4|esp32h4','y'),
     ],
     indirect=True,
 )
-def test_h4_cli_zc_ZCL_command(dut: Tuple[IdfDut, IdfDut]) -> None:
+def test_h4_cli_zc_ZCL_command(dut: Tuple[Dut, Dut]) -> None:
     light =dut[1]
     cli = dut[0]
     result = config_zigbee_network(cli,light)
@@ -146,13 +142,14 @@ def test_h4_cli_zc_ZCL_command(dut: Tuple[IdfDut, IdfDut]) -> None:
 # #Case 4: Zigbee network leaving
 @pytest.mark.order(4)
 @pytest.mark.esp32h4
+@pytest.mark.i154_zigbee_multi_dut
 @pytest.mark.parametrize(
     ' count, app_path, beta_target, target, erase_all', [
         ( 2, pytest_build_dir,'esp32h2beta2|esp32h2beta2', 'esp32h4|esp32h4','y'),
     ],
     indirect=True,
 )
-def test_h4_cli_zc_check_leaving(dut: Tuple[IdfDut, IdfDut]) -> None:
+def test_h4_cli_zc_check_leaving(dut: Tuple[Dut, Dut]) -> None:
     light =dut[1]
     cli = dut[0]
     result = config_zigbee_network(cli,light)

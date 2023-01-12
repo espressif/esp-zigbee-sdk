@@ -81,7 +81,7 @@ build_pytest_examples:
 
 build_docs:
     stage: build
-    image: $CI_DOCKER_REGISTRY/esp-idf-doc-env-v5.0:2-3
+    image: $CI_DOCKER_REGISTRY/esp-idf-doc-env-v5.1:1-1
     variables:
         ESP_DOCS_LATEST_BRANCH_NAME: "main"
     artifacts:
@@ -92,9 +92,7 @@ build_docs:
         expire_in: 1 days
     script:
         - cd docs
-        - pip install -r requirements.txt
         - build-docs -t esp32 esp32c3 esp32h2 esp32s3 -l en
-
 
 pytest_esp32h4_i154_zigbee_multi_dut:
   stage: target_test
@@ -103,8 +101,7 @@ pytest_esp32h4_i154_zigbee_multi_dut:
     - build_pytest_examples
   script:
     - pip install -r tools/ci/requirements-pytest.txt
-    - cd ${ESP_ZIGBEE_SDK_PATH}/examples
-    - pytest -m esp32h4
+    - find examples/ -name "pytest_*.py" | xargs pytest --target esp32h4 -m i154_zigbee_multi_dut
   tags: ["esp32h4", "i154_zigbee_multi_dut"]
 
 .deploy_docs_template:
@@ -118,7 +115,6 @@ pytest_esp32h4_i154_zigbee_multi_dut:
         - source ${CI_PROJECT_DIR}/docs/utils.sh
         - add_doc_server_ssh_keys $DOCS_DEPLOY_PRIVATEKEY $DOCS_DEPLOY_SERVER $DOCS_DEPLOY_SERVER_USER
         - export GIT_VER=$(git describe --always)
-        - pip install -r ${CI_PROJECT_DIR}/docs/requirements.txt
         - deploy-docs
     tags:
         - deploy_docs

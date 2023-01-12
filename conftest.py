@@ -15,10 +15,8 @@
 
 import logging
 import os
-import sys
 import xml.etree.ElementTree as ET
 from datetime import datetime
-from fnmatch import fnmatch
 from typing import Callable, List, Optional, Tuple
 
 import pytest
@@ -32,51 +30,20 @@ from _pytest.runner import CallInfo
 from _pytest.terminal import TerminalReporter
 from pytest_embedded.plugin import multi_dut_argument, multi_dut_fixture
 from pytest_embedded.utils import find_by_suffix
-from pytest_embedded_idf.dut import IdfDut
 
 
-
-SUPPORTED_TARGETS = ['esp32', 'esp32s2', 'esp32c3', 'esp32s3', 'esp32c2']
-PREVIEW_TARGETS = ['esp32h4', 'esp32c6']  # this PREVIEW_TARGETS excludes 'linux' target
 DEFAULT_SDKCONFIG = 'default'
 
 
 ##################
 # Help Functions #
 ##################
-def is_target_marker(marker: str) -> bool:
-    if marker.startswith('esp32') or marker.startswith('esp8') or marker == 'linux':
-        return True
-
-    return False
-
-
 def format_case_id(target: Optional[str], config: Optional[str], case: str) -> str:
     return f'{target}.{config}.{case}'
 
 
 def item_marker_names(item: Item) -> List[str]:
     return [marker.name for marker in item.iter_markers()]
-
-
-def get_target_marker(markexpr: str) -> str:
-    candidates = set()
-    # we use `-m "esp32 and generic"` in our CI to filter the test cases
-    for marker in markexpr.split('and'):
-        marker = marker.strip()
-        if is_target_marker(marker):
-            candidates.add(marker)
-
-    if len(candidates) > 1:
-        raise ValueError(
-            f'Specified more than one target markers: {candidates}. Please specify no more than one.'
-        )
-    elif len(candidates) == 1:
-        return candidates.pop()
-    else:
-        raise ValueError(
-            'Please specify one target marker via "--target [TARGET]" or via "-m [TARGET]"'
-        )
 
 
 ############
@@ -91,32 +58,6 @@ def session_tempdir() -> str:
     )
     os.makedirs(_tmpdir, exist_ok=True)
     return _tmpdir
-
-
-@pytest.fixture()
-def log_minimum_free_heap_size(dut: IdfDut, config: str) -> Callable[..., None]:
-    def real_func() -> None:
-        res = dut.expect(r'Minimum free heap size: (\d+) bytes')
-        logging.info(
-            '\n------ heap size info ------\n'
-            '[app_name] {}\n'
-            '[config_name] {}\n'
-            '[target] {}\n'
-            '[minimum_free_heap_size] {} Bytes\n'
-            '------ heap size end ------'.format(
-                os.path.basename(dut.app.app_path),
-                config,
-                dut.target,
-                res.group(1).decode('utf8'),
-            )
-        )
-
-    return real_func
-
-
-# @pytest.fixture
-# def case_tester(dut: IdfDut, **kwargs):      # type: ignore
-#     yield CaseTester(dut, **kwargs)
 
 
 @pytest.fixture
@@ -194,13 +135,6 @@ def junit_properties(
 ##################
 # Hook functions #
 ##################
-def pytest_addoption(parser: pytest.Parser) -> None:
-    base_group = parser.getgroup('idf')
-    base_group.addoption(
-        '--known-failure-cases-file', help='known failure cases file path'
-    )
-
-
 _idf_pytest_embedded_key = pytest.StashKey['IdfPytestEmbedded']
 
 
@@ -214,8 +148,7 @@ def pytest_configure(config: Config) -> None:
             target = 'unneeded'
             break
 
-    if not target:  # also could specify through markexpr via "-m"
-        target = get_target_marker(config.getoption('markexpr') or '')
+    assert target, "Must specify target by --target"
 
     config.stash[_idf_pytest_embedded_key] = IdfPytestEmbedded(
         target=target,
@@ -275,36 +208,6 @@ class IdfPytestEmbedded:
         for item in items:
             if 'timeout' not in item.keywords:
                 item.add_marker(pytest.mark.timeout(10 * 60))
-
-        # add markers for special markers
-        for item in items:
-            if 'supported_targets' in item.keywords:
-                for _target in SUPPORTED_TARGETS:
-                    item.add_marker(_target)
-            if 'preview_targets' in item.keywords:
-                for _target in PREVIEW_TARGETS:
-                    item.add_marker(_target)
-            if 'all_targets' in item.keywords:
-                for _target in [*SUPPORTED_TARGETS, *PREVIEW_TARGETS]:
-                    item.add_marker(_target)
-
-        # add 'xtal_40mhz' tag as a default tag for esp32c2 target
-        for item in items:
-            if 'esp32c2' in item_marker_names(item) and 'xtal_26mhz' not in item_marker_names(item):
-                item.add_marker('xtal_40mhz')
-
-        # filter all the test cases with "nightly_run" marker
-        if os.getenv('INCLUDE_NIGHTLY_RUN') == '1':
-            # Do not filter nightly_run cases
-            pass
-        elif os.getenv('NIGHTLY_RUN') == '1':
-            items[:] = [
-                item for item in items if 'nightly_run' in item_marker_names(item)
-            ]
-        else:
-            items[:] = [
-                item for item in items if 'nightly_run' not in item_marker_names(item)
-            ]
 
         # filter all the test cases with "--target"
         if self.target:
