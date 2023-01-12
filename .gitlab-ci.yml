@@ -8,7 +8,6 @@ variables:
     GIT_STRATEGY: fetch
     GIT_SUBMODULE_STRATEGY: none
     ESP_ZIGBEE_SDK_PATH: "$CI_PROJECT_DIR"
-    IDF_REPO_URL: "ssh://git@gitlab.espressif.cn:27227/espressif/esp-idf.git"
     # tell build system do not check submodule update as we download archive instead of clone
     IDF_SKIP_CHECK_SUBMODULES: 1
 
@@ -22,7 +21,7 @@ before_script:
 
 .setup_idf: &setup_idf
   - cd $CI_PROJECT_DIR
-  - git clone --depth=1 -b $CI_COMMIT_REF_NAME ${IDF_REPO_URL} || git clone --depth=1 -b master ${IDF_REPO_URL}
+  - git clone --depth=1 -b $CI_COMMIT_REF_NAME ${IDF_GIT_REPO_URL} || git clone --depth=1 -b master ${IDF_GIT_REPO_URL}
   - cd esp-idf
   - ./install.sh
   - . ./export.sh

@@ -49,7 +49,7 @@ def config_zigbee_network(cli:Dut, light:Dut) -> Tuple[bool,str]:
     ],
     indirect=True,
 )
-def test_h4_cli_zc_connection(dut: Tuple[Dut, Dut]) -> None:
+def test_i154_cli_zc_connection(dut: Tuple[Dut, Dut]) -> None:
     light =dut[1]
     cli = dut[0]
     result = config_zigbee_network(cli,light)
@@ -73,7 +73,7 @@ def test_h4_cli_zc_connection(dut: Tuple[Dut, Dut]) -> None:
     ],
     indirect=True,
 )
-def test_h4_cli_zc_finding_binding(dut: Tuple[Dut, Dut]) -> None:
+def test_i154_cli_zc_finding_binding(dut: Tuple[Dut, Dut]) -> None:
     light =dut[1]
     cli = dut[0]
     result = config_zigbee_network(cli,light)
@@ -111,7 +111,7 @@ def test_h4_cli_zc_finding_binding(dut: Tuple[Dut, Dut]) -> None:
     ],
     indirect=True,
 )
-def test_h4_cli_zc_ZCL_command(dut: Tuple[Dut, Dut]) -> None:
+def test_i154_cli_zc_ZCL_command(dut: Tuple[Dut, Dut]) -> None:
     light =dut[1]
     cli = dut[0]
     result = config_zigbee_network(cli,light)
@@ -149,7 +149,7 @@ def test_h4_cli_zc_ZCL_command(dut: Tuple[Dut, Dut]) -> None:
     ],
     indirect=True,
 )
-def test_h4_cli_zc_check_leaving(dut: Tuple[Dut, Dut]) -> None:
+def test_i154_cli_zc_check_leaving(dut: Tuple[Dut, Dut]) -> None:
     light =dut[1]
     cli = dut[0]
     result = config_zigbee_network(cli,light)
