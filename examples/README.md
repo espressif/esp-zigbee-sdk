@@ -9,6 +9,7 @@ The examples are grouped into subdirectories by category. Each category director
 - [esp_zigbee_rcp](esp_zigbee_rcp) Zigbee rcp (radio co-processor) device
 - [esp_zigbee_HA_sample](esp_zigbee_HA_sample) Zigbee HA sample examples
 - [esp_zigbee_CLI](esp_zigbee_cli) Zigbee CLI (Command line interface) examples
+- [esp_zigbee_OTA](esp_zigbee_ota) Zigbee OTA (Over-The-Air) upgrade example
 
 ## Using Examples
 Please see the information on usage under each Zigbee examples folder.

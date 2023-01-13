@@ -27,9 +27,9 @@
 #define OTA_UPGRADE_CURRENT_TIME      0x12345                                               /* Test current time of ota server, currently zcl time cluster is not supported */
 #define OTA_UPGRADE_OFFSET_TIME       5                                                     /* Offset time value in seconds, use as upgrade delay.*/
 
-/* ota bin */
-extern const uint8_t ota_file_start[] asm("_binary_ota_file_bin_start");
-extern const uint8_t ota_file_end[]   asm("_binary_ota_file_bin_end");
+/* ota_file.bin */
+extern const uint8_t ota_file_start[] asm("_binary_ota_file_bin_start");                    /* ota_file corresponds to filename and bin corresponds to filetype */
+extern const uint8_t ota_file_end[]   asm("_binary_ota_file_bin_end");                      /* ota_file corresponds to filename and bin corresponds to filetype */
 
 #define ESP_ZB_ZC_CONFIG()                                                  \
     {                                                                       \

@@ -1,5 +1,5 @@
-OTA UPGRADE API
-===============
+OTA API
+=======
 
 Zigbee OTA Upgrade Cluster related APIs for ESP Zigbee SDK.
 
