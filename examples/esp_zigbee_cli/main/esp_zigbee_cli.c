@@ -63,12 +63,13 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
     esp_err_t err_status                = signal_struct->esp_err_status;
     esp_zb_app_signal_type_t sig_type    = *p_sg_p;
     esp_zb_nwk_device_type_t  role      = esp_zb_get_network_device_role();
-
+    esp_zb_zdo_signal_device_annce_params_t *dev_annce_params = NULL;
+    esp_zb_zdo_signal_leave_indication_params_t *leave_ind_params = NULL;
     switch (sig_type) {
     case ESP_ZB_ZDO_SIGNAL_LEAVE:
         /* The ESP Zigbee CLI Agent will not attempt to rejoin the network after it receives the LEAVE command. */
         if (err_status == ESP_OK) {
-            ESP_LOGE(TAG, "leave network, status: %d", err_status);
+            ESP_LOGI(TAG, "leave network, status: %d", err_status);
         } else {
             ESP_LOGE(TAG, "Unable to leave network, status: %d", err_status);
         }
@@ -89,6 +90,12 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
         break;
     case ESP_ZB_BDB_SIGNAL_FORMATION:
         if (err_status == ESP_OK) {
+            esp_zb_ieee_addr_t extended_pan_id;
+            esp_zb_get_extended_pan_id(extended_pan_id);
+            ESP_LOGI(TAG, "Formed network successfully (Extended PAN ID: %02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x, PAN ID: 0x%04hx)",
+                     extended_pan_id[7], extended_pan_id[6], extended_pan_id[5], extended_pan_id[4],
+                     extended_pan_id[3], extended_pan_id[2], extended_pan_id[1], extended_pan_id[0],
+                     esp_zb_get_pan_id());
             esp_zb_bdb_start_top_level_commissioning(ESP_ZB_BDB_MODE_NETWORK_STEERING);
         } else {
             ESP_LOGI(TAG, "Restart network formation");
@@ -100,6 +107,16 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
             ESP_LOGI(TAG, "Joined network successfully");
         } else {
             esp_zb_scheduler_alarm((esp_zb_callback_t)bdb_start_top_level_commissioning_cb, ESP_ZB_BDB_MODE_NETWORK_STEERING, 1000);
+        }
+        break;
+    case ESP_ZB_ZDO_SIGNAL_DEVICE_ANNCE:
+        dev_annce_params = (esp_zb_zdo_signal_device_annce_params_t *)esp_zb_app_signal_get_params(p_sg_p);
+        ESP_LOGI(TAG, "New device commissioned or rejoined (short: 0x%04hx)", dev_annce_params->device_short_addr);
+        break;
+    case ESP_ZB_ZDO_SIGNAL_LEAVE_INDICATION:
+        leave_ind_params = (esp_zb_zdo_signal_leave_indication_params_t *)esp_zb_app_signal_get_params(p_sg_p);
+        if (!leave_ind_params->rejoin) {
+            ESP_LOGI(TAG, "Zigbee Node is leaving network: 0x%x",leave_ind_params->short_addr);
         }
         break;
     default:

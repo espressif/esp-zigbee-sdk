@@ -1,5 +1,6 @@
 stages:
     - build
+    - target_test
     - docs
 
 variables:
@@ -7,6 +8,8 @@ variables:
     GIT_STRATEGY: fetch
     GIT_SUBMODULE_STRATEGY: none
     ESP_ZIGBEE_SDK_PATH: "$CI_PROJECT_DIR"
+    # tell build system do not check submodule update as we download archive instead of clone
+    IDF_SKIP_CHECK_SUBMODULES: 1
 
 before_script:
   - mkdir -p ~/.ssh
@@ -18,266 +21,66 @@ before_script:
 
 .setup_idf: &setup_idf
   - cd $CI_PROJECT_DIR
-  - git clone --recursive -b master ssh://git@gitlab.espressif.cn:27227/espressif/esp-idf.git
+  - git clone --depth=1 -b $CI_COMMIT_REF_NAME ${IDF_GIT_REPO_URL} || git clone --depth=1 -b master ${IDF_GIT_REPO_URL}
   - cd esp-idf
-  - git checkout --track origin/$CI_COMMIT_REF_NAME || git branch
-  - git submodule sync --recursive
-  - git submodule update --recursive --init
   - ./install.sh
   - . ./export.sh
+  - export PYTHONPATH="$IDF_PATH/tools/ci/python_packages:$PYTHONPATH"
+  - python tools/ci/ci_fetch_submodule.py -s all
 
-.submodule_update: &submodule_update
-  - cd ${ESP_ZIGBEE_SDK_PATH}
-  - git submodule sync --recursive
-  - git submodule update --init --recursive
+build_non_pytest_examples:
+  stage: build
+  image: ${CI_DOCKER_REGISTRY}/esp-env-v5.1:1
+  artifacts:
+    paths:
+      - "**/build*/size.json"
+      - "**/build*/build_log.txt"
+      - "**/build*/*.bin"
+      - "**/build*/flasher_args.json"
+      - "**/build*/config/sdkconfig.json"
+      - "**/build*/bootloader/*.bin"
+      - "**/build*/partition_table/*.bin"
+    when: always
+    expire_in: 4 days
+  script:
+    - *setup_idf
+    - cd ${ESP_ZIGBEE_SDK_PATH}
+    - pip install -r tools/ci/requirements-build.txt
+    - python tools/ci/build_apps.py ./examples --no_pytest
+      --parallel-count ${CI_NODE_TOTAL:-1}
+      --parallel-index ${CI_NODE_INDEX:-1}
+  parallel: 2
+  tags:
+    - build
 
-.build_esp_zigbee_sdk_example_gateway_template:
-    stage: build
-    image: ${CI_DOCKER_REGISTRY}/esp-env-v5.0:2
-    variables:
-        TARGET_NAME: ""
-        EXAMPLE_PATH: ""
-    allow_failure: false
-    script:
-        - *setup_idf
-        - *submodule_update
-        - cd ${ESP_ZIGBEE_SDK_PATH}/examples/esp_zigbee_rcp
-        - idf.py --preview set-target esp32h4
-        - idf.py build
-        - cd ${ESP_ZIGBEE_SDK_PATH}/"${EXAMPLE_PATH}"
-        - idf.py fullclean
-        - idf.py set-target "${TARGET_NAME}"
-        - idf.py build
-
-.build_esp_zigbee_sdk_example_zigbee_template:
-    stage: build
-    image: ${CI_DOCKER_REGISTRY}/esp-env-v5.0:2
-    variables:
-        TARGET_NAME: ""
-        EXAMPLE_PATH: ""
-    allow_failure: false
-    script:
-        - *setup_idf
-        - *submodule_update
-        - cd ${ESP_ZIGBEE_SDK_PATH}/"${EXAMPLE_PATH}"
-        - idf.py fullclean
-        - idf.py --preview set-target "${TARGET_NAME}"
-        - idf.py build
-
-.build_esp_zigbee_sdk_example_non_h4_zigbee_template:
-    stage: build
-    image: ${CI_DOCKER_REGISTRY}/esp-env-v5.0:2
-    variables:
-        TARGET_NAME: ""
-        EXAMPLE_PATH: ""
-    allow_failure: false
-    script:
-        - *setup_idf
-        - *submodule_update
-        - cd ${ESP_ZIGBEE_SDK_PATH}/"${EXAMPLE_PATH}"
-        - idf.py fullclean
-        - idf.py set-target "${TARGET_NAME}"
-        - idf.py build
-
-# build esp_zigbee_gateway for esp32/esp32c3/esp32s2/esp32s3
-build_esp32_zigbee_gateway_examples:
-  extends: .build_esp_zigbee_sdk_example_gateway_template
-  variables:
-    TARGET_NAME: "esp32"
-    EXAMPLE_PATH: "examples/esp_zigbee_gateway"
-
-# build esp_zigbee_gateway for esp32/esp32c3/esp32s2/esp32s3
-build_esp32s3_zigbee_gateway_examples:
-  extends: .build_esp_zigbee_sdk_example_gateway_template
-  variables:
-    TARGET_NAME: "esp32s3"
-    EXAMPLE_PATH: "examples/esp_zigbee_gateway"
-
-# build esp_zigbee_gateway for esp32/esp32c3/esp32s2/esp32s3
-build_esp32c3_zigbee_gateway_examples:
-  extends: .build_esp_zigbee_sdk_example_gateway_template
-  variables:
-    TARGET_NAME: "esp32c3"
-    EXAMPLE_PATH: "examples/esp_zigbee_gateway"
-
-# build esp_zigbee_gateway for esp32/esp32c3/esp32s2/esp32s3
-build_esp32s2_zigbee_gateway_examples:
-  extends: .build_esp_zigbee_sdk_example_gateway_template
-  variables:
-    TARGET_NAME: "esp32s2"
-    EXAMPLE_PATH: "examples/esp_zigbee_gateway"
-
-#build esp_zigbee rcp for esp32h4beta2
-build_esp32h4_beta2_zigbee_rcp_examples:
-  extends: .build_esp_zigbee_sdk_example_zigbee_template
-  variables:
-    TARGET_NAME: "esp32h4"
-    EXAMPLE_PATH: "examples/esp_zigbee_rcp"
-
-#build esp_zigbee rcp for esp32c6
-build_esp32c6_zigbee_rcp_examples:
-  extends: .build_esp_zigbee_sdk_example_zigbee_template
-  variables:
-    TARGET_NAME: "esp32c6"
-    EXAMPLE_PATH: "examples/esp_zigbee_rcp"
-
-#build esp_zigbee cli for esp32h4beta2
-build_esp32h4_beta2_zigbee_cli_examples:
-  extends: .build_esp_zigbee_sdk_example_zigbee_template
-  variables:
-    TARGET_NAME: "esp32h4"
-    EXAMPLE_PATH: "examples/esp_zigbee_cli"
-
-#build esp_zigbee cli for esp32c6
-build_esp32c6_zigbee_cli_examples:
-  extends: .build_esp_zigbee_sdk_example_zigbee_template
-  variables:
-    TARGET_NAME: "esp32c6"
-    EXAMPLE_PATH: "examples/esp_zigbee_cli"
-
-#build esp_zigbee cli for esp32
-build_esp32_zigbee_cli_examples:
-  extends: .build_esp_zigbee_sdk_example_non_h4_zigbee_template
-  variables:
-    TARGET_NAME: "esp32"
-    EXAMPLE_PATH: "examples/esp_zigbee_cli"
-
-#build esp_zigbee cli for esp32c3
-build_esp32c3_zigbee_cli_examples:
-  extends: .build_esp_zigbee_sdk_example_non_h4_zigbee_template
-  variables:
-    TARGET_NAME: "esp32c3"
-    EXAMPLE_PATH: "examples/esp_zigbee_cli"
-
-#build esp_zigbee cli for esp32s2
-build_esp32s2_zigbee_cli_examples:
-  extends: .build_esp_zigbee_sdk_example_non_h4_zigbee_template
-  variables:
-    TARGET_NAME: "esp32s2"
-    EXAMPLE_PATH: "examples/esp_zigbee_cli"
-
-#build esp_zigbee cli for esp32s3
-build_esp32s3_zigbee_cli_examples:
-  extends: .build_esp_zigbee_sdk_example_non_h4_zigbee_template
-  variables:
-    TARGET_NAME: "esp32s3"
-    EXAMPLE_PATH: "examples/esp_zigbee_cli"
-
-#build esp_zigbee customized_client for esp32h4beta2
-build_esp32h4_beta2_zigbee_customized_client_examples:
-  extends: .build_esp_zigbee_sdk_example_zigbee_template
-  variables:
-    TARGET_NAME: "esp32h4"
-    EXAMPLE_PATH: "examples/esp_zigbee_customized_devices/customized_client"
-
-#build esp_zigbee customized_client for esp32c6
-build_esp32c6_zigbee_customized_client_examples:
-  extends: .build_esp_zigbee_sdk_example_zigbee_template
-  variables:
-    TARGET_NAME: "esp32c6"
-    EXAMPLE_PATH: "examples/esp_zigbee_customized_devices/customized_client"
-
-#build esp_zigbee customized_server for esp32h4beta2
-build_esp32h4_beta2_zigbee_customized_server_examples:
-  extends: .build_esp_zigbee_sdk_example_zigbee_template
-  variables:
-    TARGET_NAME: "esp32h4"
-    EXAMPLE_PATH: "examples/esp_zigbee_customized_devices/customized_server"
-
-#build esp_zigbee customized_server for esp32c6
-build_esp32c6_zigbee_customized_server_examples:
-  extends: .build_esp_zigbee_sdk_example_zigbee_template
-  variables:
-    TARGET_NAME: "esp32c6"
-    EXAMPLE_PATH: "examples/esp_zigbee_customized_devices/customized_server"
-
-#build esp_zigbee ota_client for esp32h4beta2
-build_esp32h4_beta2_zigbee_ota_client_examples:
-  extends: .build_esp_zigbee_sdk_example_zigbee_template
-  variables:
-    TARGET_NAME: "esp32h4"
-    EXAMPLE_PATH: "examples/esp_zigbee_ota/ota_client"
-
-#build esp_zigbee ota_client for esp32c6
-build_esp32c6_zigbee_ota_client_examples:
-  extends: .build_esp_zigbee_sdk_example_zigbee_template
-  variables:
-    TARGET_NAME: "esp32c6"
-    EXAMPLE_PATH: "examples/esp_zigbee_ota/ota_client"
-
-#build esp_zigbee ota_server for esp32h4beta2
-build_esp32h4_beta2_zigbee_ota_server_examples:
-  extends: .build_esp_zigbee_sdk_example_zigbee_template
-  variables:
-    TARGET_NAME: "esp32h4"
-    EXAMPLE_PATH: "examples/esp_zigbee_ota/ota_server"
-
-#build esp_zigbee ota_server for esp32c6
-build_esp32c6_zigbee_ota_server_examples:
-  extends: .build_esp_zigbee_sdk_example_zigbee_template
-  variables:
-    TARGET_NAME: "esp32c6"
-    EXAMPLE_PATH: "examples/esp_zigbee_ota/ota_server"
-
-#build esp_zigbee HA color dimmable light for esp32h4beta2
-build_esp32h4_beta2_zigbee_color_dimmable_light_examples:
-  extends: .build_esp_zigbee_sdk_example_zigbee_template
-  variables:
-    TARGET_NAME: "esp32h4"
-    EXAMPLE_PATH: "examples/esp_zigbee_HA_sample/HA_color_dimmable_light"
-
-#build esp_zigbee HA color dimmable light for esp32c6
-build_esp32c6_zigbee_color_dimmable_light_examples:
-  extends: .build_esp_zigbee_sdk_example_zigbee_template
-  variables:
-    TARGET_NAME: "esp32c6"
-    EXAMPLE_PATH: "examples/esp_zigbee_HA_sample/HA_color_dimmable_light"
-
-#build esp_zigbee HA color dimmable switch for esp32h4beta2
-build_esp32h4_beta2_zigbee_color_dimmable_switch_examples:
-  extends: .build_esp_zigbee_sdk_example_zigbee_template
-  variables:
-    TARGET_NAME: "esp32h4"
-    EXAMPLE_PATH: "examples/esp_zigbee_HA_sample/HA_color_dimmable_switch"
-
-#build esp_zigbee HA color dimmable switch for esp32c6
-build_esp32c6_zigbee_color_dimmable_switch_examples:
-  extends: .build_esp_zigbee_sdk_example_zigbee_template
-  variables:
-    TARGET_NAME: "esp32c6"
-    EXAMPLE_PATH: "examples/esp_zigbee_HA_sample/HA_color_dimmable_switch"
-
-#build esp_zigbee HA on_off light for esp32h4beta2
-build_esp32h4_beta2_zigbee_on_off_light_examples:
-  extends: .build_esp_zigbee_sdk_example_zigbee_template
-  variables:
-    TARGET_NAME: "esp32h4"
-    EXAMPLE_PATH: "examples/esp_zigbee_HA_sample/HA_on_off_light"
-
-#build esp_zigbee HA on_off light for esp32c6
-build_esp32c6_zigbee_on_off_light_examples:
-  extends: .build_esp_zigbee_sdk_example_zigbee_template
-  variables:
-    TARGET_NAME: "esp32c6"
-    EXAMPLE_PATH: "examples/esp_zigbee_HA_sample/HA_on_off_light"
-
-#build esp_zigbee HA color dimmable light for esp32h4beta2
-build_esp32h4_beta2_zigbee_on_off_switch_examples:
-  extends: .build_esp_zigbee_sdk_example_zigbee_template
-  variables:
-    TARGET_NAME: "esp32h4"
-    EXAMPLE_PATH: "examples/esp_zigbee_HA_sample/HA_on_off_switch"
-
-#build esp_zigbee HA color dimmable light for esp32c6
-build_esp32c6_zigbee_on_off_switch_examples:
-  extends: .build_esp_zigbee_sdk_example_zigbee_template
-  variables:
-    TARGET_NAME: "esp32c6"
-    EXAMPLE_PATH: "examples/esp_zigbee_HA_sample/HA_on_off_switch"
+build_pytest_examples:
+  stage: build
+  image: ${CI_DOCKER_REGISTRY}/esp-env-v5.1:1
+  artifacts:
+    paths:
+      - "**/build*/size.json"
+      - "**/build*/build_log.txt"
+      - "**/build*/*.bin"
+      - "**/build*/*.map"
+      - "**/build*/*.elf"
+      - "**/build*/flasher_args.json"
+      - "**/build*/flash_project_args"
+      - "**/build*/config/sdkconfig.json"
+      - "**/build*/bootloader/*.bin"
+      - "**/build*/partition_table/*.bin"
+    when: always
+    expire_in: 4 days
+  script:
+    - *setup_idf
+    - cd ${ESP_ZIGBEE_SDK_PATH}
+    - pip install -r tools/ci/requirements-build.txt
+    - python tools/ci/build_apps.py ./examples --pytest
+  tags:
+    - build
 
 build_docs:
     stage: build
-    image: $CI_DOCKER_REGISTRY/esp-idf-doc-env-v5.0:2-3
+    image: $CI_DOCKER_REGISTRY/esp-idf-doc-env-v5.1:1-1
     variables:
         ESP_DOCS_LATEST_BRANCH_NAME: "main"
     artifacts:
@@ -288,13 +91,21 @@ build_docs:
         expire_in: 1 days
     script:
         - cd docs
-        - pip install -r requirements.txt
         - build-docs -t esp32 esp32c3 esp32h2 esp32s3 -l en
 
+pytest_esp32h4_i154_zigbee_multi_dut:
+  stage: target_test
+  image: ${CI_DOCKER_REGISTRY}/target-test-env-v5.1:1
+  needs:
+    - build_pytest_examples
+  script:
+    - pip install -r tools/ci/requirements-pytest.txt
+    - find examples/ -name "pytest_*.py" | xargs pytest --target esp32h4 -m i154_zigbee_multi_dut
+  tags: ["esp32h4", "i154_zigbee_multi_dut"]
 
 .deploy_docs_template:
     stage: docs
-    image: $CI_DOCKER_REGISTRY/esp-idf-doc-env-v5.0:2-3
+    image: $CI_DOCKER_REGISTRY/esp-idf-doc-env-v5.1:1-1
     needs:
         - build_docs
     variables:
@@ -303,8 +114,9 @@ build_docs:
         - source ${CI_PROJECT_DIR}/docs/utils.sh
         - add_doc_server_ssh_keys $DOCS_DEPLOY_PRIVATEKEY $DOCS_DEPLOY_SERVER $DOCS_DEPLOY_SERVER_USER
         - export GIT_VER=$(git describe --always)
-        - pip install -r ${CI_PROJECT_DIR}/docs/requirements.txt
         - deploy-docs
+    tags:
+        - deploy_docs
 
 deploy_docs_preview:
     extends:

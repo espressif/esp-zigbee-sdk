@@ -236,7 +236,7 @@ Send Simple Descriptor Request.
 ```bash
 > zdo -c 0xefba 10
 > src_addr=0xEFBA ep=10 profile_id=0x0102 app_dev_id=0x0 app_dev_ver=0x5
-  in_clusters=0x0000,0x0003,0x0004,0x0005,0x0006,0x0008,0x0300 out_clusters=0x0300
+  in clusters=0x0000,0x0003,0x0004,0x0005,0x0006,0x0008,0x0300 out clusters=0x0300
 I (1180874) : Done
 > 
 ```
@@ -247,7 +247,8 @@ Send match descriptor request.
 &emsp;&emsp;&emsp;&nbsp;<h:requested address/type>  
 &emsp;&emsp;&emsp;&nbsp;<h:profile ID>  
 &emsp;&emsp;&emsp;&nbsp;<d:number of input clusters> [<h:input cluster IDs> ...]  
-&emsp;&emsp;&emsp;&nbsp;<d:number of output clusters> [<h:output cluster IDs> …] [timeout]*  
+&emsp;&emsp;&emsp;&nbsp;<d:number of output clusters> [<h:output cluster IDs> …]  
+&emsp;&emsp;&emsp;&nbsp;[timeout]*  
 	
 Note:  
 Send Match Descriptor Request to the dst_addr node that is a query about the req_addr node of the prof_id profile ID, which must have at least one of n_input_clusters or n_output_clusters.    

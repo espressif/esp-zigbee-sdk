@@ -4,6 +4,7 @@ compile_commands.json
 # ESP-IDF default build directory name
 build
 build/
+build_*/
 sdkconfig
 sdkconfig.old
 dependencies.lock
@@ -11,6 +12,7 @@ managed_components
 __pycache__/
 out/
 _build/
+pytest_embedded_log/
 # VS Code Settings
 .vscode/
 # clangd set
