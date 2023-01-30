@@ -9,8 +9,8 @@ from typing import Tuple
 from pytest_embedded import Dut
 
 CURRENT_DIR_CLI = str(pathlib.Path(__file__).parent)+'/esp_zigbee_cli'
-CURRENT_DIR_ON_OFF_LIGHT = str(pathlib.Path(__file__).parent)+'/esp_zigbee_HA_sample/HA_on_off_light'
-pytest_build_dir = CURRENT_DIR_CLI+'|'+CURRENT_DIR_ON_OFF_LIGHT
+CURRENT_DIR_COLOR_DIMM_LIGHT = str(pathlib.Path(__file__).parent)+'/esp_zigbee_HA_sample/HA_color_dimmable_light'
+pytest_build_dir = CURRENT_DIR_CLI+'|'+CURRENT_DIR_COLOR_DIMM_LIGHT
 
 #pre-requisite to config Zigbee network
 def config_zigbee_network(cli:Dut, light:Dut) -> Tuple[bool,str]:
@@ -31,7 +31,7 @@ def config_zigbee_network(cli:Dut, light:Dut) -> Tuple[bool,str]:
     cli_node_expanid=cli.expect(r'extpanid: 0x([a-z0-9]+:?)',timeout=2)[1].decode()
     # get the light node network address
     light_nwk_addr= cli.expect(r'New device commissioned or rejoined \(short: 0x([a-z0-9]+)',timeout=10)[1].decode()
-    light.expect('ESP_ZB_ON_OFF_LIGHT: Joined network successfully',timeout=20)
+    light.expect('ESP_ZB_COLOR_DIMM_LIGHT: Joined network successfully',timeout=20)
     light_node_got_expanid=light.expect(r'PAN ID: (([a-z0-9]{2}:?){8})',timeout=3)[1].decode()
     light_node_got_expanid = light_node_got_expanid.replace(":","")
     # make sure the light node join the network that cli formed (same expanid)
@@ -86,8 +86,8 @@ def test_i154_cli_zc_finding_binding(dut: Tuple[Dut, Dut]) -> None:
     # simple descriptor request
     cli.write('zdo -c 0x'+light_nwk_addr+' '+str(light_endpoint))
     cli.expect('in clusters|out clusters',timeout=3)
-    # find on_off_light (cluster id =0x0006)
-    cli.write('zdo -m '+light_nwk_addr+' '+light_nwk_addr+' '+'0x0104 '+'1 '+'0x0006 '+'0')
+    # find on_off (cluster id =0x0006) level control (cluster id =0x0008) color control (cluster id =0x0300)
+    cli.write('zdo -m '+light_nwk_addr+' '+light_nwk_addr+' '+'0x0104 '+'3 '+'0x0006 '+'0x0008 '+'0x0300 '+'0')
     assert(light_nwk_addr==str(cli.expect(r'src_addr=([a-z0-9]{4})',timeout=3)[1].decode()))
     assert(light_endpoint==str(cli.expect(r'ep=([0-9]*)',timeout=3)[1].decode()))
     # get ieee_address of the light
@@ -120,24 +120,111 @@ def test_i154_cli_zc_ZCL_command(dut: Tuple[Dut, Dut]) -> None:
     cli.write('zdo -a 0x'+light_nwk_addr)
     assert(light_nwk_addr == str(cli.expect(r'src_addr=([a-z0-9]{4})',timeout=3)[1].decode()))
     light_endpoint =cli.expect(r'ep=([0-9]+)',timeout=3)[1].decode()
-    # ZCL command (on-off 0x0006 cluster)
+
+    #################### ZCL command (on-off 0x0006 cluster) ####################
     light_on =1
     light_off=0
-    # toggle first time
-    cli.write('zcl -c '+light_nwk_addr+' '+light_endpoint+' 0x0006 02')
+    # On command
+    cli.write('zcl -c '+light_nwk_addr+' '+light_endpoint+' 0x0006 01')
     cli.expect('Done',timeout=3)
-    assert str(light_on) == light.expect(r'on/off light set to ([0-9])',timeout=3)[1].decode()
     # read on_off attribute
     cli.write('zcl -a read '+light_nwk_addr+' '+light_endpoint+' 0x0006 0x0104 0')
     assert str(bool(light_on)) ==cli.expect(r'Value: (\w+)',timeout=3)[1].decode()
-    # toggle second time
+    # Off command
     time.sleep(2)
-    cli.write('zcl -c '+light_nwk_addr+' '+light_endpoint+' 0x0006 02')
+    cli.write('zcl -c '+light_nwk_addr+' '+light_endpoint+' 0x0006 00')
     cli.expect('Done',timeout=3)
-    assert str(light_off) == light.expect(r'on/off light set to ([0-9])',timeout=3)[1].decode()
     # read on_off attribute
     cli.write('zcl -a read '+light_nwk_addr+' '+light_endpoint+' 0x0006 0x0104 0')
     assert str(bool(light_off)) ==cli.expect(r'Value: (\w+)',timeout=3)[1].decode()
+    # toggle command
+    time.sleep(2)
+    cli.write('zcl -c '+light_nwk_addr+' '+light_endpoint+' 0x0006 02')
+    cli.expect('Done',timeout=3)
+    # read on_off attribute
+    cli.write('zcl -a read '+light_nwk_addr+' '+light_endpoint+' 0x0006 0x0104 0')
+    assert str(bool(light_on)) ==cli.expect(r'Value: (\w+)',timeout=3)[1].decode()
+
+    ################### ZCL command (level-control 0x0008 cluster) ####################
+    light_lvl =5
+    # Move to level(with On/Off) command
+    time.sleep(2)
+    cli.write('zcl -c '+light_nwk_addr+' '+light_endpoint+' 0x0008 04 profile 0x0104 payload 05ffff')
+    assert str(light_lvl) == light.expect(r'Light level change to:([0-9])',timeout=3)[1].decode()
+    cli.expect('Done',timeout=3)
+    # read level_control attribute
+    cli.write('zcl -a read '+light_nwk_addr+' '+light_endpoint+' 0x0008 0x0104 0')
+    assert str((light_lvl)) ==cli.expect(r'Value: (\d+)',timeout=3)[1].decode()
+    cli.expect('Done',timeout=3)
+    # Move (with On/Off) command
+    time.sleep(2)
+    cli.write('zcl -c '+light_nwk_addr+' '+light_endpoint+' 0x0008 05 profile 0x0104 payload 0105')
+    cli.expect('Done',timeout=3)
+    # read level_control attribute
+    cli.write('zcl -a read '+light_nwk_addr+' '+light_endpoint+' 0x0008 0x0104 0')
+    cli.expect('Done',timeout=3)
+    # Step (with On/Off) command
+    time.sleep(2)
+    cli.write('zcl -c '+light_nwk_addr+' '+light_endpoint+' 0x0008 06 profile 0x0104 payload 0005ffff')
+    cli.expect('Done',timeout=3)
+    # read level_control attribute
+    cli.write('zcl -a read '+light_nwk_addr+' '+light_endpoint+' 0x0008 0x0104 0')
+    cli.expect('Done',timeout=3)
+    # Stop command
+    time.sleep(2)
+    cli.write('zcl -c '+light_nwk_addr+' '+light_endpoint+' 0x0008 07')
+    cli.expect('Done',timeout=3)
+    # read level_control attribute
+    cli.write('zcl -a read '+light_nwk_addr+' '+light_endpoint+' 0x0008 0x0104 0')
+    cli.expect('Done',timeout=3)
+
+    #################### ZCL command (color-control 0x0300 cluster) ####################
+    light_color_x =12440
+    light_color_y =12857
+    # Move to color command
+    time.sleep(2)
+    cli.write('zcl -c '+light_nwk_addr+' '+light_endpoint+' 0x0300 07 profile 0x0104 payload 983039320000')
+    assert str(light_color_x) == light.expect(r'Light color x change to:([0-9]+)',timeout=3)[1].decode()
+    assert str(light_color_y) == light.expect(r'Light color y change to:([0-9]+)',timeout=3)[1].decode()
+    cli.expect('Done',timeout=3)
+    # read color_control_x attribute
+    cli.write('zcl -a read '+light_nwk_addr+' '+light_endpoint+' 0x0300 0x0104 3')
+    assert str((light_color_x)) ==cli.expect(r'Value: (\d+)',timeout=3)[1].decode()
+    cli.expect('Done',timeout=3)
+    # read color_control_y attribute
+    cli.write('zcl -a read '+light_nwk_addr+' '+light_endpoint+' 0x0300 0x0104 4')
+    assert str((light_color_y)) ==cli.expect(r'Value: (\d+)',timeout=3)[1].decode()
+    cli.expect('Done',timeout=3)
+    # Move color command
+    time.sleep(2)
+    cli.write('zcl -c '+light_nwk_addr+' '+light_endpoint+' 0x0300 08 profile 0x0104 payload 01000100')
+    cli.expect('Done',timeout=3)
+    # read color_control_x attribute
+    cli.write('zcl -a read '+light_nwk_addr+' '+light_endpoint+' 0x0300 0x0104 3')
+    cli.expect('Done',timeout=3)
+    # read color_control_y attribute
+    cli.write('zcl -a read '+light_nwk_addr+' '+light_endpoint+' 0x0300 0x0104 4')
+    cli.expect('Done',timeout=3)
+    # Step color command
+    time.sleep(2)
+    cli.write('zcl -c '+light_nwk_addr+' '+light_endpoint+' 0x0300 09 profile 0x0104 payload 010001000100')
+    cli.expect('Done',timeout=3)
+    # read color_control_x attribute
+    cli.write('zcl -a read '+light_nwk_addr+' '+light_endpoint+' 0x0300 0x0104 3')
+    cli.expect('Done',timeout=3)
+    # read color_control_y attribute
+    cli.write('zcl -a read '+light_nwk_addr+' '+light_endpoint+' 0x0300 0x0104 4')
+    cli.expect('Done',timeout=3)
+    # Stop move step command
+    time.sleep(2)
+    cli.write('zcl -c '+light_nwk_addr+' '+light_endpoint+' 0x0300 47')
+    cli.expect('Done',timeout=3)
+    # read color_control_x attribute
+    cli.write('zcl -a read '+light_nwk_addr+' '+light_endpoint+' 0x0300 0x0104 3')
+    cli.expect('Done',timeout=3)
+    # read color_control_y attribute
+    cli.write('zcl -a read '+light_nwk_addr+' '+light_endpoint+' 0x0300 0x0104 4')
+    cli.expect('Done',timeout=3)
 
 # #Case 4: Zigbee network leaving
 @pytest.mark.order(4)
