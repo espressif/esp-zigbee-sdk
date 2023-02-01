@@ -96,3 +96,31 @@ Bug Fixes
 ---------
 
 -Bug fixed for rcp_incompatible_switch_port
+
+
+# 1-Feb-2023
+
+Versions
+--------
+0.5.0 version release of ESP-ZIGBEE-SDK
+
+Features
+--------
+
+
+- add timeout handler mechanism for user
+- minor type name updates
+- partition table adjustment for examples
+
+
+Known Issues
+------------
+
+
+New Changes
+-----------
+- ZDO related API requests and callbacks update with new argument
+
+Bug Fixes
+---------
+
