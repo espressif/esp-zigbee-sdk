@@ -35,7 +35,7 @@ static void bdb_start_top_level_commissioning_cb(uint8_t mode_mask)
 void attr_cb(uint8_t status, uint8_t endpoint, uint16_t cluster_id, uint16_t attr_id, void *new_value)
 {
     if (cluster_id == ESP_ZB_ZCL_CLUSTER_ID_ON_OFF) {
-        uint8_t value = *(uint8_t*)new_value;
+        uint8_t value = *(uint8_t *)new_value;
         if (attr_id == ESP_ZB_ZCL_ATTR_ON_OFF_ON_OFF_ID) {
             /* implemented light on/off control */
             ESP_LOGI(TAG, "on/off light set to %hd", value);

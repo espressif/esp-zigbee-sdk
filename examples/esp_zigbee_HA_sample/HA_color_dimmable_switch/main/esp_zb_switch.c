@@ -100,9 +100,9 @@ static void bdb_start_top_level_commissioning_cb(uint8_t mode_mask)
     ESP_ERROR_CHECK(esp_zb_bdb_start_top_level_commissioning(mode_mask));
 }
 
-void user_find_cb(uint8_t zdo_status, uint16_t addr, uint8_t endpoint)
+void user_find_cb(esp_zb_zdp_status_t zdo_status, uint16_t addr, uint8_t endpoint, void *user_ctx)
 {
-    ESP_LOGI(TAG, "User find cb: address:0x%x, endpoint:%d, response_status:%d", addr, endpoint, zdo_status);
+    ESP_LOGI(TAG, "User find cb: response_status:%d, address:0x%x, endpoint:%d", zdo_status, addr, endpoint);
     if (zdo_status == ESP_ZB_ZDP_STATUS_SUCCESS) {
         color_light.endpoint = endpoint;
         color_light.short_addr = addr;
@@ -155,7 +155,7 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
         cmd_req.dst_nwk_addr = dev_annce_params->device_short_addr;
         cmd_req.addr_of_interest = dev_annce_params->device_short_addr;
         /* find color dimmable light once device joining the network */
-        esp_zb_zdo_find_color_dimmable_light(&cmd_req, user_find_cb);
+        esp_zb_zdo_find_color_dimmable_light(&cmd_req, user_find_cb, NULL);
         break;
     default:
         ESP_LOGI(TAG, "ZDO signal: %d, status: %d", sig_type, err_status);

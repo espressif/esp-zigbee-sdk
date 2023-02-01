@@ -28,6 +28,7 @@
 static const char *TAG = "ESP_ZB_GATEWAY";
 
 /********************* Define functions **************************/
+#if(CONFIG_ZIGBEE_GW_AUTO_UPDATE_RCP)
 static void esp_zb_gateway_update_rcp(void)
 {
     /* Deinit uart to transfer UART to the serial loader */
@@ -57,11 +58,6 @@ static void esp_zb_gateway_board_try_update(const char *rcp_version_str)
     }
 }
 
-static void bdb_start_top_level_commissioning_cb(uint8_t mode_mask)
-{
-    ESP_ERROR_CHECK(esp_zb_bdb_start_top_level_commissioning(mode_mask));
-}
-
 static esp_err_t init_spiffs(void)
 {
     esp_vfs_spiffs_conf_t rcp_fw_conf = {
@@ -70,7 +66,12 @@ static esp_err_t init_spiffs(void)
     esp_vfs_spiffs_register(&rcp_fw_conf);
     return ESP_OK;
 }
+#endif
 
+static void bdb_start_top_level_commissioning_cb(uint8_t mode_mask)
+{
+    ESP_ERROR_CHECK(esp_zb_bdb_start_top_level_commissioning(mode_mask));
+}
 
 void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
 {
