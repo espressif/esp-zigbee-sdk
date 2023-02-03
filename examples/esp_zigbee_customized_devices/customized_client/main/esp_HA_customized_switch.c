@@ -79,8 +79,8 @@ static void bind_cb(esp_zb_zdp_status_t zdo_status, void *user_ctx)
         /* configure report attribute command */
         esp_zb_zcl_config_report_cmd_t report_cmd;
         report_cmd.zcl_basic_cmd.dst_addr_u.addr_short = on_off_light.short_addr;
-        report_cmd.zcl_basic_cmd.dst_endpoint = HA_ONOFF_SWITCH_ENDPOINT;
-        report_cmd.zcl_basic_cmd.src_endpoint = on_off_light.endpoint;
+        report_cmd.zcl_basic_cmd.dst_endpoint = on_off_light.endpoint;
+        report_cmd.zcl_basic_cmd.src_endpoint = HA_ONOFF_SWITCH_ENDPOINT;
         report_cmd.address_mode = ESP_ZB_APS_ADDR_MODE_16_ENDP_PRESENT;
         report_cmd.clusterID = ESP_ZB_ZCL_CLUSTER_ID_ON_OFF;
         report_cmd.attributeID = ESP_ZB_ZCL_ATTR_ON_OFF_ON_OFF_ID;
