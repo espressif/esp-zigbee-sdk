@@ -67,7 +67,7 @@ typedef struct esp_zb_zcl_attr_s {
     uint16_t id;                        /*!< Attribute id */
     uint8_t type;                       /*!< Attribute type see zcl_attr_type */
     uint8_t access;                     /*!< Attribute access options according to zcl_attr_access */
-    uint16_t manuf_code;                /*!< Manufacture specific id */
+    uint16_t manuf_code;                /*!< Manufacture specific id, refer to ESP_ZB_ZCL_NON_MANUFACTURER_SPECIFIC */
     void *data_p;                       /*!< Pointer to attribute data */
 } ESP_ZB_PACKED_STRUCT
 esp_zb_zcl_attr_t;
@@ -540,6 +540,11 @@ typedef struct esp_zb_temperature_sensor_cfg_s {
 typedef struct esp_zb_configuration_tool_cfg_s {
     esp_zb_basic_cluster_cfg_t      basic_cfg;          /*!<  Basic cluster configuration */
     esp_zb_identify_cluster_cfg_t   identify_cfg;       /*!<  Identify cluster configuration */
+    esp_zb_groups_cluster_cfg_t     groups_cfg;         /*!<  Groups cluster configuration */
+    esp_zb_scenes_cluster_cfg_t     scenes_cfg;         /*!<  Scenes cluster configuration */
+    esp_zb_on_off_cluster_cfg_t     on_off_cfg;         /*!<  On off cluster configuration */
+    esp_zb_level_cluster_cfg_t      level_cfg;          /*!<  Level cluster configuration */
+    esp_zb_color_cluster_cfg_t      color_cfg;          /*!<  Color cluster configuration */
 } esp_zb_configuration_tool_cfg_t;
 
 #ifdef __cplusplus

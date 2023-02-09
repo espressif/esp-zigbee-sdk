@@ -92,10 +92,10 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
         if (err_status == ESP_OK) {
             esp_zb_ieee_addr_t extended_pan_id;
             esp_zb_get_extended_pan_id(extended_pan_id);
-            ESP_LOGI(TAG, "Formed network successfully (Extended PAN ID: %02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x, PAN ID: 0x%04hx)",
+            ESP_LOGI(TAG, "Formed network successfully (Extended PAN ID: %02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x, PAN ID: 0x%04hx, Channel:%d)",
                      extended_pan_id[7], extended_pan_id[6], extended_pan_id[5], extended_pan_id[4],
                      extended_pan_id[3], extended_pan_id[2], extended_pan_id[1], extended_pan_id[0],
-                     esp_zb_get_pan_id());
+                     esp_zb_get_pan_id(), esp_zb_get_current_channel());
             esp_zb_bdb_start_top_level_commissioning(ESP_ZB_BDB_MODE_NETWORK_STEERING);
         } else {
             ESP_LOGI(TAG, "Restart network formation");
@@ -116,7 +116,7 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
     case ESP_ZB_ZDO_SIGNAL_LEAVE_INDICATION:
         leave_ind_params = (esp_zb_zdo_signal_leave_indication_params_t *)esp_zb_app_signal_get_params(p_sg_p);
         if (!leave_ind_params->rejoin) {
-            ESP_LOGI(TAG, "Zigbee Node is leaving network: 0x%x",leave_ind_params->short_addr);
+            ESP_LOGI(TAG, "Zigbee Node is leaving network: 0x%x", leave_ind_params->short_addr);
         }
         break;
     default:
@@ -129,7 +129,7 @@ void zigbee_stack_init(void)
 {
     esp_zb_cfg_t zb_nwk_cfg = ESP_ZB_ZC_CONFIG();
     esp_zb_init(&zb_nwk_cfg);
-    ESP_ERROR_CHECK(esp_zb_set_network_channel(ZIGBEE_CHANNEL));
+    ESP_ERROR_CHECK(esp_zb_set_primary_network_channel_set(1 << ZIGBEE_CHANNEL));
     esp_zb_nvram_erase_at_start(true);
     /* Set ESP Zigbee endpoint to CLI*/
     zb_cli_set_endpoint(ESP_ZIGBEE_CLI_ENDPOINT);

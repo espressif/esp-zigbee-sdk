@@ -32,6 +32,11 @@ extern "C" {
 /** GreenPower profile ID */
 #define ESP_ZB_AF_GP_PROFILE_ID       0xA1E0U
 
+/** Non manufacturer specific code for certain attribute */
+#define ESP_ZB_ZCL_ATTR_NON_MANUFACTURER_SPECIFIC 0xFFFFU
+/** Non manufacturer specific code for certain cluster */
+#define EZP_ZB_ZCL_CLUSTER_NON_MANUFACTURER_SPECIFIC 0x0000
+
 /** @brief HA Device identifiers.
  */
 typedef enum {

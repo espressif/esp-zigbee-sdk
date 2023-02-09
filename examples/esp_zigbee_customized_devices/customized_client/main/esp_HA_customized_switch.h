@@ -20,6 +20,8 @@
 #define ED_AGING_TIMEOUT                ESP_ZB_ED_AGING_TIMEOUT_64MIN
 #define ED_KEEP_ALIVE                   3000    /* 3000 millisecond */
 #define HA_ONOFF_SWITCH_ENDPOINT        1           /* esp switch device endpoint */
+#define ESP_ZB_PRIMARY_CHANNEL_MASK     (1l << 11)  /* Zigbee primary channel mask use in the example */
+#define ESP_ZB_SECONDARY_CHANNEL_MASK   (1l << 13)  /* Zigbee primary channel mask use in the example */
 
 #define ESP_ZB_ZED_CONFIG()                                         \
     {                                                               \

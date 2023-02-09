@@ -26,6 +26,7 @@
 #define OTA_UPGRADE_QUERY_JITTER      0x64                                                  /* Query jitter indicates whether the client receiving Image Notify Command */
 #define OTA_UPGRADE_CURRENT_TIME      0x12345                                               /* Test current time of ota server, currently zcl time cluster is not supported */
 #define OTA_UPGRADE_OFFSET_TIME       5                                                     /* Offset time value in seconds, use as upgrade delay.*/
+#define ESP_ZB_PRIMARY_CHANNEL_MASK     (1l << 13)  /* Zigbee primary channel mask use in the example */
 
 /* ota_file.bin */
 extern const uint8_t ota_file_start[] asm("_binary_ota_file_bin_start");                    /* ota_file corresponds to filename and bin corresponds to filetype */

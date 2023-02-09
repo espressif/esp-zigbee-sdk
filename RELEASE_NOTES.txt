@@ -97,7 +97,6 @@ Bug Fixes
 
 -Bug fixed for rcp_incompatible_switch_port
 
-
 # 1-Feb-2023
 
 Versions
@@ -107,15 +106,12 @@ Versions
 Features
 --------
 
-
 - add timeout handler mechanism for user
 - minor type name updates
 - partition table adjustment for examples
 
-
 Known Issues
 ------------
-
 
 New Changes
 -----------
@@ -124,3 +120,29 @@ New Changes
 Bug Fixes
 ---------
 
+# 10-Feb-2023
+
+Versions
+--------
+0.5.1 version release of ESP-ZIGBEE-SDK
+
+Features
+--------
+- add new API for ZDO and ZCL
+
+Known Issues
+------------
+- hue saturation color command not supported
+
+New Changes
+-----------
+- delete the API esp_zb_set_network_channel
+- add the API for esp_zb_set_primary_network_channel_set/ esp_zb_set_secondary_network_channel_set
+- add the API for get current channel
+- add the API for set ZCL attribute
+
+Bug Fixes
+---------
+- fix the issue https://github.com/espressif/esp-zigbee-sdk/issues/1
+- fix the issue https://github.com/espressif/esp-zigbee-sdk/issues/3
+- fix the issue https://github.com/espressif/esp-idf/issues/10662

@@ -24,6 +24,7 @@
 #define OTA_UPGRADE_FILE_VERSION        0x01010101            /* The attribute indicates the file version of the running firmware image on the device */
 #define OTA_UPGRADE_HW_VERSION          0x0101                /* The parameter indicates the version of hardware */
 #define OTA_UPGRADE_MAX_DATA_SIZE       32                    /* The parameter indicates the maximum data size of query block image */
+#define ESP_ZB_PRIMARY_CHANNEL_MASK     (1l << 13)  /* Zigbee primary channel mask use in the example */
 
 #define ESP_ZB_ZED_CONFIG()                                         \
     {                                                               \
