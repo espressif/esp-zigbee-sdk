@@ -86,7 +86,7 @@ static void bind_cb(esp_zb_zdp_status_t zdo_status, void *user_ctx)
         report_cmd.attributeID = ESP_ZB_ZCL_ATTR_ON_OFF_ON_OFF_ID;
         report_cmd.attrType = ESP_ZB_ZCL_ATTR_TYPE_BOOL;
         report_cmd.min_interval = 0;
-        report_cmd.max_interval = 10;
+        report_cmd.max_interval = 30;
         report_cmd.reportable_change = 0;
         esp_zb_zcl_config_report_cmd_req(&report_cmd);
     }
@@ -189,17 +189,16 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
     case ESP_ZB_BDB_SIGNAL_DEVICE_FIRST_START:
     case ESP_ZB_BDB_SIGNAL_DEVICE_REBOOT:
         if (err_status != ESP_OK) {
-            /* commissioning failed, try again on network steering */
-            ESP_LOGI(TAG, "Start network steering");
-            esp_zb_bdb_start_top_level_commissioning(ESP_ZB_BDB_MODE_NETWORK_STEERING);
+            /* commissioning failed */
+            ESP_LOGW(TAG, "Failed to initialize Zigbee stack (status: %d)", err_status);
         } else {
             /* device auto start successfully and on a formed network */
             esp_zb_ieee_addr_t extended_pan_id;
             esp_zb_get_extended_pan_id(extended_pan_id);
-            ESP_LOGI(TAG, "Joined network successfully (Extended PAN ID: %02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x, PAN ID: 0x%04hx)",
+            ESP_LOGI(TAG, "Joined network successfully (Extended PAN ID: %02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x, PAN ID: 0x%04hx, Channel:%d)",
                      extended_pan_id[7], extended_pan_id[6], extended_pan_id[5], extended_pan_id[4],
                      extended_pan_id[3], extended_pan_id[2], extended_pan_id[1], extended_pan_id[0],
-                     esp_zb_get_pan_id());
+                     esp_zb_get_pan_id(), esp_zb_get_current_channel());
             esp_zb_zdo_match_desc_req_param_t  find_req;
             find_req.addr_of_interest = 0x0000;
             find_req.dst_nwk_addr = 0x0000;
@@ -211,10 +210,10 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
         if (err_status == ESP_OK) {
             esp_zb_ieee_addr_t extended_pan_id;
             esp_zb_get_extended_pan_id(extended_pan_id);
-            ESP_LOGI(TAG, "Joined network successfully (Extended PAN ID: %02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x, PAN ID: 0x%04hx)",
+            ESP_LOGI(TAG, "Joined network successfully (Extended PAN ID: %02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x, PAN ID: 0x%04hx, Channel:%d)",
                      extended_pan_id[7], extended_pan_id[6], extended_pan_id[5], extended_pan_id[4],
                      extended_pan_id[3], extended_pan_id[2], extended_pan_id[1], extended_pan_id[0],
-                     esp_zb_get_pan_id());
+                     esp_zb_get_pan_id(), esp_zb_get_current_channel());
             /* find the match on-off light device */
             esp_zb_zdo_match_desc_req_param_t  find_req;
             find_req.addr_of_interest = 0x0000;
@@ -267,6 +266,8 @@ static void esp_zb_task(void *pvParameters)
     esp_zb_device_register(esp_zb_ep_list);
     esp_zb_device_add_report_attr_cb(esp_zb_dev_reporting_cb);
     esp_zb_add_read_attr_resp_cb(HA_ONOFF_SWITCH_ENDPOINT, esp_zb_read_resp_cb);
+    esp_zb_set_primary_network_channel_set(ESP_ZB_PRIMARY_CHANNEL_MASK);
+    esp_zb_set_secondary_network_channel_set(ESP_ZB_SECONDARY_CHANNEL_MASK);
     ESP_ERROR_CHECK(esp_zb_start(true));
     esp_zb_main_loop_iteration();
 }

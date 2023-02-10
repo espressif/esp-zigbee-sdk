@@ -234,8 +234,6 @@ typedef struct esp_zb_app_signal_s {
  * @brief  Zigbee stack initialization.
  *
  * @note To be called inside the application's main cycle at start.
- * @note Default network channel is set to 13, if esp_zb_set_network_channel() not called or
- * no product config setting refer to tools/mfg_tool.
  * @note Default is no NVRAM erase from start up, user could call factory reset for erase NVRAM and other action please refer esp_zb_factory_reset().
  * @note Make sure to use correct corresponding nwk_cfg with your device type @ref esp_zb_cfg_s.
  * @anchor esp_zb_init
@@ -245,16 +243,28 @@ typedef struct esp_zb_app_signal_s {
 void esp_zb_init(esp_zb_cfg_t *nwk_cfg);
 
 /**
- * @brief   Set the Zigbee device network channel.
+ * @brief Set the primary channel mask.
  *
- * @note  This function should be run AFTER @ref esp_zb_init is called, if the user wants to set a specific channel
- * without reading channel setting from flash refer to tools/mfg_tool.
- * @note  Default network channel is set to 13, if esp_zb_set_network_channel is not called.
+ * Beacon request will be sent on these channels for the BDB energy scan.
  *
- * @param[in] channel Enabling which channel ranging from 11 - 26, frequency ranging from 2405 MHz to 2480 MHz
- * @return 0 - ESP_OK  invalid channel- ESP_ERR_INVALID_ARG
+ * @note  This function should be run AFTER @ref esp_zb_init is called and before @ref esp_zb_start. These masks define the allowable channels on which the device may attempt to
+ * form or join a network at startup time. If function is not called, by default it will scan all channels or read from `zb_fct` NVRAM zone if available. Please refer to tools/mfg_tool.
+ * @param[in] channel_mask  Valid channel mask is from 0x00000800 (only channel 11) to 0x07FFF800 (all channels from 11 to 26)
+ * @return  - ESP_OK on success
+            - ESP_ERR_INVALID_ARG if the channel mask is out of range
  */
-esp_err_t esp_zb_set_network_channel(uint8_t channel);
+esp_err_t esp_zb_set_primary_network_channel_set(uint32_t channel_mask);
+
+/**
+ * @brief   Set the secondary channel mask.
+ *
+ * Beacon request will be sent on these channels for the BDB energy scan, if no network found after energy scan on the primary channels.
+ *
+ * @param[in] channel_mask Valid channel mask is from 0x00000800 (only channel 11) to 0x07FFF800 (all channels from 11 to 26)
+ * @return  - ESP_OK on success
+            - ESP_ERR_INVALID_ARG if the channel mask is out of range
+ */
+esp_err_t esp_zb_set_secondary_network_channel_set(uint32_t channel_mask);
 
 /**
  * @brief   Set the Zigbee device long address.
@@ -263,14 +273,14 @@ esp_err_t esp_zb_set_network_channel(uint8_t channel);
  * without reading MAC address from flash refer to tools/mfg_tool or eFUSE.
  *
  * @param[in] addr Pointer of long address
- * @return 0 - ESP_OK
+ * @return - ESP_OK on success
  */
 esp_err_t esp_zb_set_long_address(esp_zb_ieee_addr_t addr);
 
 /**
  * @brief   Get the Zigbee device long address.
  *
- * @note Thie function will return a pointer to 64-bit of ieee long address.
+ * @note This function will return a pointer to 64-bit of ieee long address.
  *
  * @param[out] addr pointer of long address
  *
@@ -304,6 +314,12 @@ void esp_zb_get_extended_pan_id(esp_zb_ieee_addr_t ext_pan_id);
 uint16_t esp_zb_get_pan_id(void);
 
 /**
+ * @brief   Get the currently used channel.
+ * @return  8-bit Zigbee network channel number
+ */
+uint8_t esp_zb_get_current_channel(void);
+
+/**
  * @brief   Get the Zigbee network device type.
  *
  * @return device type @ref esp_zb_nwk_device_type_t
@@ -314,7 +330,7 @@ esp_zb_nwk_device_type_t esp_zb_get_network_device_role(void);
 /**
  * @brief  Start top level commissioning procedure with specified mode mask.
  *
- * @param[in] mode_mask - commissioning modes refer to esp_zb_bdb_commissioning_mode
+ * @param[in] mode_mask commissioning modes refer to esp_zb_bdb_commissioning_mode
  *
  * @return - ESP_OK on success
  *
@@ -346,6 +362,8 @@ void esp_zb_factory_reset(void);
  * some useful things.
  *
  * @note No-autostart mode: It initializes scheduler and buffers pool, but not MAC and upper layers.
+ * Notifies the application that Zigbee framework (scheduler, buffer pool, etc.) has started, but no
+ * join/rejoin/formation/BDB initialization has been done yet.
  * Typically esp_zb_start with no_autostart mode is used when application wants to do something before
  * starting joining the network.
  *
@@ -362,7 +380,7 @@ void esp_zb_factory_reset(void);
  *
  * @note Application should later call Zigbee commissioning initiation - for instance,
  * esp_zb_bdb_start_top_level_commissioning().
- *
+ * @anchor esp_zb_start
  * @return - ESP_OK on success
  *
  */

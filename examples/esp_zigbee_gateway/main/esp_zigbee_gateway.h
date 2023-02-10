@@ -17,7 +17,8 @@
 
 /* Zigbee Configuration */
 #define MAX_CHILDREN                    10          /* the max amount of connected devices */
-#define INSTALLCODE_POLICY_ENABLE       false    /* enable the install code policy for security */
+#define INSTALLCODE_POLICY_ENABLE       false       /* enable the install code policy for security */
+#define ESP_ZB_PRIMARY_CHANNEL_MASK     (1l << 13)  /* Zigbee primary channel mask use in the example */
 
 #define RCP_VERSION_MAX_SIZE            80
 #define HOST_RESET_PIN_TO_RCP_RESET     CONFIG_PIN_TO_RCP_RESET

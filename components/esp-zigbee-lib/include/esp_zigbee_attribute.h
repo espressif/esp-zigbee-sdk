@@ -9,7 +9,7 @@
 extern "C" {
 #endif
 #include "esp_zigbee_type.h"
-
+#include "zcl/esp_zigbee_zcl_common.h"
 /**
  * @brief  Create an empty attribute list.
  *
@@ -37,6 +37,24 @@ esp_zb_attribute_list_t *esp_zb_zcl_attr_list_create(uint16_t cluster_id);
  *
  */
 esp_zb_zcl_attr_t *esp_zb_zcl_get_attribute(uint8_t endpoint, uint16_t cluster_id, uint8_t cluster_role, uint16_t attr_id);
+
+/**
+ * @brief  Set ZCL attribute value.
+ *
+ * @note  Set the local attribute from the specific endpoint, cluster and attribute.
+ *
+ * @param[in] endpoint The endpoint
+ * @param[in] cluster_id Cluster id for attribute list refer to esp_zb_zcl_cluster_id
+ * @param[in] cluster_role Cluster role of this cluster, either server or client role refer to esp_zb_zcl_cluster_role
+ * @param[in] attr_id Attribute id
+ * @param[in] value_p pointer to new value
+
+ * @note It will force write the attribute value even if it's read-only.
+ * @return zcl status refer to esp_zb_zcl_status_t
+ *
+ */
+esp_zb_zcl_status_t esp_zb_zcl_set_attribute_val(uint8_t endpoint, uint16_t cluster_id, uint8_t cluster_role,
+        uint16_t attr_id, void *value_p);
 
 /**
  * @brief Add an attribute in basic cluster.
