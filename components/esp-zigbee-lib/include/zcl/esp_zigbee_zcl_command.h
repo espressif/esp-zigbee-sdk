@@ -71,6 +71,18 @@ typedef struct esp_zb_zcl_config_report_cmd_s {
     uint16_t reportable_change;                     /*!< Minimum change to attribute will result in report */
 } esp_zb_zcl_config_report_cmd_t;
 
+/**
+ * @brief The Zigbee ZCL report attribute command struct
+ *
+ */
+typedef struct esp_zb_zcl_report_attr_cmd_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;           /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode;         /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+    uint16_t clusterID;                             /*!< Cluster ID to report */
+    uint8_t cluster_role;                           /*!< Cluster role */
+    uint16_t attributeID;                           /*!< Attribute ID to report */
+} esp_zb_zcl_report_attr_cmd_t;
+
 /* ZCL basic cluster */
 
 /**
@@ -87,8 +99,6 @@ typedef struct esp_zb_zcl_basic_fact_reset_cmd_s {
 /**
  * @brief The Zigbee ZCL on-off command struct
  *
- * @note On off command will set enable ZCL response by default, later will support enable/disable this feature.
- *
  */
 typedef struct esp_zb_zcl_on_off_cmd_s {
     esp_zb_zcl_basic_cmd_t zcl_basic_cmd;           /*!< Basic command info */
@@ -101,8 +111,6 @@ typedef struct esp_zb_zcl_on_off_cmd_s {
 /**
  * @brief The Zigbee ZCL identify command struct
  *
- * @note Identify command will set enable ZCL response by default, later will support enable/disable this feature.
- *
  */
 typedef struct esp_zb_zcl_identify_cmd_s {
     esp_zb_zcl_basic_cmd_t zcl_basic_cmd;           /*!< Basic command info */
@@ -112,8 +120,6 @@ typedef struct esp_zb_zcl_identify_cmd_s {
 
 /**
  * @brief The Zigbee ZCL identify query command struct
- *
- * @note Identify query command will set enable ZCL response by default, later will support enable/disable this feature.
  *
  */
 typedef struct esp_zb_zcl_identify_query_cmd_s {
@@ -126,10 +132,6 @@ typedef struct esp_zb_zcl_identify_query_cmd_s {
 /**
  * @brief The Zigbee ZCL level move to level command struct
  *
- * @note Move to level will set enable ZCL response by default, later will support enable/disable this feature.
- *
- * @note Profile id set to HA profile by default, later SDK will support others.
- *
  */
 typedef struct esp_zb_zcl_move_to_level_cmd_s {
     esp_zb_zcl_basic_cmd_t zcl_basic_cmd;               /*!< Basic command info */
@@ -141,10 +143,6 @@ typedef struct esp_zb_zcl_move_to_level_cmd_s {
 /**
  * @brief The Zigbee ZCL level move command struct
  *
- * @note Move level will set enable ZCL response by default, later will support enable/disable this feature.
- *
- * @note Profile id set to HA profile by default, later SDK will support others.
- *
  */
 typedef struct esp_zb_zcl_level_move_cmd_s {
     esp_zb_zcl_basic_cmd_t zcl_basic_cmd;               /*!< Basic command info */
@@ -155,10 +153,6 @@ typedef struct esp_zb_zcl_level_move_cmd_s {
 
 /**
  * @brief The Zigbee ZCL level step command struct
- *
- * @note Step level will set enable ZCL response by default, later will support enable/disable this feature.
- *
- * @note Profile id set to HA profile by default, later SDK will support others.
  *
  */
 typedef struct esp_zb_zcl_level_step_cmd_s {
@@ -172,10 +166,6 @@ typedef struct esp_zb_zcl_level_step_cmd_s {
 /**
  * @brief The Zigbee ZCL level stop command struct
  *
- * @note Stop level will set enable ZCL response by default, later will support enable/disable this feature.
- *
- * @note Profile id set to HA profile by default, later SDK will support others.
- *
  */
 typedef struct esp_zb_zcl_level_stop_cmd_s {
     esp_zb_zcl_basic_cmd_t zcl_basic_cmd;               /*!< Basic command info */
@@ -185,11 +175,88 @@ typedef struct esp_zb_zcl_level_stop_cmd_s {
 /* ZCL color cluster */
 
 /**
+ * @brief The Zigbee ZCL color move to hue command struct
+ *
+ */
+typedef struct esp_zb_zcl_color_move_to_hue_cmd_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;               /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode;             /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+    uint8_t hue;                                        /*!< current value of hue */
+    uint8_t direction;                                  /*!< direction */
+    uint16_t transition_time;                           /*!< time wants to transition tenths of a second */
+} esp_zb_zcl_color_move_to_hue_cmd_t;
+
+/**
+ * @brief The Zigbee ZCL color move hue command struct
+ *
+ */
+typedef struct esp_zb_zcl_color_move_hue_cmd_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;               /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode;             /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+    uint8_t move_mode;                                  /*!< move mode */
+    uint8_t rate;                                       /*!< rate */
+} esp_zb_zcl_color_move_hue_cmd_t;
+
+/**
+ * @brief The Zigbee ZCL color step hue command struct
+ *
+ */
+typedef struct esp_zb_zcl_color_step_hue_cmd_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;               /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode;             /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+    uint8_t step_mode;                                  /*!< step mode */
+    uint8_t step_size;                                  /*!< step size */
+    uint16_t transition_time;                           /*!< time wants to transition tenths of a second */
+} esp_zb_zcl_color_step_hue_cmd_t;
+
+/**
+ * @brief The Zigbee ZCL color move to saturation command struct
+ *
+ */
+typedef struct esp_zb_zcl_color_move_to_saturation_cmd_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;               /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode;             /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+    uint8_t saturation;                                 /*!< current value of saturation */
+    uint16_t transition_time;                           /*!< time wants to transition tenths of a second */
+} esp_zb_zcl_color_move_to_saturation_cmd_t;
+
+/**
+ * @brief The Zigbee ZCL color move saturation command struct
+ *
+ */
+typedef struct esp_zb_zcl_color_move_saturation_cmd_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;               /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode;             /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+    uint8_t move_mode;                                  /*!< move mode */
+    uint8_t rate;                                       /*!< rate */
+} esp_zb_zcl_color_move_saturation_cmd_t;
+
+/**
+ * @brief The Zigbee ZCL color step saturation command struct
+ *
+ */
+typedef struct esp_zb_zcl_color_step_saturation_cmd_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;               /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode;             /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+    uint8_t step_mode;                                  /*!< step mode */
+    uint8_t step_size;                                  /*!< step size */
+    uint16_t transition_time;                           /*!< time wants to transition tenths of a second */
+} esp_zb_zcl_color_step_saturation_cmd_t;
+
+/**
+ * @brief The Zigbee ZCL color move to hue and saturation command struct
+ *
+ */
+typedef struct esp_zb_color_move_to_hue_saturation_cmd_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;               /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode;             /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+    uint8_t hue;                                        /*!< current value of hue */
+    uint8_t saturation;                                 /*!< current value of saturation */
+    uint16_t transition_time;                           /*!< time wants to transition tenths of a second */
+} esp_zb_color_move_to_hue_saturation_cmd_t;
+
+/**
  * @brief The Zigbee ZCL color move to color command struct
- *
- * @note Move to color will set enable ZCL response by default, later will support enable/disable this feature.
- *
- * @note Profile id set to HA profile by default, later SDK will support others.
  *
  */
 typedef struct esp_zb_zcl_color_move_to_color_cmd_s {
@@ -203,10 +270,6 @@ typedef struct esp_zb_zcl_color_move_to_color_cmd_s {
 /**
  * @brief The Zigbee ZCL color move color command struct
  *
- * @note Move color will set enable ZCL response by default, later will support enable/disable this feature.
- *
- * @note Profile id set to HA profile by default, later SDK will support others.
- *
  */
 typedef struct esp_zb_zcl_color_move_color_cmd_s {
     esp_zb_zcl_basic_cmd_t zcl_basic_cmd;               /*!< Basic command info */
@@ -217,10 +280,6 @@ typedef struct esp_zb_zcl_color_move_color_cmd_s {
 
 /**
  * @brief The Zigbee ZCL color step color command struct
- *
- * @note Step color will set enable ZCL response by default, later will support enable/disable this feature.
- *
- * @note Profile id set to HA profile by default, later SDK will support others.
  *
  */
 typedef struct esp_zb_zcl_color_step_color_cmd_s {
@@ -234,10 +293,6 @@ typedef struct esp_zb_zcl_color_step_color_cmd_s {
 /**
  * @brief The Zigbee ZCL color stop command struct
  *
- * @note Stop move color will set enable ZCL response by default, later will support enable/disable this feature.
- *
- * @note Profile id set to HA profile by default, later SDK will support others.
- *
  */
 typedef struct esp_zb_zcl_color_stop_move_step_cmd_s {
     esp_zb_zcl_basic_cmd_t zcl_basic_cmd;                   /*!< Basic command info */
@@ -247,10 +302,6 @@ typedef struct esp_zb_zcl_color_stop_move_step_cmd_s {
 /**
  * @brief The Zigbee ZCL lock/unlock door command struct
  *
- * @note Lock and Unlock door will set enable ZCL response by default, later will support enable/disable this feature.
- *
- * @note Profile id set to HA profile by default, later SDK will support others.
- *
  */
 typedef struct esp_zb_zcl_lock_unlock_door_cmd_s {
     esp_zb_zcl_basic_cmd_t zcl_basic_cmd;                   /*!< Basic command info */
@@ -259,10 +310,6 @@ typedef struct esp_zb_zcl_lock_unlock_door_cmd_s {
 
 /**
  * @brief The Zigbee ZCL groups add group command struct
- *
- * @note Add group will set enable ZCL response by default, later will support this feature
- *
- * @note Profile id set to HA profile by default, later will support others
  *
  * @note Group name currently is not supported, put empty string, Support of group names is optional, @@see ZCL specification, subclause  3.6.2.2.2
  */
@@ -275,10 +322,6 @@ typedef struct esp_zb_zcl_groups_add_group_cmd_s {
 /**
  * @brief The Zigbee ZCL groups remove all groups command struct
  *
- * @note Remove all groups will set enable ZCL response by default, later will support this feature
- *
- * @note Profile id set to HA profile by default, later will support others
- *
  */
 typedef struct esp_zb_zcl_groups_remove_all_groups_cmd_s {
     esp_zb_zcl_basic_cmd_t zcl_basic_cmd;                  /*!< Basic command info */
@@ -290,7 +333,7 @@ typedef struct esp_zb_zcl_groups_remove_all_groups_cmd_s {
  *
  * @note Get group membership will set enable ZCL response by default, later will support this feature
  *
- * @note Profile id set to HA profile by default, later will support others. Maximum group list size is 10
+ * @note Maximum group list size is 10.
  *
  */
 typedef struct esp_zb_zcl_groups_get_group_membership_cmd_s {
@@ -308,15 +351,13 @@ typedef struct esp_zb_zcl_scenes_extension_field_s {
     uint16_t cluster_id;                                   /*!< Cluster id */
     uint8_t length;                                        /*!< Length of scenes_extension_field */
     uint8_t *extension_field_attribute_value_list;         /*!< Extension field attribute value list */
-    struct esp_zb_zcl_scenes_extension_field_s* next;      /*!< A pointer to next scenes extension field */
+    struct esp_zb_zcl_scenes_extension_field_s *next;      /*!< A pointer to next scenes extension field */
 } esp_zb_zcl_scenes_extension_field_t;
 
 /**
  * @brief The Zigbee ZCL scenes add scene command struct
  *
- * @note Send add scene will set enable ZCL response by default, later will support enable/disable this feature.
- *
- * @note Profile id set to HA profile by default, later SDK will support others. If you have more cluster, please realloc buffer.
+ * @note If you have more cluster, please realloc buffer.
  * The maximum number of scenes capable of being stored in the table is 10.
  */
 typedef struct esp_zb_zcl_scenes_add_scene_cmd_s {
@@ -331,10 +372,6 @@ typedef struct esp_zb_zcl_scenes_add_scene_cmd_s {
 /**
  * @brief The Zigbee ZCL scenes remove scene command struct
  *
- * @note Send remove scene will set enable ZCL response by default, later will support enable/disable this feature.
- *
- * @note Profile id set to HA profile by default, later SDK will support others.
- *
  */
 typedef struct esp_zb_zcl_scenes_remove_scene_cmd_s {
     esp_zb_zcl_basic_cmd_t zcl_basic_cmd;               /*!< Basic command info */
@@ -346,10 +383,6 @@ typedef struct esp_zb_zcl_scenes_remove_scene_cmd_s {
 /**
  * @brief The Zigbee ZCL scenes remove all scenes command struct
  *
- * @note Send remove all scenes will set enable ZCL response by default, later will support enable/disable this feature.
- *
- * @note Profile id set to HA profile by default, later SDK will support others.
- *
  */
 typedef struct esp_zb_zcl_scenes_remove_all_scenes_cmd_s {
     esp_zb_zcl_basic_cmd_t zcl_basic_cmd;               /*!< Basic command info */
@@ -360,10 +393,6 @@ typedef struct esp_zb_zcl_scenes_remove_all_scenes_cmd_s {
 /**
  * @brief The Zigbee ZCL scenes view scene command struct
  *
- * @note Send view scene will set enable ZCL response by default, later will support enable/disable this feature.
- *
- * @note Profile id set to HA profile by default, later SDK will support others.
- *
  */
 typedef struct esp_zb_zcl_scenes_view_scene_cmd_s {
     esp_zb_zcl_basic_cmd_t zcl_basic_cmd;               /*!< Basic command info */
@@ -373,10 +402,6 @@ typedef struct esp_zb_zcl_scenes_view_scene_cmd_s {
 
 /**
  * @brief The Zigbee ZCL scenes store scene command struct
- *
- * @note Send store scene will set enable ZCL response by default, later will support enable/disable this feature.
- *
- * @note Profile id set to HA profile by default, later SDK will support others.
  *
  */
 typedef struct esp_zb_zcl_scenes_store_scene_cmd_s {
@@ -389,10 +414,6 @@ typedef struct esp_zb_zcl_scenes_store_scene_cmd_s {
 /**
  * @brief The Zigbee ZCL scenes recall scene command struct
  *
- * @note Send recall scene will set enable ZCL response by default, later will support enable/disable this feature.
- *
- * @note Profile id set to HA profile by default, later SDK will support others.
- *
  */
 typedef struct esp_zb_zcl_scenes_recall_scene_cmd_s {
     esp_zb_zcl_basic_cmd_t zcl_basic_cmd;                 /*!< Basic command info */
@@ -404,10 +425,6 @@ typedef struct esp_zb_zcl_scenes_recall_scene_cmd_s {
 /**
  * @brief The Zigbee ZCL scenes get scene membership command struct
  *
- * @note Send get scene membership will set enable ZCL response by default, later will support enable/disable this feature.
- *
- * @note Profile id set to HA profile by default, later SDK will support others.
- *
  */
 typedef struct esp_zb_zcl_scenes_get_scene_membership_cmd_s {
     esp_zb_zcl_basic_cmd_t zcl_basic_cmd;               /*!< Basic command info */
@@ -417,8 +434,6 @@ typedef struct esp_zb_zcl_scenes_get_scene_membership_cmd_s {
 
 /**
  * @brief The Zigbee ZCL custom cluster command struct
- *
- * @note Profile id set to HA profile by default, later SDK will support others.
  *
  * @note Support only u8, s8, u16, s16, u32, s32, string  data types.
  *
@@ -436,8 +451,6 @@ typedef struct esp_zb_zcl_custom_cluster_cmd_req_s {
 
 /**
  * @brief The Zigbee ZCL custom cluster command response struct
- *
- * @note Profile id set to HA profile by default, later SDK will support others.
  *
  */
 typedef struct esp_zb_zcl_custom_cluster_cmd_resp_s {
@@ -467,6 +480,16 @@ void esp_zb_zcl_read_attr_cmd_req(esp_zb_zcl_read_attr_cmd_t *cmd_req);
  *
  */
 void esp_zb_zcl_write_attr_cmd_req(esp_zb_zcl_write_attr_cmd_t *cmd_req);
+
+/**
+ * @brief   Send report attribute command
+ *
+ * @param[in]  cmd_req  pointer to the report attribute command @ref esp_zb_zcl_report_attr_cmd_s
+ * @note Currently it supports ZCL specs defined attributes with type 8,16,32,64 bit or string.
+ * @return - ESP_OK on success
+ *
+ */
+esp_err_t esp_zb_zcl_report_attr_cmd_req(esp_zb_zcl_report_attr_cmd_t *cmd_req);
 
 /**
  * @brief   Send config report command
@@ -573,6 +596,63 @@ void esp_zb_zcl_level_step_with_onoff_cmd_req(esp_zb_zcl_level_step_cmd_t *cmd_r
 void esp_zb_zcl_level_stop_cmd_req(esp_zb_zcl_level_stop_cmd_t *cmd_req);
 
 /* ZCL color control cluster list command */
+
+/**
+ * @brief   Send color move to hue command
+ *
+ * @param[in]  cmd_req  pointer to the move to hue command @ref esp_zb_zcl_color_move_to_hue_cmd_s
+ *
+ */
+void esp_zb_zcl_color_move_to_hue_cmd_req(esp_zb_zcl_color_move_to_hue_cmd_t *cmd_req);
+
+/**
+ * @brief   Send color move hue command
+ *
+ * @param[in]  cmd_req  pointer to the move hue command @ref esp_zb_zcl_color_move_hue_cmd_s
+ *
+ */
+void esp_zb_zcl_color_move_hue_cmd_req(esp_zb_zcl_color_move_hue_cmd_t *cmd_req);
+
+/**
+ * @brief   Send color step hue command
+ *
+ * @param[in]  cmd_req  pointer to the step hue command @ref esp_zb_zcl_color_step_hue_cmd_s
+ *
+ */
+void esp_zb_zcl_color_step_hue_cmd_req(esp_zb_zcl_color_step_hue_cmd_t *cmd_req);
+
+/**
+ * @brief   Send color move to saturation command
+ *
+ * @param[in]  cmd_req  pointer to the move to saturation command @ref esp_zb_zcl_color_move_to_saturation_cmd_s
+ *
+ */
+void esp_zb_zcl_color_move_to_saturation_cmd_req(esp_zb_zcl_color_move_to_saturation_cmd_t *cmd_req);
+
+/**
+ * @brief   Send color move saturation command
+ *
+ * @param[in]  cmd_req  pointer to the move saturation command @ref esp_zb_zcl_color_move_saturation_cmd_s
+ *
+ */
+void esp_zb_zcl_color_move_saturation_cmd_req(esp_zb_zcl_color_move_saturation_cmd_t *cmd_req);
+
+/**
+ * @brief   Send color step saturation command
+ *
+ * @param[in]  cmd_req  pointer to the step saturation command @ref esp_zb_zcl_color_step_saturation_cmd_s
+ *
+ */
+void esp_zb_zcl_color_step_saturation_cmd_req(esp_zb_zcl_color_step_saturation_cmd_t *cmd_req);
+
+/**
+ * @brief   Send color move to hue and saturation command
+ *
+ * @param[in]  cmd_req  pointer to the move to hue and saturation command @ref esp_zb_color_move_to_hue_saturation_cmd_s
+ *
+ */
+void esp_zb_zcl_color_move_to_hue_and_saturation_cmd_req(esp_zb_color_move_to_hue_saturation_cmd_t *cmd_req);
+
 
 /**
  * @brief   Send color move to color command
