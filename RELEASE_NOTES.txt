@@ -140,6 +140,7 @@ New Changes
 - add the API for esp_zb_set_primary_network_channel_set/ esp_zb_set_secondary_network_channel_set
 - add the API for get current channel
 - add the API for set ZCL attribute
+- Add more clusters for cli example to support dimmable light example for pytest
 
 Bug Fixes
 ---------
