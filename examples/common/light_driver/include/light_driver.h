@@ -33,14 +33,15 @@ extern "C" {
 
 /** Convert Hue,Saturation,V to RGB
  * RGB - [0..0xffff]
- * Hue,Sat - [0..0xff]
+ * hue - [0..0xff]
+ * Sat - [0..0xff]
  * V always = (ZB_UINT16_MAX-1)
 */
 #define HSV_to_RGB(h, s, v, r, g, b )           \
 {                                               \
-  zb_uint8_t i;                                 \
-  zb_uint8_t sector = ZB_UINT8_MAX/6;           \
-  zb_uint16_t f, p, q, t;                       \
+  uint8_t i;                                    \
+  uint8_t sector = UINT8_MAX/6;                 \
+  float f, p, q, t;                             \
   if( s == 0 ) {  /* achromatic (grey)*/        \
     r = g = b = (v);                            \
   }                                             \
@@ -48,9 +49,9 @@ extern "C" {
   {                                             \
     i = h / sector;  /* sector 0 to 5 */        \
     f = h % sector; /* factorial part of h*/    \
-    p = (zb_uint16_t)(v * ( 1.0 - s/ZB_UINT8_MAX ));                            \
-    q = (zb_uint16_t)(v * ( 1.0 - s/ZB_UINT8_MAX * f/(float)sector ));          \
-    t = (zb_uint16_t)(v * ( 1.0 - s/ZB_UINT8_MAX * ( 1 - f/(float)sector ) ));  \
+    p = (float)(v * ( 1.0 - (float)s/UINT8_MAX ));                            \
+    q = (float)(v * ( 1.0 - (float)s/UINT8_MAX * f/(float)sector ));          \
+    t = (float)(v * ( 1.0 - (float)s/UINT8_MAX * ( 1 - f/(float)sector ) ));  \
     switch( i ) {                               \
       case 0: r = (v); g = t; b = p; break;     \
       case 1: r = q; g = (v); b = p; break;     \
@@ -111,6 +112,13 @@ void light_driver_set_color_RGB(uint8_t red, uint8_t green, uint8_t blue);
 */
 void light_driver_set_color_xy(uint16_t color_current_x, uint16_t color_current_y);
 
+/**
+* @brief Set light color from hue saturation
+*
+* @param  hue  The hue to be set
+* @param  sat  The sat to be set
+*/
+void light_driver_set_color_hue_sat(uint8_t hue, uint8_t sat);
 
 #ifdef __cplusplus
 } // extern "C"

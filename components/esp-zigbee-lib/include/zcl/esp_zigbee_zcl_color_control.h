@@ -117,6 +117,30 @@ typedef enum {
     ESP_ZB_ZCL_CMD_COLOR_CONTROL_STEP_COLOR_TEMPERATURE           = 0x4c,    /*!< Step color temperature command */
 } esp_zb_zcl_color_control_cmd_id_t;
 
+/** @brief Direction of Move to Hue defines
+ */
+typedef enum {
+    ESP_ZB_ZCL_CMD_COLOR_CONTROL_MOVE_TO_HUE_SHORTEST = 0x00,   /*!< Shortest distance */
+    ESP_ZB_ZCL_CMD_COLOR_CONTROL_MOVE_TO_HUE_LONGEST  = 0x01,   /*!< Longest distance */
+    ESP_ZB_ZCL_CMD_COLOR_CONTROL_MOVE_TO_HUE_UP       = 0x02,   /*!< Up */
+    ESP_ZB_ZCL_CMD_COLOR_CONTROL_MOVE_TO_HUE_DOWN     = 0x03,   /*!< Down */
+} esp_zb_zcl_color_control_move_to_hue_direction_t;
+
+/** @brief Direction of Move mode defines.
+ */
+typedef enum {
+    ESP_ZB_ZCL_CMD_COLOR_CONTROL_MOVE_STOP              = 0x00, /*!< Stop */
+    ESP_ZB_ZCL_CMD_COLOR_CONTROL_MOVE_UP                = 0x01, /*!< Up */
+    ESP_ZB_ZCL_CMD_COLOR_CONTROL_MOVE_DOWN              = 0x03, /*!< Down */
+} esp_zb_zcl_color_control_move_mode_t;
+
+/** @brief Direction of Step mode defines.
+ */
+typedef enum {
+    ESP_ZB_ZCL_CMD_COLOR_CONTROL_STEP_UP                = 0x01, /*!< Up */
+    ESP_ZB_ZCL_CMD_COLOR_CONTROL_STEP_DOWN              = 0x03, /*!< Down */
+} esp_zb_zcl_color_control_step_mode_t;
+
 #ifdef __cplusplus
 }
 #endif

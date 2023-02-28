@@ -54,8 +54,8 @@ static void esp_zb_buttons_handler(switch_func_pair_t *button_func_pair)
     case SWITCH_ONOFF_TOGGLE_CONTROL:
         /* send on-off toggle command to remote device */
         esp_zb_zcl_on_off_cmd_t cmd_req;
-        cmd_req.zcl_basic_cmd.dst_addr_u.addr_short = 0;
-        cmd_req.zcl_basic_cmd.dst_endpoint = 10;
+        cmd_req.zcl_basic_cmd.dst_addr_u.addr_short = on_off_light.short_addr;
+        cmd_req.zcl_basic_cmd.dst_endpoint = on_off_light.endpoint;
         cmd_req.zcl_basic_cmd.src_endpoint = HA_ONOFF_SWITCH_ENDPOINT;
         cmd_req.address_mode = ESP_ZB_APS_ADDR_MODE_16_ENDP_PRESENT;
         cmd_req.on_off_cmd_id = ESP_ZB_ZCL_CMD_ON_OFF_TOGGLE_ID;

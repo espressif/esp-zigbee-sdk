@@ -38,6 +38,18 @@ void light_driver_set_color_xy(uint16_t color_current_x, uint16_t color_current_
     ESP_ERROR_CHECK(led_strip_refresh(s_led_strip));
 }
 
+void light_driver_set_color_hue_sat(uint8_t hue, uint8_t sat)
+{
+    float red_f, green_f, blue_f;
+    HSV_to_RGB(hue, sat, UINT8_MAX, red_f, green_f, blue_f);
+    float ratio = (float)s_level / 255;
+    s_red = (uint8_t)red_f;
+    s_green = (uint8_t)green_f;
+    s_blue = (uint8_t)blue_f;
+    ESP_ERROR_CHECK(led_strip_set_pixel(s_led_strip, 0, s_red * ratio, s_green * ratio, s_blue * ratio));
+    ESP_ERROR_CHECK(led_strip_refresh(s_led_strip));
+}
+
 void light_driver_set_color_RGB(uint8_t red, uint8_t green, uint8_t blue)
 {
     float ratio = (float)s_level / 255;
@@ -50,9 +62,6 @@ void light_driver_set_color_RGB(uint8_t red, uint8_t green, uint8_t blue)
 
 void light_driver_set_power(bool power)
 {
-    if (!power) {
-        light_driver_set_level(0);
-    }
     ESP_ERROR_CHECK(led_strip_set_pixel(s_led_strip, 0, s_red * power, s_green * power, s_blue * power));
     ESP_ERROR_CHECK(led_strip_refresh(s_led_strip));
 }
