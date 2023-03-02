@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2022 Espressif Systems (Shanghai) CO LTD
+ * SPDX-FileCopyrightText: 2022-2023 Espressif Systems (Shanghai) CO LTD
  *
  * SPDX-License-Identifier: Apache-2.0
  */
@@ -91,6 +91,17 @@ esp_zb_attribute_list_t *esp_zb_scenes_cluster_create(esp_zb_scenes_cluster_cfg_
 esp_zb_attribute_list_t *esp_zb_on_off_cluster_create(esp_zb_on_off_cluster_cfg_t *on_off_cfg);
 
 /**
+ * @brief  Create a standard on-off switch config cluster attribute list.
+ *
+ * @note  This only contains the mandatory attribute. Switch type attribute default set to 0. User could change it if necessary.
+ * @param[in] on_off_switch_cfg  Configuration parameters for this cluster defined by @ref esp_zb_on_off_switch_cluster_cfg_s
+ *
+ * @return Pointer to attribute list @ref esp_zb_attribute_list_s
+ *
+ */
+esp_zb_attribute_list_t *esp_zb_on_off_switch_cfg_cluster_create(esp_zb_on_off_switch_cluster_cfg_t *on_off_switch_cfg);
+
+/**
  * @brief  Create a standard level cluster attribute list.
  *
  * @note  This only contains the mandatory attribute.
@@ -135,6 +146,17 @@ esp_zb_attribute_list_t *esp_zb_time_cluster_create(esp_zb_time_cluster_cfg_t *t
 esp_zb_attribute_list_t *esp_zb_shade_config_cluster_create(esp_zb_shade_config_cluster_cfg_t *shade_cfg);
 
 /**
+ * @brief  Create a standard binary input (basic) cluster attribute list.
+ *
+ * @note  This only contains the mandatory attribute. Switch type attribute default set to 0. User could change it if necessary.
+ * @param[in] binary_input_cfg  Configuration parameters for this cluster defined by @ref esp_zb_binary_input_cluster_cfg_s
+ *
+ * @return Pointer to attribute list @ref esp_zb_attribute_list_s
+ *
+ */
+esp_zb_attribute_list_t *esp_zb_binary_input_cluster_create(esp_zb_binary_input_cluster_cfg_t *binary_input_cfg);
+
+/**
  * @brief  Create a standard door lock cluster attribute list.
  *
  * @note  This only contains the mandatory attribute.
@@ -144,6 +166,17 @@ esp_zb_attribute_list_t *esp_zb_shade_config_cluster_create(esp_zb_shade_config_
  *
  */
 esp_zb_attribute_list_t *esp_zb_door_lock_cluster_create(esp_zb_door_lock_cluster_cfg_t *lock_cfg);
+
+/**
+ * @brief  Create a standard IAS zone cluster attribute list.
+ *
+ * @note  This only contains the mandatory attribute. Switch type attribute default set to 0. User could change it if necessary.
+ * @param[in] ias_zone_cfg  Configuration parameters for this cluster defined by @ref esp_zb_ias_zone_cluster_cfg_s
+ *
+ * @return Pointer to attribute list @ref esp_zb_attribute_list_s
+ *
+ */
+esp_zb_attribute_list_t *esp_zb_ias_zone_cluster_create(esp_zb_ias_zone_cluster_cfg_t *ias_zone_cfg);
 
 /**
  * @brief  Create a standard temperature measurement cluster attribute list.
@@ -239,6 +272,20 @@ esp_err_t esp_zb_cluster_list_add_scenes_cluster(esp_zb_cluster_list_t *cluster_
 esp_err_t esp_zb_cluster_list_add_on_off_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 /**
+ * @brief Add on_off switch config cluster (attribute list) in a cluster list.
+ *
+ * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
+ * @param[in] attr_list  An attribute list which wants to add
+ * @param[in] role_mask  A role of server or client for this cluster (attribute list) refer to esp_zb_zcl_cluster_role
+ *
+ * @return
+ *      - ESP_OK on success
+ *      - ESP_ERR_INVALID_ARG if cluster list not initialized
+ *
+ */
+esp_err_t esp_zb_cluster_list_add_on_off_switch_config_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
+
+/**
  * @brief Add level cluster (attribute list) in a cluster list.
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
@@ -293,6 +340,34 @@ esp_err_t esp_zb_cluster_list_add_time_cluster(esp_zb_cluster_list_t *cluster_li
  *
  */
 esp_err_t esp_zb_cluster_list_add_shade_config_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
+
+/**
+ * @brief Add binary input (basic) cluster (attribute list) in a cluster list.
+ *
+ * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
+ * @param[in] attr_list  An attribute list which wants to add
+ * @param[in] role_mask  A role of server or client for this cluster (attribute list) refer to esp_zb_zcl_cluster_role
+ *
+ * @return
+ *      - ESP_OK on success
+ *      - ESP_ERR_INVALID_ARG if cluster list not initialized
+ *
+ */
+esp_err_t esp_zb_cluster_list_add_binary_input_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
+
+/**
+ * @brief Add ias zone cluster (attribute list) in a cluster list.
+ *
+ * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
+ * @param[in] attr_list  An attribute list which wants to add
+ * @param[in] role_mask  A role of server or client for this cluster (attribute list) refer to esp_zb_zcl_cluster_role
+ *
+ * @return
+ *      - ESP_OK on success
+ *      - ESP_ERR_INVALID_ARG if cluster list not initialized
+ *
+ */
+esp_err_t esp_zb_cluster_list_add_ias_zone_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 /**
  * @brief Add Door Lock cluster (attribute list) in a cluster list.
@@ -424,6 +499,20 @@ esp_err_t esp_zb_cluster_list_update_scenes_cluster(esp_zb_cluster_list_t *clust
 esp_err_t esp_zb_cluster_list_update_on_off_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 /**
+ * @brief Update on_off switch config cluster (attribute list) in a cluster list.
+ *
+ * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
+ * @param[in] attr_list  An attribute list which wants to update
+ * @param[in] role_mask  A role of server or client for this cluster (attribute list) refer to esp_zb_zcl_cluster_role
+ *
+ * @return
+ *      - ESP_OK on success
+ *      - ESP_ERR_INVALID_ARG if cluster list not initialized
+ *
+ */
+esp_err_t esp_zb_cluster_list_update_on_off_switch_config_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
+
+/**
  * @brief Update level cluster (attribute list) in a cluster list.
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
@@ -478,6 +567,34 @@ esp_err_t esp_zb_cluster_list_update_time_cluster(esp_zb_cluster_list_t *cluster
  *
  */
 esp_err_t esp_zb_cluster_list_update_shade_config_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
+
+/**
+ * @brief Update binary input (basic) cluster (attribute list) in a cluster list.
+ *
+ * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
+ * @param[in] attr_list  An attribute list which wants to add
+ * @param[in] role_mask  A role of server or client for this cluster (attribute list) refer to esp_zb_zcl_cluster_role
+ *
+ * @return
+ *      - ESP_OK on success
+ *      - ESP_ERR_INVALID_ARG if cluster list not initialized
+ *
+ */
+esp_err_t esp_zb_cluster_list_update_binary_input_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
+
+/**
+ * @brief Update ias zone cluster (attribute list) in a cluster list.
+ *
+ * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
+ * @param[in] attr_list  An attribute list which wants to add
+ * @param[in] role_mask  A role of server or client for this cluster (attribute list) refer to esp_zb_zcl_cluster_role
+ *
+ * @return
+ *      - ESP_OK on success
+ *      - ESP_ERR_INVALID_ARG if cluster list not initialized
+ *
+ */
+esp_err_t esp_zb_cluster_list_update_ias_zone_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 /**
  * @brief Update Door Lock cluster (attribute list) in a cluster list.

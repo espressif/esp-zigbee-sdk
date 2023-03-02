@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2022 Espressif Systems (Shanghai) CO LTD
+ * SPDX-FileCopyrightText: 2022-2023 Espressif Systems (Shanghai) CO LTD
  *
  * SPDX-License-Identifier: Apache-2.0
  */
@@ -15,9 +15,12 @@ extern "C" {
 #include "esp_zigbee_zcl_groups.h"
 #include "esp_zigbee_zcl_scenes.h"
 #include "esp_zigbee_zcl_on_off.h"
+#include "esp_zigbee_zcl_on_off_switch_config.h"
 #include "esp_zigbee_zcl_level.h"
 #include "esp_zigbee_zcl_color_control.h"
 #include "esp_zigbee_zcl_time.h"
+#include "esp_zigbee_zcl_binary_input.h"
+#include "esp_zigbee_zcl_ias_zone.h"
 #include "esp_zigbee_zcl_shade_config.h"
 #include "esp_zigbee_zcl_door_lock.h"
 #include "esp_zigbee_zcl_temperature_meas.h"
