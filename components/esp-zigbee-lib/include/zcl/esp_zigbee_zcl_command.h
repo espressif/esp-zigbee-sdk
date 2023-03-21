@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2022 Espressif Systems (Shanghai) CO LTD
+ * SPDX-FileCopyrightText: 2022-2023 Espressif Systems (Shanghai) CO LTD
  *
  * SPDX-License-Identifier: Apache-2.0
  */
@@ -433,6 +433,38 @@ typedef struct esp_zb_zcl_scenes_get_scene_membership_cmd_s {
 } esp_zb_zcl_scenes_get_scene_membership_cmd_t;
 
 /**
+ * @brief The Zigbee ZCL IAS zone enroll response command struct
+ */
+typedef struct esp_zb_zcl_ias_zone_enroll_response_cmd_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;                      /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode;                    /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+    uint8_t enroll_rsp_code;                                   /*!< The enroll response code refer to `esp_zb_zcl_ias_zone_enroll_response_code_t` */
+    uint8_t zone_id;                                           /*!< Zone ID is the index of table */
+} esp_zb_zcl_ias_zone_enroll_response_cmd_t;
+
+/**
+ * @brief The Zigbee ZCL IAS zone Change Notification command struct
+ */
+typedef struct esp_zb_zcl_ias_zone_status_change_notif_cmd_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;                       /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode;                     /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+    uint16_t zone_status;                                       /*!< Zone status shall be current value of the zone status attribute */
+    uint8_t  extend_status;                                     /*!< Extended status for additional info */
+    uint8_t  zone_id;                                           /*!< Zone ID is the index of table */
+    uint16_t delay;                                             /*!< Delay in quarter-seconds */
+} esp_zb_zcl_ias_zone_status_change_notif_cmd_t;
+
+/**
+ * @brief The Zigbee ZCL IAS zone enroll request command struct
+ */
+typedef struct esp_zb_zcl_ias_zone_enroll_request_cmd_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;                      /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode;                    /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+    uint16_t zone_type;                                        /*!< Zone type */
+    uint16_t manuf_code;                                       /*!< Manufacturer code */
+} esp_zb_zcl_ias_zone_enroll_request_cmd_t;
+
+/**
  * @brief The Zigbee ZCL custom cluster command struct
  *
  * @note Support only u8, s8, u16, s16, u32, s32, string  data types.
@@ -797,6 +829,30 @@ void esp_zb_zcl_scenes_recall_scene_cmd_req(esp_zb_zcl_scenes_recall_scene_cmd_t
  *
  */
 void esp_zb_zcl_scenes_get_scene_membership_cmd_req(esp_zb_zcl_scenes_get_scene_membership_cmd_t *cmd_req);
+
+/**
+ * @brief   Send IAS zone enroll response command
+ * @note Type 2 cluster from client to server
+ * @param[in]  cmd_resp  pointer to the zone enroll response command  @ref esp_zb_zcl_ias_zone_enroll_response_cmd_s
+ *
+ */
+void esp_zb_zcl_ias_zone_enroll_cmd_resp(esp_zb_zcl_ias_zone_enroll_response_cmd_t *cmd_resp);
+
+/**
+ * @brief   Send IAS zone status change notification command
+ * @note Type 2 cluster from server to client
+ * @param[in]  cmd_req  pointer to the ias zone status change notification command  @ref esp_zb_zcl_ias_zone_status_change_notif_cmd_s
+ *
+ */
+void esp_zb_zcl_ias_zone_status_change_notif_cmd_req(esp_zb_zcl_ias_zone_status_change_notif_cmd_t *cmd_req);
+
+/**
+ * @brief   Send IAS zone enroll request command
+ * @note Type 2 cluster from server to client
+ * @param[in]  cmd_req  pointer to the ias zone enroll request command  @ref esp_zb_zcl_ias_zone_enroll_request_cmd_s
+ *
+ */
+void esp_zb_zcl_ias_zone_enroll_cmd_req(esp_zb_zcl_ias_zone_enroll_request_cmd_t *cmd_req);
 
 /**
  * @brief   Send custom cluster command request

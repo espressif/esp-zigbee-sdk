@@ -147,3 +147,52 @@ Bug Fixes
 - fix the issue https://github.com/espressif/esp-zigbee-sdk/issues/1
 - fix the issue https://github.com/espressif/esp-zigbee-sdk/issues/3
 - fix the issue https://github.com/espressif/esp-idf/issues/10662
+
+
+# 28-Feb-2023
+
+Versions
+--------
+0.5.2 version release of ESP-ZIGBEE-SDK
+
+Features
+--------
+- hue/saturation command and report attribute API
+
+Known Issues
+------------
+
+New Changes
+-----------
+
+- add the API for hue/saturation command and attribute callback support
+- add the API for report attribute
+
+
+Bug Fixes
+---------
+- fix the issue https://github.com/espressif/esp-zigbee-sdk/issues/4
+- fix the issue https://github.com/espressif/esp-zigbee-sdk/issues/5
+
+
+# 17-Mar-2023
+
+Versions
+--------
+0.5.3 version release of ESP-ZIGBEE-SDK
+
+Features
+--------
+- More cluster (ias zone, on_off_switch_configuration binary_input) support
+- support ESP32h2 chip
+
+Known Issues
+------------
+
+New Changes
+-----------
+
+Bug Fixes
+---------
+
+- fix the issue https://github.com/espressif/esp-zigbee-sdk/issues/6

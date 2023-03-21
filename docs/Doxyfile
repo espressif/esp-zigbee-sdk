@@ -32,6 +32,9 @@ INPUT = \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_command.h              \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_common.h               \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_basic.h                \
+    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_binary_input.h         \
+    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_ias_zone.h             \
+    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_on_off_switch_config.h \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_color_control.h        \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_door_lock.h            \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_groups.h               \
