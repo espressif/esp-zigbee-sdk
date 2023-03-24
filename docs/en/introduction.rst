@@ -52,3 +52,70 @@ By combining the above-mentioned Zigbee hardware and software solutions with ESP
 
 .. todo::
     Add introduction here and add example in the rainmaker repository for Zigbee solution
+
+1.2 Supported Features
+----------------------
+
+The supported features in current ESP Zigbee SDK are listed below.
+
+1.2.1 ZCL Clusters
+~~~~~~~~~~~~~~~~~~
+
+.. table:: **ZCL cluster**
+   :align: center
+
+   ========================= ============ 
+         Cluster Name         Cluster ID  
+   ========================= ============ 
+            basic               0x0000    
+           identify             0x0003    
+            groups              0x0004    
+            scenes              0x0005    
+            on_off              0x0006    
+       on_off_switch_cfg        0x0007    
+         level_control          0x0008    
+             time               0x000a    
+         binary_input           0x000f    
+              ota               0x0019    
+         shade_config           0x0100    
+           door_lock            0x0101    
+         color_control          0x0300    
+    temperature_measurement     0x0402    
+           ias_zone             0x0500    
+   ========================= ============ 
+
+
+1.2.1.1 Attributes and Commands
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+See each cluster's supported attribute in `ZCL api-reference <https://docs.espressif.com/projects/esp-zigbee-sdk/en/latest/esp32/api-reference/zcl/index.html>`__
+
+
+1.2.2 HA Automation Device Types
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. table:: **Zigbee Home Automation**
+   :align: center
+
+   =========== ======================= ======================================================================= 
+    Device ID       Device Name                                   Default Clusters                             
+   =========== ======================= ======================================================================= 
+     0x0002         on_off_light                       basic, identify, groups, scenes, on_off                 
+     0x0000         on_off_switch                                 basic, identify                              
+     0x0102     color_dimmable_light    basic, identify, groups, scenes, on_off, level_control, color_control  
+     0x0105     color_dimmable_switch                              basic, identify                             
+     0x0009         power_outlet                       basic, identify, groups,scenes, on_off                  
+     0x0200             shade               basic, identify, groups, scenes, on_off, level_control, shade      
+     0x0201       shade_controller                                 basic, identify                             
+     0x000A           door_lock                      basic, identify, groups, scenes, door_lock                
+     0x000B     door_lock_controller                               basic, identify                             
+     0x0302      temperature_sensor                       basic, identify, temperature_meas                    
+     0x0005      configuration_tool     basic, identify, groups, scenes, on_off, level_control, color_control  
+   =========== ======================= ======================================================================= 
+
+See default mandatory attributes in each HA device's cluster in `HA api-reference <https://docs.espressif.com/projects/esp-zigbee-sdk/en/latest/esp32/api-reference/ha/index.html>`__
+
+1.2.3 More Supported
+~~~~~~~~~~~~~~~~~~~~
+
+For any new cluster or device needs, please open an `issue <https://github.com/espressif/esp-zigbee-sdk/issues>`__ on GitHub. We will get back to you soon.
