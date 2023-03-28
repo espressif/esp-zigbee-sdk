@@ -17,8 +17,8 @@ PROJECT_ROOT = Path(__file__).parent.parent.parent.absolute()
 DEF_APP_PATH = PROJECT_ROOT / 'examples'
 APPS_BUILD_PER_JOB = 30
 PYTEST_APPS = [
-    {"target": "esp32h4", "name": "esp_zigbee_cli"},
-    {"target": "esp32h4", "name": "HA_color_dimmable_light"},
+    {"target": "esp32h2", "name": "esp_zigbee_cli"},
+    {"target": "esp32h2", "name": "HA_color_dimmable_light"},
 ]
 IGNORE_WARNINGS = [
     r"warning: 'init_spiffs' defined but not used",
