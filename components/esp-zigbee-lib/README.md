@@ -11,6 +11,10 @@ In this component it provides:
     + Zigbee security to support install code related function  
     + More to come ... ...  
 
+For the list of current supported ZCL clusters, attributes, commands, Zigbee Home Automation devices, see details [docs](https://docs.espressif.com/projects/esp-zigbee-sdk/en/latest/esp32/developing.html#zigbee-product).
+
+For any new feature requests, please open an [issue](https://github.com/espressif/esp-zigbee-sdk/issues) on GitHub. We will get back to you soon.
+
 ## User guide
 For a demonstration of the library use, see the examples folder [examples](https://github.com/espressif/esp-zigbee-sdk/tree/main/examples).
 For information on how to program Espressif SoCs, see [ESP-IDF Programming Guide](https://docs.espressif.com/projects/esp-idf).
