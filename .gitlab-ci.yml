@@ -93,15 +93,15 @@ build_docs:
         - cd docs
         - build-docs -t esp32 esp32c3 esp32h2 esp32s3 -l en
 
-pytest_esp32h4_i154_zigbee_multi_dut:
+pytest_esp32h2_i154_zigbee_multi_dut:
   stage: target_test
   image: ${CI_DOCKER_REGISTRY}/target-test-env-v5.1:1
   needs:
     - build_pytest_examples
   script:
     - pip install -r tools/ci/requirements-pytest.txt
-    - find examples/ -name "pytest_*.py" | xargs pytest --target esp32h4 -m i154_zigbee_multi_dut
-  tags: ["esp32h4", "i154_zigbee_multi_dut"]
+    - find examples/ -name "pytest_*.py" | xargs pytest --target esp32h2 -m i154_zigbee_multi_dut
+  tags: ["esp32h2", "i154_zigbee_multi_dut"]
 
 .deploy_docs_template:
     stage: docs
