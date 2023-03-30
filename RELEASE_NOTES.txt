@@ -196,3 +196,31 @@ Bug Fixes
 ---------
 
 - fix the issue https://github.com/espressif/esp-zigbee-sdk/issues/6
+
+
+# 6-April-2023
+
+Versions
+--------
+0.5.4 version release of ESP-ZIGBEE-SDK
+
+Features
+--------
+- provide set PANID api
+- provide humidity, power config cluster, with docs update
+- support group bind
+- support zigbee gateway (wifi, zigbee coexist) on single chip C6 solution
+
+Known Issues
+------------
+
+New Changes
+-----------
+
+Bug Fixes
+---------
+- fix the ZCL report command source address alignment issue
+- fixes: https://github.com/espressif/esp-zigbee-sdk/issues/7
+- fixes: https://github.com/espressif/esp-zigbee-sdk/issues/10
+- fixes: https://github.com/espressif/esp-zigbee-sdk/issues/8
+- fixes: https://github.com/espressif/esp-zigbee-sdk/issues/11

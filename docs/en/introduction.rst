@@ -68,6 +68,7 @@ The supported features in current ESP Zigbee SDK are listed below.
          Cluster Name         Cluster ID  
    ========================= ============ 
             basic               0x0000    
+      power_configuration       0x0001
            identify             0x0003    
             groups              0x0004    
             scenes              0x0005    
@@ -80,7 +81,8 @@ The supported features in current ESP Zigbee SDK are listed below.
          shade_config           0x0100    
            door_lock            0x0101    
          color_control          0x0300    
-    temperature_measurement     0x0402    
+    temperature_measurement     0x0402
+      humidity_measurement      0x0405
            ias_zone             0x0500    
    ========================= ============ 
 

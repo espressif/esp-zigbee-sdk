@@ -23,6 +23,7 @@ extern "C" {
 #include "esp_zigbee_zcl_ias_zone.h"
 #include "esp_zigbee_zcl_shade_config.h"
 #include "esp_zigbee_zcl_door_lock.h"
+#include "esp_zigbee_zcl_humidity_meas.h"
 #include "esp_zigbee_zcl_temperature_meas.h"
 #include "esp_zigbee_zcl_ota.h"
 
@@ -137,6 +138,7 @@ typedef enum {
     ESP_ZB_ZCL_CLUSTER_ID_PRESSURE_MEASUREMENT     = 0x0403U,       /*!< Pressure measurement */
     ESP_ZB_ZCL_CLUSTER_ID_REL_HUMIDITY_MEASUREMENT = 0x0405U,       /*!< Relative humidity measurement */
     ESP_ZB_ZCL_CLUSTER_ID_OCCUPANCY_SENSING        = 0x0406U,       /*!< Occupancy sensing */
+    ESP_ZB_ZCL_CLUSTER_ID_IAS_ZONE                 = 0x0500U,       /*!< IAS zone */
 } esp_zb_zcl_cluster_id_t;
 
 /**

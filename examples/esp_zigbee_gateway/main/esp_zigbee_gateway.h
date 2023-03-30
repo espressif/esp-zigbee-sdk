@@ -35,6 +35,12 @@
         },                                                                              \
     }
 
+#if CONFIG_ZB_RADIO_NATIVE
+#define ESP_ZB_DEFAULT_RADIO_CONFIG()                           \
+    {                                                           \
+        .radio_mode = RADIO_MODE_NATIVE,                        \
+    }
+#else
 #define ESP_ZB_DEFAULT_RADIO_CONFIG()                           \
     {                                                           \
         .radio_mode = RADIO_MODE_UART_RCP,                      \
@@ -54,6 +60,7 @@
             .tx_pin = HOST_TX_PIN_TO_RCP_RX,                    \
         },                                                      \
     }
+#endif
 
 #define ESP_ZB_DEFAULT_HOST_CONFIG()                            \
     {                                                           \

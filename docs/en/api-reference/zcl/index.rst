@@ -10,6 +10,7 @@ This section provides the ESP Zigbee SDK's APIs that support different kind of Z
    esp_zigbee_zcl_command
    esp_zigbee_zcl_common
    esp_zigbee_zcl_basic
+   esp_zigbee_zcl_power_config
    esp_zigbee_zcl_color_control
    esp_zigbee_zcl_door_lock
    esp_zigbee_zcl_groups
@@ -23,4 +24,5 @@ This section provides the ESP Zigbee SDK's APIs that support different kind of Z
    esp_zigbee_zcl_ota
    esp_zigbee_zcl_shade_config
    esp_zigbee_zcl_temperature_meas
+   esp_zigbee_zcl_humidity_meas
    esp_zigbee_zcl_time

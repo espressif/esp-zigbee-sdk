@@ -141,6 +141,7 @@ typedef struct esp_zb_zdo_bind_req_param_s {
     esp_zb_ieee_addr_t src_address;                     /*!< The IEEE address for the source */
     uint8_t src_endp;                                   /*!< The source endpoint for the binding entry */
     uint16_t cluster_id;                                /*!< The identifier of the cluster on the source device that is bound to the destination */
+    uint8_t dst_addr_mode;                              /*!< The destination address mode ref to esp_zb_zdo_bind_dst_addr_mode_t*/
     esp_zb_addr_u dst_address_u;                        /*!< The destination address for the binding entry */
     uint8_t dst_endp;                                   /*!< This field shall be present only if the
                                                          * DstAddrMode field has a value of
@@ -229,7 +230,6 @@ typedef struct esp_zb_zdo_mgmt_leave_req_param_s {
  * @param[in] user_cb  A user callback that will be called if received bind response refer to esp_zb_zdo_bind_callback_t
  * @param[in] user_ctx A void pointer that contains the user defines additional information when callback trigger
  *
- * @note Current implementation of API only support bind address mode ZB_APS_ADDR_MODE_64_ENDP_PRESENT for addressing.
  */
 void esp_zb_zdo_device_bind_req(esp_zb_zdo_bind_req_param_t *cmd_req, esp_zb_zdo_bind_callback_t user_cb, void *user_ctx);
 

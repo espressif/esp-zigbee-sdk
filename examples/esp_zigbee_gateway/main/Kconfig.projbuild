@@ -1,5 +1,5 @@
 menu "ESP Zigbee gateway rcp update"
-
+    depends on !SOC_IEEE802154_SUPPORTED
     menu "Board Configuration"
         config PIN_TO_RCP_RESET
             int "Pin to RCP reset"

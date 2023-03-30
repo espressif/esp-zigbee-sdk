@@ -314,6 +314,14 @@ void esp_zb_get_extended_pan_id(esp_zb_ieee_addr_t ext_pan_id);
 uint16_t esp_zb_get_pan_id(void);
 
 /**
+ * @brief   Set the Zigbee network PAN ID.
+ *
+ * @param[in] pan_id 16-bit Zigbee network PAN ID
+ *
+ */
+void esp_zb_set_pan_id(uint16_t pan_id);
+
+/**
  * @brief   Get the currently used channel.
  * @return  8-bit Zigbee network channel number
  */
