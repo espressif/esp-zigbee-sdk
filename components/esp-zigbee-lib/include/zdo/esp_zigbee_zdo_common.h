@@ -76,6 +76,14 @@ typedef enum {
     ESP_ZB_BDB_MODE_NETWORK_FORMATION               = 4,
 } esp_zb_bdb_commissioning_mode_t;
 
+/**
+ * @brief The enum of bind request destination address mode
+ * @anchor esp_zb_zdo_bind_dst_addr_mode_t
+ */
+typedef enum {
+    ESP_ZB_ZDO_BIND_DST_ADDR_MODE_16_BIT_GROUP                  = 0x01U,
+    ESP_ZB_ZDO_BIND_DST_ADDR_MODE_64_BIT_EXTENDED               = 0x03U,
+} esp_zb_zdo_bind_dst_addr_mode_t;
 
 /* zdo param define */
 /**

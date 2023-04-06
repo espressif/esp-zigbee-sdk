@@ -24,23 +24,21 @@ typedef union {
     esp_zb_ieee_addr_t addr_long;                   /*!< Zigbee long address */
 } esp_zb_addr_u;
 
-/** Enum of the Zigbee ZCL address type
+/** Definition of the Zigbee ZCL address type
  * @brief Possible address types of devices from which ZCL message is received.
  * @anchor esp_zb_zcl_address_type_t
  */
-typedef enum {
-    ESP_ZB_ZCL_ADDR_TYPE_SHORT = 0U,
-    ESP_ZB_ZCL_ADDR_TYPE_IEEE_GPD = 1U,
-    ESP_ZB_ZCL_ADDR_TYPE_SRC_ID_GPD = 2U,
-    ESP_ZB_ZCL_ADDR_TYPE_IEEE = 3U,
-} esp_zb_zcl_address_type_t;
+#define ESP_ZB_ZCL_ADDR_TYPE_SHORT           0U
+#define ESP_ZB_ZCL_ADDR_TYPE_IEEE_GPD        1U
+#define ESP_ZB_ZCL_ADDR_TYPE_SRC_ID_GPD      2U
+#define ESP_ZB_ZCL_ADDR_TYPE_IEEE            3U
 
 /**
  * @brief Type to represent source address of ZCL message
  * @note Address type refer @ref esp_zb_zcl_address_type_t
  */
 typedef struct esp_zb_zcl_addr_s {
-    esp_zb_zcl_address_type_t addr_type;            /*!< address type see esp_zb_zcl_address_type_t */
+    uint8_t addr_type;                  /*!< address type see esp_zb_zcl_address_type_t */
     union {
         uint16_t short_addr;            /*!< Zigbee short address */
         uint32_t src_id;                /*!< Source ID of ZGPD */
@@ -312,6 +310,19 @@ typedef struct esp_zb_basic_cluster_cfg_s {
 } esp_zb_basic_cluster_cfg_t;
 
 /**
+ * @brief Zigbee default attribute for power configuration cluster.
+ *
+ */
+typedef struct esp_zb_power_config_cluster_cfg_s {
+    uint16_t    main_voltage;                       /*!<  MainVoltage RMS voltage or DC voltage in units of 100mV */
+    uint8_t     main_freq;                          /*!<  MainFrequency in value of 0.5 * measured frequency, DC supply is 0Hz */
+    uint8_t     main_alarm_mask;                    /*!<  Main alram mask in bit */
+    uint16_t    main_voltage_min;                   /*!<  Main voltage min threshold in unit of 100mV */
+    uint16_t    main_voltage_max;                   /*!<  Main voltage max threshold in unit of 100mV */
+    uint16_t    main_voltage_dwell;                 /*!<  Main voltage exist in seconds */
+} esp_zb_power_config_cluster_cfg_t;
+
+/**
  * @brief Zigbee standard mandatory attribute for identify cluster.
  *
  */
@@ -436,6 +447,16 @@ typedef struct esp_zb_temperature_meas_cluster_cfg_s {
     int16_t min_value;                          /*!<  The attribute indicates minimum value of the measured value */
     int16_t max_value;                          /*!<  The attribute indicates maximum value of the measured value */
 } esp_zb_temperature_meas_cluster_cfg_t;
+
+/**
+ * @brief Zigbee standard mandatory attribute for humidity measurement cluster.
+ *
+ */
+typedef struct esp_zb_humidity_meas_cluster_cfg_s {
+    uint16_t measured_value;                     /*!<  The attribute indicates the humidity in 100*percent */
+    uint16_t min_value;                          /*!<  The attribute indicates minimum value of the measured value */
+    uint16_t max_value;                          /*!<  The attribute indicates maximum value of the measured value */
+} esp_zb_humidity_meas_cluster_cfg_t;
 
 /**
  * @brief Zigbee standard mandatory attribute for OTA client cluster.

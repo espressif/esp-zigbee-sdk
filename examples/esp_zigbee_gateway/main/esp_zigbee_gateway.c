@@ -13,13 +13,18 @@
  */
 #include <string.h>
 #include "esp_log.h"
+#include "esp_netif.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "esp_vfs_eventfd.h"
 #include "esp_spiffs.h"
+#include "esp_wifi.h"
 #include "nvs_flash.h"
+#include "protocol_examples_common.h"
 #include "esp_rcp_update.h"
+#include "esp_coexist_internal.h"
 #include "esp_zigbee_gateway.h"
+
 
 #if (!defined ZB_MACSPLIT_HOST && defined ZB_MACSPLIT_DEVICE)
 #error Only Zigbee gateway host device should be defined
@@ -149,7 +154,9 @@ static void esp_zb_task(void *pvParameters)
     /* initiate Zigbee Stack start without zb_send_no_autostart_signal auto-start */
     esp_zb_set_primary_network_channel_set(ESP_ZB_PRIMARY_CHANNEL_MASK);
     ESP_ERROR_CHECK(esp_zb_start(false));
+#if(CONFIG_ZB_RADIO_MACSPLIT_UART)
     esp_zb_add_rcp_failure_cb(rcp_error_handler);
+#endif
     esp_zb_main_loop_iteration();
     esp_rcp_update_deinit();
     vTaskDelete(NULL);
@@ -163,9 +170,21 @@ void app_main(void)
     };
     /* load Zigbee gateway platform config to initialization */
     ESP_ERROR_CHECK(esp_zb_platform_config(&config));
+    ESP_ERROR_CHECK(nvs_flash_init());
+    ESP_ERROR_CHECK(esp_netif_init());
+    ESP_ERROR_CHECK(esp_event_loop_create_default());
+#if CONFIG_EXAMPLE_CONNECT_WIFI
+    ESP_ERROR_CHECK(example_connect());
+#if CONFIG_ESP_COEX_SW_COEXIST_ENABLE
+    ESP_ERROR_CHECK(esp_wifi_set_ps(WIFI_PS_MIN_MODEM));
+    coex_enable();
+    coex_schm_status_bit_set(1, 1);
+#else
+    ESP_ERROR_CHECK(esp_wifi_set_ps(WIFI_PS_NONE));
+#endif
+#endif
 #if(CONFIG_ZIGBEE_GW_AUTO_UPDATE_RCP)
     esp_rcp_update_config_t rcp_update_config = ESP_ZB_RCP_UPDATE_CONFIG();
-    ESP_ERROR_CHECK(nvs_flash_init());
     ESP_ERROR_CHECK(init_spiffs());
     ESP_ERROR_CHECK(esp_rcp_update_init(&rcp_update_config));
 #endif
