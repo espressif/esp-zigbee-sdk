@@ -30,7 +30,7 @@ before_script:
 
 build_non_pytest_examples:
   stage: build
-  image: ${CI_DOCKER_REGISTRY}/esp-env-v5.1:1
+  image: ${CI_DOCKER_REGISTRY}/esp-env-v5.2:1
   artifacts:
     paths:
       - "**/build*/size.json"
@@ -55,7 +55,7 @@ build_non_pytest_examples:
 
 build_pytest_examples:
   stage: build
-  image: ${CI_DOCKER_REGISTRY}/esp-env-v5.1:1
+  image: ${CI_DOCKER_REGISTRY}/esp-env-v5.2:1
   artifacts:
     paths:
       - "**/build*/size.json"
@@ -80,7 +80,7 @@ build_pytest_examples:
 
 build_docs:
     stage: build
-    image: $CI_DOCKER_REGISTRY/esp-idf-doc-env-v5.1:1-1
+    image: $CI_DOCKER_REGISTRY/esp-idf-doc-env-v5.2:1-1
     variables:
         ESP_DOCS_LATEST_BRANCH_NAME: "main"
     artifacts:
@@ -95,7 +95,7 @@ build_docs:
 
 pytest_esp32h2_i154_zigbee_multi_dut:
   stage: target_test
-  image: ${CI_DOCKER_REGISTRY}/target-test-env-v5.1:1
+  image: ${CI_DOCKER_REGISTRY}/target-test-env-v5.2:1
   needs:
     - build_pytest_examples
   script:
@@ -105,7 +105,7 @@ pytest_esp32h2_i154_zigbee_multi_dut:
 
 .deploy_docs_template:
     stage: docs
-    image: $CI_DOCKER_REGISTRY/esp-idf-doc-env-v5.1:1-1
+    image: $CI_DOCKER_REGISTRY/esp-idf-doc-env-v5.2:1-1
     needs:
         - build_docs
     variables:
