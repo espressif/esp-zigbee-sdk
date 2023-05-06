@@ -104,6 +104,7 @@ static void ieee_cb(esp_zb_zdp_status_t zdo_status, esp_zb_ieee_addr_t ieee_addr
         memcpy(&(bind_req.src_address), on_off_light.ieee_addr, sizeof(esp_zb_ieee_addr_t));
         bind_req.src_endp = on_off_light.endpoint;
         bind_req.cluster_id = ESP_ZB_ZCL_CLUSTER_ID_ON_OFF;
+        bind_req.dst_addr_mode = ESP_ZB_ZDO_BIND_DST_ADDR_MODE_64_BIT_EXTENDED;
         esp_zb_get_long_address(bind_req.dst_address_u.addr_long);
         bind_req.dst_endp = HA_ONOFF_SWITCH_ENDPOINT;
         bind_req.req_dst_addr = on_off_light.short_addr;
