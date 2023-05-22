@@ -19,6 +19,7 @@ git clone --recursive https://github.com/espressif/esp-zigbee-sdk.git
 #### Pre-requisite Environment  
 - Refer [ESP-IDF](https://github.com/espressif/esp-idf) to get the more info about the Espressif IoT Development Framework. Official development framework for Espressif SoCs.  
 - Check [IDF Get Started](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/get-started/linux-macos-setup.html) to know how to install the ESP-IDF environment.
+- Current [esp-zboss-lib](https://github.com/espressif/esp-zboss-lib) is 0.4.0 and is compatitable with latest [ESP-IDF](https://github.com/espressif/esp-idf) `origin/master` or commit id `dc848707dba1755ed3a494b0a5549babfc2a09f5`.
 
 #### Zigbee Examples
 - Check the [HA examples](examples/esp_zigbee_HA_sample) if you want to know more about Zigbee Home automation devices  

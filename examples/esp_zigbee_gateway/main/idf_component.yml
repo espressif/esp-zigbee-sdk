@@ -1,6 +1,6 @@
 ## IDF Component Manager Manifest File
 dependencies:
-  espressif/esp-zboss-lib: "~0.3.0"
+  espressif/esp-zboss-lib: "~0.4.0"
   espressif/esp_rcp_update: "~0.3.0"
   espressif/esp-serial-flasher: "~0.0.4"
   ## Required IDF version
