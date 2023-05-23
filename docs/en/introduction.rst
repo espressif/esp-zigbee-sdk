@@ -36,7 +36,7 @@ Espressif's Zigbee SDK is built on top of the `Zboss stack <https://dsr-zboss.co
 
 Espressif is aimed to simplify the development process of Zigbee products and enable the users to go to production in the shortest possible time.
 
-.. figure:: ../_static/SDk_structure.png
+.. figure:: ../_static/esp_zigbee_stack.png
     :align: center
     :alt: ESP Zigbee Software Components
     :figclass: align-center

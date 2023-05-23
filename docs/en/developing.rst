@@ -12,22 +12,21 @@ This section talks about setting up your development environment, fetching the G
 2.1.1 Setting up the Repositories
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Follow the `ESP-IDF getting started guide <https://docs.espressif.com/projects/esp-idf/en/latest/esp32/get-started/index.html>`_ to set up the IDF development environment.
 
 Clone the `esp-idf <https://github.com/espressif/esp-idf>`_ and the `esp-zigbee-sdk <https://github.com/espressif/esp-zigbee-sdk>`_ repository.
 
 .. code-block:: bash
 
-   git clone https://github.com/espressif/esp-idf.git
+   git clone --recursive https://github.com/espressif/esp-idf.git
+   cd esp-idf; git checkout 56677da; submodule update --init --recursive;
+   ./install.sh
+   source ./export.sh
 
 
 .. code-block:: bash
 
    git clone --recursive https://github.com/espressif/esp-zigbee-sdk.git
-
-
-Follow the `ESP-IDF getting started guide <https://idf.espressif.com/>`_ to set up the IDF development environment.
-
-Current compatitable version of [ESP-IDF](https://github.com/espressif/esp-idf) use latest `origin/master` or commit id `dc848707dba1755ed3a494b0a5549babfc2a09f5`.
 
 2.1.2 Building Applications on esp-idf (Option)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -307,7 +306,7 @@ Initialize the OTA cluster (server part) and load the ota file by using :cpp:fun
 
 Following diagram explains the OTA upgrade process in detail:
 
-.. figure:: ../../examples/esp_zigbee_ota/zigbee-ota-upgrade-process.png
+.. figure:: ../_static/zigbee-ota-upgrade-process.png
     :align: center
     :alt: ESP Zigbee OTA Upgrade
     :figclass: align-center

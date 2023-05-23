@@ -56,7 +56,7 @@ I (3026279) ESP_OTA_SERVER: New device commissioned or rejoined (short: 0x7bbd)
  *  After server starts, server send OTA image notify to client. Then client send the query image request to server.
  *  On receipt of the query image request, server initializes by loading the client that holds the three field values (manufacturer code, image type and new file version). If the client values matches with server values, server send response back to client. Otherwise, it shall discard the command and no further processing shall continue.
  *  Following diagram explains the OTA upgrade process in detail:
- ![Zigbee_ota](../zigbee-ota-upgrade-process.png)
+ ![Zigbee_ota](../../../docs/_static/zigbee-ota-upgrade-process.png)
  * There will be offset time of 5 seconds, calculated by the difference between upgrade time and current time and use it as upgrade delay.
  * ota_file.bin is upgrade bin file for client side to upgrade. Server gets the upgrade bin file (ota_file.bin) and transmit it through OTA process. After OTA finish, the client receive the upgrade bin file and trigger restart. For details see the [esp_ota_client](../ota_client/README.md).
 

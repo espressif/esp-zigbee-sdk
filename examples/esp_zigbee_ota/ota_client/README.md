@@ -78,7 +78,7 @@ I (1025) ESP_OTA_CLIENT: Joined network successfully (Extended PAN ID: ff:fc:74:
 
  * After receiving OTA image notify from server, client send the query image request and image block requests to server upon receiving the response from server.
  * Following diagram explains the OTA upgrade process in detail:
- ![Zigbee_ota](../zigbee-ota-upgrade-process.png)
+ ![Zigbee_ota](../../../docs/_static/zigbee-ota-upgrade-process.png)
  * Server gets the upgrade bin file (ota_file.bin) and transmit it through OTA process. After upgrade finish, the client will restart. Upgrade bin file will be loaded from client side and a log "OTA example 2.0 is running" can be seen on the log indicates OTA file upgraded successfully.
 
 ## Troubleshooting
