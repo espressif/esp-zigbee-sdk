@@ -27,6 +27,7 @@ Clone the `esp-idf <https://github.com/espressif/esp-idf>`_ and the `esp-zigbee-
 
 Follow the `ESP-IDF getting started guide <https://idf.espressif.com/>`_ to set up the IDF development environment.
 
+Current compatitable version of [ESP-IDF](https://github.com/espressif/esp-idf) use latest `origin/master` or commit id `dc848707dba1755ed3a494b0a5549babfc2a09f5`.
 
 2.1.2 Building Applications on esp-idf (Option)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
