@@ -1,6 +1,7 @@
 .cache
 compile_commands.json
 *.swp
+
 # ESP-IDF default build directory name
 build
 build/
@@ -12,9 +13,15 @@ managed_components
 __pycache__/
 out/
 _build/
+
 pytest_embedded_log/
 # VS Code Settings
 .vscode/
+
 # clangd set
 .clangd
 compile_commands.json
+.clang-format
+
+# pre-commit
+.pre-commit-config.yaml

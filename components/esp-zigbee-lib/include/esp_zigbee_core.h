@@ -71,7 +71,8 @@ typedef void (*esp_zb_set_attr_callback_t)(uint8_t status, uint8_t endpoint, uin
  * @brief A report attribute callback for user to get report info
  *
  * @param[in] addr A struct of address contains short and ieee address @ref esp_zb_zcl_addr_s
- * @param[in] endpoint  An endpoint which comes from report device
+ * @param[in] src_endpoint  An endpoint which comes from report device
+ * @param[in] dst_endpoint  Destination endpoint number
  * @param[in] cluster_id Cluster id that reported
  * @param[in] attr_id  Attribute id that reported
  * @param[in] attr_type Attribute data type refer to esp_zb_zcl_attr_type_t
@@ -79,7 +80,7 @@ typedef void (*esp_zb_set_attr_callback_t)(uint8_t status, uint8_t endpoint, uin
  *
  */
 typedef void (*esp_zb_report_attr_callback_t)(
-    esp_zb_zcl_addr_t *addr, uint8_t endpoint, uint16_t cluster_id, uint16_t attr_id, esp_zb_zcl_attr_type_t attr_type, void *value);
+    esp_zb_zcl_addr_t *addr, uint8_t src_endpoint, uint8_t dst_endpoint, uint16_t cluster_id, uint16_t attr_id, esp_zb_zcl_attr_type_t attr_type, void *value);
 
 /** Read attribute response callback
  *
@@ -326,6 +327,18 @@ void esp_zb_set_pan_id(uint16_t pan_id);
  * @return  8-bit Zigbee network channel number
  */
 uint8_t esp_zb_get_current_channel(void);
+
+/**
+ * @brief   Set the tx power.
+ * @param[in]  power 8-bit of power value in dB
+ */
+void esp_zb_set_tx_power(int8_t power);
+
+/**
+ * @brief   Get the tx power.
+ * @param[in]  power 8-bit of power pointer value in dB
+ */
+void esp_zb_get_tx_power(int8_t *power);
 
 /**
  * @brief   Get the Zigbee network device type.
