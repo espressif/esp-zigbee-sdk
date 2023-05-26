@@ -4,7 +4,7 @@
 4.1 Espressif Zigbee manufacturing configuration
 ------------------------------------------------
 
-Espressif also provided a tools :project_file:`README<tools/mfg_tool/README.md>` for user to set the manufacturing related configuration.
+Espressif also provides a tool :project_file:`mfg_tool<tools/mfg_tool/README.md>` for user to set the manufacturing related configuration.
 
 Currently, user could config Install code, MAC address, Channel Mask, Manufacture Name, Manufacture Code to a flash binary file in the partition table ``zb_fct``.
 

@@ -2,45 +2,32 @@
 
 ## Introduction  
   
-ESP-Zigbee-SDK is the official Zigbee development framework for Esspresif's ESP32-H2 and ESP32 series SOCs. It provides varieties of APIs aimed to simplify the development process of Zigbee products and enable the users to go to production in the shortest possible time. More details of the sdk see the [esp-zigbee-sdk components](components/esp-zigbee-lib/)
+ESP-Zigbee-SDK is the official Zigbee development framework for Espressif's ESP32 series SoCs. It provides varieties of APIs aimed to simplify the development process of Zigbee products and enable the users to go to production in the shortest possible time.
 
-## Get esp-zigbee-sdk  
+Refer [ESP Zigbee SDK Guide](https://docs.espressif.com/projects/esp-zigbee-sdk/en/latest) for the latest version of the documentation.
+
+## Software Components
+
+The SDK is built on top of [ESP-IDF](https://github.com/espressif/esp-idf) and [ZBOSS](https://dsr-zoi.com/).
+
+![esp_zigbee_stack](docs/_static/esp_zigbee_stack.png)
+
+ The ZBOSS and Espressif Zigbee SDK is provided as pre-built library:
+- [esp-zboss-lib](https://components.espressif.com/components/espressif/esp-zboss-lib): ZBOSS libraries for ESP32 series SoCs
+- [esp-zigbee-lib](chttps://components.espressif.com/components/espressif/esp-zigbee-lib): Espressif Zigbee SDK and APIs libraries
+
+Note：these two library components are hosted by [ESP Registry](https://components.espressif.com/), which can be downloaded automatically by specifying the dependency in `idf_component.yml` file. An example: [idf_component.yml](examples/esp_zigbee_HA_sample/HA_on_off_light/main/idf_component.yml).
+
+## Get esp-zigbee-sdk
 
 Please clone this repository using the below command:
 
 ```
-git clone --recursive https://github.com/espressif/esp-zigbee-sdk.git
+git clone https://github.com/espressif/esp-zigbee-sdk.git
 ```
 
-> Note the --recursive option. This is required to pull in the various dependencies into esp-matter. In case you have already cloned the repository without this option, execute this to pull in the submodules: `git submodule update --init --recursive`  
-
-## Simple user guide  
-
-#### Pre-requisite Environment  
-- Refer [ESP-IDF](https://github.com/espressif/esp-idf) to get the more info about the Espressif IoT Development Framework. Official development framework for Espressif SoCs.  
-- Check [IDF Get Started](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/get-started/linux-macos-setup.html) to know how to install the ESP-IDF environment.
-- Current [esp-zboss-lib](https://github.com/espressif/esp-zboss-lib) is 0.4.0 and is compatitable with latest [ESP-IDF](https://github.com/espressif/esp-idf) `origin/master` or commit id `dc848707dba1755ed3a494b0a5549babfc2a09f5`.
-
-#### Zigbee Examples
-- Check the [HA examples](examples/esp_zigbee_HA_sample) if you want to know more about Zigbee Home automation devices  
-- Check the [Customized device](examples/esp_zigbee_customized_devices) if you want to know more about customized Zigbee devices  
-- Check the [Gateway](examples/esp_zigbee_gateway) if you want to know the Zigbee Gateway  
-- Check the [CLI](examples/esp_zigbee_cli) if you want to know the Zigbee CLI command example
-- Check the [OTA](examples/esp_zigbee_ota) if you want to know the Zigbee OTA Upgrade example
-
-More new details see examples's [Readme](examples/README.md)
-
-#### esp-zigbee components
-- Check the component (esp-zboss-lib) should be downloaded automatically from managment component under each esp-zigbee-sdk example, it includes Zigbee stack static library for supporting Esspresif's ESP32-H2 and ESP32 series SOCs.
-- Check the component [esp-zigbee-lib](components/esp-zigbee-lib/) that includes SDK's API to build own projects. More details see the [Readme](components/esp-zigbee-lib/README.md) under esp-zigbee-lib component.
-
-## Documentation  
-
-Refer [ESP Zigbee SDK Guide](https://docs.espressif.com/projects/esp-zigbee-sdk/en/latest) for the latest version of the documentation.  
-
-## Tools
-
-Refer [mfg_tool](tools/mfg_tool/README.md) for user to configure Zigbee manufacture related binary file to Zigbee product.
+## Supported ESP-IDF versions
+* This SDK currently works with ESP-IDF commit [56677da](https://github.com/espressif/esp-idf/tree/56677da) in release/v5.1 branch.
 
 ## Copyright Notes
 
