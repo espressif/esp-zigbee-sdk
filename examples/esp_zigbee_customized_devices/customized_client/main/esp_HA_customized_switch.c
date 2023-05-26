@@ -170,10 +170,11 @@ static void user_find_cb(esp_zb_zdp_status_t zdo_status, uint16_t addr, uint8_t 
     }
 }
 
-static void esp_zb_dev_reporting_cb(esp_zb_zcl_addr_t *addr, uint8_t endpoint, uint16_t cluster_id,
+static void esp_zb_dev_reporting_cb(esp_zb_zcl_addr_t *addr, uint8_t src_endpoint, uint8_t dst_endpoint, uint16_t cluster_id,
                                     uint16_t attr_id, esp_zb_zcl_attr_type_t attr_type, void *value)
 {
-    ESP_LOGI(TAG, "Switch got report attribute from address:0x%x,cluster_id:0x%x,attr_id:0x%x,value:%d,attr_type:0x%x,", addr->u.short_addr, cluster_id, attr_id, *(uint8_t *)value, attr_type);
+    ESP_LOGI(TAG, "Switch got report attribute from address:0x%x,src_ep:%d,dst_ep:%d,cluster_id:0x%x,attr_id:0x%x,value:%d,attr_type:0x%x,", addr->u.short_addr, src_endpoint, dst_endpoint, cluster_id,
+    attr_id, *(uint8_t *)value, attr_type);
 }
 
 static void esp_zb_read_resp_cb(esp_zb_zcl_status_t status, uint16_t cluster_id, uint16_t attr_id, esp_zb_zcl_attr_type_t attr_type, void *value)

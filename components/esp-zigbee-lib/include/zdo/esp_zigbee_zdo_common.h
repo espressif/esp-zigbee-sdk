@@ -101,7 +101,7 @@ typedef enum {
  * @note Stack passes this parameter to application when device leave the network.
  */
 typedef struct esp_zb_zdo_signal_leave_params_s {
-    esp_zb_nwk_leave_type_t leave_type; /*!< Leave type. @ref nwk_leave_type */
+    uint8_t leave_type;             /*!< Leave type. @ref nwk_leave_type */
 } esp_zb_zdo_signal_leave_params_t;
 
 /**

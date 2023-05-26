@@ -109,6 +109,29 @@ esp_err_t esp_zb_secur_ic_remove_req(esp_zb_ieee_addr_t address);
  */
 esp_err_t esp_zb_secur_ic_remove_all_req(void);
 
+/**
+ * @brief Set the Trust Center standard distrbuted key
+ *
+ * @param key A pointer to standard distributed key of Trust Center that will be set to
+ */
+ void esp_zb_secur_TC_standard_distributed_key_set(uint8_t *key);
+
+/**
+ * @brief Set the Trust Center pre-configured security key
+ *
+ * @param key A pointer to the pre-configured key of Trust Center that will be set to
+ */
+void esp_zb_secur_TC_standard_preconfigure_key_set(uint8_t *key);
+
+/**
+ * @brief Set the link key exchange requirement for a ZigBee node.
+ * 
+ * @note The ZigBee end device with @p disabled will not request key from the ZigBee coordinator.
+ *       The ZigBee coordinator with @p disabled allows the end device to stay in network without a TC-link key exchange.
+ * @param[in] enable Enable or Disable
+ */
+void esp_zb_secur_link_key_exchange_required_set(bool enable);
+
 #ifdef __cplusplus
 }
 #endif
