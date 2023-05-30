@@ -102,6 +102,9 @@ def update_component_yml_files():
     os.chdir(os.path.join(DEF_APP_PATH, 'esp_zigbee_touchlink', 'touchlink_switch'))
     os.remove('main/idf_component.yml')
 
+    os.chdir(os.path.join(DEF_APP_PATH, 'esp_zigbee_sleep', 'sleepy_end_device'))
+    os.remove('main/idf_component.yml')
+
 def main(args: argparse.Namespace) -> None:
     current_dir = os.getcwd()
     update_component_yml_files()

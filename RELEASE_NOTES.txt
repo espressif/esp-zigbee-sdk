@@ -1,3 +1,25 @@
+# 29-Aug-2023
+
+Versions
+--------
+0.9.2 version release of ESP-ZIGBEE-SDK
+
+Features
+--------
+
+- Add zigbee sleep feature support
+- Add zigbee sleepy end device example
+
+Known Issues
+------------
+
+New Changes
+-----------
+
+Bug Fixes
+---------
+
+
 # 11-Aug-2023
 
 Versions
