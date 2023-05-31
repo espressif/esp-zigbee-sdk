@@ -14,7 +14,7 @@ The SDK is built on top of [ESP-IDF](https://github.com/espressif/esp-idf) and [
 
  The ZBOSS and Espressif Zigbee SDK is provided as pre-built library:
 - [esp-zboss-lib](https://components.espressif.com/components/espressif/esp-zboss-lib): ZBOSS libraries for ESP32 series SoCs
-- [esp-zigbee-lib](chttps://components.espressif.com/components/espressif/esp-zigbee-lib): Espressif Zigbee SDK and APIs libraries
+- [esp-zigbee-lib](https://components.espressif.com/components/espressif/esp-zigbee-lib): Espressif Zigbee SDK and APIs libraries
 
 Note：these two library components are hosted by [ESP Registry](https://components.espressif.com/), which can be downloaded automatically by specifying the dependency in `idf_component.yml` file. An example: [idf_component.yml](examples/esp_zigbee_HA_sample/HA_on_off_light/main/idf_component.yml).
 

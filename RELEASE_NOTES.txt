@@ -224,3 +224,32 @@ Bug Fixes
 - fixes: https://github.com/espressif/esp-zigbee-sdk/issues/10
 - fixes: https://github.com/espressif/esp-zigbee-sdk/issues/8
 - fixes: https://github.com/espressif/esp-zigbee-sdk/issues/11
+
+# 26-May-2023
+
+Versions
+--------
+0.6.0 version release of ESP-ZIGBEE-SDK
+
+Features
+--------
+* add TC standard distributed and pre-configured key settings
+* add TC link key exchange setting
+* add zb tx power setting
+* add destination endpoint to report callback
+* enable write callback for custom cluster
+
+Known Issues
+------------
+
+New Changes
+-----------
+Examples under esp-zigbee-sdk would use management component registry to download both esp-zigbee-lib and esp-zboss-lib.
+
+Bug Fixes
+---------
+Closes: https://github.com/espressif/esp-zigbee-sdk/issues/21
+Closes: https://github.com/espressif/esp-zigbee-sdk/issues/22
+Closes: https://github.com/espressif/esp-zigbee-sdk/issues/23
+Closes: https://github.com/espressif/esp-zigbee-sdk/issues/24
+Closes: https://github.com/espressif/esp-zigbee-sdk/issues/25
