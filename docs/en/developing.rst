@@ -19,7 +19,7 @@ Clone the `esp-idf <https://github.com/espressif/esp-idf>`_ and the `esp-zigbee-
 .. code-block:: bash
 
    git clone --recursive https://github.com/espressif/esp-idf.git
-   cd esp-idf; git checkout 56677da; submodule update --init --recursive;
+   cd esp-idf; git checkout 56677da; git submodule update --init --recursive;
    ./install.sh
    source ./export.sh
 
