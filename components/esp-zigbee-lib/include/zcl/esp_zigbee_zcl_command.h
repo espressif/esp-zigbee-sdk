@@ -68,7 +68,7 @@ typedef struct esp_zb_zcl_config_report_cmd_s {
     uint8_t  attrType;                              /*!< Attribute type to report refer to zb_zcl_common.h zcl_attr_type */
     uint16_t  min_interval;                         /*!< Minimum reporting interval */
     uint16_t  max_interval;                         /*!< Maximum reporting interval */
-    uint16_t reportable_change;                     /*!< Minimum change to attribute will result in report */
+    void* reportable_change;                     /*!< Minimum change to attribute will result in report */
 } esp_zb_zcl_config_report_cmd_t;
 
 /**

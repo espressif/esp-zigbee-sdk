@@ -313,6 +313,13 @@ void esp_zb_zdo_device_leave_req(esp_zb_zdo_mgmt_leave_req_param_t *cmd_req, esp
  */
 void esp_zb_zdo_permit_joining_req(esp_zb_zdo_permit_joining_req_param_t *cmd_req, esp_zb_zdo_permit_join_callback_t user_cb, void *user_ctx);
 
+/**
+ * @brief Stringify the Zigbee Device Object signal
+ *
+ * @param[in] signal A @ref esp_zb_app_signal_type_t object that expect to stringified
+ * @return A string pointer of esp_zb_app_signal_type_t
+ */
+const char *esp_zb_zdo_signal_to_string(esp_zb_app_signal_type_t signal);
 #ifdef __cplusplus
 }
 #endif

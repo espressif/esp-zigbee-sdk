@@ -78,6 +78,7 @@ static void bind_cb(esp_zb_zdp_status_t zdo_status, void *user_ctx)
         ESP_LOGI(TAG, "bind_cb status:%d and response from:0x%x,endpoint:%d", zdo_status, ((zdo_info_user_ctx_t *)user_ctx)->short_addr, ((zdo_info_user_ctx_t *)user_ctx)->endpoint);
         /* configure report attribute command */
         esp_zb_zcl_config_report_cmd_t report_cmd;
+        bool report_change = 0;
         report_cmd.zcl_basic_cmd.dst_addr_u.addr_short = on_off_light.short_addr;
         report_cmd.zcl_basic_cmd.dst_endpoint = on_off_light.endpoint;
         report_cmd.zcl_basic_cmd.src_endpoint = HA_ONOFF_SWITCH_ENDPOINT;
@@ -87,7 +88,7 @@ static void bind_cb(esp_zb_zdp_status_t zdo_status, void *user_ctx)
         report_cmd.attrType = ESP_ZB_ZCL_ATTR_TYPE_BOOL;
         report_cmd.min_interval = 0;
         report_cmd.max_interval = 30;
-        report_cmd.reportable_change = 0;
+        report_cmd.reportable_change = (void*)&report_change;
         esp_zb_zcl_config_report_cmd_req(&report_cmd);
     }
 }
@@ -192,7 +193,7 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
     case ESP_ZB_BDB_SIGNAL_DEVICE_REBOOT:
         if (err_status != ESP_OK) {
             /* commissioning failed */
-            ESP_LOGW(TAG, "Failed to initialize Zigbee stack (status: %d)", err_status);
+            ESP_LOGW(TAG, "Failed to initialize Zigbee stack (status: %s)", esp_err_to_name(err_status));
         } else {
             /* device auto start successfully and on a formed network */
             esp_zb_ieee_addr_t extended_pan_id;
@@ -222,7 +223,7 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
             find_req.dst_nwk_addr = 0x0000;
             esp_zb_zdo_find_on_off_light(&find_req, user_find_cb, NULL);
         } else {
-            ESP_LOGI(TAG, "Network steering was not successful (status: %d)", err_status);
+            ESP_LOGI(TAG, "Network steering was not successful (status: %s)", esp_err_to_name(err_status));
             esp_zb_scheduler_alarm((esp_zb_callback_t)bdb_start_top_level_commissioning_cb, ESP_ZB_BDB_MODE_NETWORK_STEERING, 1000);
         }
         break;
@@ -233,7 +234,8 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
         }
         break;
     default:
-        ESP_LOGI(TAG, "ZDO signal: %d, status: %d", sig_type, err_status);
+        ESP_LOGI(TAG, "ZDO signal: %s (0x%x), status: %s", esp_zb_zdo_signal_to_string(sig_type), sig_type,
+                 esp_err_to_name(err_status));
         break;
     }
 }
