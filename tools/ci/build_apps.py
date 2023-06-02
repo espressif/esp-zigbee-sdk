@@ -6,6 +6,7 @@
 
 import argparse
 import sys
+import os
 from pathlib import Path
 from typing import List
 
@@ -53,8 +54,48 @@ def get_cmake_apps(
     )
     return apps
 
+def update_component_yml_files():
+    os.chdir(os.path.join(DEF_APP_PATH, 'esp_zigbee_customized_devices', 'customized_client'))
+    os.remove('main/idf_component.yml')
+
+    os.chdir(os.path.join(DEF_APP_PATH, 'esp_zigbee_customized_devices', 'customized_server'))
+    os.remove('main/idf_component.yml')
+    os.system(f'cp {os.path.join(PROJECT_ROOT, "tools", "managed_component_yml", "light_idf_component.yml")} main/idf_component.yml')
+
+    os.chdir(os.path.join(DEF_APP_PATH, 'esp_zigbee_ota', 'ota_client'))
+    os.remove('main/idf_component.yml')
+
+    os.chdir(os.path.join(DEF_APP_PATH, 'esp_zigbee_ota', 'ota_server'))
+    os.remove('main/idf_component.yml')
+
+    os.chdir(os.path.join(DEF_APP_PATH, 'esp_zigbee_gateway'))
+    os.remove('main/idf_component.yml')
+    os.system(f'cp {os.path.join(PROJECT_ROOT, "tools", "managed_component_yml", "gw_idf_component.yml")} main/idf_component.yml')
+
+    os.chdir(os.path.join(DEF_APP_PATH, 'esp_zigbee_HA_sample', 'HA_color_dimmable_light'))
+    os.remove('main/idf_component.yml')
+    os.system(f'cp {os.path.join(PROJECT_ROOT, "tools", "managed_component_yml", "light_idf_component.yml")} main/idf_component.yml')
+
+    os.chdir(os.path.join(DEF_APP_PATH, 'esp_zigbee_HA_sample', 'HA_color_dimmable_switch'))
+    os.remove('main/idf_component.yml')
+
+    os.chdir(os.path.join(DEF_APP_PATH, 'esp_zigbee_HA_sample', 'HA_on_off_switch'))
+    os.remove('main/idf_component.yml')
+
+    os.chdir(os.path.join(DEF_APP_PATH, 'esp_zigbee_rcp'))
+    os.remove('main/idf_component.yml')
+
+    os.chdir(os.path.join(DEF_APP_PATH, 'esp_zigbee_cli'))
+    os.remove('main/idf_component.yml')
+
+    os.chdir(os.path.join(DEF_APP_PATH, 'esp_zigbee_HA_sample', 'HA_on_off_light'))
+    os.remove('main/idf_component.yml')
+    os.system(f'cp {os.path.join(PROJECT_ROOT, "tools", "managed_component_yml", "light_idf_component.yml")} main/idf_component.yml')
 
 def main(args: argparse.Namespace) -> None:
+    current_dir = os.getcwd()
+    update_component_yml_files()
+    os.chdir(current_dir)
     apps = get_cmake_apps(args.paths, args.target, args.config)
 
     # no_pytest and only_pytest can not be both True
