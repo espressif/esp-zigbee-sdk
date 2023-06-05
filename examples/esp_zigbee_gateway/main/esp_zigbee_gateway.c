@@ -48,7 +48,7 @@ static void esp_zb_gateway_board_try_update(const char *rcp_version_str)
 {
     char version_str[RCP_VERSION_MAX_SIZE];
     if (esp_rcp_load_version_in_storage(version_str, sizeof(version_str)) == ESP_OK) {
-        ESP_LOGI(TAG, "RCP Version in Zigbee Gateway storage:%s", version_str);
+        ESP_LOGI(TAG, "Storage RCP Version: %s", version_str);
         if (strcmp(version_str, rcp_version_str)) {
             ESP_LOGI(TAG, "*** NOT MATCH VERSION! ***");
             esp_zb_gateway_update_rcp();
@@ -94,7 +94,7 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
     case ESP_ZB_MACSPLIT_DEVICE_BOOT:
         ESP_LOGI(TAG, "Zigbee rcp device booted");
         rcp_version = (esp_zb_zdo_signal_macsplit_dev_boot_params_t *)esp_zb_app_signal_get_params(p_sg_p);
-        ESP_LOGI(TAG, "Running RCP Version:%s", rcp_version->version_str);
+        ESP_LOGI(TAG, "Running RCP Version: %s", rcp_version->version_str);
 #if(CONFIG_ZIGBEE_GW_AUTO_UPDATE_RCP)
         esp_zb_gateway_board_try_update(rcp_version->version_str);
 #endif
@@ -105,7 +105,7 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
             ESP_LOGI(TAG, "Start network formation");
             esp_zb_bdb_start_top_level_commissioning(ESP_ZB_BDB_MODE_NETWORK_FORMATION);
         } else {
-            ESP_LOGE(TAG, "Failed to initialize Zigbee stack (status: %d)", err_status);
+            ESP_LOGE(TAG, "Failed to initialize Zigbee stack (status: %s", esp_err_to_name(err_status));
         }
         break;
     case ESP_ZB_BDB_SIGNAL_FORMATION:
@@ -118,7 +118,7 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
                      esp_zb_get_pan_id(), esp_zb_get_current_channel());
             esp_zb_bdb_start_top_level_commissioning(ESP_ZB_BDB_MODE_NETWORK_STEERING);
         } else {
-            ESP_LOGI(TAG, "Restart network formation (status: %d)", err_status);
+            ESP_LOGI(TAG, "Restart network formation (status: %s)", esp_err_to_name(err_status));
             esp_zb_scheduler_alarm((esp_zb_callback_t)bdb_start_top_level_commissioning_cb, ESP_ZB_BDB_MODE_NETWORK_FORMATION, 1000);
         }
         break;
@@ -132,7 +132,8 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
         ESP_LOGI(TAG, "New device commissioned or rejoined (short: 0x%04hx)", dev_annce_params->device_short_addr);
         break;
     default:
-        ESP_LOGI(TAG, "ZDO signal: %d, status: %d", sig_type, err_status);
+        ESP_LOGI(TAG, "ZDO signal: %s (0x%x), status: %s", esp_zb_zdo_signal_to_string(sig_type), sig_type,
+                 esp_err_to_name(err_status));
         break;
     }
 }

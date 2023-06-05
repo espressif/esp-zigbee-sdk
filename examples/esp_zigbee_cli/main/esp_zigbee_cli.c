@@ -69,9 +69,9 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
     case ESP_ZB_ZDO_SIGNAL_LEAVE:
         /* The ESP Zigbee CLI Agent will not attempt to rejoin the network after it receives the LEAVE command. */
         if (err_status == ESP_OK) {
-            ESP_LOGI(TAG, "leave network, status: %d", err_status);
+            ESP_LOGI(TAG, "leave network, status: %s", esp_err_to_name(err_status));
         } else {
-            ESP_LOGE(TAG, "Unable to leave network, status: %d", err_status);
+            ESP_LOGE(TAG, "Unable to leave network, status: %s", esp_err_to_name(err_status));
         }
         break;
     case ESP_ZB_ZDO_SIGNAL_SKIP_STARTUP:
@@ -120,7 +120,8 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
         }
         break;
     default:
-        ESP_LOGI(TAG, "ZDO signal: %d, status: %d", sig_type, err_status);
+        ESP_LOGI(TAG, "ZDO signal: %s (0x%x), status: %s", esp_zb_zdo_signal_to_string(sig_type), sig_type,
+                 esp_err_to_name(err_status));
         break;
     }
 }
