@@ -5,6 +5,7 @@
  */
 
 #pragma once
+#include <stdint.h>
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -465,6 +466,40 @@ typedef struct esp_zb_zcl_ias_zone_enroll_request_cmd_s {
 } esp_zb_zcl_ias_zone_enroll_request_cmd_t;
 
 /**
+ * @brief The Zigbee ZCL window covering send command struct
+ *
+ * @note value only support uint8_t, uint16_t data types for the Lift/Tilt value/percentage payload. If not, set to NULL
+ *
+ */
+typedef struct esp_zb_zcl_window_covering_cluster_send_cmd_req_s{
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;                       /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode;                     /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+    void *value;                                                /*!< Pointer to value */
+    uint16_t cluster_id;                                        /*!< Cluster id */
+    uint8_t cmd_id;                                             /*!< Command id */
+}esp_zb_zcl_window_covering_cluster_send_cmd_req_t;
+
+/**
+ * @brief The Zigbee ZCL electrical profile information response command struct
+ */
+typedef struct esp_zb_zcl_electrical_profile_info_cmd_resp_s{
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;                       /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode;                     /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+    esp_zb_electrical_measurement_profile_info_t profile_info;  /*!< Electrical profile info response command */
+    uint16_t cluster_id;                                        /*!< Cluster id */
+}esp_zb_zcl_electrical_profile_info_cmd_resp_t;
+
+/**
+ * @brief The Zigbee ZCL electrical profile response command struct
+ */
+typedef struct esp_zb_zcl_electrical_measurement_profile_cmd_resp_s{
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;                        /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode;                      /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+    esp_zb_electrical_measurement_profile_t profile;             /*!< Electrical profile response command */
+    uint16_t cluster_id;                                         /*!< Cluster id */
+}esp_zb_zcl_electrical_measurement_profile_cmd_resp_t;
+
+/**
  * @brief The Zigbee ZCL custom cluster command struct
  *
  * @note Support only u8, s8, u16, s16, u32, s32, string  data types.
@@ -849,10 +884,34 @@ void esp_zb_zcl_ias_zone_status_change_notif_cmd_req(esp_zb_zcl_ias_zone_status_
 /**
  * @brief   Send IAS zone enroll request command
  * @note Type 2 cluster from server to client
- * @param[in]  cmd_req  pointer to the ias zone enroll request command  @ref esp_zb_zcl_ias_zone_enroll_request_cmd_s
+ * @param[in]  cmd_req  pointer to the ias zone enroll request command @ref esp_zb_zcl_ias_zone_enroll_request_cmd_s
  *
  */
 void esp_zb_zcl_ias_zone_enroll_cmd_req(esp_zb_zcl_ias_zone_enroll_request_cmd_t *cmd_req);
+
+/**
+ * @brief   Send window covering cluster command request
+ *
+ * @param[in]  cmd_req  pointer to the send custom cluster command request reference to esp_zb_zcl_window_covering_cluster_send_cmd_req_t
+ *
+ */
+void esp_zb_zcl_window_covering_cluster_send_cmd_req(esp_zb_zcl_window_covering_cluster_send_cmd_req_t *cmd_req);
+
+/**
+ * @brief   Get electrical measurement cluster profile info response
+ *
+ * @param[in]  cmd_req  pointer to the send custom cluster command response reference to esp_zb_zcl_window_covering_cluster_get_cmd_req_t
+ *
+ */
+void esp_zb_zcl_electrical_measurement_cluster_get_profile_info_resp(esp_zb_zcl_electrical_profile_info_cmd_resp_t *cmd_req);
+
+/**
+ * @brief   Get electrical measurement cluster measurement profile response
+ *
+ * @param[in]  cmd_req  pointer to the send custom cluster command response reference to esp_zb_zcl_window_covering_cluster_get_cmd_req_t
+ *
+ */
+void esp_zb_zcl_electrical_measurement_cluster_get_measurement_profile_resp(esp_zb_zcl_electrical_measurement_profile_cmd_resp_t *cmd_req);
 
 /**
  * @brief   Send custom cluster command request

@@ -79,11 +79,16 @@ The supported features in current ESP Zigbee SDK are listed below.
          binary_input           0x000f    
               ota               0x0019    
          shade_config           0x0100    
-           door_lock            0x0101    
-         color_control          0x0300    
+           door_lock            0x0101
+        window_covering         0x0102    
+         color_control          0x0300 
+    illuminance_measurement     0x0400   
     temperature_measurement     0x0402
+      pressure_measurement      0x0403
       humidity_measurement      0x0405
-           ias_zone             0x0500    
+       occupancy_sensing        0x0406
+           ias_zone             0x0500
+    electrical_measurement      0x0b04
    ========================= ============ 
 
 

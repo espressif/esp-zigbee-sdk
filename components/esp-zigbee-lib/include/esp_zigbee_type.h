@@ -5,9 +5,13 @@
  */
 
 #pragma once
+
 #ifdef __cplusplus
 extern "C" {
 #endif
+#include <stdint.h>
+#include "stdbool.h"
+
 #define ESP_ZB_PACKED_STRUCT __attribute__ ((packed))
 
 typedef uint8_t esp_zb_64bit_addr_t[8];
@@ -208,6 +212,16 @@ typedef struct esp_zb_af_node_desc_s {
     uint8_t           desc_capability_field;      /*!< Descriptor capability field */
 } ESP_ZB_PACKED_STRUCT
 esp_zb_af_node_desc_t;
+
+/**
+* @brief Struture of network descriptor request of active scan response
+*/
+typedef struct esp_zb_network_descriptor_s{
+    uint16_t short_pan_id;                      /*!< PAN id */
+    bool     permit_joining;                    /*!< Indicates that at least one router / coordinator on the network currently permits joining */
+    esp_zb_ieee_addr_t extended_pan_id;         /*!< Extended PAN id, the MAC address which forms the network */
+}ESP_ZB_PACKED_STRUCT
+esp_zb_network_descriptor_t;
 
 /**
  * @brief Structure of simple descriptor request of ZCL command
@@ -472,6 +486,55 @@ typedef struct esp_zb_ota_cluster_cfg_s {
     esp_zb_ieee_addr_t ota_upgrade_server_id;     /*!<  The attribute indicates the address of the upgrade server */
     uint8_t ota_image_upgrade_status;             /*!<  The attribute indicates the image upgrade status of the client device */
 } esp_zb_ota_cluster_cfg_t;
+
+/**
+ * @brief Zigbee standard mandatory atrribute for illuminance measurement cluster
+ *
+ */
+typedef struct esp_zb_illuminance_meas_cluster_cfg_s {
+    uint16_t measured_value;                     /*!<  The attribute indicates the illuminance from 0x0000 to 0xffff */
+    uint16_t min_value;                          /*!<  The attribute indicates minimum value of the measured value */
+    uint16_t max_value;                          /*!<  The attribute indicates maximum value of the measured value */
+} esp_zb_illuminance_meas_cluster_cfg_t;
+
+/**
+ * @brief Zigbee standard mandatory atrribute for pressure measurement cluster
+ *
+ */
+typedef struct esp_zb_pressure_meas_cluster_cfg_s {
+    int16_t measured_value;                     /*!<  The attribute indicates the pressure from 0x8000 to 0x7fff */
+    int16_t min_value;                          /*!<  The attribute indicates minimum value of the measured value */
+    int16_t max_value;                          /*!<  The attribute indicates maximum value of the measured value */
+} esp_zb_pressure_meas_cluster_cfg_t;
+
+/**
+ * @brief Zigbee standard mandatory atrribute for electrical measurement cluster
+ *
+ */
+typedef struct esp_zb_electrical_meas_cluster_cfg_s {
+    uint32_t measured_type;                     /*!<  This attribute indicates a device’s measurement type */
+} esp_zb_electrical_meas_cluster_cfg_t;
+
+/**
+ * @brief Zigbee standard mandatory atrribute for occupancy sensing cluster
+ *
+ */
+typedef struct esp_zb_occupancy_sensing_cluster_cfg_s {
+    uint8_t occupancy;                          /*!<  Bit 0 specifies the sensed occupancy as follows: 1 = occupied, 0 = unoccupied. */
+    uint32_t sensor_type;                       /*!<  The attribute specifies the type of the occupancy sensor */
+    uint8_t sensor_type_bitmap;                 /*!<  The attribute specifies the types of the occupancy sensor */
+} esp_zb_occupancy_sensing_cluster_cfg_t;
+
+/**
+ * @brief Zigbee standard mandatory atrribute for window covering cluster
+ *
+ */
+typedef struct esp_zb_window_covering_cluster_cfg_s {
+    uint8_t covering_type;                      /*!<  This attribute identifies the type of window covering being controlled by this endpoint */
+    uint8_t covering_status;                    /*!<  This attribute makes configuration and status information available */
+    uint8_t covering_mode;                      /*!<  This attribute allows configuration of the window covering */
+} esp_zb_window_covering_cluster_cfg_t;
+
 
 /****************** standard device config *********************/
 /**

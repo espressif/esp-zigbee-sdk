@@ -14,10 +14,10 @@ extern "C" {
 /** @brief Temperature Measurement cluster attribute identifiers
 */
 typedef enum {
-    ESP_ZB_ZCL_ATTR_TEMP_MEASUREMENT_VALUE_ID         = 0x0000,  /*!< @brief MeasuredValue, ZCL spec 4.4.2.2.1.1 */
-    ESP_ZB_ZCL_ATTR_TEMP_MEASUREMENT_MIN_VALUE_ID     = 0x0001,  /*!< @brief MinMeasuredValue, ZCL spec 4.4.2.2.1.2 */
-    ESP_ZB_ZCL_ATTR_TEMP_MEASUREMENT_MAX_VALUE_ID     = 0x0002,  /*!< @brief MaxMeasuredValue, ZCL spec 4.4.2.2.1.3 */
-    ESP_ZB_ZCL_ATTR_TEMP_MEASUREMENT_TOLERANCE_ID     = 0x0003,  /*!< @brief Tolerance, ZCL spec 4.4.2.2.1.4 */
+    ESP_ZB_ZCL_ATTR_TEMP_MEASUREMENT_VALUE_ID         = 0x0000,  /*!< MeasuredValue */
+    ESP_ZB_ZCL_ATTR_TEMP_MEASUREMENT_MIN_VALUE_ID     = 0x0001,  /*!< MinMeasuredValue*/
+    ESP_ZB_ZCL_ATTR_TEMP_MEASUREMENT_MAX_VALUE_ID     = 0x0002,  /*!< MaxMeasuredValue */
+    ESP_ZB_ZCL_ATTR_TEMP_MEASUREMENT_TOLERANCE_ID     = 0x0003,  /*!< Tolerance */
 } esp_zb_zcl_temp_measurement_attr_t;
 
 /** @brief Default value for Value attribute */
