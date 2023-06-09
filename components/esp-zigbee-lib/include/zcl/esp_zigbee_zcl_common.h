@@ -26,6 +26,11 @@ extern "C" {
 #include "esp_zigbee_zcl_humidity_meas.h"
 #include "esp_zigbee_zcl_temperature_meas.h"
 #include "esp_zigbee_zcl_ota.h"
+#include "esp_zigbee_zcl_electrical_meas.h"
+#include "esp_zigbee_zcl_illuminance_meas.h"
+#include "esp_zigbee_zcl_pressure_meas.h"
+#include "esp_zigbee_zcl_occupancy_sensing.h"
+#include "esp_zigbee_zcl_window_covering.h"
 
 /** HA profile ID*/
 #define ESP_ZB_AF_HA_PROFILE_ID       0x0104U
@@ -139,6 +144,7 @@ typedef enum {
     ESP_ZB_ZCL_CLUSTER_ID_REL_HUMIDITY_MEASUREMENT = 0x0405U,       /*!< Relative humidity measurement */
     ESP_ZB_ZCL_CLUSTER_ID_OCCUPANCY_SENSING        = 0x0406U,       /*!< Occupancy sensing */
     ESP_ZB_ZCL_CLUSTER_ID_IAS_ZONE                 = 0x0500U,       /*!< IAS zone */
+    ESP_ZB_ZCL_CLUSTER_ID_ELECTRICAL_MEASUREMENT   = 0x0b04U,       /*!< Electrical measurement */
 } esp_zb_zcl_cluster_id_t;
 
 /**

@@ -192,6 +192,20 @@ typedef uint8_t (*esp_zb_cli_resp_callback_t)(uint8_t bufid);
  */
 typedef void (*esp_zb_identify_notify_callback_t)(uint8_t identify_on);
 
+
+/** Active scan network callback
+ *
+ * @brief A ZDO active scan request callback for user to get scan list status.
+ *
+ * @note User's callback get response from the device that found in network.
+ *
+ * @param[in] zdo_status The ZDO response status, refer to `esp_zb_zdp_status`
+ * @param[in] count     Number of discovered networks
+ * @param[in] nwk_descriptor The pointer to all discvoered networks see refer to esp_zb_network_descriptor_t
+ *
+ */
+typedef void (*esp_zb_zdo_scan_complete_callback_t)(esp_zb_zdp_status_t zdo_status, uint8_t count, esp_zb_network_descriptor_t *nwk_descriptor);
+
 /**
  * @brief The Zigbee Coordinator/ Router device configuration.
  *
@@ -266,6 +280,18 @@ esp_err_t esp_zb_set_primary_network_channel_set(uint32_t channel_mask);
             - ESP_ERR_INVALID_ARG if the channel mask is out of range
  */
 esp_err_t esp_zb_set_secondary_network_channel_set(uint32_t channel_mask);
+
+/**
+ * @brief   Active scan available network.
+ *
+ * Network discovery service for scanning available network
+ *
+ * @param[in] channel_mask Valid channel mask is from 0x00000800 (only channel 11) to 0x07FFF800 (all channels from 11 to 26)
+ * @param[in] scan_duration Time to spend scanning each channel
+ * @param[in] user_cb   A user callback to get the active scan result please refer to esp_zb_zdo_scan_complete_callback_t
+ *
+ */
+void esp_zb_active_scan_request(uint32_t channel_mask, uint8_t scan_duration, esp_zb_zdo_scan_complete_callback_t user_cb);
 
 /**
  * @brief   Set the Zigbee device long address.

@@ -5,11 +5,14 @@
  */
 
 #pragma once
+
 #ifdef __cplusplus
 extern "C" {
 #endif
+#include "esp_err.h"
 #include "esp_zigbee_type.h"
 #include "zcl/esp_zigbee_zcl_common.h"
+
 /**
  * @brief  Create an empty attribute list.
  *
@@ -293,6 +296,76 @@ esp_err_t esp_zb_humidity_meas_cluster_add_attr(esp_zb_attribute_list_t *attr_li
  *
  */
 esp_err_t esp_zb_ota_cluster_add_attr(esp_zb_attribute_list_t *attr_list, uint16_t attr_id, void *value_p);
+
+/**
+ * @brief Add an attribute in illuminance measurement cluster
+ *
+ * @param[in] attr_list A pointer to attribute list @ref esp_zb_attribute_list_s
+ * @param[in] attr_id  An attribute id to be added
+ * @param[in] value_p A pointer to attribute value wants to add
+ *
+ * @return
+ *      - ESP_OK on success
+ *      - ESP_ERR_INVALID_ARG if attribute is existed or unsupported
+ *
+ */
+esp_err_t esp_zb_illuminance_meas_cluster_add_attr(esp_zb_attribute_list_t *attr_list, uint16_t attr_id, void *value_p);
+
+/**
+ * @brief Add an attribute in pressure measurement cluster
+ *
+ * @param[in] attr_list A pointer to attribute list @ref esp_zb_attribute_list_s
+ * @param[in] attr_id  An attribute id to be added
+ * @param[in] value_p A pointer to attribute value wants to add
+ *
+ * @return
+ *      - ESP_OK on success
+ *      - ESP_ERR_INVALID_ARG if attribute is existed or unsupported
+ *
+ */
+esp_err_t esp_zb_pressure_meas_cluster_add_attr(esp_zb_attribute_list_t *attr_list, uint16_t attr_id, void *value_p);
+
+/**
+ * @brief Add an attribute in electrical measurement cluster
+ *
+ * @param[in] attr_list A pointer to attribute list @ref esp_zb_attribute_list_s
+ * @param[in] attr_id  An attribute id to be added
+ * @param[in] value_p A pointer to attribute value wants to add
+ *
+ * @return
+ *      - ESP_OK on success
+ *      - ESP_ERR_INVALID_ARG if attribute is existed or unsupported
+ *
+ */
+esp_err_t esp_zb_electrical_meas_cluster_add_attr(esp_zb_attribute_list_t *attr_list, uint16_t attr_id, void *value_p);
+
+/**
+ * @brief Add an attribute in window covering cluster
+ *
+ * @param[in] attr_list A pointer to attribute list @ref esp_zb_attribute_list_s
+ * @param[in] attr_id  An attribute id to be added
+ * @param[in] value_p A pointer to attribute value wants to add
+ *
+ * @return
+ *      - ESP_OK on success
+ *      - ESP_ERR_INVALID_ARG if attribute is existed or unsupported
+ *
+ */
+esp_err_t esp_zb_window_covering_cluster_add_attr(esp_zb_attribute_list_t *attr_list, uint16_t attr_id, void *value_p);
+
+/**
+ * @brief Add an attribute in occupancy sensor cluster
+ * 
+ * @param[in] attr_list A pointer to attribute list @ref esp_zb_attribute_list_s
+ * @param[in] attr_id  An attribute id to be added
+ * @param[in] value_p A pointer to attribute value wants to add
+ *
+ * @return
+ *      - ESP_OK on success
+ *      - ESP_ERR_INVALID_ARG if attribute is existed or unsupported
+ * 
+ */
+esp_err_t esp_zb_occupancy_sensing_cluster_add_attr(esp_zb_attribute_list_t *attr_list, uint16_t attr_id, void *value_p);
 
 /**
 * @brief Add customized attribute in customized cluster.

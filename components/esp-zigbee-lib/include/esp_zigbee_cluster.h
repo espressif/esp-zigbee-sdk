@@ -8,6 +8,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+#include "esp_err.h"
 #include "esp_zigbee_type.h"
 
 /**
@@ -210,6 +211,56 @@ esp_zb_attribute_list_t *esp_zb_temperature_meas_cluster_create(esp_zb_temperatu
  *
  */
 esp_zb_attribute_list_t *esp_zb_humidity_meas_cluster_create(esp_zb_humidity_meas_cluster_cfg_t *humidity_cfg);
+
+/**
+ * @brief Create a standard illuminance measurement cluster attribute list.
+ *
+ * @param[in] illuminance_cfg Configuration parameters for this cluster defined by reference to esp_zb_illuminance_meas_cluster_cfg_t
+ *
+ * @return Pointer to attribute list @ref esp_zb_attribute_list_s
+ *
+ */
+esp_zb_attribute_list_t *esp_zb_illuminance_meas_cluster_create(esp_zb_illuminance_meas_cluster_cfg_t *illuminance_cfg);
+
+/**
+ * @brief Create a standard pressure measurement cluster attribute list.
+ *
+ * @param[in] pressure_cfg Configuration parameters for this cluster defined by reference to esp_zb_pressure_meas_cluster_cfg_t
+ *
+ * @return Pointer to attribute list @ref esp_zb_attribute_list_s
+ *
+ */
+esp_zb_attribute_list_t *esp_zb_pressure_meas_cluster_create(esp_zb_pressure_meas_cluster_cfg_t *pressure_cfg);
+
+/**
+ * @brief Create a standard electrical measurement cluster attribute list.
+ *
+ * @param[in] electrical_cfg Configuration parameters for this cluster defined by reference to esp_zb_electrical_meas_cluster_cfg_t
+ *
+ * @return Pointer to attribute list @ref esp_zb_attribute_list_s
+ *
+ */
+esp_zb_attribute_list_t *esp_zb_electrical_meas_cluster_create(esp_zb_electrical_meas_cluster_cfg_t *electrical_cfg);
+
+/**
+ * @brief Create a standard occupancy sensor cluster attribute list.
+ *
+ * @param[in] sensing_cfg Configuration parameters for this cluster defined by reference to esp_zb_occupancy_sensing_cluster_cfg_t
+ *
+ * @return Pointer to attribute list @ref esp_zb_attribute_list_s
+ *
+ */
+esp_zb_attribute_list_t *esp_zb_occupancy_sensing_cluster_create(esp_zb_occupancy_sensing_cluster_cfg_t *sensing_cfg);
+
+/**
+ * @brief Create a standard window covering cluster attribute list.
+ *
+ * @param[in] covering_cfg Configuration parameters for this cluster defined by reference to esp_zb_window_covering_cluster_cfg_t
+ *
+ * @return Pointer to attribute list @ref esp_zb_attribute_list_s
+ *
+ */
+esp_zb_attribute_list_t *esp_zb_window_covering_cluster_create(esp_zb_window_covering_cluster_cfg_t *covering_cfg);
 
 /**
  * @brief  Create a standard OTA cluster attribute list
@@ -446,6 +497,77 @@ esp_err_t esp_zb_cluster_list_add_temperature_meas_cluster(esp_zb_cluster_list_t
  *
  */
 esp_err_t esp_zb_cluster_list_add_humidity_meas_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
+
+
+/**
+ * @brief Add illuminance measurement cluster (attribute list) in a cluster list.
+ * 
+ * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
+ * @param[in] attr_list  An attribute list which wants to add
+ * @param[in] role_mask  A role of server or client for this cluster (attribute list) refer to esp_zb_zcl_cluster_role
+ *
+ * @return
+ *      - ESP_OK on success
+ *      - ESP_ERR_INVALID_ARG if cluster list not initialized
+ *
+ */
+esp_err_t esp_zb_cluster_list_add_illuminance_meas_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
+
+/**
+ * @brief Add pressure measurement cluster (attribute list) in a cluster list.
+ *
+ * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
+ * @param[in] attr_list  An attribute list which wants to add
+ * @param[in] role_mask  A role of server or client for this cluster (attribute list) refer to esp_zb_zcl_cluster_role
+ *
+ * @return
+ *      - ESP_OK on success
+ *      - ESP_ERR_INVALID_ARG if cluster list not initialized
+ *
+ */
+esp_err_t esp_zb_cluster_list_add_pressure_meas_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
+
+/**
+ * @brief Add electrical measurement cluster (attribute list) in a cluster list.
+ *
+ * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
+ * @param[in] attr_list  An attribute list which wants to add
+ * @param[in] role_mask  A role of server or client for this cluster (attribute list) refer to esp_zb_zcl_cluster_role
+ *
+ * @return
+ *      - ESP_OK on success
+ *      - ESP_ERR_INVALID_ARG if cluster list not initialized
+ *
+ */
+esp_err_t esp_zb_cluster_list_add_electrical_meas_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
+
+/**
+ * @brief Add occupancy sensor cluster (attribute list) in a cluster list.
+ *
+ * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
+ * @param[in] attr_list  An attribute list which wants to add
+ * @param[in] role_mask  A role of server or client for this cluster (attribute list) refer to esp_zb_zcl_cluster_role
+ *
+ * @return
+ *      - ESP_OK on success
+ *      - ESP_ERR_INVALID_ARG if cluster list not initialized
+ *
+ */
+esp_err_t esp_zb_cluster_list_add_occupancy_sensing_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
+
+/**
+ * @brief Add window covering cluster (attribute list) in a cluster list.
+ *
+ * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
+ * @param[in] attr_list  An attribute list which wants to add
+ * @param[in] role_mask  A role of server or client for this cluster (attribute list) refer to esp_zb_zcl_cluster_role
+ *
+ * @return
+ *      - ESP_OK on success
+ *      - ESP_ERR_INVALID_ARG if cluster list not initialized
+ *
+ */
+esp_err_t esp_zb_cluster_list_add_window_covering_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 /**
  * @brief Add OTA cluster (attribute list) in a cluster list.
@@ -701,6 +823,76 @@ esp_err_t esp_zb_cluster_list_update_temperature_meas_cluster(esp_zb_cluster_lis
  *
  */
 esp_err_t esp_zb_cluster_list_update_humidity_meas_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
+
+/**
+ * @brief Update illuminance measurement cluster (attribute list) in a cluster list.
+ *
+ * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
+ * @param[in] attr_list  An attribute list which wants to update
+ * @param[in] role_mask  A role of server or client for this cluster (attribute list) refer to esp_zb_zcl_cluster_role
+ *
+ * @return
+ *      - ESP_OK on success
+ *      - ESP_ERR_INVALID_ARG if cluster list not initialized
+ *
+ */
+esp_err_t esp_zb_cluster_list_update_illuminance_meas_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
+
+/**
+ * @brief Update pressure measurement cluster (attribute list) in a cluster list.
+ *
+ * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
+ * @param[in] attr_list  An attribute list which wants to update
+ * @param[in] role_mask  A role of server or client for this cluster (attribute list) refer to esp_zb_zcl_cluster_role
+ *
+ * @return
+ *      - ESP_OK on success
+ *      - ESP_ERR_INVALID_ARG if cluster list not initialized
+ *
+ */
+esp_err_t esp_zb_cluster_list_update_pressure_meas_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
+
+/**
+ * @brief Update electrical measurement cluster (attribute list) in a cluster list.
+ *
+ * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
+ * @param[in] attr_list  An attribute list which wants to update
+ * @param[in] role_mask  A role of server or client for this cluster (attribute list) refer to esp_zb_zcl_cluster_role
+ *
+ * @return
+ *      - ESP_OK on success
+ *      - ESP_ERR_INVALID_ARG if cluster list not initialized
+ *
+ */
+esp_err_t esp_zb_cluster_list_update_electrical_meas_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
+
+/**
+ * @brief Update occupancy sensor cluster (attribute list) in a cluster list.
+ *
+ * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
+ * @param[in] attr_list  An attribute list which wants to update
+ * @param[in] role_mask  A role of server or client for this cluster (attribute list) refer to esp_zb_zcl_cluster_role
+ *
+ * @return
+ *      - ESP_OK on success
+ *      - ESP_ERR_INVALID_ARG if cluster list not initialized
+ *
+ */
+esp_err_t esp_zb_cluster_list_update_occupancy_sensing_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
+
+/**
+ * @brief Update window covering cluster (attribute list) in a cluster list.
+ *
+ * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
+ * @param[in] attr_list  An attribute list which wants to update
+ * @param[in] role_mask  A role of server or client for this cluster (attribute list) refer to esp_zb_zcl_cluster_role
+ *
+ * @return
+ *      - ESP_OK on success
+ *      - ESP_ERR_INVALID_ARG if cluster list not initialized
+ *
+ */
+esp_err_t esp_zb_cluster_list_update_window_covering_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 /**
  * @brief Update OTA cluster (attribute list) in a cluster list.

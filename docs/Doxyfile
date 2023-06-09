@@ -48,6 +48,11 @@ INPUT = \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_temperature_meas.h     \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_humidity_meas.h        \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_time.h                 \
+    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_illuminance_meas.h     \
+    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_pressure_meas.h        \
+    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_electrical_meas.h      \
+    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_window_covering.h      \
+    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_occupancy_sensing.h    \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/zdo/esp_zigbee_zdo_command.h              \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/zdo/esp_zigbee_zdo_common.h               \
 
