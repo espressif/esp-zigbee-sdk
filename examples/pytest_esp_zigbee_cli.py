@@ -42,10 +42,11 @@ def config_zigbee_network(cli:Dut, light:Dut) -> Tuple[bool,str]:
 #Case 1: Zigbee network connection
 @pytest.mark.order(1)
 @pytest.mark.esp32h2
+@pytest.mark.esp32c6
 @pytest.mark.i154_zigbee_multi_dut
 @pytest.mark.parametrize(
-    ' count, app_path, target, erase_all', [
-        ( 2, pytest_build_dir, 'esp32h2|esp32h2','y'),
+    'count, app_path, erase_all', [
+        ( 2, pytest_build_dir,'y'),
     ],
     indirect=True,
 )
@@ -66,10 +67,11 @@ def test_i154_cli_zc_connection(dut: Tuple[Dut, Dut]) -> None:
 # #Case 2: Zigbee network finding-binding
 @pytest.mark.order(2)
 @pytest.mark.esp32h2
+@pytest.mark.esp32c6
 @pytest.mark.i154_zigbee_multi_dut
 @pytest.mark.parametrize(
-    ' count, app_path, target, erase_all', [
-        ( 2, pytest_build_dir, 'esp32h2|esp32h2','y'),
+    'count, app_path, erase_all', [
+        ( 2, pytest_build_dir,'y'),
     ],
     indirect=True,
 )
@@ -104,10 +106,11 @@ def test_i154_cli_zc_finding_binding(dut: Tuple[Dut, Dut]) -> None:
 # #Case 3: Zigbee network ZCL command
 @pytest.mark.order(3)
 @pytest.mark.esp32h2
+@pytest.mark.esp32c6
 @pytest.mark.i154_zigbee_multi_dut
 @pytest.mark.parametrize(
-    ' count, app_path, target, erase_all', [
-        ( 2, pytest_build_dir, 'esp32h2|esp32h2','y'),
+    'count, app_path, erase_all', [
+        ( 2, pytest_build_dir,'y'),
     ],
     indirect=True,
 )
@@ -229,10 +232,11 @@ def test_i154_cli_zc_ZCL_command(dut: Tuple[Dut, Dut]) -> None:
 # #Case 4: Zigbee network leaving
 @pytest.mark.order(4)
 @pytest.mark.esp32h2
+@pytest.mark.esp32c6
 @pytest.mark.i154_zigbee_multi_dut
 @pytest.mark.parametrize(
-    ' count, app_path, target, erase_all', [
-        ( 2, pytest_build_dir, 'esp32h2|esp32h2','y'),
+    'count, app_path, erase_all', [
+        ( 2, pytest_build_dir,'y'),
     ],
     indirect=True,
 )

@@ -20,10 +20,13 @@ APPS_BUILD_PER_JOB = 30
 PYTEST_APPS = [
     {"target": "esp32h2", "name": "esp_zigbee_cli"},
     {"target": "esp32h2", "name": "HA_color_dimmable_light"},
+    {"target": "esp32c6", "name": "esp_zigbee_cli"},
+    {"target": "esp32c6", "name": "HA_color_dimmable_light"},
 ]
 IGNORE_WARNINGS = [
     r"warning: 'init_spiffs' defined but not used",
     r"warning: 'esp_zb_gateway_board_try_update' defined but not used",
+    r"DeprecationWarning: pkg_resources is deprecated as an API",
 ]
 MAINFEST_FILES = [
     str(PROJECT_ROOT / 'examples' / '.build-rules.yml'),
