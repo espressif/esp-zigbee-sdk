@@ -253,3 +253,84 @@ Closes: https://github.com/espressif/esp-zigbee-sdk/issues/22
 Closes: https://github.com/espressif/esp-zigbee-sdk/issues/23
 Closes: https://github.com/espressif/esp-zigbee-sdk/issues/24
 Closes: https://github.com/espressif/esp-zigbee-sdk/issues/25
+
+
+# 9-June-2023
+
+Versions
+--------
+0.6.1 version release of ESP-ZIGBEE-SDK
+
+Features
+--------
+* fix callback for custom cluster
+* stringify zigbee app signal
+* fix end device distributed key setting
+* register attribute from local variable to static
+
+Known Issues
+------------
+
+New Changes
+-----------
+Examples support the ESP-Thread-Border/Zigbee-Gateway Board V1.2 
+
+Bug Fixes
+---------
+Closes: https://github.com/espressif/esp-zigbee-sdk/issues/25
+Closes: https://github.com/espressif/esp-zigbee-sdk/issues/27
+
+
+# 16-June-2023
+
+Versions
+--------
+0.6.2 version release of ESP-ZIGBEE-SDK
+
+Features
+--------
+* support active scan available PAN
+* add illuminance measurement cluster
+* add pressure measurement cluster
+* add electrical measurement cluster
+* add window covering cluster
+* add occupancy sensing cluster
+
+Known Issues
+------------
+
+New Changes
+-----------
+Examples support the ESP-Thread-Border/Zigbee-Gateway Board V1.2 
+
+Bug Fixes
+---------
+Closes: https://github.com/espressif/esp-zigbee-sdk/issues/20
+
+
+# 30-June-2023
+
+Versions
+--------
+0.7.0 version release of ESP-ZIGBEE-SDK
+
+Features
+--------
+* add zb privilege command support
+* fix zb zcl ias zone cmd crash
+* fix node des callback issue
+* add ESP-Thread-Border/Zigbee-Gateway Board V1.2 support
+* use ESP_ZB_TRANSCEIVER_ALL_CHANNELS_MASK as zb end device primary channel mask
+
+Known Issues
+------------
+
+New Changes
+-----------
+Examples support the ESP-Thread-Border/Zigbee-Gateway Board V1.2 
+
+Bug Fixes
+---------
+Closes: https://github.com/espressif/esp-zigbee-sdk/issues/34
+Closes: https://github.com/espressif/esp-zigbee-sdk/issues/38
+

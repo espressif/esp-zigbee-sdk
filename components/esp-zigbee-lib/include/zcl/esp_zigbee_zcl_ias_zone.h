@@ -21,6 +21,10 @@ typedef enum {
     ESP_ZB_ZCL_ATTR_IAS_ZONE_ZONEID_ID                                          = 0x0011,    /*!< ZoneID attribute */
     ESP_ZB_ZCL_ATTR_IAS_ZONE_NUMBER_OF_ZONE_SENSITIVITY_LEVELS_SUPPORTED_ID     = 0x0012,    /*!< NumberOfZoneSensitivityLevelsSupported attribute */
     ESP_ZB_ZCL_ATTR_IAS_ZONE_CURRENT_ZONE_SENSITIVITY_LEVEL_ID                  = 0x0013,    /*!< CurrentZoneSensitivityLevel attribute */
+    ESP_ZB_ZCL_ATTR_CUSTOM_CIE_ADDR_IS_SET                                      = 0xE000,    /*!< Custom CIE address for checking establishment and authorization internally*/
+    ESP_ZB_ZCL_ATTR_CUSTOM_CIE_EP                                               = 0xE001,    /*!< Custom CIE endpoint for checking establishment and authorization internally*/
+    ESP_ZB_ZCL_ATTR_CUSTOM_CIE_SHORT_ADDR                                       = 0xE002,    /*!< Custom CIE short address for checking establishment and authorization internally*/
+    ESP_ZB_ZCL_ATTR_IAS_ZONE_INT_CTX_ID                                         = 0xeffe,    /*!< Application context */
 } esp_zb_zcl_ias_zone_attr_t;
 
 /** @brief IAS Zone ZoneState value

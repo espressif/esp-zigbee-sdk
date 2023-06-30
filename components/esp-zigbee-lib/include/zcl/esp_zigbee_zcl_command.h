@@ -528,6 +528,31 @@ typedef struct esp_zb_zcl_custom_cluster_cmd_resp_s {
     uint16_t custom_cmd_resp_id;                            /*!< Custom command response id */
 } esp_zb_zcl_custom_cluster_cmd_resp_t;
 
+/**
+ * @brief The Zigee zcl cluster command value struct
+ *
+ */
+typedef struct {
+    esp_zb_zcl_attr_type_t type;                /*!< Data type to be used */
+    uint8_t length;                             /*!< Length of string data type, first byte should be the length of string */
+    void *value;                                /*!< Supported data types u8, s8, u16, s16, u32, s32, char string */
+} ESP_ZB_PACKED_STRUCT
+esp_zb_zcl_cluster_command_value_t;
+
+/**
+ * @brief The Zigee zcl cluster received command application information struct
+ *
+ */
+typedef struct esp_zb_zcl_cmd_info_s {
+    uint8_t status;                                 /*!< Parse the status of command */
+    esp_zb_zcl_addr_t zcl_addr_u;                   /*!< Type to represent source address of ZCL message */
+    uint8_t  dst_endpoint;                          /*!< The destination enpoint of command */
+    uint8_t  src_endpoint;                          /*!< The source enpoint of command */
+    uint16_t cluster_id;                            /*!< The cluster id for command */
+    uint16_t command_id;                            /*!< The command id to be used */
+    esp_zb_zcl_cluster_command_value_t req;         /*!< The request data for command id */
+} esp_zb_zcl_cmd_info_t;
+
 /********************* Declare functions **************************/
 
 /* read attribute, write attribute, config report and more general command will support later */
@@ -892,7 +917,7 @@ void esp_zb_zcl_ias_zone_enroll_cmd_req(esp_zb_zcl_ias_zone_enroll_request_cmd_t
 /**
  * @brief   Send window covering cluster command request
  *
- * @param[in]  cmd_req  pointer to the send custom cluster command request reference to esp_zb_zcl_window_covering_cluster_send_cmd_req_t
+ * @param[in]  cmd_req  pointer to the send custom cluster command request @ref esp_zb_zcl_window_covering_cluster_send_cmd_req_s
  *
  */
 void esp_zb_zcl_window_covering_cluster_send_cmd_req(esp_zb_zcl_window_covering_cluster_send_cmd_req_t *cmd_req);
@@ -900,7 +925,7 @@ void esp_zb_zcl_window_covering_cluster_send_cmd_req(esp_zb_zcl_window_covering_
 /**
  * @brief   Get electrical measurement cluster profile info response
  *
- * @param[in]  cmd_req  pointer to the send custom cluster command response reference to esp_zb_zcl_window_covering_cluster_get_cmd_req_t
+ * @param[in]  cmd_req  pointer to the send custom cluster command response @ref esp_zb_zcl_electrical_profile_info_cmd_resp_s
  *
  */
 void esp_zb_zcl_electrical_measurement_cluster_get_profile_info_resp(esp_zb_zcl_electrical_profile_info_cmd_resp_t *cmd_req);
@@ -908,7 +933,7 @@ void esp_zb_zcl_electrical_measurement_cluster_get_profile_info_resp(esp_zb_zcl_
 /**
  * @brief   Get electrical measurement cluster measurement profile response
  *
- * @param[in]  cmd_req  pointer to the send custom cluster command response reference to esp_zb_zcl_window_covering_cluster_get_cmd_req_t
+ * @param[in]  cmd_req  pointer to the send custom cluster command response @ref esp_zb_zcl_electrical_measurement_profile_cmd_resp_s
  *
  */
 void esp_zb_zcl_electrical_measurement_cluster_get_measurement_profile_resp(esp_zb_zcl_electrical_measurement_profile_cmd_resp_t *cmd_req);

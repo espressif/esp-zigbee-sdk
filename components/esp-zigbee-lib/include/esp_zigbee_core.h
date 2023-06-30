@@ -52,6 +52,8 @@ typedef enum {
     ESP_ZB_ED_AGING_TIMEOUT_16384MIN = 14U, /*!< 16384 minutes */
 } esp_zb_aging_timeout_t;
 
+#define ESP_ZB_TRANSCEIVER_ALL_CHANNELS_MASK   0x07FFF800U /*!< channel 11-26 for compatibility with 2.4GHZ*/
+
 /** ZCL set attribute callback
  *
  * @param[in] status The status for ZCL set attribute 0 - status success
@@ -192,6 +194,11 @@ typedef uint8_t (*esp_zb_cli_resp_callback_t)(uint8_t bufid);
  */
 typedef void (*esp_zb_identify_notify_callback_t)(uint8_t identify_on);
 
+/** ZCL command callback
+ * @param[out] cmd The zcl command content refers to esp_zb_zcl_cmd_info_t
+ * 
+ */
+typedef void (*esp_zb_privilege_command_callback_t)(esp_zb_zcl_cmd_info_t cmd);
 
 /** Active scan network callback
  *
@@ -289,7 +296,6 @@ esp_err_t esp_zb_set_secondary_network_channel_set(uint32_t channel_mask);
  * @param[in] channel_mask Valid channel mask is from 0x00000800 (only channel 11) to 0x07FFF800 (all channels from 11 to 26)
  * @param[in] scan_duration Time to spend scanning each channel
  * @param[in] user_cb   A user callback to get the active scan result please refer to esp_zb_zdo_scan_complete_callback_t
- *
  */
 void esp_zb_active_scan_request(uint32_t channel_mask, uint8_t scan_duration, esp_zb_zdo_scan_complete_callback_t user_cb);
 
@@ -365,6 +371,15 @@ void esp_zb_set_tx_power(int8_t power);
  * @param[in]  power 8-bit of power pointer value in dB
  */
 void esp_zb_get_tx_power(int8_t *power);
+
+/**
+ * @brief  Get the network short address by the IEEE address
+ * 
+ * @param[in] address 8-byte for the IEEE address
+ * @return Network short address
+ *  
+ */
+uint16_t esp_zb_address_short_by_ieee(esp_zb_ieee_addr_t address);
 
 /**
  * @brief   Get the Zigbee network device type.
@@ -637,6 +652,32 @@ void esp_zb_add_cli_resp_handler_cb(uint8_t endpoint, esp_zb_cli_resp_callback_t
  *
  */
 void esp_zb_add_identify_notify_cb(uint8_t endpoint, esp_zb_identify_notify_callback_t cb);
+
+/**
+ * @brief Add a callback and the privilege command the Zigbee cluster in endpoint.
+ *
+ * @note The privilege command will skip the Zigbee stack and be exposed to users by the callback indirectly.
+ *       Allowing different commands to use the same callback.
+ *
+ * @param[in] endpoint The specific endpoint for @p cluster
+ * @param[in] cluster The specific cluster for @p command
+ * @param[in] command The specific command ID is required to handle for users.
+ * @param[in] cb The callback refers to esp_zb_privilege_command_callback_t callback will be called, when application layer receives the @p command
+ *
+ */
+void esp_zb_add_cluster_privilege_command_cb(uint8_t endpoint, uint16_t cluster, uint16_t command, esp_zb_privilege_command_callback_t cb);
+
+/**
+ * @brief Delete the privilege command from the @p cluster of @p endpoint
+ *
+ * @param[in] endpoint The specific endpoint for @p cluster
+ * @param[in] cluster The specific cluster for @p command
+ * @param[in] command The specific command ID will be deleted so that the stack will handle the command rather than user.
+ * @return
+ *      -   True: On success
+ *      -   False: Nothing to delete
+ */
+bool esp_zb_delete_cluster_privilege_command(uint8_t endpoint, uint16_t cluster, uint16_t command);
 
 /* ZCL attribute, cluster, endpoint, device related */
 

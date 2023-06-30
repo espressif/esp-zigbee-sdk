@@ -187,10 +187,10 @@ typedef enum{
 }esp_zb_zcl_electrical_measurement_profile_interval_period_t;
 
 /**
- * @brief The Zigbee electrical measurement cluster profile information command struct
- *
- */
-typedef struct{
+* @brief The Zigbee electrical measurement cluster profile information command struct
+*
+*/
+typedef struct esp_zb_electrical_measurement_profile_info_s {
     uint8_t count;                                                                  /*!< The counter for response command */
     esp_zb_zcl_electrical_measurement_profile_interval_period_t interval_period;    /*!< The Profile interval period for profile information response command */
     uint8_t max_number_of_intervals;                                                /*!< The Profile max number of intervals for profile information response command */
@@ -199,10 +199,10 @@ typedef struct{
 }esp_zb_electrical_measurement_profile_info_t;
 
 /**
- * @brief The Zigbee electrical measurement cluster profile command struct
- *
- */
-typedef struct{
+* @brief The Zigbee electrical measurement cluster profile command struct
+*
+*/
+typedef struct esp_zb_electrical_measurement_profile_s {
     uint32_t start_time;                                        /*!< The start time for profile response command */
     uint32_t status;                                            /*!< The status for profile response command */
     uint32_t interval_period;                                   /*!< The interval period for profile response command */
