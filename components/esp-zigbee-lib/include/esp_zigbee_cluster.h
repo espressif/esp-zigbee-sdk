@@ -215,7 +215,7 @@ esp_zb_attribute_list_t *esp_zb_humidity_meas_cluster_create(esp_zb_humidity_mea
 /**
  * @brief Create a standard illuminance measurement cluster attribute list.
  *
- * @param[in] illuminance_cfg Configuration parameters for this cluster defined by reference to esp_zb_illuminance_meas_cluster_cfg_t
+ * @param[in] illuminance_cfg Configuration parameters for this cluster defined by @ref esp_zb_illuminance_meas_cluster_cfg_s
  *
  * @return Pointer to attribute list @ref esp_zb_attribute_list_s
  *
@@ -225,7 +225,7 @@ esp_zb_attribute_list_t *esp_zb_illuminance_meas_cluster_create(esp_zb_illuminan
 /**
  * @brief Create a standard pressure measurement cluster attribute list.
  *
- * @param[in] pressure_cfg Configuration parameters for this cluster defined by reference to esp_zb_pressure_meas_cluster_cfg_t
+ * @param[in] pressure_cfg Configuration parameters for this cluster defined by @ref esp_zb_pressure_meas_cluster_cfg_s
  *
  * @return Pointer to attribute list @ref esp_zb_attribute_list_s
  *
@@ -235,7 +235,7 @@ esp_zb_attribute_list_t *esp_zb_pressure_meas_cluster_create(esp_zb_pressure_mea
 /**
  * @brief Create a standard electrical measurement cluster attribute list.
  *
- * @param[in] electrical_cfg Configuration parameters for this cluster defined by reference to esp_zb_electrical_meas_cluster_cfg_t
+ * @param[in] electrical_cfg Configuration parameters for this cluster defined by @ref esp_zb_electrical_meas_cluster_cfg_s
  *
  * @return Pointer to attribute list @ref esp_zb_attribute_list_s
  *
@@ -245,7 +245,7 @@ esp_zb_attribute_list_t *esp_zb_electrical_meas_cluster_create(esp_zb_electrical
 /**
  * @brief Create a standard occupancy sensor cluster attribute list.
  *
- * @param[in] sensing_cfg Configuration parameters for this cluster defined by reference to esp_zb_occupancy_sensing_cluster_cfg_t
+ * @param[in] sensing_cfg Configuration parameters for this cluster defined by @ref esp_zb_occupancy_sensing_cluster_cfg_s
  *
  * @return Pointer to attribute list @ref esp_zb_attribute_list_s
  *
@@ -255,7 +255,7 @@ esp_zb_attribute_list_t *esp_zb_occupancy_sensing_cluster_create(esp_zb_occupanc
 /**
  * @brief Create a standard window covering cluster attribute list.
  *
- * @param[in] covering_cfg Configuration parameters for this cluster defined by reference to esp_zb_window_covering_cluster_cfg_t
+ * @param[in] covering_cfg Configuration parameters for this cluster defined by @ref esp_zb_window_covering_cluster_cfg_s
  *
  * @return Pointer to attribute list @ref esp_zb_attribute_list_s
  *

@@ -51,13 +51,14 @@ esp_zb_zcl_attr_t *esp_zb_zcl_get_attribute(uint8_t endpoint, uint16_t cluster_i
  * @param[in] cluster_role Cluster role of this cluster, either server or client role refer to esp_zb_zcl_cluster_role
  * @param[in] attr_id Attribute id
  * @param[in] value_p pointer to new value
-
- * @note It will force write the attribute value even if it's read-only.
+ * @param[in] check The access method of attribute whether is required to check or not
+ *
+ * @note Please look up the Zigbee Cluster Library for the access method of attribute
  * @return zcl status refer to esp_zb_zcl_status_t
  *
  */
 esp_zb_zcl_status_t esp_zb_zcl_set_attribute_val(uint8_t endpoint, uint16_t cluster_id, uint8_t cluster_role,
-        uint16_t attr_id, void *value_p);
+        uint16_t attr_id, void *value_p, bool check);
 
 /**
  * @brief Add an attribute in basic cluster.
@@ -255,6 +256,17 @@ esp_err_t esp_zb_door_lock_cluster_add_attr(esp_zb_attribute_list_t *attr_list, 
  */
 esp_err_t esp_zb_ias_zone_cluster_add_attr(esp_zb_attribute_list_t *attr_list, uint16_t attr_id, void *value_p);
 
+/**
+ * @brief Set the IAS zone CIE address for IAS zone server
+ * 
+ * @param[in] endpoint A 8-bit endpoint ID which the IAS zone cluster attach
+ * @param[in] cie_ieee_addr The 8-byte IEEE address will be regarded as the IAS message destination address  
+ * @return  
+ *      - ESP_OK on success
+ *      - ESP_FAIL The CIE address has been set, invalid arguement or IAS zone cluster does not exist
+ * 
+ */
+esp_err_t esp_zb_ias_zone_cluster_set_cie_address(uint8_t endpoint, esp_zb_ieee_addr_t cie_ieee_addr);
 /**
  * @brief Add an attribute in temperature measurement cluster.
  *

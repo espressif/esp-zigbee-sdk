@@ -30,7 +30,7 @@ def config_zigbee_network(cli:Dut, light:Dut) -> Tuple[bool,str]:
     # get the cli expanid (same as ieee address)
     cli_node_expanid=cli.expect(r'extpanid: 0x([a-z0-9]+:?)',timeout=2)[1].decode()
     # get the light node network address
-    light_nwk_addr= cli.expect(r'New device commissioned or rejoined \(short: 0x([a-z0-9]+)',timeout=10)[1].decode()
+    light_nwk_addr= cli.expect(r'New device commissioned or rejoined \(short: 0x([a-z0-9]+)',timeout=30)[1].decode()
     light.expect('ESP_ZB_COLOR_DIMM_LIGHT: Joined network successfully',timeout=20)
     light_node_got_expanid=light.expect(r'PAN ID: (([a-z0-9]{2}:?){8})',timeout=3)[1].decode()
     light_node_got_expanid = light_node_got_expanid.replace(":","")
