@@ -20,10 +20,10 @@
 #include "esp_zb_light.h"
 
 /**
- * @note Make sure set idf.py menuconfig in zigbee component as zigbee end device!
+ * @note Make sure set idf.py menuconfig in zigbee component as zigbee router !
 */
-#if !defined ZB_ED_ROLE
-#error Define ZB_ED_ROLE in idf.py menuconfig to compile light (End Device) source code.
+#if !defined CONFIG_ZB_ZCZR
+#error Define ZB_ZCZR in idf.py menuconfig to compile light (Router) source code.
 #endif
 
 static const char *TAG = "ESP_ZB_COLOR_DIMM_LIGHT";
@@ -117,11 +117,11 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
 static void esp_zb_task(void *pvParameters)
 {
     /* initialize Zigbee stack with Zigbee end-device config */
-    esp_zb_cfg_t zb_nwk_cfg = ESP_ZB_ZED_CONFIG();
+    esp_zb_cfg_t zb_nwk_cfg = ESP_ZB_ZR_CONFIG();
     esp_zb_init(&zb_nwk_cfg);
     /* set the color dimmable light device config */
     esp_zb_color_dimmable_light_cfg_t light_cfg = ESP_ZB_DEFAULT_COLOR_DIMMABLE_LIGHT_CONFIG();
-    esp_zb_ep_list_t *esp_zb_color_dimmable_light_ep = esp_zb_color_dimmable_light_ep_create(HA_ESP_LIGHT_ENDPOINT, &light_cfg);
+    esp_zb_ep_list_t *esp_zb_color_dimmable_light_ep = esp_zb_color_dimmable_light_ep_create(HA_COLOR_DIMMABLE_LIGHT_ENDPOINT, &light_cfg);
     esp_zb_device_register(esp_zb_color_dimmable_light_ep);
     esp_zb_device_add_set_attr_value_cb(attr_cb);
     esp_zb_set_primary_network_channel_set(ESP_ZB_PRIMARY_CHANNEL_MASK);
