@@ -111,8 +111,8 @@ pytest_esp32h2_i154_zigbee_multi_dut:
     - build_pytest_examples
   script:
     - pip install -r tools/ci/requirements-pytest.txt
-    - find examples/ -name "pytest_*.py" | xargs pytest --target esp32h2 -m i154_zigbee_multi_dut
-  tags: ["esp32h2", "i154_zigbee_multi_dut"]
+    - find examples/ -name "pytest_*.py" | xargs pytest --target esp32h2 -m zigbee_multi_dut
+  tags: ["esp32h2", "zigbee_multi_dut"]
 
 pytest_esp32c6_i154_zigbee_multi_dut:
   stage: target_test
@@ -121,8 +121,8 @@ pytest_esp32c6_i154_zigbee_multi_dut:
     - build_pytest_examples
   script:
     - pip install -r tools/ci/requirements-pytest.txt
-    - find examples/ -name "pytest_*.py" | xargs pytest --target esp32c6 -m i154_zigbee_multi_dut
-  tags: ["esp32c6", "i154_zigbee_multi_dut"]
+    - find examples/ -name "pytest_*.py" | xargs pytest --target esp32c6 -m zigbee_multi_dut
+  tags: ["esp32c6", "zigbee_multi_dut"]
 
 .deploy_docs_template:
     stage: docs

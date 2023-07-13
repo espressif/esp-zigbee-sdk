@@ -43,14 +43,14 @@ def config_zigbee_network(cli:Dut, light:Dut) -> Tuple[bool,str]:
 @pytest.mark.order(1)
 @pytest.mark.esp32h2
 @pytest.mark.esp32c6
-@pytest.mark.i154_zigbee_multi_dut
+@pytest.mark.zigbee_multi_dut
 @pytest.mark.parametrize(
     'count, app_path, erase_all', [
         ( 2, pytest_build_dir,'y'),
     ],
     indirect=True,
 )
-def test_i154_cli_zc_connection(dut: Tuple[Dut, Dut]) -> None:
+def test_zb_cli_zc_connection(dut: Tuple[Dut, Dut]) -> None:
     light =dut[1]
     cli = dut[0]
     result = config_zigbee_network(cli,light)
@@ -68,14 +68,14 @@ def test_i154_cli_zc_connection(dut: Tuple[Dut, Dut]) -> None:
 @pytest.mark.order(2)
 @pytest.mark.esp32h2
 @pytest.mark.esp32c6
-@pytest.mark.i154_zigbee_multi_dut
+@pytest.mark.zigbee_multi_dut
 @pytest.mark.parametrize(
     'count, app_path, erase_all', [
         ( 2, pytest_build_dir,'y'),
     ],
     indirect=True,
 )
-def test_i154_cli_zc_finding_binding(dut: Tuple[Dut, Dut]) -> None:
+def test_zb_cli_zc_finding_binding(dut: Tuple[Dut, Dut]) -> None:
     light =dut[1]
     cli = dut[0]
     result = config_zigbee_network(cli,light)
@@ -107,14 +107,14 @@ def test_i154_cli_zc_finding_binding(dut: Tuple[Dut, Dut]) -> None:
 @pytest.mark.order(3)
 @pytest.mark.esp32h2
 @pytest.mark.esp32c6
-@pytest.mark.i154_zigbee_multi_dut
+@pytest.mark.zigbee_multi_dut
 @pytest.mark.parametrize(
     'count, app_path, erase_all', [
         ( 2, pytest_build_dir,'y'),
     ],
     indirect=True,
 )
-def test_i154_cli_zc_ZCL_command(dut: Tuple[Dut, Dut]) -> None:
+def test_zb_cli_zc_ZCL_command(dut: Tuple[Dut, Dut]) -> None:
     light =dut[1]
     cli = dut[0]
     result = config_zigbee_network(cli,light)
@@ -233,14 +233,14 @@ def test_i154_cli_zc_ZCL_command(dut: Tuple[Dut, Dut]) -> None:
 @pytest.mark.order(4)
 @pytest.mark.esp32h2
 @pytest.mark.esp32c6
-@pytest.mark.i154_zigbee_multi_dut
+@pytest.mark.zigbee_multi_dut
 @pytest.mark.parametrize(
     'count, app_path, erase_all', [
         ( 2, pytest_build_dir,'y'),
     ],
     indirect=True,
 )
-def test_i154_cli_zc_check_leaving(dut: Tuple[Dut, Dut]) -> None:
+def test_zb_cli_zc_check_leaving(dut: Tuple[Dut, Dut]) -> None:
     light =dut[1]
     cli = dut[0]
     result = config_zigbee_network(cli,light)
