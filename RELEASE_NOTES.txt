@@ -334,3 +334,26 @@ Bug Fixes
 Closes: https://github.com/espressif/esp-zigbee-sdk/issues/34
 Closes: https://github.com/espressif/esp-zigbee-sdk/issues/38
 
+# 14-July-2023
+
+Versions
+--------
+0.7.1 version release of ESP-ZIGBEE-SDK
+
+Features
+--------
+* Fix the process of privilege command handler
+* Add ias zone cluster request, response and notification handler
+* Add method to match common cluster
+* Fix compile warnings
+
+Known Issues
+------------
+
+New Changes
+-----------
+
+Bug Fixes
+---------
+Closes: https://github.com/espressif/esp-zigbee-sdk/issues/42
+

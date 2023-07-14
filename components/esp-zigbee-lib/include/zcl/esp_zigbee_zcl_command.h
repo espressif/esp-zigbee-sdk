@@ -529,7 +529,7 @@ typedef struct esp_zb_zcl_custom_cluster_cmd_resp_s {
 } esp_zb_zcl_custom_cluster_cmd_resp_t;
 
 /**
- * @brief The Zigee zcl cluster command value struct
+ * @brief The Zigbee zcl cluster command value struct
  *
  */
 typedef struct {
@@ -540,7 +540,7 @@ typedef struct {
 esp_zb_zcl_cluster_command_value_t;
 
 /**
- * @brief The Zigee zcl cluster received command application information struct
+ * @brief The Zigbee zcl cluster received command application information struct
  *
  */
 typedef struct esp_zb_zcl_cmd_info_s {
