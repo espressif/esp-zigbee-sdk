@@ -22,8 +22,8 @@
 /**
  * @note Make sure set idf.py menuconfig in zigbee component as zigbee coordinator device!
 */
-#if defined ZB_ED_ROLE
-#error Define ZB_COORDINATOR_ROLE in idf.py menuconfig to compile light switch source code.
+#if !defined CONFIG_ZB_ZCZR
+#error Define ZB_ZCZR in idf.py menuconfig to compile light switch (Coordinator) source code.
 #endif
 
 /* define a single remote device struct for managing */
