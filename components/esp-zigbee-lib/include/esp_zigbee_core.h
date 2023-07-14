@@ -200,6 +200,40 @@ typedef void (*esp_zb_identify_notify_callback_t)(uint8_t identify_on);
  */
 typedef void (*esp_zb_privilege_command_callback_t)(esp_zb_zcl_cmd_info_t cmd);
 
+/** IAS zone cluster command callback
+ *
+ * @brief A IAS zone cluster command received from remote node and callback for user to get the Enroll Request Information
+ *
+ * @param[out] zone_type The type of IAS zone that refers to esp_zb_zcl_ias_zone_zonetype_t
+ * @param[out] manuf The manfacturer code
+ *
+ */
+typedef void (*esp_zb_ias_zone_enroll_request_callback_t)(uint16_t zone_type, uint16_t manuf);
+
+/** IAS zone cluster command callback
+ *
+ * @brief A IAS zone cluster command received from remote node and callback for user to get the Enroll Eesponse information
+ *
+ * @param[out] code The Zone Enroll response code that can refer to esp_zb_zcl_ias_zone_enroll_response_code_t
+ * @param[out] zone_id A unique reference number allocated by the CIE at zone enrollment time
+ *
+ */
+typedef void (*esp_zb_ias_zone_enroll_response_callback_t)(uint8_t code, uint8_t zone_id);
+
+/** IAS zone cluster command callback
+ *
+ * @brief A IAS zone cluster command received from remote node and callback for user to get the Zone Status
+ *
+ * @note: The Zone Status Change Notification command is generated when a change takes place in one or more bits of the ZoneStatus attribute.
+ *
+ * @param[out] zone_status The current value of the Zone Status attribute
+ * @param[out] extended_status The reserved for additional status information, default is zero
+ * @param[out] zone_id A unique reference number allocated by the CIE at zone enrollment time
+ * @param[out] delay defined as the amount of time, in quarter-seconds, from the moment when a change takes place in one or more bits of the Zone
+ * Status attribute and the successful transmission of the Zone Status Change Notification.
+ */
+typedef void (*esp_zb_ias_zone_status_notification_cmd_callback_t)(uint16_t zone_status, uint8_t extended_status, uint8_t zone_id, uint16_t delay);
+
 /** Active scan network callback
  *
  * @brief A ZDO active scan request callback for user to get scan list status.
@@ -374,10 +408,10 @@ void esp_zb_get_tx_power(int8_t *power);
 
 /**
  * @brief  Get the network short address by the IEEE address
- * 
+ *
  * @param[in] address 8-byte for the IEEE address
  * @return Network short address
- *  
+ *
  */
 uint16_t esp_zb_address_short_by_ieee(esp_zb_ieee_addr_t address);
 
@@ -611,6 +645,14 @@ void esp_zb_add_scenes_store_cmd_cb(esp_zb_scenes_store_cmd_callback_t cb);
 void esp_zb_add_scenes_recall_cmd_cb(esp_zb_scenes_recall_cmd_callback_t cb);
 
 /**
+ * @brief Set the ZCL IAS Zone to handle the received enroll response command for server.
+ *
+ * @param cb A ias zone cluster enroll response callback that user used refer to esp_zb_ias_zone_enroll_response_callback_t
+ *
+ */
+void esp_zb_add_ias_zone_enroll_response_cb(esp_zb_ias_zone_enroll_response_callback_t cb);
+
+/**
  * @brief   Set the ZCL OTA upgrade status callback for client.
  *
  * @note  Set a callback being called on receive OTA upgrade response. The callback will
@@ -678,6 +720,24 @@ void esp_zb_add_cluster_privilege_command_cb(uint8_t endpoint, uint16_t cluster,
  *      -   False: Nothing to delete
  */
 bool esp_zb_delete_cluster_privilege_command(uint8_t endpoint, uint16_t cluster, uint16_t command);
+
+/**
+ * @brief Set a callback to handle the received ias zone enroll request command for client.
+ *
+ * @param endpoint A specific endpoint
+ * @param cb A ias zone cluster enroll request callback that user used refer to esp_zb_ias_zone_enroll_request_callback_t
+ *
+ */
+void esp_zb_add_ias_zone_enroll_request_cb(uint8_t endpoint, esp_zb_ias_zone_enroll_request_callback_t cb);
+
+/**
+ * @brief Set a callback to handle the received ias zone status change notification for client.
+ *
+ * @param endpoint A specific endpoint
+ * @param cb A ias zone cluster zone status change notification callback that user used refer to esp_zb_ias_zone_status_notification_cmd_callback_t
+ *
+ */
+void esp_zb_add_ias_zone_status_notification_cb(uint8_t endpoint, esp_zb_ias_zone_status_notification_cmd_callback_t cb);
 
 /* ZCL attribute, cluster, endpoint, device related */
 

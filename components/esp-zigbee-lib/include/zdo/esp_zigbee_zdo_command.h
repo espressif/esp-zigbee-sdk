@@ -5,6 +5,7 @@
  */
 
 #pragma once
+#include "esp_err.h"
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -155,8 +156,13 @@ typedef struct esp_zb_zdo_bind_req_param_s {
  * @brief The Zigbee ZDO match descrpitor command struct
  */
 typedef struct esp_zb_zdo_match_desc_req_param_s {
-    uint16_t   dst_nwk_addr;                            /*!< NWK address that request sent to */
-    uint16_t   addr_of_interest;                        /*!< NWK address of interest */
+    uint16_t dst_nwk_addr;              /*!< NWK address that request sent to */
+    uint16_t addr_of_interest;          /*!< NWK address of interest */
+    uint16_t profile_id;                /*!< Profile ID to be match at the destination which refers to esp_zb_af_profile_id_t */
+    uint8_t num_in_clusters;            /*!< The number of input clusters provided for matching cluster server */
+    uint8_t num_out_clusters;           /*!< The number of output clusters provided for matching cluster client */
+    uint16_t *cluster_list;             /*!< The pointer MUST point the uint16_t object with a size equal to num_in_clusters + num_out_clusters,
+                                         * which will be used to match device. */
 } esp_zb_zdo_match_desc_req_param_t;
 
 /**
@@ -234,6 +240,16 @@ typedef struct esp_zb_zdo_mgmt_leave_req_param_s {
 void esp_zb_zdo_device_bind_req(esp_zb_zdo_bind_req_param_t *cmd_req, esp_zb_zdo_bind_callback_t user_cb, void *user_ctx);
 
 /**
+ * @brief   Send unbind device request command
+ *
+ * @param[in] cmd_req  Pointer to the bind request command @ref esp_zb_zdo_bind_req_param_s
+ * @param[in] user_cb  A user callback that will be called if received bind response refer to esp_zb_zdo_bind_callback_t
+ * @param[in] user_ctx A void pointer that contains the user defines additional information when callback trigger
+ *
+ */
+void esp_zb_zdo_device_unbind_req(esp_zb_zdo_bind_req_param_t *cmd_req, esp_zb_zdo_bind_callback_t user_cb, void *user_ctx);
+
+/**
  * @brief   Send find on-off device request command
  *
  * @param[in] cmd_req  Pointer to the find request command @ref esp_zb_zdo_match_desc_req_param_s
@@ -253,6 +269,19 @@ void esp_zb_zdo_find_on_off_light(esp_zb_zdo_match_desc_req_param_t *cmd_req, es
  */
 void esp_zb_zdo_find_color_dimmable_light(esp_zb_zdo_match_desc_req_param_t *cmd_req, esp_zb_zdo_match_desc_callback_t user_cb, void *user_ctx);
 
+/**
+ * @brief Send match desc request to find matched Zigbee device
+ *
+ * @param[in] param    Pointer to @ref esp_zb_zdo_match_desc_req_param_s that will be used to match device
+ * @param[in] user_cb  A user callback that will be called if received find response refer to esp_zb_zdo_match_desc_callback_t
+ * @param[in] user_ctx A void pointer that contains the user defines additional information when callback trigger
+ * @return
+ *          - ESP_OK: Success in send match desc request
+ *          - ESP_ERR_NO_MEM: Failed to allocate the memory for the reqeust
+ *          - ESP_ERR_INVALID_SIZE: The size of cluster list is wrong in @p param
+ */
+esp_err_t esp_zb_zdo_match_cluster(esp_zb_zdo_match_desc_req_param_t *param, esp_zb_zdo_match_desc_callback_t user_cb,
+                                     void *user_ctx);
 /**
  * @brief   Send ieee request command
  *

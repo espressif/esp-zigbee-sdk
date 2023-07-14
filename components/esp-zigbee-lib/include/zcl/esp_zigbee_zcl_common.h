@@ -32,14 +32,16 @@ extern "C" {
 #include "esp_zigbee_zcl_occupancy_sensing.h"
 #include "esp_zigbee_zcl_window_covering.h"
 
-/** HA profile ID*/
-#define ESP_ZB_AF_HA_PROFILE_ID       0x0104U
-/** SE profile ID */
-#define ESP_ZB_AF_SE_PROFILE_ID       0x0109U
-/** ZLL profile identifier. */
-#define ESP_ZB_AF_ZLL_PROFILE_ID      0xC05EU
-/** GreenPower profile ID */
-#define ESP_ZB_AF_GP_PROFILE_ID       0xA1E0U
+/**
+ * @brief Application Framework Profile identifiers.
+ *
+ */
+typedef enum {
+    ESP_ZB_AF_HA_PROFILE_ID     = 0x0104U,  /** HA profile ID */
+    ESP_ZB_AF_SE_PROFILE_ID     = 0x0109U,  /** SE profile ID */
+    ESP_ZB_AF_ZLL_PROFILE_ID    = 0xC05EU,  /** ZLL profile ID */
+    ESP_ZB_AF_GP_PROFILE_ID     = 0xA1E0U,  /** GreenPower profile ID */
+} esp_zb_af_profile_id_t;
 
 /** Non manufacturer specific code for certain attribute */
 #define ESP_ZB_ZCL_ATTR_NON_MANUFACTURER_SPECIFIC 0xFFFFU
