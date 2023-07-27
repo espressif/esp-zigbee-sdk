@@ -1,38 +1,323 @@
-# 28-July-2022
+# 28-July-2023
 
 Versions
 --------
-Initial version release of ESP-ZIGBEE-SDK
+0.7.2 version release of ESP-ZIGBEE-SDK
+
+Features
+--------
+* Add security network key getting API
+* Add zdo bind table request command
+* Add more zcl color control command support
+* Enlarge mac rx queue size
+* Support more endpoints on Zigbee device
+* Support more types of custom cluster
+* Add scene cluster view command response
+* Add scene cluster for prompts
+* Optimize the scene cluster implementation 
+
+Known Issues
+------------
+
+New Changes
+-----------
+
+Bug Fixes
+---------
+Closes: https://github.com/espressif/esp-zigbee-sdk/issues/51
+Closes: https://github.com/espressif/esp-zigbee-sdk/issues/53
+
+
+# 14-July-2023
+
+Versions
+--------
+0.7.1 version release of ESP-ZIGBEE-SDK
+
+Features
+--------
+* Fix the process of privilege command handler
+* Add ias zone cluster request, response and notification handler
+* Add method to match common cluster
+* Fix compile warnings
+
+Known Issues
+------------
+
+New Changes
+-----------
+
+Bug Fixes
+---------
+Closes: https://github.com/espressif/esp-zigbee-sdk/issues/42
+
+
+# 30-June-2023
+
+Versions
+--------
+0.7.0 version release of ESP-ZIGBEE-SDK
+
+Features
+--------
+* add zb privilege command support
+* fix zb zcl ias zone cmd crash
+* fix node des callback issue
+* add ESP-Thread-Border/Zigbee-Gateway Board V1.2 support
+* use ESP_ZB_TRANSCEIVER_ALL_CHANNELS_MASK as zb end device primary channel mask
+
+Known Issues
+------------
+
+New Changes
+-----------
+Examples support the ESP-Thread-Border/Zigbee-Gateway Board V1.2 
+
+Bug Fixes
+---------
+Closes: https://github.com/espressif/esp-zigbee-sdk/issues/34
+Closes: https://github.com/espressif/esp-zigbee-sdk/issues/38
+
+
+# 16-June-2023
+
+Versions
+--------
+0.6.2 version release of ESP-ZIGBEE-SDK
+
+Features
+--------
+* support active scan available PAN
+* add illuminance measurement cluster
+* add pressure measurement cluster
+* add electrical measurement cluster
+* add window covering cluster
+* add occupancy sensing cluster
+
+Known Issues
+------------
+
+New Changes
+-----------
+Examples support the ESP-Thread-Border/Zigbee-Gateway Board V1.2 
+
+Bug Fixes
+---------
+Closes: https://github.com/espressif/esp-zigbee-sdk/issues/20
+
+
+# 9-June-2023
+
+Versions
+--------
+0.6.1 version release of ESP-ZIGBEE-SDK
+
+Features
+--------
+* fix callback for custom cluster
+* stringify zigbee app signal
+* fix end device distributed key setting
+* register attribute from local variable to static
+
+Known Issues
+------------
+
+New Changes
+-----------
+Examples support the ESP-Thread-Border/Zigbee-Gateway Board V1.2 
+
+Bug Fixes
+---------
+Closes: https://github.com/espressif/esp-zigbee-sdk/issues/25
+Closes: https://github.com/espressif/esp-zigbee-sdk/issues/27
+
+
+# 26-May-2023
+
+Versions
+--------
+0.6.0 version release of ESP-ZIGBEE-SDK
+
+Features
+--------
+* add TC standard distributed and pre-configured key settings
+* add TC link key exchange setting
+* add zb tx power setting
+* add destination endpoint to report callback
+* enable write callback for custom cluster
+
+Known Issues
+------------
+
+New Changes
+-----------
+Examples under esp-zigbee-sdk would use management component registry to download both esp-zigbee-lib and esp-zboss-lib.
+
+Bug Fixes
+---------
+Closes: https://github.com/espressif/esp-zigbee-sdk/issues/21
+Closes: https://github.com/espressif/esp-zigbee-sdk/issues/22
+Closes: https://github.com/espressif/esp-zigbee-sdk/issues/23
+Closes: https://github.com/espressif/esp-zigbee-sdk/issues/24
+Closes: https://github.com/espressif/esp-zigbee-sdk/issues/25
+
+
+# 6-April-2023
+
+Versions
+--------
+0.5.4 version release of ESP-ZIGBEE-SDK
+
+Features
+--------
+- provide set PANID api
+- provide humidity, power config cluster, with docs update
+- support group bind
+- support zigbee gateway (wifi, zigbee coexist) on single chip C6 solution
+
+Known Issues
+------------
+
+New Changes
+-----------
+
+Bug Fixes
+---------
+- fix the ZCL report command source address alignment issue
+- fixes: https://github.com/espressif/esp-zigbee-sdk/issues/7
+- fixes: https://github.com/espressif/esp-zigbee-sdk/issues/10
+- fixes: https://github.com/espressif/esp-zigbee-sdk/issues/8
+- fixes: https://github.com/espressif/esp-zigbee-sdk/issues/11
+
+
+# 17-Mar-2023
+
+Versions
+--------
+0.5.3 version release of ESP-ZIGBEE-SDK
+
+Features
+--------
+- More cluster (ias zone, on_off_switch_configuration binary_input) support
+- support ESP32h2 chip
+
+Known Issues
+------------
+
+New Changes
+-----------
+
+Bug Fixes
+---------
+
+- fix the issue https://github.com/espressif/esp-zigbee-sdk/issues/6
+
+
+# 28-Feb-2023
+
+Versions
+--------
+0.5.2 version release of ESP-ZIGBEE-SDK
+
+Features
+--------
+- hue/saturation command and report attribute API
+
+Known Issues
+------------
+
+New Changes
+-----------
+
+- add the API for hue/saturation command and attribute callback support
+- add the API for report attribute
+
+
+Bug Fixes
+---------
+- fix the issue https://github.com/espressif/esp-zigbee-sdk/issues/4
+- fix the issue https://github.com/espressif/esp-zigbee-sdk/issues/5
+
+
+
+# 10-Feb-2023
+
+Versions
+--------
+0.5.1 version release of ESP-ZIGBEE-SDK
+
+Features
+--------
+- add new API for ZDO and ZCL
+
+Known Issues
+------------
+- hue saturation color command not supported
+
+New Changes
+-----------
+- delete the API esp_zb_set_network_channel
+- add the API for esp_zb_set_primary_network_channel_set/ esp_zb_set_secondary_network_channel_set
+- add the API for get current channel
+- add the API for set ZCL attribute
+- Add more clusters for cli example to support dimmable light example for pytest
+
+Bug Fixes
+---------
+- fix the issue https://github.com/espressif/esp-zigbee-sdk/issues/1
+- fix the issue https://github.com/espressif/esp-zigbee-sdk/issues/3
+- fix the issue https://github.com/espressif/esp-idf/issues/10662
+
+
+# 1-Feb-2023
+
+Versions
+--------
+0.5.0 version release of ESP-ZIGBEE-SDK
 
 Features
 --------
 
--HA standard:
-	Standard Home Automation devices setting and build up
--ZCL:
-	Provide the ZCL common and cluster specific command
--ZDO:
-	Varieties of the ZDO command
--SECURITY
-	Zigbee security support to install code related function
--NWK:
-	Zigbee stack related function to support ZC, ZR and ZED
--CORE:
-	Zigbee device hardware platform configuration setting related function
-	Customized attribute, cluster and endpoint API
+- add timeout handler mechanism for user
+- minor type name updates
+- partition table adjustment for examples
+
+Known Issues
+------------
+
+New Changes
+-----------
+- ZDO related API requests and callbacks update with new argument
+
+Bug Fixes
+---------
+
+
+# 23-Dec-2022
+
+Versions
+--------
+0.4.1 version release of ESP-ZIGBEE-SDK
+
+Features
+--------
+
+-esp-zigbee-lib version updated to 0.4.1
+-Add support for esp32c6
+-Update examples to support esp32c6
+-Add esp32c6 target in CI test
 
 
 Known Issues
 ------------
 
--ZDO binding currently only support 64-bit ieee address
 
 New Changes
 -----------
 
-
 Bug Fixes
 ---------
+-Bug fixed for rcp_incompatible_switch_port
 
 
 # 14-Dec-2022
@@ -69,291 +354,37 @@ Bug Fixes
 -Bug fixed for buffer length issue on customized cluster command
 
 
-# 23-Dec-2022
+# 28-July-2022
 
 Versions
 --------
-0.4.1 version release of ESP-ZIGBEE-SDK
+Initial version release of ESP-ZIGBEE-SDK
 
 Features
 --------
 
--esp-zigbee-lib version updated to 0.4.1
--Add support for esp32c6
--Update examples to support esp32c6
--Add esp32c6 target in CI test
+-HA standard:
+	Standard Home Automation devices setting and build up
+-ZCL:
+	Provide the ZCL common and cluster specific command
+-ZDO:
+	Varieties of the ZDO command
+-SECURITY
+	Zigbee security support to install code related function
+-NWK:
+	Zigbee stack related function to support ZC, ZR and ZED
+-CORE:
+	Zigbee device hardware platform configuration setting related function
+	Customized attribute, cluster and endpoint API
 
 
 Known Issues
 ------------
 
-
-New Changes
------------
-
-
-Bug Fixes
----------
-
--Bug fixed for rcp_incompatible_switch_port
-
-# 1-Feb-2023
-
-Versions
---------
-0.5.0 version release of ESP-ZIGBEE-SDK
-
-Features
---------
-
-- add timeout handler mechanism for user
-- minor type name updates
-- partition table adjustment for examples
-
-Known Issues
-------------
-
-New Changes
------------
-- ZDO related API requests and callbacks update with new argument
-
-Bug Fixes
----------
-
-# 10-Feb-2023
-
-Versions
---------
-0.5.1 version release of ESP-ZIGBEE-SDK
-
-Features
---------
-- add new API for ZDO and ZCL
-
-Known Issues
-------------
-- hue saturation color command not supported
-
-New Changes
------------
-- delete the API esp_zb_set_network_channel
-- add the API for esp_zb_set_primary_network_channel_set/ esp_zb_set_secondary_network_channel_set
-- add the API for get current channel
-- add the API for set ZCL attribute
-- Add more clusters for cli example to support dimmable light example for pytest
-
-Bug Fixes
----------
-- fix the issue https://github.com/espressif/esp-zigbee-sdk/issues/1
-- fix the issue https://github.com/espressif/esp-zigbee-sdk/issues/3
-- fix the issue https://github.com/espressif/esp-idf/issues/10662
-
-
-# 28-Feb-2023
-
-Versions
---------
-0.5.2 version release of ESP-ZIGBEE-SDK
-
-Features
---------
-- hue/saturation command and report attribute API
-
-Known Issues
-------------
-
-New Changes
------------
-
-- add the API for hue/saturation command and attribute callback support
-- add the API for report attribute
-
-
-Bug Fixes
----------
-- fix the issue https://github.com/espressif/esp-zigbee-sdk/issues/4
-- fix the issue https://github.com/espressif/esp-zigbee-sdk/issues/5
-
-
-# 17-Mar-2023
-
-Versions
---------
-0.5.3 version release of ESP-ZIGBEE-SDK
-
-Features
---------
-- More cluster (ias zone, on_off_switch_configuration binary_input) support
-- support ESP32h2 chip
-
-Known Issues
-------------
+-ZDO binding currently only support 64-bit ieee address
 
 New Changes
 -----------
 
 Bug Fixes
 ---------
-
-- fix the issue https://github.com/espressif/esp-zigbee-sdk/issues/6
-
-
-# 6-April-2023
-
-Versions
---------
-0.5.4 version release of ESP-ZIGBEE-SDK
-
-Features
---------
-- provide set PANID api
-- provide humidity, power config cluster, with docs update
-- support group bind
-- support zigbee gateway (wifi, zigbee coexist) on single chip C6 solution
-
-Known Issues
-------------
-
-New Changes
------------
-
-Bug Fixes
----------
-- fix the ZCL report command source address alignment issue
-- fixes: https://github.com/espressif/esp-zigbee-sdk/issues/7
-- fixes: https://github.com/espressif/esp-zigbee-sdk/issues/10
-- fixes: https://github.com/espressif/esp-zigbee-sdk/issues/8
-- fixes: https://github.com/espressif/esp-zigbee-sdk/issues/11
-
-# 26-May-2023
-
-Versions
---------
-0.6.0 version release of ESP-ZIGBEE-SDK
-
-Features
---------
-* add TC standard distributed and pre-configured key settings
-* add TC link key exchange setting
-* add zb tx power setting
-* add destination endpoint to report callback
-* enable write callback for custom cluster
-
-Known Issues
-------------
-
-New Changes
------------
-Examples under esp-zigbee-sdk would use management component registry to download both esp-zigbee-lib and esp-zboss-lib.
-
-Bug Fixes
----------
-Closes: https://github.com/espressif/esp-zigbee-sdk/issues/21
-Closes: https://github.com/espressif/esp-zigbee-sdk/issues/22
-Closes: https://github.com/espressif/esp-zigbee-sdk/issues/23
-Closes: https://github.com/espressif/esp-zigbee-sdk/issues/24
-Closes: https://github.com/espressif/esp-zigbee-sdk/issues/25
-
-
-# 9-June-2023
-
-Versions
---------
-0.6.1 version release of ESP-ZIGBEE-SDK
-
-Features
---------
-* fix callback for custom cluster
-* stringify zigbee app signal
-* fix end device distributed key setting
-* register attribute from local variable to static
-
-Known Issues
-------------
-
-New Changes
------------
-Examples support the ESP-Thread-Border/Zigbee-Gateway Board V1.2 
-
-Bug Fixes
----------
-Closes: https://github.com/espressif/esp-zigbee-sdk/issues/25
-Closes: https://github.com/espressif/esp-zigbee-sdk/issues/27
-
-
-# 16-June-2023
-
-Versions
---------
-0.6.2 version release of ESP-ZIGBEE-SDK
-
-Features
---------
-* support active scan available PAN
-* add illuminance measurement cluster
-* add pressure measurement cluster
-* add electrical measurement cluster
-* add window covering cluster
-* add occupancy sensing cluster
-
-Known Issues
-------------
-
-New Changes
------------
-Examples support the ESP-Thread-Border/Zigbee-Gateway Board V1.2 
-
-Bug Fixes
----------
-Closes: https://github.com/espressif/esp-zigbee-sdk/issues/20
-
-
-# 30-June-2023
-
-Versions
---------
-0.7.0 version release of ESP-ZIGBEE-SDK
-
-Features
---------
-* add zb privilege command support
-* fix zb zcl ias zone cmd crash
-* fix node des callback issue
-* add ESP-Thread-Border/Zigbee-Gateway Board V1.2 support
-* use ESP_ZB_TRANSCEIVER_ALL_CHANNELS_MASK as zb end device primary channel mask
-
-Known Issues
-------------
-
-New Changes
------------
-Examples support the ESP-Thread-Border/Zigbee-Gateway Board V1.2 
-
-Bug Fixes
----------
-Closes: https://github.com/espressif/esp-zigbee-sdk/issues/34
-Closes: https://github.com/espressif/esp-zigbee-sdk/issues/38
-
-# 14-July-2023
-
-Versions
---------
-0.7.1 version release of ESP-ZIGBEE-SDK
-
-Features
---------
-* Fix the process of privilege command handler
-* Add ias zone cluster request, response and notification handler
-* Add method to match common cluster
-* Fix compile warnings
-
-Known Issues
-------------
-
-New Changes
------------
-
-Bug Fixes
----------
-Closes: https://github.com/espressif/esp-zigbee-sdk/issues/42
-
