@@ -5,6 +5,7 @@
  */
 
 #pragma once
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -139,15 +140,25 @@ typedef void (*esp_zb_view_group_resp_callback_t)(esp_zb_zcl_status_t status, ui
  */
 typedef void (*esp_zb_get_group_membership_resp_callback_t)(esp_zb_zcl_status_t status, uint8_t group_table_capacity, uint8_t group_count, uint16_t *group_id_list);
 
+/** Scenes cluster view scene response callback
+ *
+ * @brief View Scenes cluster callback for user to get scene information
+ *
+ * @param[out] resp The response information for viewing scene @ref esp_zb_zcl_scenes_view_scene_resp_s
+ *
+ */
+typedef void (*esp_zb_zcl_scenes_view_scene_resp_callback_t)(esp_zb_zcl_scenes_view_scene_resp_t resp);
+
 /** Scenes cluster store command callback
  *
  * @brief Store scenes state callback for user to save data entry.
  *
- * @param[in] status Status of the store scene command, refer to esp_zb_zcl_status_t success status - 0  invalid field status - 133
- * @param[in] field_data A pointer to scenes extension field @ref esp_zb_zcl_scenes_extension_field_s
- *
+ * @note The SDK provides esp_zb_zcl_scenes_table_store() function to store scene for user.
+ * @param[out] status Status of the store scene command, refer to esp_zb_zcl_status_t success status - 0  invalid field status - 133
+ * @param[out] group_id The group id of storing scene request
+ * @param[out] scene_id The scene id of storing scene request
  */
-typedef void (*esp_zb_scenes_store_cmd_callback_t)(esp_zb_zcl_status_t status, esp_zb_zcl_scenes_extension_field_t *field_data);
+typedef void (*esp_zb_scenes_store_cmd_callback_t)(esp_zb_zcl_status_t status, uint16_t group_id, uint8_t scene_id);
 
 /** Scenes cluster recall command callback
  *
@@ -625,6 +636,15 @@ void esp_zb_groups_view_group_resp_cb(uint8_t endpoint, esp_zb_view_group_resp_c
 void esp_zb_groups_get_group_membership_resp_cb(uint8_t endpoint, esp_zb_get_group_membership_resp_callback_t cb);
 
 /**
+ * @brief   Set the ZCL scenes cluster get scene information response callback for specific endpoint for client.
+ *
+ * @param[in] endpoint A specific endpoint
+ * @param[in] cb Get scenes cluster view scene callback that user used can refer to esp_zb_zcl_scenes_view_scene_resp_callback_t
+ *
+ */
+void esp_zb_scenes_view_scene_resp_cb(uint8_t endpoint, esp_zb_zcl_scenes_view_scene_resp_callback_t cb);
+
+/**
  * @brief   Set the ZCL scenes cluster store command callback for server.
  *
  * @note  Set a callback (optional) being called on receive scenes store command. The callback provides the
@@ -633,6 +653,19 @@ void esp_zb_groups_get_group_membership_resp_cb(uint8_t endpoint, esp_zb_get_gro
  *
  */
 void esp_zb_add_scenes_store_cmd_cb(esp_zb_scenes_store_cmd_callback_t cb);
+
+/**
+ * @brief Set the ZCL scenes cluster scene table for users.
+ *
+ * @param[in] group_id          The group id of scene, which will be used to find scenes table record
+ * @param[in] scene_id          The scene id of scene, which will be used to find scenes table record
+ * @param[in] transition_time   The transition time of scene, whose unit is 100 milliseconds
+ * @param[in] field             The pointer to zcl senes extension field list
+ * @return
+ *      - ESP_OK: on success
+ *      - ESP_FAIL: the group id or scene id is invalid
+ */
+esp_err_t esp_zb_zcl_scenes_table_store(uint16_t group_id, uint8_t scene_id, uint16_t transition_time, esp_zb_zcl_scenes_extension_field_t *field);
 
 /**
  * @brief   Set the ZCL scenes cluster recall command callback for server.

@@ -132,6 +132,18 @@ void esp_zb_secur_TC_standard_preconfigure_key_set(uint8_t *key);
  */
 void esp_zb_secur_link_key_exchange_required_set(bool enable);
 
+/**
+ * @brief Get the primary security network key
+ *
+ * @note The network key can only be obtained after the Zigbee device is the joined state.
+ * @param[out] key The 16-byte network key
+ *
+ * @return
+ *      - ESP_OK: on success
+ *      - ESP_ERR_INVALID_STATE: invalid network state.
+ */
+esp_err_t esp_zb_secur_primary_network_key_get(uint8_t *key);
+
 #ifdef __cplusplus
 }
 #endif

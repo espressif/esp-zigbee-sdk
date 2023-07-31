@@ -301,6 +301,108 @@ typedef struct esp_zb_zcl_color_stop_move_step_cmd_s {
 } esp_zb_zcl_color_stop_move_step_cmd_t;
 
 /**
+ * @brief The Zigbee ZCL color move to color temperature command struct
+ *
+ */
+typedef struct esp_zb_zcl_color_move_to_color_temperature_cmd_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;   /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode; /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+    uint16_t color_temperature;             /*!< The field indicates the  color-temperature value */
+    uint16_t transition_time;               /*!< The time wants to transition tenths of a second */
+} esp_zb_zcl_color_move_to_color_temperature_cmd_t;
+
+/**
+ * @brief The Zigbee ZCL color enhanced move to hue command struct
+ *
+ */
+typedef struct esp_zb_zcl_color_enhanced_move_to_hue_cmd_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;   /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode; /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+    uint16_t enhanced_hue;                  /*!< The field specifies the target enhanced hue for the lamp */
+    uint8_t direction;                      /*!< The direction */
+    uint16_t transition_time;               /*!< The time wants to transition tenths of a second */
+} esp_zb_zcl_color_enhanced_move_to_hue_cmd_t;
+
+/**
+ * @brief The Zigbee ZCL color enhanced move hue
+ *
+ */
+typedef struct esp_zb_zcl_color_enhanced_move_hue_cmd_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;   /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode; /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+    uint8_t move_mode;                      /*!< The Move Mode, If the Move Mode field is equal to 0x00 (Stop), the Rate field SHALL be ignored */
+    uint16_t rate;                          /*!< The field specifies the rate of movement in steps per second */
+} esp_zb_zcl_color_enhanced_move_hue_cmd_t;
+
+/**
+ * @brief The Zigbee ZCL color enhanced step hue command struct
+ *
+ */
+typedef struct esp_zb_zcl_color_enhanced_step_hue_cmd_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;   /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode; /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+    uint8_t step_mode;                      /*!< The Step Mode */
+    uint16_t step_size;                     /*!< The Step Size specifies the change to be added to the current value of the device’s enhanced hue.*/
+    uint16_t transition_time;               /*!< The time wants to transition tenths of a second  */
+} esp_zb_zcl_color_enhanced_step_hue_cmd_t;
+
+/**
+ * @brief The Zigbee ZCL color enhanced move to hue saturation command struct
+ *
+ */
+typedef struct esp_zb_zcl_color_enhanced_move_to_hue_saturation_cmd_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;   /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode; /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+    uint16_t enhanced_hue;                  /*!< The Enhanced Hue specifies the target extended hue for the lamp */
+    uint8_t saturation;                     /*!< The value of Saturation */
+    uint16_t transition_time;               /*!< The time wants to transition tenths of a second */
+} esp_zb_zcl_color_enhanced_move_to_hue_saturation_cmd_t;
+
+/**
+ * @brief The Zigbee ZCL color color loop set command struct
+ *
+ */
+typedef struct esp_zb_zcl_color_color_loop_set_cmd_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;   /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode; /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+    uint8_t update_flags;                   /*!< The Update Flags field specifies which color loop attributes to update before the color loop is started */
+    uint8_t action;                         /*!< The Action field specifies the action to take for the color loop,
+                                                 if the Update Action sub-field of the Update Flags field is set to 1. */
+    uint8_t direction;                      /*!< The Direction field of the color loop set command */
+    uint16_t time;                          /*!< The Time field specifies the number of seconds over which to perform a full color loop,
+                                                 if the Update Time field of the Update Flags field is set to 1. */
+    uint16_t start_hue;                     /*!< The field specifies the starting hue to use for the color loop if the Update Start Hue field of the Update Flags field is set to 1 */
+} esp_zb_zcl_color_color_loop_set_cmd_t;
+
+/**
+ * @brief The Zigbee ZCL color move color temperature command struct
+ *
+ */
+typedef struct esp_zb_zcl_color_move_color_temperature_cmd_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;   /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode; /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+    uint8_t move_mode;                      /*!< The Move Mode field of the Move Hue command, if the Move Mode field is equal to 0x00, the Rate field SHALL be ignored. */
+    uint16_t rate;                          /*!< The Rate filed specifies the rate of movement in steps per second */
+    uint16_t color_temperature_minimum;     /*!< The field specifies a lower bound on the Color-Temperature attribute */
+    uint16_t color_temperature_maximum;     /*!< The field specifies a upper bound on the Color-Temperature attribute */
+} esp_zb_zcl_color_move_color_temperature_cmd_t;
+
+/**
+ * @brief The Zigbee ZCL color step color temperature command struct
+ *
+ */
+typedef struct esp_zb_zcl_color_step_color_temperature_cmd_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;   /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode; /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+    uint8_t move_mode;                      /*!< The Move Mode field of the Step Hue command, If the Move Mode field is equal to 0x00, the Rate field SHALL be ignored. */
+    uint16_t step_size;                     /*!< The Step Size field specifies the change to be added to (or subtracted from) the current
+                                                 value of the device’s color temperature.*/
+    uint16_t transition_time;               /*!< The time wants to transition tenths of a second  */
+    uint16_t color_temperature_minimum;     /*!< The field specifies a lower bound on the Color-Temperature attribute*/
+    uint16_t color_temperature_maximum;     /*!< The field specifies a upper bound on the Color-Temperature attribute*/
+} esp_zb_zcl_color_step_color_temperature_cmd_t;
+
+/**
  * @brief The Zigbee ZCL lock/unlock door command struct
  *
  */
@@ -400,6 +502,18 @@ typedef struct esp_zb_zcl_scenes_view_scene_cmd_s {
     uint16_t group_id;                                  /*!< Group id */
     uint8_t scene_id;                                   /*!< Scene id */
 } esp_zb_zcl_scenes_view_scene_cmd_t;
+
+/**
+ * @brief The Zigbee ZCL scenes view scene response struct for users
+ *
+ */
+typedef struct esp_zb_zcl_scenes_view_scene_resp_s {
+    uint8_t status;                                  /*!< Command execution status refers to esp_zb_zcl_status_t */
+    uint16_t group_id;                               /*!< Scene group identifier */
+    uint8_t scene_id;                                /*!< Scene identifier */
+    uint16_t transition_time;                        /*!< Scene transition time Valid if status is ESP_ZB_ZCL_STATUS_SUCCESS only */
+    esp_zb_zcl_scenes_extension_field_t *field_data; /*!< Extension field, {{cluster_id, length, value}, ... , {cluster_id, length, value}} */
+} esp_zb_zcl_scenes_view_scene_resp_t;
 
 /**
  * @brief The Zigbee ZCL scenes store scene command struct
@@ -777,6 +891,70 @@ void esp_zb_zcl_color_step_color_cmd_req(esp_zb_zcl_color_step_color_cmd_t *cmd_
  *
  */
 void esp_zb_zcl_color_stop_move_step_cmd_req(esp_zb_zcl_color_stop_move_step_cmd_t *cmd_req);
+
+/**
+ * @brief   Send color control move to color temperature command(0x0a)
+ *
+ * @param[in]  cmd_req  pointer to the move to color temperature command @ref esp_zb_zcl_color_move_to_color_temperature_cmd_s
+ *
+ */
+void esp_zb_zcl_color_move_to_color_temperature_cmd_req(esp_zb_zcl_color_move_to_color_temperature_cmd_t *cmd_req);
+
+/**
+ * @brief   Send color control enhanced move to hue command(0x40)
+ *
+ * @param[in]  cmd_req  pointer to the enhanced move to hue command @ref esp_zb_zcl_color_enhanced_move_to_hue_cmd_s
+ *
+ */
+void esp_zb_zcl_color_enhanced_move_to_hue_cmd_req(esp_zb_zcl_color_enhanced_move_to_hue_cmd_t *cmd_req);
+
+/**
+ * @brief   Send color control enhanced move hue command(0x41)
+ *
+ * @param[in]  cmd_req  pointer to the enhanced move hue command @ref esp_zb_zcl_color_enhanced_move_hue_cmd_s
+ *
+ */
+void esp_zb_zcl_color_enhanced_move_hue_cmd_req(esp_zb_zcl_color_enhanced_move_hue_cmd_t *cmd_req);
+
+/**
+ * @brief   Send color control enhanced step hue command(0x42)
+ *
+ * @param[in]  cmd_req  pointer to the enhanced step hue command @ref esp_zb_zcl_color_enhanced_step_hue_cmd_s
+ *
+ */
+void esp_zb_zcl_color_enhanced_step_hue_cmd_req(esp_zb_zcl_color_enhanced_step_hue_cmd_t *cmd_req);
+
+/**
+ * @brief   Send color control move to hue and saturation command(0x43)
+ *
+ * @param[in]  cmd_req  pointer to the enhanced move to hue saturation command @ref esp_zb_zcl_color_enhanced_move_to_hue_saturation_cmd_s
+ *
+ */
+void esp_zb_zcl_color_enhanced_move_to_hue_saturation_cmd_req(esp_zb_zcl_color_enhanced_move_to_hue_saturation_cmd_t *cmd_req);
+
+/**
+ * @brief   Send color control color loop set command(0x44)
+ *
+ * @param[in]  cmd_req  pointer to the color loop set command @ref esp_zb_zcl_color_color_loop_set_cmd_s
+ *
+ */
+void esp_zb_zcl_color_color_loop_set_cmd_req(esp_zb_zcl_color_color_loop_set_cmd_t *cmd_req);
+
+/**
+ * @brief   Send color control move color temperature command(0x4b)
+ *
+ * @param[in]  cmd_req  pointer to the move color temperature command @ref esp_zb_zcl_color_move_color_temperature_cmd_s
+ *
+ */
+void esp_zb_zcl_color_move_color_temperature_cmd_req(esp_zb_zcl_color_move_color_temperature_cmd_t *cmd_req);
+
+/**
+ * @brief   Send color control step color temperature command(0x4c)
+ *
+ * @param[in]  cmd_req  pointer to the step color temperature command @ref esp_zb_zcl_color_step_color_temperature_cmd_s
+ *
+ */
+void esp_zb_zcl_color_step_color_temperature_cmd_req(esp_zb_zcl_color_step_color_temperature_cmd_t *cmd_req);
 
 /**
  * @brief   Send lock door command

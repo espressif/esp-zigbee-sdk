@@ -23,6 +23,7 @@ extern "C" {
 #define ESP_ZB_SIMPLE_DESC_REQ_TIMEOUT              (5 * ESP_ZB_TIME_ONE_SECOND)            /* timeout for simple descriptor */
 #define ESP_ZB_PERMIT_JOIN_REQ_TIMEOUT              (5 * ESP_ZB_TIME_ONE_SECOND)            /* timeout for permit join */
 #define ESP_ZB_DEVICE_LEAVE_REQ_TIMEOUT             (5 * ESP_ZB_TIME_ONE_SECOND)            /* timeout for device leave */
+#define ESP_ZB_DEVICE_BIND_TABLE_REQ_TIMEOUT        (5 * ESP_ZB_TIME_ONE_SECOND)            /* timeout for device bind table request */
 
 /** Find device callback
  *
@@ -226,6 +227,51 @@ typedef struct esp_zb_zdo_mgmt_leave_req_param_s {
     unsigned int rejoin: 1;                             /*!< Bitfield of rejoin or not */
 } esp_zb_zdo_mgmt_leave_req_param_t;
 
+/**
+ * @brief The Zigbee ZDO binding table request struct
+ *
+ */
+typedef struct esp_zb_zdo_mgmt_bind_param_s {
+    uint8_t start_index;                /*!< The starting index for the requested elements of the Binding Table */
+    uint16_t dst_addr;                  /*!< The destination address */
+} esp_zb_zdo_mgmt_bind_param_t;
+
+/**
+ * @brief The Zigbee ZDO binding table record struct
+ *
+ */
+typedef struct esp_zb_zdo_binding_table_record_s {
+    esp_zb_ieee_addr_t src_address; /*!< The source IEEE address for the binding entry. */
+    uint8_t src_endp;               /*!< The source endpoint for the binding entry. */
+    uint16_t cluster_id;            /*!< The identifier of the cluster on the source device that is bound to the destination device. */
+    uint8_t dst_addr_mode;          /*!< Destination address mode @ref esp_zb_zdo_bind_dst_addr_mode_t */
+    esp_zb_addr_u dst_address;      /*!< The destination address for the binding entry.16 or 64 bit. As specified by the dst_addr_mode field.*/
+    uint8_t dst_endp;               /*!< The destination endpoint for binding entry,
+                                         this field shall be present only if the DstAddrMode field has a value of 0x03 @ref esp_zb_zdo_bind_dst_addr_mode_t */
+} esp_zb_zdo_binding_table_record_t;
+
+/**
+ * @brief The Zigbee ZDO binding table information struct for users
+ *
+ */
+typedef struct esp_zb_zdo_binding_table_info_s {
+    uint8_t status;                           /*!< The status of binding table information refer to esp_zb_zdp_status */
+    uint8_t total;                            /*!< The total number of binding table record */
+    uint8_t count;                            /*!< The binding table record counter */
+    uint8_t index;                            /*!< The index of table record */
+    esp_zb_zdo_binding_table_record_t record; /*!< The record of remote device binding table  */
+} esp_zb_zdo_binding_table_info_t;
+
+/** Binding table request callback
+ *
+ * @brief A ZDO binding table request callback for user to get the binding table record of remote device.
+ *
+ * @param[out] record The binding table record which is only accessed by read, refer to esp_zb_zdo_binding_table_info_t
+ * @param[out] user_ctx  User information context, set in `esp_zb_zdo_binding_table_req()`
+ *
+ */
+typedef void (*esp_zb_zdo_binding_table_callback_t)(const esp_zb_zdo_binding_table_info_t *record, void *user_ctx);
+
 /********************* Declare functions **************************/
 /* ZDO command list, more ZDO command will be supported later like node_desc, power_desc */
 
@@ -341,6 +387,16 @@ void esp_zb_zdo_device_leave_req(esp_zb_zdo_mgmt_leave_req_param_t *cmd_req, esp
  *
  */
 void esp_zb_zdo_permit_joining_req(esp_zb_zdo_permit_joining_req_param_t *cmd_req, esp_zb_zdo_permit_join_callback_t user_cb, void *user_ctx);
+
+/**
+ * @brief  Send binding table request command
+ *
+ * @param[in] cmd_req  Pointer to the zdo mgmt bind request command @ref esp_zb_zdo_mgmt_bind_param_s
+ * @param[in] user_cb  A user callback that will be called if received binding table response refer to esp_zb_zdo_binding_table_callback_t
+ * @param[in] user_ctx A void pointer that contains the user defines additional information when callback trigger
+ *
+ */
+void esp_zb_zdo_binding_table_req(esp_zb_zdo_mgmt_bind_param_t *cmd_req, esp_zb_zdo_binding_table_callback_t user_cb, void *user_ctx);
 
 /**
  * @brief Stringify the Zigbee Device Object signal
