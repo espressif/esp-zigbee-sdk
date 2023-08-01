@@ -24,5 +24,5 @@ if(CONFIG_ZB_ENABLED)
 	endif()
 
     target_link_libraries(${COMPONENT_LIB} INTERFACE ${ESP_ZIGBEE_API_LIBS})
-    target_compile_options(${COMPONENT_LIB} INTERFACE "-Wno-strict-prototypes")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-strict-prototypes")
 endif()
