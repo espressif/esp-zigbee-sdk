@@ -460,7 +460,6 @@ typedef struct esp_zb_zcl_scenes_extension_field_s {
 /**
  * @brief The Zigbee ZCL scenes add scene command struct
  *
- * @note If you have more cluster, please realloc buffer.
  * The maximum number of scenes capable of being stored in the table is 10.
  */
 typedef struct esp_zb_zcl_scenes_add_scene_cmd_s {
@@ -468,8 +467,7 @@ typedef struct esp_zb_zcl_scenes_add_scene_cmd_s {
     uint16_t group_id;                                           /*!< Group id */
     uint8_t scene_id;                                            /*!< Scene id */
     uint16_t transition_time;                                    /*!< Time wants to transition tenths of a second */
-    uint16_t extension_field_total;                              /*!< Extension field total cluster, by default is 1 */
-    esp_zb_zcl_scenes_extension_field_t extension_field[1];      /*!< If you have more cluster of extension field, please realloc size of extension_field array corresponding to the extension_field_total */
+    esp_zb_zcl_scenes_extension_field_t *extension_field;        /*!< The extension field list, please use 'NULL' as the end of list */
 } esp_zb_zcl_scenes_add_scene_cmd_t;
 
 /**
