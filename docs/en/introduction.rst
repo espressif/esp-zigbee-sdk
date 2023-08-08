@@ -89,6 +89,7 @@ The supported features in current ESP Zigbee SDK are listed below.
        occupancy_sensing        0x0406
            ias_zone             0x0500
     electrical_measurement      0x0b04
+    touchlink_commissioning     0x1000
    ========================= ============ 
 
 

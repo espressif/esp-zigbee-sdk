@@ -273,6 +273,16 @@ esp_zb_attribute_list_t *esp_zb_window_covering_cluster_create(esp_zb_window_cov
  */
 esp_zb_attribute_list_t *esp_zb_ota_cluster_create(esp_zb_ota_cluster_cfg_t *ota_cfg);
 
+/**
+ * @brief  Create a standard touchlink commissioning cluster attribute list
+ *
+ * @note  This only contains the `ZB_ZCL_ATTR_GLOBAL_CLUSTER_REVISION_ID` and touchlink commissioning cluster has no attributes.
+ *
+ * @return pointer to attribute list @ref esp_zb_attribute_list_s
+ *
+ */
+esp_zb_attribute_list_t *esp_zb_touchlink_commissioning_cluster_create(void);
+
 /**************************************** ADD CLUSTER ***********************************/
 /**
  * @brief Add basic cluster (attribute list) in a cluster list.
@@ -582,6 +592,22 @@ esp_err_t esp_zb_cluster_list_add_window_covering_cluster(esp_zb_cluster_list_t 
  *
  */
 esp_err_t esp_zb_cluster_list_add_ota_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
+
+/**
+* @brief Add touchlink commissioning cluster (attribute list) in a cluster list.
+*
+* @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
+* @param[in] attr_list An attribute list which wants to add
+* @param[in] role_mask A role of server or client for this cluster (attribute list) refer to esp_zb_zcl_cluster_role
+*
+* @note The touchlink commissioning cluster id should not be same as already existing zcl cluster id refer to zb_zcl_common.h
+*
+* @return
+* - ESP_OK on success
+* - ESP_ERR_INVALID_ARG if cluster list not initialized
+*
+*/
+esp_err_t esp_zb_cluster_list_add_touchlink_commissioning_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 /**
 * @brief Add customised cluster (attribute list) in a cluster list.

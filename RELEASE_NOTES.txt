@@ -1,3 +1,25 @@
+# 2-Aug-2023
+
+Versions
+--------
+0.8.0 version release of ESP-ZIGBEE-SDK
+
+Features
+--------
+
+- Add touchlink feature support
+- Add touchlink example
+
+Known Issues
+------------
+
+New Changes
+-----------
+
+Bug Fixes
+---------
+
+
 # 28-July-2023
 
 Versions

@@ -253,6 +253,9 @@ typedef struct esp_zb_endpoint_s {
     uint8_t cluster_count;                      /*!< Number of supported clusters */
     esp_zb_zcl_cluster_t *cluster_desc_list;    /*!< Supported clusters list */
     esp_zb_af_simple_desc_1_1_t *simple_desc;   /*!< Simple descriptor */
+#if defined ZB_ENABLE_ZLL
+    uint8_t group_id_count;                     /*!< Number of group id */
+#endif /* defined ZB_ENABLE_ZLL */
     uint8_t rep_info_count;                     /*!< Number of reporting info slots */
     esp_zb_zcl_reporting_info_t *reporting_info; /*!< Attributes reporting information */
     uint8_t cvc_alarm_count;          /*!< Number of continuous value change alarm slots */

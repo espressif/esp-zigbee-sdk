@@ -509,7 +509,7 @@ typedef struct esp_zb_zcl_scenes_view_scene_resp_s {
     uint8_t status;                                  /*!< Command execution status refers to esp_zb_zcl_status_t */
     uint16_t group_id;                               /*!< Scene group identifier */
     uint8_t scene_id;                                /*!< Scene identifier */
-    uint16_t transition_time;                        /*!< Scene transition time Valid if status is ESP_ZB_ZCL_STATUS_SUCCESS only */
+    uint16_t transition_time;                        /*!< Scene transition time Valid if status is refers to ESP_ZB_ZCL_STATUS_SUCCESS only */
     esp_zb_zcl_scenes_extension_field_t *field_data; /*!< Extension field, {{cluster_id, length, value}, ... , {cluster_id, length, value}} */
 } esp_zb_zcl_scenes_view_scene_resp_t;
 

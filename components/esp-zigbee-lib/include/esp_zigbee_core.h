@@ -18,6 +18,7 @@ extern "C" {
 #include "esp_zigbee_endpoint.h"
 #include "zcl/esp_zigbee_zcl_command.h"
 #include "zdo/esp_zigbee_zdo_command.h"
+#include "bdb/esp_zigbee_bdb_touchlink.h"
 #include "esp_zigbee_secur.h"
 #include "esp_zigbee_ota.h"
 
@@ -332,6 +333,39 @@ esp_err_t esp_zb_set_primary_network_channel_set(uint32_t channel_mask);
             - ESP_ERR_INVALID_ARG if the channel mask is out of range
  */
 esp_err_t esp_zb_set_secondary_network_channel_set(uint32_t channel_mask);
+
+/**
+ * @brief   Set the 2.4G channel mask.
+ *
+ * @param[in] channel_mask Valid channel mask is from 0x00000800 (only channel 11) to 0x07FFF800 (all channels from 11 to 26)
+ * @return  - ESP_OK on success
+            - ESP_ERR_INVALID_ARG if the channel mask is out of range
+ */
+esp_err_t esp_zb_set_channel_mask(uint32_t channel_mask);
+
+/**
+ * @brief   Set zigbee rx on when idle.
+ *
+ * @param[in] rx_on enable/disable rx on when idle.
+ *
+ */
+void esp_zb_set_rx_on_when_idle(bool rx_on);
+
+/**
+ * @brief   Check if device is factory new.
+ *
+ * @return - True factory new.
+ *
+ */
+bool esp_zb_bdb_is_factory_new(void);
+
+/**
+ * @brief Set Touchlink NWK channel
+ *
+ * @param[in] channel Touchlink NWK channel value
+ *
+ */
+void esp_zb_zdo_touchlink_set_nwk_channel(uint8_t channel);
 
 /**
  * @brief   Active scan available network.
@@ -771,6 +805,14 @@ void esp_zb_add_ias_zone_enroll_request_cb(uint8_t endpoint, esp_zb_ias_zone_enr
  *
  */
 void esp_zb_add_ias_zone_status_notification_cb(uint8_t endpoint, esp_zb_ias_zone_status_notification_cmd_callback_t cb);
+
+/**
+ * @brief  Set BDB commissioning mode.
+ *
+ * @param[in] commissioning_mode commissioning mode that refer to esp_zb_bdb_commissioning_mode_mask_t.
+ *
+ */
+void esp_zb_set_bdb_commissioning_mode(esp_zb_bdb_commissioning_mode_mask_t commissioning_mode);
 
 /* ZCL attribute, cluster, endpoint, device related */
 
