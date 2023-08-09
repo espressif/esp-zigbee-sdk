@@ -51,7 +51,7 @@ static void esp_zb_buttons_handler(switch_func_pair_t *button_func_pair)
 {
     //by checking the button function pair to call different cmd send
     switch (button_func_pair->func) {
-    case SWITCH_ONOFF_TOGGLE_CONTROL:
+    case SWITCH_ONOFF_TOGGLE_CONTROL: {
         /* send on-off toggle command to remote device */
         esp_zb_zcl_on_off_cmd_t cmd_req;
         cmd_req.zcl_basic_cmd.dst_addr_u.addr_short = on_off_light.short_addr;
@@ -59,9 +59,9 @@ static void esp_zb_buttons_handler(switch_func_pair_t *button_func_pair)
         cmd_req.zcl_basic_cmd.src_endpoint = HA_ONOFF_SWITCH_ENDPOINT;
         cmd_req.address_mode = ESP_ZB_APS_ADDR_MODE_16_ENDP_PRESENT;
         cmd_req.on_off_cmd_id = ESP_ZB_ZCL_CMD_ON_OFF_TOGGLE_ID;
-        ESP_EARLY_LOGI(TAG, "send 'on_off toggle' command");
+        ESP_EARLY_LOGI(TAG, "Send 'on_off toggle' command to address(0x%x) endpoint(%d)", on_off_light.short_addr, on_off_light.endpoint);
         esp_zb_zcl_on_off_cmd_req(&cmd_req);
-        break;
+    } break;
     default:
         break;
     }
@@ -75,7 +75,8 @@ static void bdb_start_top_level_commissioning_cb(uint8_t mode_mask)
 static void bind_cb(esp_zb_zdp_status_t zdo_status, void *user_ctx)
 {
     if (zdo_status == ESP_ZB_ZDP_STATUS_SUCCESS) {
-        ESP_LOGI(TAG, "bind_cb status:%d and response from:0x%x,endpoint:%d", zdo_status, ((zdo_info_user_ctx_t *)user_ctx)->short_addr, ((zdo_info_user_ctx_t *)user_ctx)->endpoint);
+        ESP_LOGI(TAG, "Bind response from address(0x%x), endpoint(%d) with status(%d)", ((zdo_info_user_ctx_t *)user_ctx)->short_addr,
+                 ((zdo_info_user_ctx_t *)user_ctx)->endpoint, zdo_status);
         /* configure report attribute command */
         esp_zb_zcl_config_report_cmd_t report_cmd;
         bool report_change = 0;
@@ -97,7 +98,7 @@ static void ieee_cb(esp_zb_zdp_status_t zdo_status, esp_zb_ieee_addr_t ieee_addr
 {
     if (zdo_status == ESP_ZB_ZDP_STATUS_SUCCESS) {
         memcpy(&(on_off_light.ieee_addr), ieee_addr, sizeof(esp_zb_ieee_addr_t));
-        ESP_LOGI(TAG, "ieee_cb address is:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x",
+        ESP_LOGI(TAG, "IEEE address is:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x",
                  ieee_addr[7], ieee_addr[6], ieee_addr[5], ieee_addr[4],
                  ieee_addr[3], ieee_addr[2], ieee_addr[1], ieee_addr[0]);
         /* bind the on-off light to on-off switch */
@@ -119,9 +120,9 @@ static void ieee_cb(esp_zb_zdp_status_t zdo_status, esp_zb_ieee_addr_t ieee_addr
 static void ep_cb(esp_zb_zdp_status_t zdo_status, uint8_t ep_count, uint8_t *ep_id_list, void *user_ctx)
 {
     if (zdo_status == ESP_ZB_ZDP_STATUS_SUCCESS) {
-        ESP_LOGI(TAG, "Active_ep_cb status:%d and count:%d", zdo_status, ep_count);
+        ESP_LOGI(TAG, "Active endpoint response: status(%d) and endpoint count(%d)", zdo_status, ep_count);
         for (int i = 0; i < ep_count; i++) {
-            ESP_LOGI(TAG, "endpoint ID list:%d", ep_id_list[i]);
+            ESP_LOGI(TAG, "Endpoint ID List: %d", ep_id_list[i]);
         }
     }
 }
@@ -129,10 +130,11 @@ static void ep_cb(esp_zb_zdp_status_t zdo_status, uint8_t ep_count, uint8_t *ep_
 static void simple_desc_cb(esp_zb_zdp_status_t zdo_status, esp_zb_af_simple_desc_1_1_t *simple_desc, void *user_ctx)
 {
     if (zdo_status == ESP_ZB_ZDP_STATUS_SUCCESS) {
-        ESP_LOGI(TAG, "Simple_desc_cb device_id:%d,app_version:%d,profile_id:0x%x,endpoint ID:%d", simple_desc->app_device_id, simple_desc->app_device_version, simple_desc->app_profile_id, simple_desc->endpoint);
+        ESP_LOGI(TAG, "Simple desc resposne: status(%d), device_id(%d), app_version(%d), profile_id(0x%x), endpoint_ID(%d)", zdo_status,
+                 simple_desc->app_device_id, simple_desc->app_device_version, simple_desc->app_profile_id, simple_desc->endpoint);
 
         for (int i = 0; i < (simple_desc->app_input_cluster_count + simple_desc->app_output_cluster_count); i++) {
-            ESP_LOGI(TAG, "cluster ID list:0x%x", *(simple_desc->app_cluster_list + i));
+            ESP_LOGI(TAG, "Cluster ID list: 0x%x", *(simple_desc->app_cluster_list + i));
         }
     }
 }
@@ -140,7 +142,7 @@ static void simple_desc_cb(esp_zb_zdp_status_t zdo_status, esp_zb_af_simple_desc
 static void user_find_cb(esp_zb_zdp_status_t zdo_status, uint16_t addr, uint8_t endpoint, void *user_ctx)
 {
     if (zdo_status == ESP_ZB_ZDP_STATUS_SUCCESS) {
-        ESP_LOGI(TAG, "User find cb: response_status:%d, address:0x%x, endpoint:%d", zdo_status, addr, endpoint);
+        ESP_LOGI(TAG, "Match desc response: status(%d), address(0x%x), endpoint(%d)", zdo_status, addr, endpoint);
         /* save into remote device record structure for future use */
         on_off_light.endpoint = endpoint;
         on_off_light.short_addr = addr;
@@ -174,13 +176,15 @@ static void user_find_cb(esp_zb_zdp_status_t zdo_status, uint16_t addr, uint8_t 
 static void esp_zb_dev_reporting_cb(esp_zb_zcl_addr_t *addr, uint8_t src_endpoint, uint8_t dst_endpoint, uint16_t cluster_id,
                                     uint16_t attr_id, esp_zb_zcl_attr_type_t attr_type, void *value)
 {
-    ESP_LOGI(TAG, "Switch got report attribute from address:0x%x,src_ep:%d,dst_ep:%d,cluster_id:0x%x,attr_id:0x%x,value:%d,attr_type:0x%x,", addr->u.short_addr, src_endpoint, dst_endpoint, cluster_id,
-    attr_id, *(uint8_t *)value, attr_type);
+    ESP_LOGI(TAG, "Reveived report from address(0x%x) endpoint(%d) to endpoint(%d) cluster(0x%x)", addr->u.short_addr, src_endpoint, dst_endpoint,
+             cluster_id);
+    ESP_LOGI(TAG, "Received report information: attribute(0x%x), type(0x%x), value(%d)\n", attr_id, attr_type, value ? *(uint8_t *)value : 0);
 }
 
 static void esp_zb_read_resp_cb(esp_zb_zcl_status_t status, uint16_t cluster_id, uint16_t attr_id, esp_zb_zcl_attr_type_t attr_type, void *value)
 {
-    ESP_LOGI(TAG, "Switch got read attribute response with status:%d,cluster_id:0x%x,attr_id:0x%x,value:%d,attr_type:0x%x", status, cluster_id, attr_id, *(uint8_t *)value, attr_type);
+    ESP_LOGI(TAG, "Read attribute response: status(%d), cluster(0x%x), attribute(0x%x), type(0x%x), value(%d)", status, cluster_id, attr_id,
+             attr_type, value ? *(uint8_t *)value : 0);
 }
 
 void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
@@ -188,6 +192,7 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
     uint32_t *p_sg_p       = signal_struct->p_app_signal;
     esp_err_t err_status = signal_struct->esp_err_status;
     esp_zb_app_signal_type_t sig_type = *p_sg_p;
+    esp_zb_zdo_signal_leave_params_t *leave_params = NULL;
     switch (sig_type) {
     case ESP_ZB_BDB_SIGNAL_DEVICE_FIRST_START:
     case ESP_ZB_BDB_SIGNAL_DEVICE_REBOOT:
@@ -228,7 +233,7 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
         }
         break;
     case ESP_ZB_ZDO_SIGNAL_LEAVE:
-        esp_zb_zdo_signal_leave_params_t *leave_params = (esp_zb_zdo_signal_leave_params_t *)esp_zb_app_signal_get_params(p_sg_p);
+        leave_params = (esp_zb_zdo_signal_leave_params_t *)esp_zb_app_signal_get_params(p_sg_p);
         if (leave_params->leave_type == ESP_ZB_NWK_LEAVE_TYPE_RESET) {
             ESP_LOGI(TAG, "Reset device");
         }

@@ -25,9 +25,20 @@ static void bdb_start_top_level_commissioning_cb(uint8_t mode_mask)
     ESP_ERROR_CHECK(esp_zb_bdb_start_top_level_commissioning(mode_mask));
 }
 
-static void esp_zb_ota_upgrade_status_cb (esp_zb_zcl_ota_upgrade_status_t status)
+static esp_err_t esp_zb_ota_upgrade_status_cb(esp_zb_zcl_ota_update_message_t messsage)
 {
-    ESP_LOGI(TAG, "OTA upgrade status:%d", status);
+    if (messsage.info.status == ESP_ZB_ZCL_STATUS_SUCCESS) {
+        if (messsage.update_status == ESP_ZB_ZCL_OTA_UPGRADE_STATUS_START) {
+            ESP_LOGI(TAG, "OTA start");
+        } else if (messsage.update_status == ESP_ZB_ZCL_OTA_UPGRADE_STATUS_RECEIVE) {
+            ESP_LOGI(TAG, "OTA receiving ...");
+        } else if (messsage.update_status == ESP_ZB_ZCL_OTA_UPGRADE_STATUS_FINISH) {
+            ESP_LOGI(TAG, "OTA finish");
+        } else {
+            ESP_LOGI(TAG, "OTA status: %d", messsage.update_status);
+        }
+    }
+    return ESP_OK;
 }
 
 void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)

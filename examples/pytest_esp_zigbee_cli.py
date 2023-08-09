@@ -153,7 +153,7 @@ def test_zb_cli_zc_ZCL_command(dut: Tuple[Dut, Dut]) -> None:
     # Move to level(with On/Off) command
     time.sleep(2)
     cli.write('zcl -c '+light_nwk_addr+' '+light_endpoint+' 0x0008 04 profile 0x0104 payload 05ffff')
-    assert str(light_lvl) == light.expect(r'Light level change to:([0-9])',timeout=3)[1].decode()
+    assert str(light_lvl) == light.expect(r'Light level changes to ([0-9])',timeout=3)[1].decode()
     cli.expect('Done',timeout=3)
     # read level_control attribute
     cli.write('zcl -a read '+light_nwk_addr+' '+light_endpoint+' 0x0008 0x0104 0')
@@ -187,8 +187,8 @@ def test_zb_cli_zc_ZCL_command(dut: Tuple[Dut, Dut]) -> None:
     # Move to color command
     time.sleep(2)
     cli.write('zcl -c '+light_nwk_addr+' '+light_endpoint+' 0x0300 07 profile 0x0104 payload 983039320000')
-    assert str(light_color_x) == light.expect(r'Light color x change to:([0-9]+)',timeout=3)[1].decode()
-    assert str(light_color_y) == light.expect(r'Light color y change to:([0-9]+)',timeout=3)[1].decode()
+    assert hex(light_color_x) == light.expect(r'Light color x changes to (0x\w+)',timeout=3)[1].decode()
+    assert hex(light_color_y) == light.expect(r'Light color y changes to (0x\w+)',timeout=3)[1].decode()
     cli.expect('Done',timeout=3)
     # read color_control_x attribute
     cli.write('zcl -a read '+light_nwk_addr+' '+light_endpoint+' 0x0300 0x0104 3')

@@ -1,3 +1,33 @@
+# 11-Aug-2023
+
+Versions
+--------
+0.9.0 version release of ESP-ZIGBEE-SDK
+
+Features
+--------
+
+* Fix Zigbee zdo simple desc list
+* Add more Zigbee parameters configuration option 
+* Add distribute network support
+* Optimize the zcl device cb id implementation
+* Add non-volatile scene table 
+
+Known Issues
+------------
+
+New Changes
+-----------
+
+Bug Fixes
+---------
+Closes: https://github.com/espressif/esp-zigbee-sdk/issues/40
+Closes: https://github.com/espressif/esp-zigbee-sdk/issues/57
+Closes: https://github.com/espressif/esp-zigbee-sdk/issues/67
+Closes: https://github.com/espressif/esp-zigbee-sdk/issues/68
+Closes: https://github.com/espressif/esp-zigbee-sdk/issues/69
+
+
 # 2-Aug-2023
 
 Versions

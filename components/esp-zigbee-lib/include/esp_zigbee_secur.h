@@ -8,6 +8,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+#include "esp_err.h"
 #include "esp_zigbee_type.h"
 
 /** Enum of the Zigbee secure install code type
@@ -143,6 +144,16 @@ void esp_zb_secur_link_key_exchange_required_set(bool enable);
  *      - ESP_ERR_INVALID_STATE: invalid network state.
  */
 esp_err_t esp_zb_secur_primary_network_key_get(uint8_t *key);
+
+/**
+ * @brief Set the Zigbee security network key
+ *
+ * @param key A 16-byte security network key that will be used
+ * @return
+ *      - ESP_OK: on success
+ *      - ESP_ERR_INVALID_STATE: invalid network state.
+ */
+esp_err_t esp_zb_secur_network_key_set(uint8_t *key);
 
 #ifdef __cplusplus
 }

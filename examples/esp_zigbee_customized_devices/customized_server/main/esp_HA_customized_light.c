@@ -87,19 +87,27 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
     }
 }
 
-void attr_cb(uint8_t status, uint8_t endpoint, uint16_t cluster_id, uint16_t attr_id, void *new_value)
+static esp_err_t attr_cb(const esp_zb_zcl_set_attr_value_message_t message)
 {
-    if (cluster_id == ESP_ZB_ZCL_CLUSTER_ID_ON_OFF) {
-        uint8_t value = *(uint8_t *)new_value;
-        if (attr_id == ESP_ZB_ZCL_ATTR_ON_OFF_ON_OFF_ID) {
-            /* implemented light on/off control */
-            ESP_LOGI(TAG, "on/off light set to %hd", value);
-            light_driver_set_power((bool)value);
+    esp_err_t ret = ESP_OK;
+    bool light_state = 0;
+    if (message.info.status == ESP_ZB_ZCL_STATUS_SUCCESS) {
+        ESP_LOGI(TAG, "Received message: endpoint(0x%x), cluster(0x%x), attribute(0x%x), data size(%d)", message.info.dst_endpoint,
+                 message.info.cluster, message.attribute, message.data.size);
+        if (message.info.dst_endpoint == HA_ESP_LIGHT_ENDPOINT) {
+            if (message.info.cluster == ESP_ZB_ZCL_CLUSTER_ID_ON_OFF) {
+                if (message.attribute == ESP_ZB_ZCL_ATTR_ON_OFF_ON_OFF_ID && message.data.type == ESP_ZB_ZCL_ATTR_TYPE_BOOL) {
+                    light_state = message.data.value ? *(bool *)message.data.value : light_state;
+                    ESP_LOGI(TAG, "Light sets to %s", light_state ? "On" : "Off");
+                    light_driver_set_power(light_state);
+                }
+            }
         }
     } else {
-        /* Implement some actions if needed when other cluster changed */
-        ESP_LOGI(TAG, "cluster:0x%x, attribute:0x%x changed ", cluster_id, attr_id);
+        ESP_LOGE(TAG, "Received message: status(%d) error", message.info.status);
+        ret = ESP_ERR_INVALID_ARG;
     }
+    return ret;
 }
 
 static void esp_zb_task(void *pvParameters)

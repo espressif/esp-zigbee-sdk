@@ -33,45 +33,63 @@ static void bdb_start_top_level_commissioning_cb(uint8_t mode_mask)
     ESP_ERROR_CHECK(esp_zb_bdb_start_top_level_commissioning(mode_mask));
 }
 
-void attr_cb(uint8_t status, uint8_t endpoint, uint16_t cluster_id, uint16_t attr_id, void *new_value)
+static esp_err_t attr_cb(const esp_zb_zcl_set_attr_value_message_t message)
 {
-    if (cluster_id == ESP_ZB_ZCL_CLUSTER_ID_ON_OFF) {
-        uint8_t value = *(uint8_t *)new_value;
-        if (attr_id == ESP_ZB_ZCL_ATTR_ON_OFF_ON_OFF_ID) {
-            /* implemented light on/off control */
-            light_driver_set_power((bool)value);
+    esp_err_t ret = ESP_OK;
+    bool light_state = 0;
+    uint8_t light_level = 0;
+    uint16_t light_color_x = 0;
+    uint16_t light_color_y = 0;
+    if (message.info.status == ESP_ZB_ZCL_STATUS_SUCCESS) {
+        ESP_LOGI(TAG, "Received message: endpoint(%d), cluster(0x%x), attribute(0x%x), data size(%d)", message.info.dst_endpoint,
+                 message.info.cluster, message.attribute, message.data.size);
+        if (message.info.dst_endpoint == HA_COLOR_DIMMABLE_LIGHT_ENDPOINT) {
+            switch (message.info.cluster) {
+            case ESP_ZB_ZCL_CLUSTER_ID_ON_OFF:
+                if (message.attribute == ESP_ZB_ZCL_ATTR_ON_OFF_ON_OFF_ID && message.data.type == ESP_ZB_ZCL_ATTR_TYPE_BOOL) {
+                    light_state = message.data.value ? *(bool *)message.data.value : light_state;
+                    ESP_LOGI(TAG, "Light sets to %s", light_state ? "On" : "Off");
+                    light_driver_set_power(light_state);
+                } else {
+                    ESP_LOGW(TAG, "On/Off cluster data: attribute(0x%x), type(%d)", message.attribute, message.data.type);
+                }
+                break;
+            case ESP_ZB_ZCL_CLUSTER_ID_COLOR_CONTROL:
+                if (message.attribute == ESP_ZB_ZCL_ATTR_COLOR_CONTROL_CURRENT_X_ID && message.data.type == ESP_ZB_ZCL_ATTR_TYPE_U16) {
+                    light_color_x = message.data.value ? *(uint16_t *)message.data.value : light_color_x;
+                    light_color_y = *(uint16_t *)esp_zb_zcl_get_attribute(message.info.dst_endpoint, message.info.cluster,
+                                                                          ESP_ZB_ZCL_CLUSTER_SERVER_ROLE, ESP_ZB_ZCL_ATTR_COLOR_CONTROL_CURRENT_Y_ID)
+                                         ->data_p;
+                    ESP_LOGI(TAG, "Light color x changes to 0x%x", light_color_x);
+                } else if (message.attribute == ESP_ZB_ZCL_ATTR_COLOR_CONTROL_CURRENT_Y_ID && message.data.type == ESP_ZB_ZCL_ATTR_TYPE_U16) {
+                    light_color_y = message.data.value ? *(uint16_t *)message.data.value : light_color_y;
+                    light_color_x = *(uint16_t *)esp_zb_zcl_get_attribute(message.info.dst_endpoint, message.info.cluster,
+                                                                          ESP_ZB_ZCL_CLUSTER_SERVER_ROLE, ESP_ZB_ZCL_ATTR_COLOR_CONTROL_CURRENT_X_ID)
+                                         ->data_p;
+                     ESP_LOGI(TAG, "Light color y changes to 0x%x", light_color_y);
+                } else {
+                    ESP_LOGW(TAG, "Color control cluster data: attribute(0x%x), type(%d)", message.attribute, message.data.type);
+                }
+                light_driver_set_color_xy(light_color_x, light_color_y);
+                break;
+            case ESP_ZB_ZCL_CLUSTER_ID_LEVEL_CONTROL:
+                if (message.attribute == ESP_ZB_ZCL_ATTR_LEVEL_CONTROL_CURRENT_LEVEL_ID && message.data.type == ESP_ZB_ZCL_ATTR_TYPE_U8) {
+                    light_level = message.data.value ? *(uint8_t *)message.data.value : light_level;
+                    light_driver_set_level((uint8_t)light_level);
+                    ESP_LOGI(TAG, "Light level changes to %d", light_level);
+                } else {
+                    ESP_LOGW(TAG, "Level Control cluster data: attribute(0x%x), type(%d)", message.attribute, message.data.type);
+                }
+                break;
+            default:
+                ESP_LOGI(TAG, "Message data: cluster(0x%x), attribute(0x%x)  ", message.info.cluster, message.attribute);
+            }
+        } else {
+            ESP_LOGE(TAG, "Received message: status(%d) error", message.info.status);
+            ret = ESP_ERR_INVALID_ARG;
         }
-    } else if (cluster_id == ESP_ZB_ZCL_CLUSTER_ID_COLOR_CONTROL) {
-        if (attr_id == ESP_ZB_ZCL_ATTR_COLOR_CONTROL_CURRENT_X_ID) {
-            uint16_t value_x = *((uint16_t *)new_value);
-            esp_zb_zcl_attr_t *attr_desc;
-            attr_desc = esp_zb_zcl_get_attribute(endpoint,
-                                                 ESP_ZB_ZCL_CLUSTER_ID_COLOR_CONTROL, ESP_ZB_ZCL_CLUSTER_SERVER_ROLE, ESP_ZB_ZCL_ATTR_COLOR_CONTROL_CURRENT_Y_ID);
-            uint16_t value_y = (*(uint16_t *)attr_desc->data_p);
-            ESP_LOGI(TAG, "Light color x change to:%d", value_x);
-            /* implemented light color control */
-            light_driver_set_color_xy(value_x, value_y);
-        }
-        if (attr_id == ESP_ZB_ZCL_ATTR_COLOR_CONTROL_CURRENT_Y_ID) {
-            uint16_t value_y = *((uint16_t *)new_value);
-            esp_zb_zcl_attr_t *attr_desc;
-            attr_desc = esp_zb_zcl_get_attribute(endpoint,
-                                                 ESP_ZB_ZCL_CLUSTER_ID_COLOR_CONTROL, ESP_ZB_ZCL_CLUSTER_SERVER_ROLE, ESP_ZB_ZCL_ATTR_COLOR_CONTROL_CURRENT_X_ID);
-            uint16_t value_x = (*(uint16_t *)attr_desc->data_p);
-            ESP_LOGI(TAG, "Light color y change to:%d", value_y);
-            /* implemented light color control */
-            light_driver_set_color_xy(value_x, value_y);
-        }
-    } else if (cluster_id == ESP_ZB_ZCL_CLUSTER_ID_LEVEL_CONTROL) {
-        if (attr_id == ESP_ZB_ZCL_ATTR_LEVEL_CONTROL_CURRENT_LEVEL_ID) {
-            uint8_t value = *(uint8_t *)new_value;
-            ESP_LOGI(TAG, "Light level change to:%d", value);
-            light_driver_set_level((uint8_t)value);
-        }
-    } else {
-        /* Implement some actions if needed when other cluster changed */
-        ESP_LOGI(TAG, "cluster:0x%x, attribute:0x%x changed ", cluster_id, attr_id);
     }
+    return ret;
 }
 
 void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)

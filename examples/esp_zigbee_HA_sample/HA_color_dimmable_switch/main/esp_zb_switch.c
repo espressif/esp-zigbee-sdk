@@ -76,7 +76,8 @@ static void esp_zb_buttons_handler(switch_func_pair_t *button_func_pair)
             cmd_color.zcl_basic_cmd.dst_addr_u.addr_short = color_light.short_addr;
             cmd_color.zcl_basic_cmd.dst_endpoint = color_light.endpoint;
             cmd_color.zcl_basic_cmd.src_endpoint = HA_COLOR_DIMMABLE_SWITCH_ENDPOINT;
-            ESP_EARLY_LOGI(TAG, "send 'color move to color' command color_x:%d,color_y:%d", refer_x, refer_y);
+            ESP_EARLY_LOGI(TAG, "Send command to address(0x%x) endpoint(%d) for moving light color (0x%x, 0x%x)", color_light.short_addr,
+                           color_light.endpoint, refer_x, refer_y);
             esp_zb_zcl_color_move_to_color_cmd_req(&cmd_color);
         } else {
             /* changing the level control command by button pressed */
@@ -87,7 +88,8 @@ static void esp_zb_buttons_handler(switch_func_pair_t *button_func_pair)
             cmd_level.address_mode = ESP_ZB_APS_ADDR_MODE_16_ENDP_PRESENT;
             cmd_level.level = level_value;
             cmd_level.transition_time = 0xffff;
-            ESP_EARLY_LOGI(TAG, "send 'move to level' command:%d", level_value);
+            ESP_EARLY_LOGI(TAG, "Send command to address(0x%x) endpoint(%d) for moving light level to %d", color_light.short_addr,
+                           color_light.endpoint, level_value);
             esp_zb_zcl_level_move_to_level_with_onoff_cmd_req(&cmd_level);
             level_value += step;
         }
@@ -100,9 +102,9 @@ static void bdb_start_top_level_commissioning_cb(uint8_t mode_mask)
     ESP_ERROR_CHECK(esp_zb_bdb_start_top_level_commissioning(mode_mask));
 }
 
-void user_find_cb(esp_zb_zdp_status_t zdo_status, uint16_t addr, uint8_t endpoint, void *user_ctx)
+static void user_find_cb(esp_zb_zdp_status_t zdo_status, uint16_t addr, uint8_t endpoint, void *user_ctx)
 {
-    ESP_LOGI(TAG, "User find cb: response_status:%d, address:0x%x, endpoint:%d", zdo_status, addr, endpoint);
+    ESP_LOGI(TAG, "Match desc response: status(%d), address(0x%x), endpoint(%d)", zdo_status, addr, endpoint);
     if (zdo_status == ESP_ZB_ZDP_STATUS_SUCCESS) {
         color_light.endpoint = endpoint;
         color_light.short_addr = addr;
