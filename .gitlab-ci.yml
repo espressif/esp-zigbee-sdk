@@ -45,7 +45,7 @@ before_script:
 
 build_non_pytest_examples:
   stage: build
-  image: ${CI_DOCKER_REGISTRY}/esp-env-v5.2:1
+  image: ${CI_DOCKER_REGISTRY}/esp-env-v5.2:2
   artifacts:
     paths:
       - "**/build*/size.json"
@@ -68,7 +68,7 @@ build_non_pytest_examples:
 
 build_pytest_examples:
   stage: build
-  image: ${CI_DOCKER_REGISTRY}/esp-env-v5.2:1
+  image: ${CI_DOCKER_REGISTRY}/esp-env-v5.2:2
   artifacts:
     paths:
       - "**/build*/size.json"

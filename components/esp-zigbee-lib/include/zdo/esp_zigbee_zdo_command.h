@@ -266,8 +266,8 @@ typedef struct esp_zb_zdo_binding_table_info_s {
  *
  * @brief A ZDO binding table request callback for user to get the binding table record of remote device.
  *
- * @param[out] record The binding table record which is only accessed by read, refer to esp_zb_zdo_binding_table_info_t
- * @param[out] user_ctx  User information context, set in `esp_zb_zdo_binding_table_req()`
+ * @param[in] record The binding table record which is only accessed by read, refer to esp_zb_zdo_binding_table_info_s
+ * @param[in] user_ctx  User information context, set in `esp_zb_zdo_binding_table_req()`
  *
  */
 typedef void (*esp_zb_zdo_binding_table_callback_t)(const esp_zb_zdo_binding_table_info_t *record, void *user_ctx);

@@ -58,7 +58,7 @@ static void esp_zb_buttons_handler(switch_func_pair_t *button_func_pair)
         cmd_req.zcl_basic_cmd.src_endpoint = HA_ONOFF_SWITCH_ENDPOINT;
         cmd_req.address_mode = ESP_ZB_APS_ADDR_MODE_16_ENDP_PRESENT;
         cmd_req.on_off_cmd_id = ESP_ZB_ZCL_CMD_ON_OFF_TOGGLE_ID;
-        ESP_EARLY_LOGI(TAG, "send 'on_off toggle' command");
+        ESP_EARLY_LOGI(TAG, "Send 'on_off toggle' command to address(0x%x) endpoint(%d)", on_off_light.short_addr, on_off_light.endpoint);
         esp_zb_zcl_on_off_cmd_req(&cmd_req);
     }
 }
@@ -68,9 +68,9 @@ static void bdb_start_top_level_commissioning_cb(uint8_t mode_mask)
     ESP_ERROR_CHECK(esp_zb_bdb_start_top_level_commissioning(mode_mask));
 }
 
-void user_find_cb(esp_zb_zdp_status_t zdo_status, uint16_t addr, uint8_t endpoint, void *user_ctx)
+static void user_find_cb(esp_zb_zdp_status_t zdo_status, uint16_t addr, uint8_t endpoint, void *user_ctx)
 {
-    ESP_LOGI(TAG, "User find cb: response_status:%d, address:0x%x, endpoint:%d", zdo_status, addr, endpoint);
+    ESP_LOGI(TAG, "Match desc response: status(%d), address(0x%x), endpoint(%d)", zdo_status, addr, endpoint);
     if (zdo_status == ESP_ZB_ZDP_STATUS_SUCCESS) {
         on_off_light.endpoint = endpoint;
         on_off_light.short_addr = addr;

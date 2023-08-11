@@ -5,11 +5,10 @@
  */
 
 #pragma once
-
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+#include "esp_err.h"
 #include "zb_vendor.h"
 #include "zb_config_platform.h"
 #include "esp_zigbee_type.h"
@@ -56,19 +55,23 @@ typedef enum {
 
 #define ESP_ZB_TRANSCEIVER_ALL_CHANNELS_MASK   0x07FFF800U /*!< channel 11-26 for compatibility with 2.4GHZ*/
 
+/** ZCL device callback
+ *
+ * @brief Add the callback to obtain the zboss original buffer id for zcl DEVICE_CB_ID
+ *
+ * @param[in] bufid The place of DEVICE_CB_ID messages stored in the buffer queue.
+ * @return True: the @p bufid has been handled, otherwise, it remains unresolved.
+ *
+ */
+typedef bool (*esp_zb_zcl_device_cb_id_callback_t)(uint8_t bufid);
+
 /** ZCL set attribute callback
  *
- * @param[in] status The status for ZCL set attribute 0 - status success
- * @param[in] endpoint The endpoint of this cluster lists to change
- * @param[in] cluster_id Cluster ID
- * @param[in] attr_id Attribute ID
- * @param[in] value The pointer of the attribute data
+ * @param[in] message The operation message for attribute value set by ZCL, @ref esp_zb_zcl_set_attr_value_message_s
  *
- * @note The Zigbee device callback is the default ZCL cluster handler to notify the application about a certain event.
- * It covers attribute changes like on-off, level and color cluster.
+ *  @return ESP_OK on success, or others on failure
  */
-typedef void (*esp_zb_set_attr_callback_t)(uint8_t status, uint8_t endpoint, uint16_t cluster_id, uint16_t attr_id, void *value);
-
+typedef esp_err_t (*esp_zb_set_attr_callback_t)(const esp_zb_zcl_set_attr_value_message_t message);
 
 /** Report attribute callback
  *
@@ -145,7 +148,7 @@ typedef void (*esp_zb_get_group_membership_resp_callback_t)(esp_zb_zcl_status_t 
  *
  * @brief View Scenes cluster callback for user to get scene information
  *
- * @param[out] resp The response information for viewing scene @ref esp_zb_zcl_scenes_view_scene_resp_s
+ * @param[in] resp The response information for viewing scene @ref esp_zb_zcl_scenes_view_scene_resp_s
  *
  */
 typedef void (*esp_zb_zcl_scenes_view_scene_resp_callback_t)(esp_zb_zcl_scenes_view_scene_resp_t resp);
@@ -154,32 +157,28 @@ typedef void (*esp_zb_zcl_scenes_view_scene_resp_callback_t)(esp_zb_zcl_scenes_v
  *
  * @brief Store scenes state callback for user to save data entry.
  *
- * @note The SDK provides esp_zb_zcl_scenes_table_store() function to store scene for user.
- * @param[out] status Status of the store scene command, refer to esp_zb_zcl_status_t success status - 0  invalid field status - 133
- * @param[out] group_id The group id of storing scene request
- * @param[out] scene_id The scene id of storing scene request
+ * @param[in] message The operation message for storing scene from scene cluster client, @ref esp_zb_zcl_store_scene_message_s
+ * @return ESP_OK on success, or others on failure
  */
-typedef void (*esp_zb_scenes_store_cmd_callback_t)(esp_zb_zcl_status_t status, uint16_t group_id, uint8_t scene_id);
+typedef esp_err_t (*esp_zb_scenes_store_cmd_callback_t)(const esp_zb_zcl_store_scene_message_t message);
 
 /** Scenes cluster recall command callback
  *
  * @brief Recall scenes callback for user to recall specific entry.
  *
- * @param[in] status Status of the recall scene command, refer to esp_zb_zcl_status_t success status - 0  status not found - 139
- * @param[in] field_data A pointer to scenes extension field @ref esp_zb_zcl_scenes_extension_field_s
- *
+ * @param[in] message The operation message for recalling scene from scene cluster client, @ref esp_zb_zcl_recall_scene_message_s
+ * @return ESP_OK on success, or others on failure
  */
-typedef void (*esp_zb_scenes_recall_cmd_callback_t)(esp_zb_zcl_status_t status, esp_zb_zcl_scenes_extension_field_t *field_data);
+typedef esp_err_t (*esp_zb_scenes_recall_cmd_callback_t)(const esp_zb_zcl_recall_scene_message_t message);
 
 /** OTA upgrade status callback
  *
  * @brief OTA upgrade callback for user to get upgrade status
  *
- * @param[in] status Status of the OTA upgrade refer to esp_zb_zcl_ota_upgrade_status_t started OTA upgrade - 0
- * received OTA upgrade - 2  finished OTA upgrade - 3
- *
+ * @param[in] message The operation message for ota upgrade, @ref esp_zb_zcl_ota_update_message_s
+ * @return ESP_OK on success, or others on failure
  */
-typedef void (*esp_zb_ota_upgrade_status_callback_t)(esp_zb_zcl_ota_upgrade_status_t status);
+typedef esp_err_t (*esp_zb_ota_upgrade_status_callback_t)(const esp_zb_zcl_ota_update_message_t message);
 
 /** Customized cluster command callback
  *
@@ -207,7 +206,7 @@ typedef uint8_t (*esp_zb_cli_resp_callback_t)(uint8_t bufid);
 typedef void (*esp_zb_identify_notify_callback_t)(uint8_t identify_on);
 
 /** ZCL command callback
- * @param[out] cmd The zcl command content refers to esp_zb_zcl_cmd_info_t
+ * @param[in] cmd The zcl command content refers to esp_zb_zcl_cmd_info_t
  * 
  */
 typedef void (*esp_zb_privilege_command_callback_t)(esp_zb_zcl_cmd_info_t cmd);
@@ -216,8 +215,8 @@ typedef void (*esp_zb_privilege_command_callback_t)(esp_zb_zcl_cmd_info_t cmd);
  *
  * @brief A IAS zone cluster command received from remote node and callback for user to get the Enroll Request Information
  *
- * @param[out] zone_type The type of IAS zone that refers to esp_zb_zcl_ias_zone_zonetype_t
- * @param[out] manuf The manfacturer code
+ * @param[in] zone_type The type of IAS zone that refers to esp_zb_zcl_ias_zone_zonetype_t
+ * @param[in] manuf The manfacturer code
  *
  */
 typedef void (*esp_zb_ias_zone_enroll_request_callback_t)(uint16_t zone_type, uint16_t manuf);
@@ -226,11 +225,11 @@ typedef void (*esp_zb_ias_zone_enroll_request_callback_t)(uint16_t zone_type, ui
  *
  * @brief A IAS zone cluster command received from remote node and callback for user to get the Enroll Eesponse information
  *
- * @param[out] code The Zone Enroll response code that can refer to esp_zb_zcl_ias_zone_enroll_response_code_t
- * @param[out] zone_id A unique reference number allocated by the CIE at zone enrollment time
+ * @param[in] message The response message for enroll ias zone, @ref esp_zb_zcl_ias_zone_enroll_response_message_s
+ * @return ESP_OK on success, or others on failure
  *
  */
-typedef void (*esp_zb_ias_zone_enroll_response_callback_t)(uint8_t code, uint8_t zone_id);
+typedef esp_err_t (*esp_zb_ias_zone_enroll_response_callback_t)(const esp_zb_zcl_ias_zone_enroll_response_message_t message);
 
 /** IAS zone cluster command callback
  *
@@ -238,13 +237,23 @@ typedef void (*esp_zb_ias_zone_enroll_response_callback_t)(uint8_t code, uint8_t
  *
  * @note: The Zone Status Change Notification command is generated when a change takes place in one or more bits of the ZoneStatus attribute.
  *
- * @param[out] zone_status The current value of the Zone Status attribute
- * @param[out] extended_status The reserved for additional status information, default is zero
- * @param[out] zone_id A unique reference number allocated by the CIE at zone enrollment time
- * @param[out] delay defined as the amount of time, in quarter-seconds, from the moment when a change takes place in one or more bits of the Zone
+ * @param[in] zone_status The current value of the Zone Status attribute
+ * @param[in] extended_status The reserved for additional status information, default is zero
+ * @param[in] zone_id A unique reference number allocated by the CIE at zone enrollment time
+ * @param[in] delay defined as the amount of time, in quarter-seconds, from the moment when a change takes place in one or more bits of the Zone
  * Status attribute and the successful transmission of the Zone Status Change Notification.
  */
 typedef void (*esp_zb_ias_zone_status_notification_cmd_callback_t)(uint16_t zone_status, uint8_t extended_status, uint8_t zone_id, uint16_t delay);
+
+/** Level Control set value
+ *
+ * @brief A level control command received from remote node and callback for user to set value
+ *
+ * @param[in] message The level control message for setting value, @ref esp_zb_zcl_level_control_set_value_message_s
+ * @return ESP_OK on success, or others on failure
+ *
+ */
+typedef esp_err_t (*esp_zb_level_control_set_value_callback_t)(const esp_zb_zcl_level_control_set_value_message_t message);
 
 /** Active scan network callback
  *
@@ -406,6 +415,13 @@ void esp_zb_get_long_address(esp_zb_ieee_addr_t addr);
  *
  */
 uint16_t esp_zb_get_short_address(void);
+
+/**
+ * @brief Set the Zigbee network extended PAN ID.
+ *
+ * @param ext_pan_id The extended PAN ID of Zigbee which will be set to
+ */
+void esp_zb_set_extended_pan_id(const esp_zb_ieee_addr_t ext_pan_id);
 
 /**
  * @brief   Get the Zigbee network extended PAN ID.
@@ -577,9 +593,9 @@ void *esp_zb_app_signal_get_params(uint32_t *signal_p);
  *
  * @note Function will be called via scheduler after timeout expired in millisecond. Timer resolution depends on implementation. Same callback can be scheduled for execution more then once.
  *
- * @param cb - function to call via scheduler
- * @param param - parameter to pass to the function
- * @param time - timeout, in millisecond
+ * @param[in] cb - function to call via scheduler
+ * @param[in] param - parameter to pass to the function
+ * @param[in] time - timeout, in millisecond
  */
 void esp_zb_scheduler_alarm(esp_zb_callback_t cb, uint8_t param, uint32_t time);
 
@@ -588,8 +604,8 @@ void esp_zb_scheduler_alarm(esp_zb_callback_t cb, uint8_t param, uint32_t time);
  *
  * @note This function cancel previously scheduled alarm.
  *
- * @param cb - function to cancel
- * @param param - parameter to pass to the function to cancel
+ * @param[in] cb - function to cancel
+ * @param[in] param - parameter to pass to the function to cancel
  */
 void esp_zb_scheduler_alarm_cancel(esp_zb_callback_t cb, uint8_t param);
 
@@ -686,7 +702,7 @@ void esp_zb_scenes_view_scene_resp_cb(uint8_t endpoint, esp_zb_zcl_scenes_view_s
  * @param[in] cb A scenes cluster store callback that user used refer to esp_zb_scenes_store_cmd_callback_t
  *
  */
-void esp_zb_add_scenes_store_cmd_cb(esp_zb_scenes_store_cmd_callback_t cb);
+void esp_zb_device_add_scenes_store_cmd_cb(esp_zb_scenes_store_cmd_callback_t cb);
 
 /**
  * @brief Set the ZCL scenes cluster scene table for users.
@@ -709,7 +725,13 @@ esp_err_t esp_zb_zcl_scenes_table_store(uint16_t group_id, uint8_t scene_id, uin
  * @param[in] cb A scenes cluster recall callback that user used refer to esp_zb_scenes_recall_cmd_callback_t
  *
  */
-void esp_zb_add_scenes_recall_cmd_cb(esp_zb_scenes_recall_cmd_callback_t cb);
+void esp_zb_device_add_scenes_recall_cmd_cb(esp_zb_scenes_recall_cmd_callback_t cb);
+
+/**
+ * @brief View the zcl scene table
+ *
+ */
+void esp_zb_zcl_scenes_table_show(void);
 
 /**
  * @brief Set the ZCL IAS Zone to handle the received enroll response command for server.
@@ -717,7 +739,16 @@ void esp_zb_add_scenes_recall_cmd_cb(esp_zb_scenes_recall_cmd_callback_t cb);
  * @param cb A ias zone cluster enroll response callback that user used refer to esp_zb_ias_zone_enroll_response_callback_t
  *
  */
-void esp_zb_add_ias_zone_enroll_response_cb(esp_zb_ias_zone_enroll_response_callback_t cb);
+void esp_zb_device_add_ias_zone_enroll_response_cb(esp_zb_ias_zone_enroll_response_callback_t cb);
+
+
+/**
+ * @brief Set callback for getting the Level Control current level.
+ *
+ * @param cb A level control set value callback that user used refer to esp_zb_level_control_set_value_callback_t
+ *
+ */
+void esp_zb_device_add_level_control_set_value_cb(esp_zb_level_control_set_value_callback_t cb);
 
 /**
  * @brief   Set the ZCL OTA upgrade status callback for client.
@@ -841,6 +872,28 @@ void esp_zb_rcp_init(void);
  *
  */
 void esp_zb_rcp_main_loop_iteration(void);
+
+#ifdef ZB_DISTRIBUTED_SECURITY_ON
+/**
+ * @brief Enable or disable the Zigbee distributed network.
+ *
+ * @param[in] enabled The status of Zigbee distribute network
+ */
+void esp_zb_enable_distributed_network(bool enabled);
+
+/**
+ * @brief Allow to setup network as distributed when started
+ *
+ */
+void esp_zb_zdo_setup_network_as_distributed(void);
+
+/**
+ * @brief Check if the current network is a distributed security network
+ *
+ * @return - True: The current network is distributed, otherwise it is not.
+ */
+bool esp_zb_network_is_distributed(void);
+#endif
 
 #ifdef __cplusplus
 }
