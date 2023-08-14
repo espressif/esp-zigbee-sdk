@@ -20,21 +20,16 @@
 #include "ha/esp_zigbee_ha_standard.h"
 #include "esp_zb_switch.h"
 
-/**
- * @note Make sure set idf.py menuconfig in zigbee component as zigbee coordinator device!
-*/
 #if !defined CONFIG_ZB_ZCZR
 #error Define ZB_ZCZR in idf.py menuconfig to compile light switch (Coordinator) source code.
 #endif
 
-/* define a single remote device struct for managing */
 typedef struct light_bulb_device_params_s {
     esp_zb_ieee_addr_t ieee_addr;
     uint8_t  endpoint;
     uint16_t short_addr;
 } light_bulb_device_params_t;
 
-/* define Button function currently only 1 switch define */
 static switch_func_pair_t button_func_pair[] = {
     {GPIO_INPUT_IO_TOGGLE_SWITCH, SWITCH_ONOFF_TOGGLE_CONTROL}
 };
@@ -49,12 +44,6 @@ static uint16_t color_y_table[3] = {
 
 static const char *TAG = "ESP_ZB_COLOR_DIMM_SWITCH";
 
-/********************* Define functions **************************/
-/**
- * @brief Callback for button events, currently only toggle event available
- *
- * @param button_func_pair      Incoming event from the button_pair.
- */
 static void esp_zb_buttons_handler(switch_func_pair_t *button_func_pair)
 {
     uint8_t step = 10;
@@ -65,7 +54,6 @@ static void esp_zb_buttons_handler(switch_func_pair_t *button_func_pair)
         uint16_t refer_x = color_x_table[press_count % 3];
         uint16_t refer_y = color_y_table[press_count % 3];
         if (press_count % 2 == 1) {
-            /* changing the color control command by button pressed */
             esp_zb_zcl_color_move_to_color_cmd_t cmd_color;
             cmd_color.color_x = refer_x;
             cmd_color.color_y = refer_y;
@@ -75,7 +63,6 @@ static void esp_zb_buttons_handler(switch_func_pair_t *button_func_pair)
             ESP_EARLY_LOGI(TAG, "Send command for moving light color to (0x%x, 0x%x)", refer_x, refer_y);
             esp_zb_zcl_color_move_to_color_cmd_req(&cmd_color);
         } else {
-            /* changing the level control command by button pressed */
             esp_zb_zcl_move_to_level_cmd_t cmd_level;
             cmd_level.zcl_basic_cmd.src_endpoint = HA_COLOR_DIMMABLE_SWITCH_ENDPOINT;
             cmd_level.address_mode = ESP_ZB_APS_ADDR_MODE_DST_ADDR_ENDP_NOT_PRESENT;
@@ -187,7 +174,7 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
 
 static void esp_zb_task(void *pvParameters)
 {
-    /* initialize Zigbee stack with Zigbee coordinator config */
+    /* initialize Zigbee stack */
     esp_zb_cfg_t zb_nwk_cfg = ESP_ZB_ZC_CONFIG();
     esp_zb_init(&zb_nwk_cfg);
     /* set the color dimmable switch device config */
@@ -206,9 +193,7 @@ void app_main(void)
         .host_config = ESP_ZB_DEFAULT_HOST_CONFIG(),
     };
     ESP_ERROR_CHECK(nvs_flash_init());
-    /* load Zigbee switch platform config to initialization */
     ESP_ERROR_CHECK(esp_zb_platform_config(&config));
-    /* hardware related and device init */
     switch_driver_init(button_func_pair, PAIR_SIZE(button_func_pair), esp_zb_buttons_handler);
     xTaskCreate(esp_zb_task, "Zigbee_main", 4096, NULL, 5, NULL);
 }

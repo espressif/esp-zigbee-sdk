@@ -20,33 +20,21 @@
 #include "ha/esp_zigbee_ha_standard.h"
 #include "esp_zb_switch.h"
 
-/**
- * @note Make sure set idf.py menuconfig in zigbee component as zigbee coordinator device!
-*/
 #if defined ZB_ED_ROLE
 #error Define ZB_COORDINATOR_ROLE in idf.py menuconfig to compile light switch source code.
 #endif
-
-/* define a single remote device struct for managing */
 typedef struct light_bulb_device_params_s {
     esp_zb_ieee_addr_t ieee_addr;
     uint8_t  endpoint;
     uint16_t short_addr;
 } light_bulb_device_params_t;
 
-/* define Button function currently only 1 switch define */
 static switch_func_pair_t button_func_pair[] = {
     {GPIO_INPUT_IO_TOGGLE_SWITCH, SWITCH_ONOFF_TOGGLE_CONTROL}
 };
 
 static const char *TAG = "ESP_ZB_ON_OFF_SWITCH";
-/********************* Define functions **************************/
 
-/**
- * @brief Callback for button events, currently only toggle event available
- *
- * @param button_func_pair      Incoming event from the button_pair.
- */
 static void esp_zb_buttons_handler(switch_func_pair_t *button_func_pair)
 {
     if (button_func_pair->func == SWITCH_ONOFF_TOGGLE_CONTROL) {
@@ -154,10 +142,9 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
 
 static void esp_zb_task(void *pvParameters)
 {
-    /* initialize Zigbee stack with Zigbee coordinator config */
+    /* initialize Zigbee stack */
     esp_zb_cfg_t zb_nwk_cfg = ESP_ZB_ZC_CONFIG();
     esp_zb_init(&zb_nwk_cfg);
-    /* set the on-off switch device config */
     esp_zb_on_off_switch_cfg_t switch_cfg = ESP_ZB_DEFAULT_ON_OFF_SWITCH_CONFIG();
     esp_zb_ep_list_t *esp_zb_on_off_switch_ep = esp_zb_on_off_switch_ep_create(HA_ONOFF_SWITCH_ENDPOINT, &switch_cfg);
     esp_zb_device_register(esp_zb_on_off_switch_ep);
@@ -173,9 +160,7 @@ void app_main(void)
         .host_config = ESP_ZB_DEFAULT_HOST_CONFIG(),
     };
     ESP_ERROR_CHECK(nvs_flash_init());
-    /* load Zigbee switch platform config to initialization */
     ESP_ERROR_CHECK(esp_zb_platform_config(&config));
-    /* hardware related and device init */
     switch_driver_init(button_func_pair, PAIR_SIZE(button_func_pair), esp_zb_buttons_handler);
     xTaskCreate(esp_zb_task, "Zigbee_main", 4096, NULL, 5, NULL);
 }

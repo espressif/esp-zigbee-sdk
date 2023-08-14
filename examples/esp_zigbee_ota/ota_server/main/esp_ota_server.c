@@ -17,7 +17,6 @@
 #include "nvs_flash.h"
 
 static const char *TAG = "ESP_OTA_SERVER";
-/********************* Define functions **************************/
 
 static void bdb_start_top_level_commissioning_cb(uint8_t mode_mask)
 {
@@ -79,7 +78,7 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
 
 static void esp_zb_task(void *pvParameters)
 {
-    /* initialize Zigbee stack with Zigbee coordinator config */
+    /* initialize Zigbee stack */
     esp_zb_cfg_t zb_nwk_cfg = ESP_ZB_ZC_CONFIG();
     esp_zb_ota_cfg_t ota_cfg = ESP_ZB_OTA_CONFIG();
     esp_zb_init(&zb_nwk_cfg);
@@ -112,8 +111,6 @@ void app_main(void)
         .host_config = ESP_ZB_DEFAULT_HOST_CONFIG(),
     };
     ESP_ERROR_CHECK(nvs_flash_init());
-    /* load Zigbee light_bulb platform config to initialization */
     ESP_ERROR_CHECK(esp_zb_platform_config(&config));
-    /* hardware related and device init */
     xTaskCreate(esp_zb_task, "Zigbee_main", 4096, NULL, 5, NULL);
 }

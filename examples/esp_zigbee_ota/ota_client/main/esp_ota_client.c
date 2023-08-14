@@ -18,27 +18,9 @@
 
 static const char *TAG = "ESP_OTA_CLIENT";
 
-/********************* Define functions **************************/
-
 static void bdb_start_top_level_commissioning_cb(uint8_t mode_mask)
 {
     ESP_ERROR_CHECK(esp_zb_bdb_start_top_level_commissioning(mode_mask));
-}
-
-static esp_err_t esp_zb_ota_upgrade_status_cb(esp_zb_zcl_ota_update_message_t messsage)
-{
-    if (messsage.info.status == ESP_ZB_ZCL_STATUS_SUCCESS) {
-        if (messsage.update_status == ESP_ZB_ZCL_OTA_UPGRADE_STATUS_START) {
-            ESP_LOGI(TAG, "OTA start");
-        } else if (messsage.update_status == ESP_ZB_ZCL_OTA_UPGRADE_STATUS_RECEIVE) {
-            ESP_LOGI(TAG, "OTA receiving ...");
-        } else if (messsage.update_status == ESP_ZB_ZCL_OTA_UPGRADE_STATUS_FINISH) {
-            ESP_LOGI(TAG, "OTA finish");
-        } else {
-            ESP_LOGI(TAG, "OTA status: %d", messsage.update_status);
-        }
-    }
-    return ESP_OK;
 }
 
 void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
@@ -82,6 +64,36 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
     }
 }
 
+static esp_err_t zb_ota_upgrade_status_handler(esp_zb_zcl_ota_update_message_t messsage)
+{
+    if (messsage.info.status == ESP_ZB_ZCL_STATUS_SUCCESS) {
+        if (messsage.update_status == ESP_ZB_ZCL_OTA_UPGRADE_STATUS_START) {
+            ESP_LOGI(TAG, "OTA start");
+        } else if (messsage.update_status == ESP_ZB_ZCL_OTA_UPGRADE_STATUS_RECEIVE) {
+            ESP_LOGI(TAG, "OTA receiving ...");
+        } else if (messsage.update_status == ESP_ZB_ZCL_OTA_UPGRADE_STATUS_FINISH) {
+            ESP_LOGI(TAG, "OTA finish");
+        } else {
+            ESP_LOGI(TAG, "OTA status: %d", messsage.update_status);
+        }
+    }
+    return ESP_OK;
+}
+
+static esp_err_t zb_action_handler(esp_zb_core_action_callback_id_t callback_id, const void *message)
+{
+    esp_err_t ret = ESP_OK;
+    switch (callback_id) {
+    case ESP_ZB_CORE_OTA_UPGRADE_VALUE_CB_ID:
+        ret = zb_ota_upgrade_status_handler(*(esp_zb_zcl_ota_update_message_t *)message);
+        break;
+    default:
+        ESP_LOGW(TAG, "Receive Zigbee action(0x%x) callback", callback_id);
+        break;
+    }
+    return ret;
+}
+
 static void esp_zb_task(void *pvParameters)
 {
     /* initialize Zigbee stack with Zigbee end-device config */
@@ -113,8 +125,7 @@ static void esp_zb_task(void *pvParameters)
     esp_zb_ep_list_t *esp_zb_ep_list = esp_zb_ep_list_create();
     esp_zb_ep_list_add_ep(esp_zb_ep_list, esp_zb_cluster_list, ESP_OTA_CLIENT_ENDPOINT, ESP_ZB_AF_HA_PROFILE_ID, ESP_ZB_HA_TEST_DEVICE_ID);
     esp_zb_device_register(esp_zb_ep_list);
-    /* ota upgrade callback to get upgrade status from server */
-    esp_zb_device_add_ota_upgrade_status_cb(esp_zb_ota_upgrade_status_cb);
+    esp_zb_core_action_handler_register(zb_action_handler);
     esp_zb_set_primary_network_channel_set(ESP_ZB_PRIMARY_CHANNEL_MASK);
     ESP_ERROR_CHECK(esp_zb_start(true));
     esp_zb_main_loop_iteration();
@@ -128,8 +139,6 @@ void app_main(void)
         .host_config = ESP_ZB_DEFAULT_HOST_CONFIG(),
     };
     ESP_ERROR_CHECK(nvs_flash_init());
-    /* load Zigbee switch platform config to initialization */
     ESP_ERROR_CHECK(esp_zb_platform_config(&config));
-    /* hardware related and device init */
     xTaskCreate(esp_zb_task, "Zigbee_main", 4096, NULL, 5, NULL);
 }

@@ -61,7 +61,6 @@ esp_err_t esp_zb_gateway_console_init(void)
 }
 #endif
 
-/********************* Define functions **************************/
 #if(CONFIG_ZIGBEE_GW_AUTO_UPDATE_RCP)
 static void esp_zb_gateway_update_rcp(void)
 {
@@ -134,7 +133,7 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
             ESP_LOGI(TAG, "Start network formation");
             esp_zb_bdb_start_top_level_commissioning(ESP_ZB_BDB_MODE_NETWORK_FORMATION);
         } else {
-            ESP_LOGE(TAG, "Failed to initialize Zigbee stack (status: %s", esp_err_to_name(err_status));
+            ESP_LOGE(TAG, "Failed to initialize Zigbee stack (status: %s)", esp_err_to_name(err_status));
         }
         break;
     case ESP_ZB_BDB_SIGNAL_FORMATION:
@@ -178,10 +177,9 @@ void rcp_error_handler(uint8_t connect_timeout)
 
 static void esp_zb_task(void *pvParameters)
 {
-    /* initialize Zigbee stack with Zigbee coordinator config */
+    /* initialize Zigbee stack */
     esp_zb_cfg_t zb_nwk_cfg = ESP_ZB_ZC_CONFIG();
     esp_zb_init(&zb_nwk_cfg);
-    /* initiate Zigbee Stack start without zb_send_no_autostart_signal auto-start */
     esp_zb_set_primary_network_channel_set(ESP_ZB_PRIMARY_CHANNEL_MASK);
     ESP_ERROR_CHECK(esp_zb_start(false));
 #if(CONFIG_ZB_RADIO_MACSPLIT_UART)
@@ -198,7 +196,7 @@ void app_main(void)
         .radio_config = ESP_ZB_DEFAULT_RADIO_CONFIG(),
         .host_config = ESP_ZB_DEFAULT_HOST_CONFIG(),
     };
-    /* load Zigbee gateway platform config to initialization */
+
     ESP_ERROR_CHECK(esp_zb_platform_config(&config));
     ESP_ERROR_CHECK(nvs_flash_init());
     ESP_ERROR_CHECK(esp_netif_init());
