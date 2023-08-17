@@ -12,6 +12,7 @@
  * CONDITIONS OF ANY KIND, either express or implied.
  */
 
+#include "string.h"
 #include "nvs_flash.h"
 #include "esp_log.h"
 #include "freertos/FreeRTOS.h"
@@ -39,8 +40,6 @@ static switch_func_pair_t button_func_pair[] = {
 };
 
 static const char *TAG = "ESP_ZB_ON_OFF_SWITCH";
-/* remote device struct for recording and managing node info */
-light_bulb_device_params_t on_off_light;
 /********************* Define functions **************************/
 
 /**
@@ -53,12 +52,10 @@ static void esp_zb_buttons_handler(switch_func_pair_t *button_func_pair)
     if (button_func_pair->func == SWITCH_ONOFF_TOGGLE_CONTROL) {
         /* implemented light switch toggle functionality */
         esp_zb_zcl_on_off_cmd_t cmd_req;
-        cmd_req.zcl_basic_cmd.dst_addr_u.addr_short = on_off_light.short_addr;
-        cmd_req.zcl_basic_cmd.dst_endpoint = on_off_light.endpoint;
         cmd_req.zcl_basic_cmd.src_endpoint = HA_ONOFF_SWITCH_ENDPOINT;
-        cmd_req.address_mode = ESP_ZB_APS_ADDR_MODE_16_ENDP_PRESENT;
+        cmd_req.address_mode = ESP_ZB_APS_ADDR_MODE_DST_ADDR_ENDP_NOT_PRESENT;
         cmd_req.on_off_cmd_id = ESP_ZB_ZCL_CMD_ON_OFF_TOGGLE_ID;
-        ESP_EARLY_LOGI(TAG, "Send 'on_off toggle' command to address(0x%x) endpoint(%d)", on_off_light.short_addr, on_off_light.endpoint);
+        ESP_EARLY_LOGI(TAG, "Send 'on_off toggle' command");
         esp_zb_zcl_on_off_cmd_req(&cmd_req);
     }
 }
@@ -68,12 +65,36 @@ static void bdb_start_top_level_commissioning_cb(uint8_t mode_mask)
     ESP_ERROR_CHECK(esp_zb_bdb_start_top_level_commissioning(mode_mask));
 }
 
+static void bind_cb(esp_zb_zdp_status_t zdo_status, void *user_ctx)
+{
+    if (zdo_status == ESP_ZB_ZDP_STATUS_SUCCESS) {
+        ESP_LOGI(TAG, "Bound successfully!");
+        if (user_ctx) {
+            light_bulb_device_params_t *light = (light_bulb_device_params_t *)user_ctx;
+            ESP_LOGI(TAG, "The light originating from address(0x%x) on endpoint(%d)", light->short_addr, light->endpoint);
+            free(light);
+        }
+    }
+}
+
 static void user_find_cb(esp_zb_zdp_status_t zdo_status, uint16_t addr, uint8_t endpoint, void *user_ctx)
 {
-    ESP_LOGI(TAG, "Match desc response: status(%d), address(0x%x), endpoint(%d)", zdo_status, addr, endpoint);
     if (zdo_status == ESP_ZB_ZDP_STATUS_SUCCESS) {
-        on_off_light.endpoint = endpoint;
-        on_off_light.short_addr = addr;
+        ESP_LOGI(TAG, "Found light");
+        esp_zb_zdo_bind_req_param_t bind_req;
+        light_bulb_device_params_t *light = (light_bulb_device_params_t *)malloc(sizeof(light_bulb_device_params_t));
+        light->endpoint = endpoint;
+        light->short_addr = addr;
+        esp_zb_ieee_address_by_short(light->short_addr, light->ieee_addr);
+        esp_zb_get_long_address(bind_req.src_address);
+        bind_req.src_endp = HA_ONOFF_SWITCH_ENDPOINT;
+        bind_req.cluster_id = ESP_ZB_ZCL_CLUSTER_ID_ON_OFF;
+        bind_req.dst_addr_mode = ESP_ZB_ZDO_BIND_DST_ADDR_MODE_64_BIT_EXTENDED;
+        memcpy(bind_req.dst_address_u.addr_long, light->ieee_addr, sizeof(esp_zb_ieee_addr_t));
+        bind_req.dst_endp = endpoint;
+        bind_req.req_dst_addr = esp_zb_get_short_address(); /* TODO: Send bind request to self */
+        ESP_LOGI(TAG, "Try to bind On/Off");
+        esp_zb_zdo_device_bind_req(&bind_req, bind_cb, (void *)light);
     }
 }
 
