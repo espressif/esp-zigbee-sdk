@@ -393,7 +393,7 @@ void esp_zb_active_scan_request(uint32_t channel_mask, uint8_t scan_duration, es
  * @note  Set this function AFTER @ref esp_zb_init called, if user wants to set specific address
  * without reading MAC address from flash refer to tools/mfg_tool or eFUSE.
  *
- * @param[in] addr Pointer of long address
+ * @param[in] addr An 64-bit of IEEE long address, which is presented in little-endian.
  * @return - ESP_OK on success
  */
 esp_err_t esp_zb_set_long_address(esp_zb_ieee_addr_t addr);
@@ -403,7 +403,7 @@ esp_err_t esp_zb_set_long_address(esp_zb_ieee_addr_t addr);
  *
  * @note This function will return a pointer to 64-bit of ieee long address.
  *
- * @param[out] addr pointer of long address
+ * @param[out] addr An 64-bit of IEEE long address, which is presented in little-endian.
  *
  */
 void esp_zb_get_long_address(esp_zb_ieee_addr_t addr);
@@ -419,7 +419,7 @@ uint16_t esp_zb_get_short_address(void);
 /**
  * @brief Set the Zigbee network extended PAN ID.
  *
- * @param ext_pan_id The extended PAN ID of Zigbee which will be set to
+ * @param ext_pan_id An 64-bit of extended PAN ID, which is presented in little-endian.
  */
 void esp_zb_set_extended_pan_id(const esp_zb_ieee_addr_t ext_pan_id);
 
@@ -428,7 +428,7 @@ void esp_zb_set_extended_pan_id(const esp_zb_ieee_addr_t ext_pan_id);
  *
  * @note This function will return back a pointer to 64-bit of extended PAN ID.
  *
- * @param[out] ext_pan_id pointer of extended PAN ID
+ * @param[out] ext_pan_id An 64-bit of extended PAN ID, which is presented in little-endian.
  *
  */
 void esp_zb_get_extended_pan_id(esp_zb_ieee_addr_t ext_pan_id);
@@ -470,11 +470,22 @@ void esp_zb_get_tx_power(int8_t *power);
 /**
  * @brief  Get the network short address by the IEEE address
  *
- * @param[in] address 8-byte for the IEEE address
+ * @param[in] address An 64-bit for the IEEE address, which is presented in little-endian.
  * @return Network short address
  *
  */
 uint16_t esp_zb_address_short_by_ieee(esp_zb_ieee_addr_t address);
+
+/**
+ * @brief Get the network IEEE address by the short address
+ *
+ * @param[in] short_addr The 2-byte address which will been used to search the mapped IEEE address
+ * @param[out] ieee_addr The 64-bit of address for Zigbee IEEE address, which is presented in little-endian.
+ * @return
+ *      - ESP_OK: on success
+ *      - ESP_ERR_NOT_FOUND: not found the IEEE address
+ */
+esp_err_t esp_zb_ieee_address_by_short(uint16_t short_addr, uint8_t *ieee_addr);
 
 /**
  * @brief   Get the Zigbee network device type.
@@ -608,6 +619,13 @@ void esp_zb_scheduler_alarm(esp_zb_callback_t cb, uint8_t param, uint32_t time);
  * @param[in] param - parameter to pass to the function to cancel
  */
 void esp_zb_scheduler_alarm_cancel(esp_zb_callback_t cb, uint8_t param);
+
+/**
+ * @brief Add ZCL raw device cb id getting callback
+ *
+ * @param cb A device callback for getting the raw device cb id buffer, refer to esp_zb_zcl_device_cb_id_callback_t
+ */
+void esp_zb_zcl_device_cb_id_cb(esp_zb_zcl_device_cb_id_callback_t cb);
 
 /* callback register */
 /**
