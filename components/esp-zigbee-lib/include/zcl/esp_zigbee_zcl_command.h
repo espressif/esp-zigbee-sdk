@@ -674,7 +674,8 @@ typedef struct esp_zb_zcl_cmd_info_s {
 typedef struct esp_zb_zcl_attribute_data_s {
     esp_zb_zcl_attr_type_t type;                /*!< Data type to be used */
     uint8_t size;                               /*!< Size of string data type, first byte should be the length of string */
-    void *value;                                /*!< Supported data types u8, s8, u16, s16, u32, s32, char string */
+    void *value;                                /*!< Supported data types u8, s8, u16, s16, u32, s32, char string.
+                                                   Note that if the type is string, the first byte of value indicates the string length */
 } ESP_ZB_PACKED_STRUCT
 esp_zb_zcl_attribute_data_t;
 
@@ -693,7 +694,7 @@ typedef struct esp_zb_zcl_command_s {
  *
  */
 typedef struct esp_zb_device_cb_common_info_s {
-    esp_zb_zcl_status_t status;                 /*!< The operation status of ZCL, refers to esp_zb_zcl_status_t */
+    esp_zb_zcl_status_t status;                 /*!< The operation status of ZCL, refer to esp_zb_zcl_status_t */
     uint8_t dst_endpoint;                       /*!< The destination endpoint id of the ZCL indication */
     uint16_t cluster;                           /*!< The cluster id of the ZCL indication */
 } esp_zb_device_cb_common_info_t;
@@ -708,10 +709,11 @@ typedef struct esp_zb_zcl_set_attr_value_message_s {
     esp_zb_zcl_attribute_data_t data;           /*!< The payload data for Zigbee cluster */
 } esp_zb_zcl_set_attr_value_message_t;
 
+
 /**
- * @brief The Zigbee zcl level control set value device callback message struct
- *
- */
+* @brief The Zigbee zcl level control set value device callback message struct
+*
+*/
 typedef struct esp_zb_zcl_level_control_set_value_message_s {
     esp_zb_device_cb_common_info_t info;        /*!< The common information for Zigbee device callback */
     uint16_t attribute;                         /*!< The ZCL level control current level */
@@ -740,7 +742,7 @@ typedef struct esp_zb_zcl_recall_scene_message_s {
     uint8_t scene_id;                               /*!< The scene id of Zigbee scenes cluster */
     uint16_t transition_time;                       /*!< The recall transition time of Zigbee scenes cluster */
     esp_zb_zcl_scenes_extension_field_t *field;     /*!< The extension filed of Zigbee scenes cluster,{{cluster_id, length, value},..., {cluster_id,
-                                                       length, value}},     note that the `NULL` is the end of field */
+                                                       length, value}}, note that the `NULL` is the end of field */
 } esp_zb_zcl_recall_scene_message_t;
 
 /**
@@ -750,7 +752,7 @@ typedef struct esp_zb_zcl_recall_scene_message_s {
 typedef struct esp_zb_zcl_ias_zone_enroll_response_message_s {
     esp_zb_device_cb_common_info_t info;        /*!< The common information for Zigbee device callback */
     uint8_t response_code;                      /*!< The response code of Zigbee ias zone cluster */
-    uint8_t zone_id;                            /*!< The id of Zigbee ias zone cluster */
+    uint8_t zone_id;                            /*!< The id of Zigbee ias zone cluster, refer to esp_zb_zcl_ias_zone_enroll_response_code_t  */
 } esp_zb_zcl_ias_zone_enroll_response_message_t;
 
 /**

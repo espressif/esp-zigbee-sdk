@@ -2,6 +2,29 @@
 
 Versions
 --------
+0.9.1 version release of ESP-ZIGBEE-SDK
+
+Features
+--------
+
+* Add the Zigbee device sends command to itself support in non-network state.
+* Add the short address maps ieee address API.
+* Fix the custom cluster request command without size field.
+* Fix the wrong printing of IEEE address for CLI
+* Fix the byte order for long address
+
+Known Issues
+------------
+
+New Changes
+-----------
+
+Bug Fixes
+---------
+
+
+Versions
+--------
 0.9.0 version release of ESP-ZIGBEE-SDK
 
 Features
