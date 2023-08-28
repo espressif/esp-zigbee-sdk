@@ -12,6 +12,7 @@
  * CONDITIONS OF ANY KIND, either express or implied.
  */
 
+#include "string.h"
 #include "nvs_flash.h"
 #include "esp_log.h"
 #include "freertos/FreeRTOS.h"
@@ -48,9 +49,6 @@ static uint16_t color_y_table[3] = {
 
 static const char *TAG = "ESP_ZB_COLOR_DIMM_SWITCH";
 
-/* declare a remote device for recording and managing node info */
-light_bulb_device_params_t color_light;
-
 /********************* Define functions **************************/
 /**
  * @brief Callback for button events, currently only toggle event available
@@ -69,27 +67,21 @@ static void esp_zb_buttons_handler(switch_func_pair_t *button_func_pair)
         if (press_count % 2 == 1) {
             /* changing the color control command by button pressed */
             esp_zb_zcl_color_move_to_color_cmd_t cmd_color;
-            cmd_color.address_mode = ESP_ZB_APS_ADDR_MODE_16_ENDP_PRESENT;
             cmd_color.color_x = refer_x;
             cmd_color.color_y = refer_y;
             cmd_color.transition_time = 0;
-            cmd_color.zcl_basic_cmd.dst_addr_u.addr_short = color_light.short_addr;
-            cmd_color.zcl_basic_cmd.dst_endpoint = color_light.endpoint;
+            cmd_color.address_mode = ESP_ZB_APS_ADDR_MODE_DST_ADDR_ENDP_NOT_PRESENT;
             cmd_color.zcl_basic_cmd.src_endpoint = HA_COLOR_DIMMABLE_SWITCH_ENDPOINT;
-            ESP_EARLY_LOGI(TAG, "Send command to address(0x%x) endpoint(%d) for moving light color (0x%x, 0x%x)", color_light.short_addr,
-                           color_light.endpoint, refer_x, refer_y);
+            ESP_EARLY_LOGI(TAG, "Send command for moving light color to (0x%x, 0x%x)", refer_x, refer_y);
             esp_zb_zcl_color_move_to_color_cmd_req(&cmd_color);
         } else {
             /* changing the level control command by button pressed */
             esp_zb_zcl_move_to_level_cmd_t cmd_level;
-            cmd_level.zcl_basic_cmd.dst_addr_u.addr_short = color_light.short_addr;
-            cmd_level.zcl_basic_cmd.dst_endpoint = color_light.endpoint;
             cmd_level.zcl_basic_cmd.src_endpoint = HA_COLOR_DIMMABLE_SWITCH_ENDPOINT;
-            cmd_level.address_mode = ESP_ZB_APS_ADDR_MODE_16_ENDP_PRESENT;
+            cmd_level.address_mode = ESP_ZB_APS_ADDR_MODE_DST_ADDR_ENDP_NOT_PRESENT;
             cmd_level.level = level_value;
             cmd_level.transition_time = 0xffff;
-            ESP_EARLY_LOGI(TAG, "Send command to address(0x%x) endpoint(%d) for moving light level to %d", color_light.short_addr,
-                           color_light.endpoint, level_value);
+            ESP_EARLY_LOGI(TAG, "Send command for moving light to %d level", level_value);
             esp_zb_zcl_level_move_to_level_with_onoff_cmd_req(&cmd_level);
             level_value += step;
         }
@@ -102,12 +94,39 @@ static void bdb_start_top_level_commissioning_cb(uint8_t mode_mask)
     ESP_ERROR_CHECK(esp_zb_bdb_start_top_level_commissioning(mode_mask));
 }
 
+static void bind_cb(esp_zb_zdp_status_t zdo_status, void *user_ctx)
+{
+    if (zdo_status == ESP_ZB_ZDP_STATUS_SUCCESS) {
+        ESP_LOGI(TAG, "Bound successfully!");
+        if (user_ctx) {
+            light_bulb_device_params_t *light = (light_bulb_device_params_t *)user_ctx;
+            ESP_LOGI(TAG, "The light originating from address(0x%x) on endpoint(%d)", light->short_addr, light->endpoint);
+            free(light);
+        }
+    }
+}
+
 static void user_find_cb(esp_zb_zdp_status_t zdo_status, uint16_t addr, uint8_t endpoint, void *user_ctx)
 {
-    ESP_LOGI(TAG, "Match desc response: status(%d), address(0x%x), endpoint(%d)", zdo_status, addr, endpoint);
     if (zdo_status == ESP_ZB_ZDP_STATUS_SUCCESS) {
-        color_light.endpoint = endpoint;
-        color_light.short_addr = addr;
+        ESP_LOGI(TAG, "Found dimmable light");
+        esp_zb_zdo_bind_req_param_t bind_req;
+        light_bulb_device_params_t *light = (light_bulb_device_params_t *)malloc(sizeof(light_bulb_device_params_t));
+        light->endpoint = endpoint;
+        light->short_addr = addr;
+        esp_zb_ieee_address_by_short(light->short_addr, light->ieee_addr);
+        esp_zb_get_long_address(bind_req.src_address);
+        bind_req.src_endp = HA_COLOR_DIMMABLE_SWITCH_ENDPOINT;
+        bind_req.cluster_id = ESP_ZB_ZCL_CLUSTER_ID_COLOR_CONTROL;
+        bind_req.dst_addr_mode = ESP_ZB_ZDO_BIND_DST_ADDR_MODE_64_BIT_EXTENDED;
+        memcpy(bind_req.dst_address_u.addr_long, light->ieee_addr, sizeof(esp_zb_ieee_addr_t));
+        bind_req.dst_endp = endpoint;
+        bind_req.req_dst_addr = esp_zb_get_short_address(); /* TODO: Send bind request to self */
+        ESP_LOGI(TAG, "Try to bind color control");
+        esp_zb_zdo_device_bind_req(&bind_req, bind_cb, NULL);
+        bind_req.cluster_id = ESP_ZB_ZCL_CLUSTER_ID_LEVEL_CONTROL;
+        ESP_LOGI(TAG, "Try to bind level control");
+        esp_zb_zdo_device_bind_req(&bind_req, bind_cb, (void *)light);
     }
 }
 

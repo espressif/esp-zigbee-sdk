@@ -92,7 +92,7 @@ static esp_err_t attr_cb(const esp_zb_zcl_set_attr_value_message_t message)
     esp_err_t ret = ESP_OK;
     bool light_state = 0;
     if (message.info.status == ESP_ZB_ZCL_STATUS_SUCCESS) {
-        ESP_LOGI(TAG, "Received message: endpoint(0x%x), cluster(0x%x), attribute(0x%x), data size(%d)", message.info.dst_endpoint,
+        ESP_LOGI(TAG, "Received message: endpoint(%d), cluster(0x%x), attribute(0x%x), data size(%d)", message.info.dst_endpoint,
                  message.info.cluster, message.attribute, message.data.size);
         if (message.info.dst_endpoint == HA_ESP_LIGHT_ENDPOINT) {
             if (message.info.cluster == ESP_ZB_ZCL_CLUSTER_ID_ON_OFF) {
