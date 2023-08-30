@@ -1,3 +1,31 @@
+# 30-Aug-2023
+
+Versions
+--------
+0.9.3 version release of ESP-ZIGBEE-SDK
+
+Features
+--------
+
+* Add zigbee action event mechanism.
+* Add more support for Zigbee zcl common command.
+* Add zigbee zcl scene response support.
+* Optimize the Zigbee endpoint handler implementation.
+* Optimize the custom cluster implementation.
+* Move the active_scan_complete_req to zdo layer
+
+Known Issues
+------------
+
+New Changes
+-----------
+
+Bug Fixes
+---------
+Closes: https://github.com/espressif/esp-zigbee-sdk/issues/48
+Closes: https://github.com/espressif/esp-zigbee-sdk/issues/70
+
+
 # 29-Aug-2023
 
 Versions

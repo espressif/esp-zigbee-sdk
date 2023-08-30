@@ -139,7 +139,7 @@ void zigbee_stack_init(void)
     esp_zb_ep_list_t *esp_zb_configuration_tool_ep = esp_zb_configuration_tool_ep_create(ESP_ZIGBEE_CLI_ENDPOINT, &config_tool_cfg);
     esp_zb_device_register(esp_zb_configuration_tool_ep);
     /* Register cluster response handler for ESP Zigbee CLI endpoint */
-    esp_zb_add_cli_resp_handler_cb(ESP_ZIGBEE_CLI_ENDPOINT, esp_zb_cli_agent_handler);
+    esp_zb_cli_resp_handler_register(esp_zb_cli_agent_handler);
 }
 
 void zb_main_loop_task(void *arg)

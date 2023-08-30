@@ -25,6 +25,20 @@ extern "C" {
 #define ESP_ZB_DEVICE_LEAVE_REQ_TIMEOUT             (5 * ESP_ZB_TIME_ONE_SECOND)            /* timeout for device leave */
 #define ESP_ZB_DEVICE_BIND_TABLE_REQ_TIMEOUT        (5 * ESP_ZB_TIME_ONE_SECOND)            /* timeout for device bind table request */
 
+
+/** Active scan network callback
+ *
+ * @brief A ZDO active scan request callback for user to get scan list status.
+ *
+ * @note User's callback get response from the device that found in network.
+ *
+ * @param[in] zdo_status The ZDO response status, refer to `esp_zb_zdp_status`
+ * @param[in] count     Number of discovered networks
+ * @param[in] nwk_descriptor The pointer to all discvoered networks see refer to esp_zb_network_descriptor_t
+ *
+ */
+typedef void (*esp_zb_zdo_scan_complete_callback_t)(esp_zb_zdp_status_t zdo_status, uint8_t count, esp_zb_network_descriptor_t *nwk_descriptor);
+
 /** Find device callback
  *
  * @brief A ZDO match desc request callback for user to get response info.
@@ -274,6 +288,17 @@ typedef void (*esp_zb_zdo_binding_table_callback_t)(const esp_zb_zdo_binding_tab
 
 /********************* Declare functions **************************/
 /* ZDO command list, more ZDO command will be supported later like node_desc, power_desc */
+
+/**
+ * @brief   Active scan available network.
+ *
+ * Network discovery service for scanning available network
+ *
+ * @param[in] channel_mask Valid channel mask is from 0x00000800 (only channel 11) to 0x07FFF800 (all channels from 11 to 26)
+ * @param[in] scan_duration Time to spend scanning each channel
+ * @param[in] user_cb   A user callback to get the active scan result please refer to esp_zb_zdo_scan_complete_callback_t
+ */
+void esp_zb_active_scan_request(uint32_t channel_mask, uint8_t scan_duration, esp_zb_zdo_scan_complete_callback_t user_cb);
 
 /**
  * @brief   Send bind device request command

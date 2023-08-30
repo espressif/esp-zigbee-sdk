@@ -503,18 +503,6 @@ typedef struct esp_zb_zcl_scenes_view_scene_cmd_s {
 } esp_zb_zcl_scenes_view_scene_cmd_t;
 
 /**
- * @brief The Zigbee ZCL scenes view scene response struct for users
- *
- */
-typedef struct esp_zb_zcl_scenes_view_scene_resp_s {
-    uint8_t status;                                  /*!< Command execution status refers to esp_zb_zcl_status_t */
-    uint16_t group_id;                               /*!< Scene group identifier */
-    uint8_t scene_id;                                /*!< Scene identifier */
-    uint16_t transition_time;                        /*!< Scene transition time Valid if status is refers to ESP_ZB_ZCL_STATUS_SUCCESS only */
-    esp_zb_zcl_scenes_extension_field_t *field_data; /*!< Extension field, {{cluster_id, length, value}, ... , {cluster_id, length, value}} */
-} esp_zb_zcl_scenes_view_scene_resp_t;
-
-/**
  * @brief The Zigbee ZCL scenes store scene command struct
  *
  */
@@ -641,43 +629,27 @@ typedef struct esp_zb_zcl_custom_cluster_cmd_resp_s {
     uint16_t custom_cmd_resp_id;                            /*!< Custom command response id */
 } esp_zb_zcl_custom_cluster_cmd_resp_t;
 
-/**
- * @brief The Zigbee zcl cluster command value struct
- *
- */
-typedef struct {
-    esp_zb_zcl_attr_type_t type;                /*!< Data type to be used */
-    uint8_t length;                             /*!< Length of string data type, first byte should be the length of string */
-    void *value;                                /*!< Supported data types u8, s8, u16, s16, u32, s32, char string */
-} ESP_ZB_PACKED_STRUCT
-esp_zb_zcl_cluster_command_value_t;
-
-/**
- * @brief The Zigbee zcl cluster received command application information struct
- *
- */
-typedef struct esp_zb_zcl_cmd_info_s {
-    uint8_t status;                                 /*!< Parse the status of command */
-    esp_zb_zcl_addr_t zcl_addr_u;                   /*!< Type to represent source address of ZCL message */
-    uint8_t  dst_endpoint;                          /*!< The destination enpoint of command */
-    uint8_t  src_endpoint;                          /*!< The source enpoint of command */
-    uint16_t cluster_id;                            /*!< The cluster id for command */
-    uint16_t command_id;                            /*!< The command id to be used */
-    esp_zb_zcl_cluster_command_value_t req;         /*!< The request data for command id */
-} esp_zb_zcl_cmd_info_t;
-
 /*********************** User Message *****************************/
 /**
  * @brief The Zigbee zcl cluster attribute value struct
  *
  */
 typedef struct esp_zb_zcl_attribute_data_s {
-    esp_zb_zcl_attr_type_t type;                /*!< Data type to be used */
-    uint8_t size;                               /*!< Size of string data type, first byte should be the length of string */
-    void *value;                                /*!< Supported data types u8, s8, u16, s16, u32, s32, char string.
+    esp_zb_zcl_attr_type_t type;                /*!< The type of attribute, which can refer to esp_zb_zcl_attr_type_t */
+    uint8_t size;                               /*!< The Size of string data type, first byte should be the length of string */
+    void *value;                                /*!< Supported data types u8, s8, u16, s16, u32, s32, char string
                                                    Note that if the type is string, the first byte of value indicates the string length */
 } ESP_ZB_PACKED_STRUCT
 esp_zb_zcl_attribute_data_t;
+
+/**
+ * @brief The Zigbee zcl cluster attribute struct
+ *
+ */
+typedef struct esp_zb_zcl_attribute_s {
+    uint16_t id;                      /*!< The identify of attribute */
+    esp_zb_zcl_attribute_data_t data; /*!< The data fo attribute */
+} esp_zb_zcl_attribute_t;
 
 /**
  * @brief The Zigbee zcl cluster command properties struct
@@ -705,20 +677,8 @@ typedef struct esp_zb_device_cb_common_info_s {
  */
 typedef struct esp_zb_zcl_set_attr_value_message_s {
     esp_zb_device_cb_common_info_t info;        /*!< The common information for Zigbee device callback */
-    uint16_t attribute;                         /*!< The ZCL indication for attribute id */
-    esp_zb_zcl_attribute_data_t data;           /*!< The payload data for Zigbee cluster */
+    esp_zb_zcl_attribute_t attribute;           /*!< The attribute entry whose value is set */
 } esp_zb_zcl_set_attr_value_message_t;
-
-
-/**
-* @brief The Zigbee zcl level control set value device callback message struct
-*
-*/
-typedef struct esp_zb_zcl_level_control_set_value_message_s {
-    esp_zb_device_cb_common_info_t info;        /*!< The common information for Zigbee device callback */
-    uint16_t attribute;                         /*!< The ZCL level control current level */
-    esp_zb_zcl_attribute_data_t data;           /*!< The payload data for Zigbee cluster */
-} esp_zb_zcl_level_control_set_value_message_t;
 
 /**
  * @brief The Zigbee zcl scene cluster store scene device callback message struct
@@ -741,7 +701,7 @@ typedef struct esp_zb_zcl_recall_scene_message_s {
     uint16_t group_id;                              /*!< The group id of Zigbee scenes cluster */
     uint8_t scene_id;                               /*!< The scene id of Zigbee scenes cluster */
     uint16_t transition_time;                       /*!< The recall transition time of Zigbee scenes cluster */
-    esp_zb_zcl_scenes_extension_field_t *field;     /*!< The extension filed of Zigbee scenes cluster,{{cluster_id, length, value},..., {cluster_id,
+    esp_zb_zcl_scenes_extension_field_t *field_set; /*!< The extension filed of Zigbee scenes cluster,{{cluster_id, length, value},..., {cluster_id,
                                                        length, value}}, note that the `NULL` is the end of field */
 } esp_zb_zcl_recall_scene_message_t;
 
@@ -764,7 +724,188 @@ typedef struct esp_zb_zcl_ota_update_message_s {
     esp_zb_zcl_ota_upgrade_status_t update_status;  /*!< The update status for Zigbee ota update */
 } esp_zb_zcl_ota_update_message_t;
 
-/********************* Declare functions **************************/
+/**
+ * @brief The Zigbee zcl command basic application information struct
+ *
+ */
+typedef struct esp_zb_zcl_cmd_info_s {
+    esp_zb_zcl_status_t status;    /*!< The status of command, which can refer to  esp_zb_zcl_status_t */
+    esp_zb_zcl_addr_t src_address; /*!< The struct of address contains short and ieee address, which can refer to esp_zb_zcl_addr_s */
+    uint16_t dst_address;          /*!< The destination short address of command */
+    uint8_t src_endpoint;          /*!< The source enpoint of command */
+    uint8_t dst_endpoint;          /*!< The destination enpoint of command */
+    uint16_t cluster;              /*!< The cluster id for command */
+    uint16_t profile;              /*!< The application profile identifier*/
+    esp_zb_zcl_command_t command;  /*!< The properties of command */
+} esp_zb_zcl_cmd_info_t;
+
+/**
+ * @brief The Zigbee zcl attribute report message struct
+ *
+ */
+typedef struct esp_zb_zcl_report_attr_message_s {
+    esp_zb_zcl_status_t status;       /*!< The status of the report attribute response, which can refer to esp_zb_zcl_status_t */
+    esp_zb_zcl_addr_t src_address;    /*!< The struct of address contains short and ieee address, which can refer to esp_zb_zcl_addr_s */
+    uint8_t src_endpoint;             /*!< The endpoint id which comes from report device */
+    uint8_t dst_endpoint;             /*!< The destination endpoint id */
+    uint16_t cluster;                 /*!< The cluster id that reported */
+    esp_zb_zcl_attribute_t attribute; /*!< The attribute entry of report response */
+} esp_zb_zcl_report_attr_message_t;
+
+/**
+ * @brief The Zigbee zcl read attribute response struct
+ *
+ */
+typedef struct esp_zb_zcl_cmd_read_attr_resp_message_s {
+    esp_zb_zcl_cmd_info_t info;       /*!< The basic information of reading attribute response message that refers to esp_zb_zcl_cmd_info_t */
+    esp_zb_zcl_attribute_t attribute; /*!< The attribute entry of reading attribute response */
+} esp_zb_zcl_cmd_read_attr_resp_message_t;
+
+/**
+ * @brief The Zigbee zcl response struct for writing attribute
+ *
+ */
+typedef struct esp_zb_zcl_cmd_write_attr_resp_message_s {
+    esp_zb_zcl_cmd_info_t info; /*!< The basic information of write attribute response message that refers to esp_zb_zcl_cmd_info_t */
+    uint16_t attribute_id;      /*!< The attribute id of write attribute response */
+} esp_zb_zcl_cmd_write_attr_resp_message_t;
+
+/**
+ * @brief The Zigbee zcl configure report response struct
+ *
+ */
+typedef struct esp_zb_zcl_cmd_config_report_resp_message_s {
+    esp_zb_zcl_cmd_info_t info; /*!< The basic information of configuring report response message that refers to esp_zb_zcl_cmd_info_t */
+    uint16_t attribute_id;      /*!< The attribute id of configuring report response */
+} esp_zb_zcl_cmd_config_report_resp_message_t;
+
+/**
+ * @brief The Zigbee zcl reading report configuration response struct
+ *
+ */
+typedef struct esp_zb_zcl_cmd_read_report_config_resp_message_s {
+    esp_zb_zcl_cmd_info_t info; /*!< The basic information of reading report cofiguration response message that refers to esp_zb_zcl_cmd_info_t */
+    uint8_t report_direction;   /*!< Direction: report is client or server */
+    uint16_t attribute_id;      /*!< The Attribute id */
+    union {
+        struct {
+            uint8_t attr_type;     /*!< Attribute type */
+            uint16_t min_interval; /*!< Mininum interval time */
+            uint16_t max_interval; /*!< Maximum interval time */
+            uint8_t delta[1];      /*!< Actual reportable change */
+        } client;                  /*!< Describes how attribute should be reported */
+        struct {
+            uint16_t timeout;      /*!< Timeout period */
+        } server;                  /*!< Describes how attribute report is received  */
+    };
+} esp_zb_zcl_cmd_read_report_config_resp_message_t;
+
+/**
+ * @brief The Zigbee zcl group operation response struct
+ *
+ * @note Operation: add or remove
+ */
+typedef struct esp_zb_zcl_groups_operate_group_resp_message_s {
+    esp_zb_zcl_cmd_info_t info; /*!< The basic information of group cluster response that refers to esp_zb_zcl_cmd_info_t */
+    uint16_t group_id;          /*!< The Group id of adding group response */
+} esp_zb_zcl_groups_operate_group_resp_message_t;
+
+/**
+ * @brief The Zigbee zcl group view response struct
+ *
+ */
+typedef struct esp_zb_zcl_groups_view_group_resp_message_s {
+    esp_zb_zcl_cmd_info_t info; /*!< The basic information of group cluster response that refers to esp_zb_zcl_cmd_info_t */
+    uint16_t group_id;          /*!< The group id of adding group response */
+    uint8_t *group_name;        /*!< The group name */
+} esp_zb_zcl_groups_view_group_resp_message_t;
+
+/**
+ * @brief The Zigbee zcl group get membership response struct
+ *
+ */
+typedef struct esp_zb_zcl_groups_get_group_membership_resp_message_s {
+    esp_zb_zcl_cmd_info_t info; /*!< The basic information of group cluster response that refers to esp_zb_zcl_cmd_info_t */
+    uint8_t capacity;           /*!< The Capacity of group table */
+    uint8_t group_count;        /*!< The Group  count */
+    uint16_t *group_id;         /*!< The Group id list */
+} esp_zb_zcl_groups_get_group_membership_resp_message_t;
+
+/**
+ * @brief The Zigbee ZCL scenes operate response struct
+ *
+ * @note Operation: add or remove or remove_all or store, refer to esp_zb_zcl_scenes_cmd_resp_id_t
+ */
+typedef struct esp_zb_zcl_scenes_operate_scene_resp_message_s {
+    esp_zb_zcl_cmd_info_t info; /*!< The basic information of scene cluster response that refers to esp_zb_zcl_cmd_info_t */
+    uint16_t group_id;          /*!< The Scene group identifier */
+    uint8_t scene_id;           /*!< The Scene identifier */
+} esp_zb_zcl_scenes_operate_scene_resp_message_t;
+
+/**
+ * @brief The Zigbee ZCL scenes view scene response struct
+ *
+ */
+typedef struct esp_zb_zcl_scenes_view_scene_resp_message_s {
+    esp_zb_zcl_cmd_info_t info;                      /*!< The basic information of scene cluster response that refers to esp_zb_zcl_cmd_info_t */
+    uint16_t group_id;                               /*!< The Scene group identifier */
+    uint8_t scene_id;                                /*!< The Scene identifier */
+    uint16_t transition_time;                        /*!< The Scene transition time Valid if status is refers to ESP_ZB_ZCL_STATUS_SUCCESS only */
+    esp_zb_zcl_scenes_extension_field_t *field_set;  /*!< Extension field, {{cluster_id, length, value}, ... , {cluster_id, length, value}} */
+} esp_zb_zcl_scenes_view_scene_resp_message_t;
+
+/**
+ * @brief The Zigbee ZCL scenes get scene membership response struct
+ *
+ */
+typedef struct esp_zb_zcl_scenes_get_scene_membership_resp_message_s {
+    esp_zb_zcl_cmd_info_t info; /*!< The basic information of scene cluster response that refers to esp_zb_zcl_cmd_info_t */
+    uint8_t capacity;           /*!< The Scene table capacity(Mandatory) */
+    uint16_t group_id;          /*!< The Group identifier(Mandatory) */
+    uint8_t scene_count;        /*!< The Number of scenes(Optional) */
+    uint8_t *scene_list;        /*!< The Array of scenes corresponding to the group identifier(Optional) */
+} esp_zb_zcl_scenes_get_scene_membership_resp_message_t;
+/**
+ * @brief The Zigbee ZCL IAS Zone enroll request message struct
+ * 
+ */
+typedef struct esp_zb_zcl_ias_zone_enroll_request_message_s {
+    esp_zb_zcl_cmd_info_t info;                 /*!< The basic information of ias zone message that refers to esp_zb_zcl_cmd_info_t */
+    uint16_t zone_type;                         /*!< The zone type, refer to esp_zb_zcl_ias_zone_zonetype_t */
+    uint16_t manufacturer_code;                 /*!< The manufacturer code */
+} esp_zb_zcl_ias_zone_enroll_request_message_t;
+
+/**
+ * @brief The Zigbee ZCL IAS Zone status change notification response message struct
+ * 
+ */
+typedef struct esp_zb_zcl_ias_zone_status_change_notification_message_s {
+    esp_zb_zcl_cmd_info_t info;             /*!< The basic information of ias zone status message that refers to esp_zb_zcl_report_attr_message_t */
+    uint16_t zone_status;                   /*!< The zone status attribute, which can refer esp_zb_zcl_ias_zone_zonestatus_t */
+    uint8_t extended_status;                /*!< Reserved for additional status information and SHALL be set to zero */
+    uint8_t zone_id;                        /*!< The Zone ID is the index of the Zone in the CIE's zone table */
+    uint16_t delay;                         /*!< The amount of time, in quarter-seconds, from the moment when a change takes
+                                                 place in one or more bits of the Zone Status attribute */
+} esp_zb_zcl_ias_zone_status_change_notification_message_t;
+
+/**
+ * @brief The Zigbee zcl privilege command message struct
+ *
+ */
+typedef struct esp_zb_zcl_privilege_command_message_s {
+    esp_zb_zcl_cmd_info_t info; /*!< The basic information of privilege command message that refers to esp_zb_zcl_report_attr_message_t */
+    uint16_t size;              /*!< The size of data */
+    void *data;                 /*!< The privilege command data */
+} esp_zb_zcl_privilege_command_message_t;
+
+/**
+ * @brief The Zigbee zcl customized cluster message struct
+ *
+ */
+typedef struct esp_zb_zcl_custom_cluster_command_message_s {
+    esp_zb_zcl_cmd_info_t info;       /*!< The basic information of customized cluster command message that refers to esp_zb_zcl_report_attr_message_t */
+    esp_zb_zcl_attribute_data_t data; /*!< The attribute value of customized cluster */
+} esp_zb_zcl_custom_cluster_command_message_t;
 
 /* read attribute, write attribute, config report and more general command will support later */
 
