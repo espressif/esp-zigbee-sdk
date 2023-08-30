@@ -55,6 +55,11 @@ typedef enum {
 
 #define ESP_ZB_TRANSCEIVER_ALL_CHANNELS_MASK   0x07FFF800U /*!< channel 11-26 for compatibility with 2.4GHZ*/
 
+#ifdef CONFIG_ZB_ZED
+#define ESP_ZB_SLEEP_MINIMUM_THRESHOLD_MS 20U /*! Default sleep threshold. Do not sleep when it is less then 1 Beacon Interval to wake up*/
+#define ESP_ZB_SLEEP_MAXIMUM_THRESHOLD_MS 86400000U /*! Maximum sleep threshold*/
+#endif /** CONFIG_ZB_ZED */
+
 /** ZCL device callback
  *
  * @brief Add the callback to obtain the zboss original buffer id for zcl DEVICE_CB_ID
@@ -912,6 +917,41 @@ void esp_zb_zdo_setup_network_as_distributed(void);
  */
 bool esp_zb_network_is_distributed(void);
 #endif
+
+/**
+ * @brief Set the sleep threshold on the device. When the scheduler detects that the device can enter sleep mode, it will notify the application with the signal ESP_ZB_COMMON_SIGNAL_CAN_SLEEP.
+ * The device cannot enter sleep mode when the sleep interval is less than this threshold.
+ * Default sleep threshold is 20 milliseconds, beacuse do not sleep when it is less then 1 Beacon Interval to wake up.
+ *
+ * @param[in] threshold_ms Sleep threshold in milliseconds
+ *
+ * @return ESP_OK if new threshold is valid and applied.
+ * @return ESP_FAIL if the user attempts to set a threshold greater than ESP_ZB_SLEEP_MAXIMUM_THRESHOLD_MS or less than ESP_ZB_SLEEP_MINIMUM_THRESHOLD_MS.
+ *
+ */
+esp_err_t esp_zb_sleep_set_threshold(uint32_t threshold_ms);
+
+/**
+* @brief Blocking function responsible for putting device into sleep mode.
+*/
+void esp_zb_sleep_now(void);
+
+/**
+ * @brief Enable the Zigbee sleep.
+ *
+ * @param[in] enable Enable Zigbee Sleep
+ *
+ */
+void esp_zb_sleep_enable(bool enable);
+
+/**
+ * @brief Get Zigbee sleep is enable or not.
+ *
+ * @return TRUE Zigbee sleep is enable.
+ * @return FALSE Zigbee sleep is disable.
+ *
+ */
+bool esp_zb_sleep_is_enable(void);
 
 #ifdef __cplusplus
 }
