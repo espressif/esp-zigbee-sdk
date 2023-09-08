@@ -74,6 +74,7 @@ typedef enum esp_zb_core_action_callback_id_s {
     ESP_ZB_CORE_CMD_WRITE_ATTR_RESP_CB_ID               = 0x1001,   /*!< Write attribute response, refer to esp_zb_zcl_cmd_write_attr_resp_message_t */
     ESP_ZB_CORE_CMD_REPORT_CONFIG_RESP_CB_ID            = 0x1002,   /*!< Configure reprot response, refer to esp_zb_zcl_cmd_config_report_resp_message_t */
     ESP_ZB_CORE_CMD_READ_REPORT_CFG_RESP_CB_ID          = 0x1003,   /*!< Read report configuration response, refer to esp_zb_zcl_cmd_read_report_config_resp_message_t */
+    ESP_ZB_CORE_CMD_DISC_ATTR_RESP_CB_ID                = 0x1004,   /*!< Discover attributes response, refer to esp_zb_zcl_cmd_discover_attributes_resp_message_t */
     ESP_ZB_CORE_CMD_OPERATE_GROUP_RESP_CB_ID            = 0x1010,   /*!< Group add group response, refer to esp_zb_zcl_groups_operate_group_resp_message_t */
     ESP_ZB_CORE_CMD_VIEW_GROUP_RESP_CB_ID               = 0x1011,   /*!< Group view response, refer to esp_zb_zcl_groups_view_group_resp_message_t */
     ESP_ZB_CORE_CMD_GET_GROUP_MEMBERSHIP_RESP_CB_ID     = 0x1012,   /*!< Group get membership response, refer to esp_zb_zcl_groups_get_group_membership_resp_message_t */
@@ -155,7 +156,7 @@ typedef bool (*esp_zb_zcl_device_cb_id_callback_t)(uint8_t bufid);
  *      -   True: processed
  *      -   False: unprocessed
  */
-typedef bool (*esp_zb_zcl_raw_command_callbcak_t)(uint8_t bufid);
+typedef bool (*esp_zb_zcl_raw_command_callback_t)(uint8_t bufid);
 
 /** CLI response callback
  *
@@ -190,10 +191,10 @@ void esp_zb_device_cb_id_handler_register(esp_zb_zcl_device_cb_id_callback_t cb)
 /**
  * @brief Register the raw Zigbee command handler
  *
- * @param[in] cb A callback that user can handle the Zigbee raw command buffer id, refer to esp_zb_zcl_raw_command_callbcak_t
+ * @param[in] cb A callback that user can handle the Zigbee raw command buffer id, refer to esp_zb_zcl_raw_command_callback_t
  *
  */
-void esp_zb_raw_command_handler_register(esp_zb_zcl_raw_command_callbcak_t cb);
+void esp_zb_raw_command_handler_register(esp_zb_zcl_raw_command_callback_t cb);
 
 /**
  * @brief   Set the Command line interface (CLI) handler callback.

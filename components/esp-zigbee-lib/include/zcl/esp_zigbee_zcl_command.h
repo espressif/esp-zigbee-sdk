@@ -25,6 +25,15 @@ typedef enum {
 } esp_zb_zcl_address_mode_t;
 
 /**
+ * @brief ZCL command direction enum
+ * @anchor esp_zb_zcl_cmd_direction
+ */
+typedef enum {
+    ESP_ZB_ZCL_CMD_DIRECTION_TO_SRV = 0x00U, /*!< Command for cluster server side */
+    ESP_ZB_ZCL_CMD_DIRECTION_TO_CLI = 0x01U, /*!< Command for cluster client side */
+} esp_zb_zcl_cmd_direction_t;
+
+/**
  * @brief The Zigbee ZCL basic command info
  *
  */
@@ -86,6 +95,19 @@ typedef struct esp_zb_zcl_report_attr_cmd_s {
 } esp_zb_zcl_report_attr_cmd_t;
 
 /* ZCL basic cluster */
+
+/**
+ * @brief The Zigbee ZCL configure report command struct
+ *
+ */
+typedef struct esp_zb_zcl_disc_attr_cmd_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;   /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode; /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+    uint16_t cluster_id;                    /*!< The cluster identifier for which the attribute is discovered. */
+    uint16_t start_attr_id;                 /*!< The attribute identifier at which to begin the attribute discover */
+    uint8_t max_attr_number;                /*!< The maximum number of attribute identifiers that are to be returned in the resulting Discover Attributes Response command*/
+    esp_zb_zcl_cmd_direction_t direction;   /*!< The command direction, refer to esp_zb_zcl_cmd_direction_t */
+} esp_zb_zcl_disc_attr_cmd_t;
 
 /**
  * @brief The Zigbee ZCL basic reset factory default command struct
@@ -383,7 +405,7 @@ typedef struct esp_zb_zcl_color_move_color_temperature_cmd_s {
     esp_zb_zcl_basic_cmd_t zcl_basic_cmd;   /*!< Basic command info */
     esp_zb_zcl_address_mode_t address_mode; /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
     uint8_t move_mode;                      /*!< The Move Mode field of the Move Hue command, if the Move Mode field is equal to 0x00, the Rate field SHALL be ignored. */
-    uint16_t rate;                          /*!< The Rate filed specifies the rate of movement in steps per second */
+    uint16_t rate;                          /*!< The Rate field specifies the rate of movement in steps per second */
     uint16_t color_temperature_minimum;     /*!< The field specifies a lower bound on the Color-Temperature attribute */
     uint16_t color_temperature_maximum;     /*!< The field specifies a upper bound on the Color-Temperature attribute */
 } esp_zb_zcl_color_move_color_temperature_cmd_t;
@@ -701,7 +723,7 @@ typedef struct esp_zb_zcl_recall_scene_message_s {
     uint16_t group_id;                              /*!< The group id of Zigbee scenes cluster */
     uint8_t scene_id;                               /*!< The scene id of Zigbee scenes cluster */
     uint16_t transition_time;                       /*!< The recall transition time of Zigbee scenes cluster */
-    esp_zb_zcl_scenes_extension_field_t *field_set; /*!< The extension filed of Zigbee scenes cluster,{{cluster_id, length, value},..., {cluster_id,
+    esp_zb_zcl_scenes_extension_field_t *field_set; /*!< The extension field of Zigbee scenes cluster,{{cluster_id, length, value},..., {cluster_id,
                                                        length, value}}, note that the `NULL` is the end of field */
 } esp_zb_zcl_recall_scene_message_t;
 
@@ -799,6 +821,26 @@ typedef struct esp_zb_zcl_cmd_read_report_config_resp_message_s {
         } server;                  /*!< Describes how attribute report is received  */
     };
 } esp_zb_zcl_cmd_read_report_config_resp_message_t;
+
+/**
+ * @brief Attribute information field for discovering attribtues response struct
+ *
+ */
+typedef struct esp_zb_zcl_attr_info_field_s {
+    uint16_t attr_id;                                   /*!< The attribute identifier */
+    esp_zb_zcl_attr_type_t data_type;                   /*!< The data type of attribute */
+    struct esp_zb_zcl_attr_info_field_s *next;          /*!< Next field */
+} esp_zb_zcl_attr_info_field_t;
+
+/**
+ * @brief The Zigbee zcl discover attribute response struct
+ *
+ */
+typedef struct esp_zb_zcl_cmd_discover_attributes_resp_message_s {
+    esp_zb_zcl_cmd_info_t info;                     /*!< The basic information of configuring report response message that refers to esp_zb_zcl_cmd_info_t */
+    uint8_t is_completed;                           /*!< A value of 0 indicates that there are more attributes to be discovered, otherwise, it is completed */
+    esp_zb_zcl_attr_info_field_t *field_set;        /*!< The attribute information field set, which can refer to esp_zb_zcl_attr_info_field_t */
+} esp_zb_zcl_cmd_discover_attributes_resp_message_t;
 
 /**
  * @brief The Zigbee zcl group operation response struct
@@ -942,6 +984,14 @@ esp_err_t esp_zb_zcl_report_attr_cmd_req(esp_zb_zcl_report_attr_cmd_t *cmd_req);
  *
  */
 void esp_zb_zcl_config_report_cmd_req(esp_zb_zcl_config_report_cmd_t *cmd_req);
+
+/**
+ * @brief Send discover attributes command
+ *
+ * @param[in] cmd_req pointer to the discover attributes command @ref esp_zb_zcl_disc_attr_cmd_s
+ *
+ */
+void esp_zb_zcl_disc_attr_cmd_req(esp_zb_zcl_disc_attr_cmd_t *cmd_req);
 
 /* ZCL basic cluster list command */
 

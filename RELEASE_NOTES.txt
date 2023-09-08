@@ -1,3 +1,27 @@
+# 8-Sep-2023
+
+Versions
+--------
+0.9.4 version release of ESP-ZIGBEE-SDK
+
+Features
+--------
+* Update esp-zboss-lib to v0.7.0 
+* Add zigbee discover attribtues support
+* Fix Typo for words
+
+Known Issues
+------------
+
+New Changes
+-----------
+
+Bug Fixes
+---------
+Closes: https://github.com/espressif/esp-zigbee-sdk/issues/91
+Closes: https://github.com/espressif/esp-zigbee-sdk/issues/55
+
+
 # 30-Aug-2023
 
 Versions
