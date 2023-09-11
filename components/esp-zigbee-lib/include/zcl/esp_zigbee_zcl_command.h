@@ -789,7 +789,8 @@ typedef struct esp_zb_zcl_cmd_read_attr_resp_message_s {
  */
 typedef struct esp_zb_zcl_cmd_write_attr_resp_message_s {
     esp_zb_zcl_cmd_info_t info; /*!< The basic information of write attribute response message that refers to esp_zb_zcl_cmd_info_t */
-    uint16_t attribute_id;      /*!< The attribute id of write attribute response */
+    uint16_t attribute_id;      /*!< The attribute id of write attribute response, please note that when info.status does not equal
+                                   ESP_ZB_ZCL_STATUS_SUCCESS, the attribute_id is reported; otherwise, it is an invalid value (0xFFFF). */
 } esp_zb_zcl_cmd_write_attr_resp_message_t;
 
 /**
@@ -798,7 +799,8 @@ typedef struct esp_zb_zcl_cmd_write_attr_resp_message_s {
  */
 typedef struct esp_zb_zcl_cmd_config_report_resp_message_s {
     esp_zb_zcl_cmd_info_t info; /*!< The basic information of configuring report response message that refers to esp_zb_zcl_cmd_info_t */
-    uint16_t attribute_id;      /*!< The attribute id of configuring report response */
+    uint16_t attribute_id;      /*!< The attribute id of configuring report response, please note that when info.status does not equal
+                                   ESP_ZB_ZCL_STATUS_SUCCESS, the attribute_id is reported; otherwise, it is an invalid value (0xFFFF). */
 } esp_zb_zcl_cmd_config_report_resp_message_t;
 
 /**
@@ -808,7 +810,8 @@ typedef struct esp_zb_zcl_cmd_config_report_resp_message_s {
 typedef struct esp_zb_zcl_cmd_read_report_config_resp_message_s {
     esp_zb_zcl_cmd_info_t info; /*!< The basic information of reading report cofiguration response message that refers to esp_zb_zcl_cmd_info_t */
     uint8_t report_direction;   /*!< Direction: report is client or server */
-    uint16_t attribute_id;      /*!< The Attribute id */
+    uint16_t attribute_id;      /*!< The attribute id, please note that when info.status does not equal ESP_ZB_ZCL_STATUS_SUCCESS,
+                                   the attribute_id is reported; otherwise, it is an invalid value (0xFFFF). */
     union {
         struct {
             uint8_t attr_type;     /*!< Attribute type */

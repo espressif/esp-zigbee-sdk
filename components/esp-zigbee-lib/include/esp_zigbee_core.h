@@ -152,6 +152,8 @@ typedef bool (*esp_zb_zcl_device_cb_id_callback_t)(uint8_t bufid);
 /**
  * @brief A callback for user to obtain raw command bufid of ZBoss stack
  *
+ * @note If the @p bufid has been processed in the callback, it should be freed using the zb_zcl_send_default_handler().
+ *
  * @return
  *      -   True: processed
  *      -   False: unprocessed
