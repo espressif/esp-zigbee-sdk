@@ -35,20 +35,28 @@ Build the project, flash it to the board, and start the monitor tool to view the
 As you run the example, you will see the following log:
 
 ```
-I (461) phy: libbtbb version: b684fcb, May 17 2023, 20:14:35                                                   
-I (481) main_task: Returned from app_main()                                                                    
-I (581) ESP_TL_ON_OFF_LIGHT: ZDO signal: 23, status: -1                                                        
-I (581) ESP_TL_ON_OFF_LIGHT: Touchlink target started                                                          
-I (21061) ESP_TL_ON_OFF_LIGHT: device is on permit join status                                                 
-I (21061) ESP_TL_ON_OFF_LIGHT: Touchlink target : network started                                              
-I (21061) ESP_TL_ON_OFF_LIGHT: Touchlink target finished: success                                              
-I (21071) ESP_TL_ON_OFF_LIGHT: Touchlink target finished:Touchlink Target timeout 60s  
-I (23671) ESP_TL_ON_OFF_LIGHT: ZDO signal: 48, status: 0                                                       
-I (23691) ESP_TL_ON_OFF_LIGHT: New device commissioned or rejoined (short: 0xc214)              
-I (33921) ESP_TL_ON_OFF_LIGHT: ZDO signal: 50, status: 0                                                       
-I (54191) ESP_TL_ON_OFF_LIGHT: ZDO signal: 50, status: 0                                                       
-I (54641) ESP_TL_ON_OFF_LIGHT: on/off light set to 1                                                           
-I (55181) ESP_TL_ON_OFF_LIGHT: on/off light set to 0  
+I (390) main_task: Calling app_main()
+I (400) gpio: GPIO[8]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 
+I (400) phy_init: phy_version 220,2dbbbe7,Sep 25 2023,20:39:25
+I (460) phy: libbtbb version: 90c587c, Sep 25 2023, 20:39:57
+I (470) ESP_TL_ON_OFF_LIGHT: ZDO signal: ZDO Config Ready (0x17), status: ESP_FAIL
+I (470) ESP_TL_ON_OFF_LIGHT: Touchlink target started
+I (470) main_task: Returned from app_main()
+I (16190) ESP_TL_ON_OFF_LIGHT: Device is on permit join status
+I (16190) ESP_TL_ON_OFF_LIGHT: Touchlink target : network started
+I (16190) ESP_TL_ON_OFF_LIGHT: Touchlink target finished: success
+I (18810) ESP_TL_ON_OFF_LIGHT: ZDO signal: ZDO Device Update (0x30), status: ESP_OK
+I (18830) ESP_TL_ON_OFF_LIGHT: New device commissioned or rejoined (short: 0xbf2f)
+I (27070) ESP_TL_ON_OFF_LIGHT: Received message: endpoint(10), cluster(0x6), attribute(0x0), data size(1)
+I (27070) ESP_TL_ON_OFF_LIGHT: Light sets to On
+I (28050) ESP_TL_ON_OFF_LIGHT: Received message: endpoint(10), cluster(0x6), attribute(0x0), data size(1)
+I (28050) ESP_TL_ON_OFF_LIGHT: Light sets to Off
+I (28650) ESP_TL_ON_OFF_LIGHT: Received message: endpoint(10), cluster(0x6), attribute(0x0), data size(1)
+I (28650) ESP_TL_ON_OFF_LIGHT: Light sets to On
+I (29860) ESP_TL_ON_OFF_LIGHT: ZDO signal: NLME Status Indication (0x32), status: ESP_OK
+I (29880) ESP_TL_ON_OFF_LIGHT: Received message: endpoint(10), cluster(0x6), attribute(0x0), data size(1)
+I (29880) ESP_TL_ON_OFF_LIGHT: Light sets to Off
+I (50140) ESP_TL_ON_OFF_LIGHT: ZDO signal: NLME Status Indication (0x32), status: ESP_OK
 ```
 
 ## Light Control Functions

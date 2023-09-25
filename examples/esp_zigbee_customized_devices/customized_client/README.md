@@ -31,32 +31,39 @@ Build the project, flash it to the board, and start the monitor tool to view the
 As you run the example, you will see the following log:
 
 ```
-I (308) gpio: GPIO[9]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:2
-I (318) system_api: Base MAC address is not set
-I (318) system_api: read default base MAC address from EFUSE
-I (408) phy: libbtbb version: 6c47ec3, Mar 16 2022, 18:54:24
-I (408) phy: phy_version: 101, bb2a234, Mar 16 2022, 18:54:11
-I (788) ESP_HA_ON_OFF_SWITCH: status: -1
-I (3438) ESP_HA_ON_OFF_SWITCH: Start network steering
-I (25068) ESP_HA_ON_OFF_SWITCH: Joined network successfully (Extended PAN ID: ff:fc:c2:c4:f0:bd:97:10, PAN ID: 0x9a0f)
-I (25098) ESP_HA_ON_OFF_SWITCH: User_find_cb: address:0, endpoint:10
-I (25198) ESP_HA_ON_OFF_SWITCH: Active_ep_cb status:0 and count:1
-I (25198) ESP_HA_ON_OFF_SWITCH: endpoint ID list:10
-I (25218) ESP_HA_ON_OFF_SWITCH: Simple_desc_cb device_id:2,app_version:0,profile_id:0x104,endpoint ID:10
-I (25218) ESP_HA_ON_OFF_SWITCH: cluster ID list:0x0
-I (25218) ESP_HA_ON_OFF_SWITCH: cluster ID list:0x3
-I (25228) ESP_HA_ON_OFF_SWITCH: cluster ID list:0x4
-I (25238) ESP_HA_ON_OFF_SWITCH: cluster ID list:0x5
-I (25238) ESP_HA_ON_OFF_SWITCH: cluster ID list:0x6
-I (25258) ESP_HA_ON_OFF_SWITCH: ieee_cb address is:ff:fc:c2:c4:f0:bd:97:10
-I (25318) ESP_HA_ON_OFF_SWITCH: Bind_cb status:0
-I (28248) ESP_HA_ON_OFF_SWITCH: Switch got read attribute response with status:0,value:0,attr_type:0x10,attr_id:0x0
-I (174518) ESP_HA_ON_OFF_SWITCH: send 'on_off toggle' command
-I (174588) ESP_HA_ON_OFF_SWITCH: Switch got report attribute from address:0x0,value:1,attr_type:0x10,attr_id:0x0
-I (175268) ESP_HA_ON_OFF_SWITCH: send 'on_off toggle' command
-I (179688) ESP_HA_ON_OFF_SWITCH: Switch got report attribute from address:0x0,value:0,attr_type:0x10,attr_id:0x0
-I (180118) ESP_HA_ON_OFF_SWITCH: send 'on_off toggle' command
-I (184788) ESP_HA_ON_OFF_SWITCH: Switch got report attribute from address:0x0,value:1,attr_type:0x10,attr_id:0x0
+I (372) main_task: Calling app_main()
+I (382) gpio: GPIO[9]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:2 
+I (382) phy_init: phy_version 220,2dbbbe7,Sep 25 2023,20:39:25
+I (442) phy: libbtbb version: 90c587c, Sep 25 2023, 20:39:57
+I (452) ESP_HA_ON_OFF_SWITCH: ZDO signal: ZDO Config Ready (0x17), status: ESP_FAIL
+I (452) main_task: Returned from app_main()
+I (4382) ESP_HA_ON_OFF_SWITCH: Joined network successfully (Extended PAN ID: 60:55:f9:00:00:f6:07:b4, PAN ID: 0x9479, Channel:13)
+I (4442) ESP_HA_ON_OFF_SWITCH: Match desc response: status(0), address(0x0), endpoint(10)
+I (4552) ESP_HA_ON_OFF_SWITCH: ZDO signal: NLME Status Indication (0x32), status: ESP_OK
+I (4602) ESP_HA_ON_OFF_SWITCH: IEEE address: 60:55:f9:00:00:f6:07:b4
+I (4662) ESP_HA_ON_OFF_SWITCH: ZDO signal: NLME Status Indication (0x32), status: ESP_OK
+I (4702) ESP_HA_ON_OFF_SWITCH: Read attribute response: status(0), cluster(0x6), attribute(0x0), type(0x10), value(0)
+I (4732) ESP_HA_ON_OFF_SWITCH: Bind response from address(0x0), endpoint(1) with status(0)
+I (4782) ESP_HA_ON_OFF_SWITCH: Configure report response: status(0), cluster(0x6), attribute(0xffff)
+I (7512) ESP_HA_ON_OFF_SWITCH: Simple desc resposne: status(0), device_id(256), app_version(0), profile_id(0x104), endpoint_ID(10)
+I (7512) ESP_HA_ON_OFF_SWITCH: Cluster ID list: 0x0
+I (7512) ESP_HA_ON_OFF_SWITCH: Cluster ID list: 0x3
+I (7522) ESP_HA_ON_OFF_SWITCH: Cluster ID list: 0x4
+I (7522) ESP_HA_ON_OFF_SWITCH: Cluster ID list: 0x5
+I (7532) ESP_HA_ON_OFF_SWITCH: Cluster ID list: 0x6
+I (7562) ESP_HA_ON_OFF_SWITCH: Active endpoint response: status(0) and endpoint count(1)
+I (7562) ESP_HA_ON_OFF_SWITCH: Endpoint ID List: 10
+I (7812) ESP_HA_ON_OFF_SWITCH: Reveived report from address(0x0) src endpoint(10) to dst endpoint(1) cluster(0x6)
+I (7812) ESP_HA_ON_OFF_SWITCH: Received report information: attribute(0x0), type(0x10), value(0)
+
+I (15862) ESP_HA_ON_OFF_SWITCH: Send 'on_off toggle' command to address(0x0) endpoint(10)
+I (15952) ESP_HA_ON_OFF_SWITCH: Reveived report from address(0x0) src endpoint(10) to dst endpoint(1) cluster(0x6)
+I (15952) ESP_HA_ON_OFF_SWITCH: Received report information: attribute(0x0), type(0x10), value(1)
+
+I (24742) ESP_HA_ON_OFF_SWITCH: Send 'on_off toggle' command to address(0x0) endpoint(10)
+I (24802) ESP_HA_ON_OFF_SWITCH: Reveived report from address(0x0) src endpoint(10) to dst endpoint(1) cluster(0x6)
+I (24802) ESP_HA_ON_OFF_SWITCH: Received report information: attribute(0x0), type(0x10), value(0)
+
 ```
 
 ## Light Control Functions

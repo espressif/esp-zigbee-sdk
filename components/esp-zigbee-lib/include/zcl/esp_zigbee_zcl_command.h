@@ -34,6 +34,36 @@ typedef enum {
 } esp_zb_zcl_cmd_direction_t;
 
 /**
+ * @brief The Zigbee zcl cluster attribute value struct
+ *
+ */
+typedef struct esp_zb_zcl_attribute_data_s {
+    esp_zb_zcl_attr_type_t type; /*!< The type of attribute, which can refer to esp_zb_zcl_attr_type_t */
+    uint8_t size;                /*!< The Size of string data type, first byte should be the length of string */
+    void *value;                 /*!< Supported data types u8, s8, u16, s16, u32, s32, char string
+                                    Note that if the type is string, the first byte of value indicates the string length */
+} ESP_ZB_PACKED_STRUCT esp_zb_zcl_attribute_data_t;
+
+/**
+ * @brief The Zigbee zcl cluster attribute struct
+ *
+ */
+typedef struct esp_zb_zcl_attribute_s {
+    uint16_t id;                      /*!< The identify of attribute */
+    esp_zb_zcl_attribute_data_t data; /*!< The data fo attribute */
+} esp_zb_zcl_attribute_t;
+
+/**
+ * @brief The Zigbee zcl cluster command properties struct
+ *
+ */
+typedef struct esp_zb_zcl_command_s {
+    uint8_t id;        /*!< The command id */
+    uint8_t direction; /*!< The command direction */
+    uint8_t is_common; /*!< The command is common type */
+} esp_zb_zcl_command_t;
+
+/**
  * @brief The Zigbee ZCL basic command info
  *
  */
@@ -51,7 +81,8 @@ typedef struct esp_zb_zcl_read_attr_cmd_s {
     esp_zb_zcl_basic_cmd_t zcl_basic_cmd;           /*!< Basic command info */
     esp_zb_zcl_address_mode_t address_mode;         /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
     uint16_t clusterID;                             /*!< Cluster ID to read */
-    uint16_t attributeID;                           /*!< Attribute ID to read*/
+    uint8_t attr_number;                            /*!< Number of attribute in the attr_field */
+    uint16_t *attr_field;                           /*!< Attribute identifier field to read */
 } esp_zb_zcl_read_attr_cmd_t;
 
 /**
@@ -62,24 +93,34 @@ typedef struct esp_zb_zcl_write_attr_cmd_s {
     esp_zb_zcl_basic_cmd_t zcl_basic_cmd;           /*!< Basic command info */
     esp_zb_zcl_address_mode_t address_mode;         /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
     uint16_t clusterID;                             /*!< Cluster ID to write */
-    uint16_t attributeID;                           /*!< Attribute ID to write */
-    uint8_t  attrType;                              /*!< Attribute type to write refer to zb_zcl_common.h zcl_attr_type */
-    uint8_t  *attrVal;                              /*!< Attribute value to write */
+    uint8_t attr_number;                            /*!< Number of attribute in the attr_field  */
+    esp_zb_zcl_attribute_t *attr_field;             /*!< Attributes which will be writed, @ref esp_zb_zcl_attribute_s */
 } esp_zb_zcl_write_attr_cmd_t;
+
+/**
+ * @brief The Zigbee zcl configure report record struct
+ *
+ */
+typedef struct esp_zb_zcl_config_report_record_s {
+    esp_zb_zcl_cmd_direction_t direction; /*!< Direction field specifies whether values of the attribute are to be reported, or whether reports of the
+                                             attribute are to be received.*/
+    uint16_t attributeID;                 /*!< Attribute ID to report */
+    uint8_t attrType;                     /*!< Attribute type to report refer to zb_zcl_common.h zcl_attr_type */
+    uint16_t min_interval;                /*!< Minimum reporting interval */
+    uint16_t max_interval;                /*!< Maximum reporting interval */
+    void *reportable_change;              /*!< Minimum change to attribute will result in report */
+} esp_zb_zcl_config_report_record_t;
 
 /**
  * @brief The Zigbee ZCL configure report command struct
  *
  */
 typedef struct esp_zb_zcl_config_report_cmd_s {
-    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;           /*!< Basic command info */
-    esp_zb_zcl_address_mode_t address_mode;         /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
-    uint16_t clusterID;                             /*!< Cluster ID to report */
-    uint16_t attributeID;                           /*!< Attribute ID to report */
-    uint8_t  attrType;                              /*!< Attribute type to report refer to zb_zcl_common.h zcl_attr_type */
-    uint16_t  min_interval;                         /*!< Minimum reporting interval */
-    uint16_t  max_interval;                         /*!< Maximum reporting interval */
-    void* reportable_change;                     /*!< Minimum change to attribute will result in report */
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;               /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode;             /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+    uint16_t clusterID;                                 /*!< Cluster ID to report */
+    uint16_t record_number;                             /*!< Number of report configuration record in the record_field */
+    esp_zb_zcl_config_report_record_t *record_field;    /*!< Report configuration records, @ref esp_zb_zcl_config_report_record_s */
 } esp_zb_zcl_config_report_cmd_t;
 
 /**
@@ -620,7 +661,57 @@ typedef struct esp_zb_zcl_electrical_measurement_profile_cmd_resp_s{
     esp_zb_zcl_address_mode_t address_mode;                      /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
     esp_zb_electrical_measurement_profile_t profile;             /*!< Electrical profile response command */
     uint16_t cluster_id;                                         /*!< Cluster id */
-}esp_zb_zcl_electrical_measurement_profile_cmd_resp_t;
+} esp_zb_zcl_electrical_measurement_profile_cmd_resp_t;
+
+/**
+ * @brief The Zigbee ZCL thermostat setpoint raise lower request command struct
+ */
+typedef struct esp_zb_zcl_thermostat_setpoint_raise_lower_request_cmd_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;                      /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode;                    /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+    uint8_t mode;                                              /*!< Mode field SHALL be set to Heat(0x00), Cool(0x01) and Both(0x02). It specifies which setpoint is to be configured */
+    int8_t amount;                                             /*!< Amount field specifies the setpoint(s) are to be increased (or decreased) by, in steps of 0.1 degree Celsius */
+} esp_zb_zcl_thermostat_setpoint_raise_lower_request_cmd_t;
+
+/**
+ * @brief The Zigbee ZCL thermostat set weekly schedule request command struct
+ */
+typedef struct esp_zb_zcl_thermostat_set_weekly_schedule_request_cmd_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;                      /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode;                    /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+    uint8_t num_of_transitions;                                /*!< Number of transitions for sequence field indicates how many individual transitions to expect for this sequence of commands */
+    uint8_t day_of_week;                                       /*!< Day of week for sequence field represents the day of the week at which all the transitions within the payload of the command SHOULD be associated to */
+    uint8_t mode_for_seq;                                      /*!< Mode for sequence field determines how the application SHALL decode the Set Point Fields of each transition for the remaining of the command */
+    uint16_t transition_time;                                  /*!< Transition time field represents the start time of the schedule transition during the associated day */
+    uint16_t heat_set_point;                                   /*!< Heat set point field represents the heat setpoint(0.01 degree Celsius resolution) to be applied, if the heat bit is enabled in the Mode For Sequence byte */
+    uint16_t cool_set_point;                                   /*!< Cool set point field represents the cool setpoint(0.01 degree Celsius resolution) to be applied, if the cool bit is enabled in the Mode For Sequence byte */
+} esp_zb_zcl_thermostat_set_weekly_schedule_request_cmd_t;
+
+/**
+ * @brief The Zigbee ZCL thermostat get weekly schedule request command struct
+ */
+typedef struct esp_zb_zcl_thermostat_get_weekly_schedule_request_cmd_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;                      /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode;                    /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+    uint8_t days_to_return;                                    /*!< Days to return field indicates the number of days the client would like to return the set point values for */
+    uint8_t mode_to_return;                                    /*!< Mode to return field indicates the mode(heat only, cool only or heat & cool) the client would like to return the set point values for */
+} esp_zb_zcl_thermostat_get_weekly_schedule_request_cmd_t;
+
+/**
+ * @brief The Zigbee ZCL thermostat clear weekly schedule request command struct
+ */
+typedef struct esp_zb_thermostat_clear_weekly_schedule_cmd_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;                   /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode;                 /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+} esp_zb_thermostat_clear_weekly_schedule_cmd_t;
+
+/**
+ * @brief The Zigbee ZCL thermostat get relay status log request command struct
+ */
+typedef struct esp_zb_thermostat_get_relay_status_log_cmd_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;                   /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode;                 /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+} esp_zb_thermostat_get_relay_status_log_cmd_t;
 
 /**
  * @brief The Zigbee ZCL custom cluster command struct
@@ -652,37 +743,6 @@ typedef struct esp_zb_zcl_custom_cluster_cmd_resp_s {
 } esp_zb_zcl_custom_cluster_cmd_resp_t;
 
 /*********************** User Message *****************************/
-/**
- * @brief The Zigbee zcl cluster attribute value struct
- *
- */
-typedef struct esp_zb_zcl_attribute_data_s {
-    esp_zb_zcl_attr_type_t type;                /*!< The type of attribute, which can refer to esp_zb_zcl_attr_type_t */
-    uint8_t size;                               /*!< The Size of string data type, first byte should be the length of string */
-    void *value;                                /*!< Supported data types u8, s8, u16, s16, u32, s32, char string
-                                                   Note that if the type is string, the first byte of value indicates the string length */
-} ESP_ZB_PACKED_STRUCT
-esp_zb_zcl_attribute_data_t;
-
-/**
- * @brief The Zigbee zcl cluster attribute struct
- *
- */
-typedef struct esp_zb_zcl_attribute_s {
-    uint16_t id;                      /*!< The identify of attribute */
-    esp_zb_zcl_attribute_data_t data; /*!< The data fo attribute */
-} esp_zb_zcl_attribute_t;
-
-/**
- * @brief The Zigbee zcl cluster command properties struct
- *
- */
-typedef struct esp_zb_zcl_command_s {
-    uint8_t id;                     /*!< The command id */
-    uint8_t direction;              /*!< The command direction */
-    uint8_t is_common;              /*!< The command is common type */
-} esp_zb_zcl_command_t;
-
 /**
  * @brief The Zigbee zcl cluster device callback common information
  *
@@ -745,6 +805,17 @@ typedef struct esp_zb_zcl_ota_update_message_s {
     esp_zb_device_cb_common_info_t info;            /*!< The common information for Zigbee device callback */
     esp_zb_zcl_ota_upgrade_status_t update_status;  /*!< The update status for Zigbee ota update */
 } esp_zb_zcl_ota_update_message_t;
+
+/**
+ * @brief The Zigbee zcl thermostat value callback message struct
+ *
+ */
+typedef struct esp_zb_zcl_thermostat_value_message_s {
+    esp_zb_device_cb_common_info_t info; /*!< The common information for Zigbee device callback */
+    uint8_t mode;                        /*!< Mode for Sequence */
+    uint16_t heat_setpoint;              /*!< Heat Set Point */
+    uint16_t cool_setpoint;              /*!< Cool Set Point */
+} esp_zb_zcl_thermostat_value_message_t;
 
 /**
  * @brief The Zigbee zcl command basic application information struct
@@ -1406,6 +1477,46 @@ void esp_zb_zcl_electrical_measurement_cluster_get_profile_info_resp(esp_zb_zcl_
  *
  */
 void esp_zb_zcl_electrical_measurement_cluster_get_measurement_profile_resp(esp_zb_zcl_electrical_measurement_profile_cmd_resp_t *cmd_req);
+
+/**
+ * @brief   Send thermostat setpoint raise or lower command request
+ *
+ * @param[in]  cmd_req  pointer to the setpoint raise or lower command @ref esp_zb_zcl_thermostat_setpoint_raise_lower_request_cmd_s
+ *
+ */
+void esp_zb_zcl_thermostat_setpoint_raise_lower_cmd_req(esp_zb_zcl_thermostat_setpoint_raise_lower_request_cmd_t *cmd_req);
+
+/**
+ * @brief   Send thermostat set weekly schedule command request
+ *
+ * @param[in]  cmd_req  pointer to the set weekly schedule command @ref esp_zb_zcl_thermostat_set_weekly_schedule_request_cmd_s
+ *
+ */
+void esp_zb_zcl_thermostat_set_weekly_schedule_cmd_req(esp_zb_zcl_thermostat_set_weekly_schedule_request_cmd_t *cmd_req);
+
+/**
+ * @brief   Send thermostat get weekly schedule command request
+ *
+ * @param[in]  cmd_req  pointer to the get weekly schedule command @ref esp_zb_zcl_thermostat_get_weekly_schedule_request_cmd_s
+ *
+ */
+void esp_zb_zcl_thermostat_get_weekly_schedule_cmd_req(esp_zb_zcl_thermostat_get_weekly_schedule_request_cmd_t *cmd_req);
+
+/**
+ * @brief   Send thermostat clear weekly schedule command request
+ *
+ * @param[in]  cmd_req  pointer to the clear weekly schedule command @ref esp_zb_thermostat_clear_weekly_schedule_cmd_s
+ *
+ */
+void esp_zb_zcl_thermostat_clear_weekly_schedule_cmd_req(esp_zb_thermostat_clear_weekly_schedule_cmd_t *cmd_req);
+
+/**
+ * @brief   Send thermostat get relay status log command request
+ *
+ * @param[in]  cmd_req  pointer to the get relay status log command @ref esp_zb_thermostat_get_relay_status_log_cmd_s
+ *
+ */
+void esp_zb_zcl_thermostat_get_relay_status_log_cmd_req(esp_zb_thermostat_get_relay_status_log_cmd_t *cmd_req);
 
 /**
  * @brief   Send custom cluster command request

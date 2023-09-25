@@ -36,22 +36,35 @@ Build the project, flash it to the board, and start the monitor tool to view the
 As you run the example, you will see the following log:
 
 ```
-I (438) phy: libbtbb version: b684fcb, May 17 2023, 20:14:35
-I (458) main_task: Returned from app_main()
-I (558) ESP_TL_ON_OFF_SWITCH: ZDO signal: 23, status: -1
-I (558) ESP_TL_ON_OFF_SWITCH: ZB_ZDO_SIGNAL_SKIP_STARTUP: start join
-I (558) ESP_TL_ON_OFF_SWITCH: Start Touchlink commissioning as initiator
-I (5798) ESP_TL_ON_OFF_SWITCH: Touchlink commissioning as initiator done
-I (5798) ESP_TL_ON_OFF_SWITCH: Start Touchlink commissioning as initiator
-I (11018) ESP_TL_ON_OFF_SWITCH: Touchlink commissioning as initiator done
-I (11018) ESP_TL_ON_OFF_SWITCH: Start Touchlink commissioning as initiator
-I (18938) ESP_TL_ON_OFF_SWITCH: ZB_BDB_SIGNAL_TOUCHLINK_NWK_STARTED
-I (18938) ESP_TL_ON_OFF_SWITCH: profile: 0x104, ep 10
-I (19568) ESP_TL_ON_OFF_SWITCH: Touchlink commissioning as initiator done
-I (19568) ESP_TL_ON_OFF_SWITCH: Touchlink Success, device address: 0x60 55 f9 0 0 f6 ff ec
-I (19638) ESP_TL_ON_OFF_SWITCH: User find cb: response_status:0, address:0x8429, endpoint:10
-I (50508) ESP_TL_ON_OFF_SWITCH: send 'on_off toggle' command
-I (51048) ESP_TL_ON_OFF_SWITCH: send 'on_off toggle' command
+I (373) main_task: Calling app_main()
+I (383) gpio: GPIO[9]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:2 
+I (383) phy_init: phy_version 220,2dbbbe7,Sep 25 2023,20:39:25
+I (453) phy: libbtbb version: 90c587c, Sep 25 2023, 20:39:57
+I (463) ESP_TL_ON_OFF_SWITCH: ZDO signal: ZDO Config Ready (0x17), status: ESP_FAIL
+I (463) ESP_TL_ON_OFF_SWITCH: ZB_ZDO_SIGNAL_SKIP_STARTUP: start join
+I (463) ESP_TL_ON_OFF_SWITCH: Start Touchlink commissioning as initiator
+I (473) main_task: Returned from app_main()
+I (1783) ESP_TL_ON_OFF_SWITCH: Touchlink commissioning as initiator done
+I (1783) ESP_TL_ON_OFF_SWITCH: Start Touchlink commissioning as initiator
+I (3093) ESP_TL_ON_OFF_SWITCH: Touchlink commissioning as initiator done
+I (3093) ESP_TL_ON_OFF_SWITCH: Start Touchlink commissioning as initiator
+I (4393) ESP_TL_ON_OFF_SWITCH: Touchlink commissioning as initiator done
+I (4393) ESP_TL_ON_OFF_SWITCH: Start Touchlink commissioning as initiator
+I (5703) ESP_TL_ON_OFF_SWITCH: Touchlink commissioning as initiator done
+I (5703) ESP_TL_ON_OFF_SWITCH: Start Touchlink commissioning as initiator
+I (7003) ESP_TL_ON_OFF_SWITCH: Touchlink commissioning as initiator done
+I (7003) ESP_TL_ON_OFF_SWITCH: Start Touchlink commissioning as initiator
+I (8313) ESP_TL_ON_OFF_SWITCH: Touchlink commissioning as initiator done
+I (8313) ESP_TL_ON_OFF_SWITCH: Start Touchlink commissioning as initiator
+I (12333) ESP_TL_ON_OFF_SWITCH: Touchlink network started
+I (12333) ESP_TL_ON_OFF_SWITCH: Profile: 0x104, ep: 10
+I (12953) ESP_TL_ON_OFF_SWITCH: Touchlink commissioning as initiator done
+I (12953) ESP_TL_ON_OFF_SWITCH: Touchlink Success, device address: 0x60 55 f9 0 0 f6 6 18
+I (12993) ESP_TL_ON_OFF_SWITCH: User find cb: response_status:0, address:0x7d0, endpoint:10
+I (21193) ESP_TL_ON_OFF_SWITCH: send 'on_off toggle' command
+I (22173) ESP_TL_ON_OFF_SWITCH: send 'on_off toggle' command
+I (22773) ESP_TL_ON_OFF_SWITCH: send 'on_off toggle' command
+I (24003) ESP_TL_ON_OFF_SWITCH: send 'on_off toggle' command
 ```
 
 ## Touchlink Swtich Control Light Functions

@@ -64,33 +64,42 @@ The supported features in current ESP Zigbee SDK are listed below.
 .. table:: **ZCL cluster**
    :align: center
 
-   ========================= ============ 
-         Cluster Name         Cluster ID  
-   ========================= ============ 
-            basic               0x0000    
-      power_configuration       0x0001
-           identify             0x0003    
-            groups              0x0004    
-            scenes              0x0005    
-            on_off              0x0006    
-       on_off_switch_cfg        0x0007    
-         level_control          0x0008    
-             time               0x000a    
-         binary_input           0x000f    
-              ota               0x0019    
-         shade_config           0x0100    
-           door_lock            0x0101
-        window_covering         0x0102    
-         color_control          0x0300 
-    illuminance_measurement     0x0400   
-    temperature_measurement     0x0402
-      pressure_measurement      0x0403
-      humidity_measurement      0x0405
-       occupancy_sensing        0x0406
-           ias_zone             0x0500
-    electrical_measurement      0x0b04
-    touchlink_commissioning     0x1000
-   ========================= ============ 
+   =========================== ============ 
+          Cluster Name          Cluster ID  
+   =========================== ============ 
+            basic                 0x0000    
+      power_configuration         0x0001
+           identify               0x0003    
+            groups                0x0004    
+            scenes                0x0005    
+            on_off                0x0006    
+       on_off_switch_cfg          0x0007    
+         level_control            0x0008    
+             time                 0x000a
+         analog_input             0x000c
+         analog_output            0x000d
+         analog_value             0x000e
+         binary_input             0x000f
+       multistate_value           0x0014
+              ota                 0x0019    
+         shade_config             0x0100    
+           door_lock              0x0101
+        window_covering           0x0102
+          thermostat              0x0201
+          fan_control             0x0202
+    thermostat_user_interface     0x0204
+         color_control            0x0300
+    illuminance_measurement       0x0400   
+    temperature_measurement       0x0402
+      pressure_measurement        0x0403
+      humidity_measurement        0x0405
+       occupancy_sensing          0x0406
+    carbon_dioxide_measurement    0x040d
+       PM2.5_measurement          0x042a
+           ias_zone               0x0500
+    electrical_measurement        0x0b04
+    touchlink_commissioning       0x1000
+   =========================== ============ 
 
 
 1.2.1.1 Attributes and Commands
@@ -117,6 +126,7 @@ See each cluster's supported attribute in `ZCL api-reference <https://docs.espre
      0x0201       shade_controller                                 basic, identify                             
      0x000A           door_lock                      basic, identify, groups, scenes, door_lock                
      0x000B     door_lock_controller                               basic, identify                             
+     0x0301         thermostat                         basic, identify, thermostat_configuration
      0x0302      temperature_sensor                       basic, identify, temperature_meas                    
      0x0005      configuration_tool     basic, identify, groups, scenes, on_off, level_control, color_control  
    =========== ======================= ======================================================================= 

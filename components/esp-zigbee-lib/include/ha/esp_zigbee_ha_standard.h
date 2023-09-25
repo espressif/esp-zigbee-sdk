@@ -309,6 +309,31 @@ extern "C" {
             },                                                                                      \
     }
 
+/**
+ * @brief Zigbee HA standard thermostat device default config value.
+ *
+ */
+#define ESP_ZB_DEFAULT_THERMOSTAT_CONFIG()                                                                          \
+    {                                                                                                               \
+        .basic_cfg =                                                                                                \
+            {                                                                                                       \
+                .zcl_version = ESP_ZB_ZCL_BASIC_ZCL_VERSION_DEFAULT_VALUE,                                          \
+                .power_source = ESP_ZB_ZCL_BASIC_POWER_SOURCE_DEFAULT_VALUE,                                        \
+            },                                                                                                      \
+        .identify_cfg =                                                                                             \
+            {                                                                                                       \
+                .identify_time = ESP_ZB_ZCL_IDENTIFY_IDENTIFY_TIME_DEFAULT_VALUE,                                   \
+            },                                                                                                      \
+        .thermostat_cfg =                                                                                           \
+            {                                                                                                       \
+                .local_temperature = ESP_ZB_ZCL_THERMOSTAT_LOCAL_TEMPERATURE_DEFAULT_VALUE,                         \
+                .occupied_cooling_setpoint = ESP_ZB_ZCL_THERMOSTAT_OCCUPIED_COOLING_SETPOINT_DEFAULT_VALUE,         \
+                .occupied_heating_setpoint = ESP_ZB_ZCL_THERMOSTAT_OCCUPIED_HEATING_SETPOINT_DEFAULT_VALUE,         \
+                .control_sequence_of_operation = ESP_ZB_ZCL_THERMOSTAT_CONTROL_SEQ_OF_OPERATION_DEFAULT_VALUE,      \
+                .system_mode = ESP_ZB_ZCL_THERMOSTAT_CONTROL_SYSTEM_MODE_DEFAULT_VALUE,                             \
+            },                                                                                                      \
+    }
+
 
 /********************************* Declare functions **************************************/
 
@@ -434,6 +459,17 @@ esp_zb_cluster_list_t  *esp_zb_temperature_sensor_clusters_create(esp_zb_tempera
  *
  */
 esp_zb_cluster_list_t  *esp_zb_configuration_tool_clusters_create(esp_zb_configuration_tool_cfg_t *configuration_tool);
+
+/**
+ * @brief  Create a standard HA thermostat cluster list.
+ *
+ * @note This contains basic, identify and thermostat cluster as server side. Identify cluster as client side.
+ * @param[in] thermostat  Configuration parameters for this cluster lists defined by @ref esp_zb_thermostat_cfg_s
+ *
+ * @return Pointer to cluster list  @ref esp_zb_cluster_list_s
+ *
+ */
+esp_zb_cluster_list_t  *esp_zb_thermostat_clusters_create(esp_zb_thermostat_cfg_t *thermostat);
 
 /****************************** ZCL HA device standard endpoint list ********************************/
 
@@ -579,6 +615,19 @@ esp_zb_ep_list_t *esp_zb_temperature_sensor_ep_create(uint8_t endpoint_id, esp_z
  *
  */
 esp_zb_ep_list_t *esp_zb_configuration_tool_ep_create(uint8_t endpoint_id, esp_zb_configuration_tool_cfg_t *configuration_tool);
+
+/**
+ * @brief  Create a standard single HA thermostat endpoint.
+ *
+ * @param[in] endpoint_id The specific endpoint
+ * @param[in] thermostat  Configuration parameters for this cluster lists defined by @ref esp_zb_thermostat_cfg_s
+ *
+ * @note This function adds a single endpoint to a cluster list.
+ *
+ * @return Pointer to esp_zb_ep_list_t @ref esp_zb_ep_list_s
+ *
+ */
+esp_zb_ep_list_t *esp_zb_thermostat_ep_create(uint8_t endpoint_id, esp_zb_thermostat_cfg_t *thermostat);
 
 #ifdef __cplusplus
 }

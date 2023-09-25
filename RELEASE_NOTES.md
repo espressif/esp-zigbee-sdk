@@ -1,5 +1,33 @@
 # Espressif Zigbee SDK Release Notes
 
+## 10-Oct-2023
+1.0.0 version release of ESP-ZIGBEE-SDK
+
+### Features
+- Update esp-zboss-lib to v1.0.0
+- Update examples README.md
+- Add trace log user API
+- Add NWK_AGGRESSIVE_ROUTE_ADD_TIME to vendor configuration
+- Add ZCL thermostat cluster
+- Add ZCL fan control cluster
+- Add ZCL thermostat ui config cluster
+- Add ZCL analog input cluster
+- Add ZCL analog output cluster
+- Add ZCL analog value cluster
+- Add ZCL carbon dioxide measurement cluster
+- Add ZCL pm2.5 measurement cluster
+- Add ZCL multistate value cluster
+- Closes: https://github.com/espressif/esp-zigbee-sdk/issues/36
+- Closes: https://github.com/espressif/esp-zigbee-sdk/issues/59
+- Closes: https://github.com/espressif/esp-zigbee-sdk/issues/96
+
+### Bug Fixes
+- Fix Zigbee light sleep
+- Fix Zigbee ZCL general(read/write/report_config) command
+- Closes: https://github.com/espressif/esp-zigbee-sdk/issues/102
+- Closes: https://github.com/espressif/esp-zigbee-sdk/issues/106
+
+
 ## 12-Sep-2023
 0.9.5 version release of ESP-ZIGBEE-SDK
 

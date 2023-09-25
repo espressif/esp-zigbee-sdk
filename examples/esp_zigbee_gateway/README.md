@@ -73,13 +73,28 @@ Build the project, flash it to the board, and start the monitor tool to view the
 As you run the example, you will see the following log:
 
 ```
-I (660) ESP_ZB_GATEWAY: status: -1
-I (670) ESP_ZB_GATEWAY: Zigbee stack initialized
-I (680) ESP_ZB_GATEWAY: Zigbee rcp device booted
-I (1280) ESP_ZB_GATEWAY: Start network formation
-I (3060) ESP_ZB_GATEWAY: Formed network successfully (ieee extended address: f9:54:2d:01:a0:03:f7:84, PAN ID: 0x8651)
-I (4060) ESP_ZB_GATEWAY: status: 0
-I (4400) ESP_ZB_GATEWAY: Network steering started
+I (4438) esp_netif_handlers: example_netif_sta ip: 192.168.201.120, mask: 255.255.252.0, gw: 192.168.200.1
+I (4438) example_connect: Got IPv4 event: Interface "example_netif_sta" address: 192.168.201.120
+I (4498) example_connect: Got IPv6 event: Interface "example_netif_sta" address: fe80:0000:0000:0000:3685:18ff:fe7e:74b4, type: ESP_IP6_ADDR_IS_LINK_LOCAL
+I (4498) example_common: Connected to example_netif_sta
+I (4508) example_common: - IPv4 address: 192.168.201.120,
+I (4508) example_common: - IPv6 address: fe80:0000:0000:0000:3685:18ff:fe7e:74b4, type: ESP_IP6_ADDR_IS_LINK_LOCAL
+I (4518) wifi:Set ps type: 0, coexist: 0
+
+I (4588) RCP_UPDATE: RCP: using update sequence 0
+I (4588) main_task: Returned from app_main()
+I (4618) ESP_ZB_GATEWAY: ZDO signal: ZDO Config Ready (0x17), status: ESP_FAIL
+I (4638) ESP_ZB_GATEWAY: Zigbee stack initialized
+I (4668) ESP_ZB_GATEWAY: Zigbee rcp device booted
+I (4668) ESP_ZB_GATEWAY: Running RCP Version: zigbee-54f0517724-f371cda-1.0.0-2023-10-10 06:17:54 UTC
+I (4668) ESP_ZB_GATEWAY: Storage RCP Version: zigbee-54f0517724-f371cda-1.0.0-2023-10-10 06:17:54 UTC
+I (4678) ESP_ZB_GATEWAY: *** MATCH VERSION! ***
+I (5608) wifi:<ba-add>idx:0 (ifx:0, 9c:3a:9a:04:18:92), tid:0, ssn:0, winSize:64
+I (5628) ESP_ZB_GATEWAY: Start network formation
+I (7958) ESP_ZB_GATEWAY: ZDO signal: NWK Permit Join (0x36), status: ESP_OK
+I (8418) ESP_ZB_GATEWAY: Formed network successfully (ieee_address: 60:55:f9:ff:fe:f7:69:04, PAN ID: 0x3fe3, Channel:13)
+I (9248) ESP_ZB_GATEWAY: ZDO signal: NWK Permit Join (0x36), status: ESP_OK
+I (9768) ESP_ZB_GATEWAY: Network steering started
 ```
 
 ## Gateway Functions

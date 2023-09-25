@@ -82,11 +82,12 @@ static void bind_cb(esp_zb_zdp_status_t zdo_status, void *user_ctx)
         report_cmd.zcl_basic_cmd.src_endpoint = HA_ONOFF_SWITCH_ENDPOINT;
         report_cmd.address_mode = ESP_ZB_APS_ADDR_MODE_16_ENDP_PRESENT;
         report_cmd.clusterID = ESP_ZB_ZCL_CLUSTER_ID_ON_OFF;
-        report_cmd.attributeID = ESP_ZB_ZCL_ATTR_ON_OFF_ON_OFF_ID;
-        report_cmd.attrType = ESP_ZB_ZCL_ATTR_TYPE_BOOL;
-        report_cmd.min_interval = 0;
-        report_cmd.max_interval = 30;
-        report_cmd.reportable_change = (void*)&report_change;
+
+        esp_zb_zcl_config_report_record_t records[] = {
+            {ESP_ZB_ZCL_CMD_DIRECTION_TO_SRV, ESP_ZB_ZCL_ATTR_ON_OFF_ON_OFF_ID, ESP_ZB_ZCL_ATTR_TYPE_BOOL, 0, 30, &report_change}};
+        report_cmd.record_number = sizeof(records) / sizeof(esp_zb_zcl_config_report_record_t);
+        report_cmd.record_field = records;
+
         esp_zb_zcl_config_report_cmd_req(&report_cmd);
     }
 }
@@ -160,8 +161,10 @@ static void user_find_cb(esp_zb_zdp_status_t zdo_status, uint16_t addr, uint8_t 
         ieee_req.start_index = 0;
         esp_zb_zdo_ieee_addr_req(&ieee_req, ieee_cb, NULL);
         esp_zb_zcl_read_attr_cmd_t read_req;
+        uint16_t attributes[] = {ESP_ZB_ZCL_ATTR_ON_OFF_ON_OFF_ID};
         read_req.address_mode = ESP_ZB_APS_ADDR_MODE_16_ENDP_PRESENT;
-        read_req.attributeID = ESP_ZB_ZCL_ATTR_ON_OFF_ON_OFF_ID;
+        read_req.attr_number = sizeof(attributes) / sizeof(uint16_t);
+        read_req.attr_field = attributes;
         read_req.clusterID = ESP_ZB_ZCL_CLUSTER_ID_ON_OFF;
         read_req.zcl_basic_cmd.dst_endpoint = on_off_light.endpoint;
         read_req.zcl_basic_cmd.src_endpoint = HA_ONOFF_SWITCH_ENDPOINT;
