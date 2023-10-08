@@ -1,7 +1,7 @@
 2. Developing with ESP Zigbee SDK
 =================================
 
-Please refer the :project_file:`Release Notes <RELEASE_NOTES.txt>` to know more about ESP Zigbee SDK releases. Check :project_file:`README <README.md>` to know more details.
+Please refer the :project_file:`Release Notes <RELEASE_NOTES.md>` to know more about ESP Zigbee SDK releases. Check :project_file:`README <README.md>` to know more details.
 
 2.1 Development Setup
 ---------------------
@@ -19,14 +19,16 @@ Clone the `esp-idf <https://github.com/espressif/esp-idf>`_ and the `esp-zigbee-
 .. code-block:: bash
 
    git clone --recursive https://github.com/espressif/esp-idf.git
-   cd esp-idf; git checkout 56677da; git submodule update --init --recursive;
+   cd esp-idf
+   git checkout release/v5.1
+   git submodule update --init --recursive
    ./install.sh
    source ./export.sh
 
 
 .. code-block:: bash
 
-   git clone --recursive https://github.com/espressif/esp-zigbee-sdk.git
+   git clone https://github.com/espressif/esp-zigbee-sdk.git
 
 2.1.2 Building Applications on esp-idf (Option)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -351,3 +353,95 @@ After Zigbee stack is running, by checking different signals that stack provided
 
 .. todo::
    2.3.5 Adding customized devices
+
+2.4 Debugging
+-------------
+
+2.4.1 Sniffer and Wireshark
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Analyzing the packet flow captured by a sniffer is an effective method for understanding Zigbee protocol and troubleshooting issues.
+
+To setup a sniffer for 802.15.4, you'll require the following:
+
+- A host machine running `Pyspinel <https://openthread.io/guides/pyspinel>`_ and `Wireshark <https://www.wireshark.org/>`_
+- A 802.15.4 enabled devkit (ESP32-H2, ESP32-C6, etc) running `ot_rcp <https://github.com/espressif/esp-idf/tree/master/examples/openthread/ot_rcp>`_
+
+Follow the steps in `Packet Sniffing with Pyspinel <https://openthread.io/guides/pyspinel/sniffer>`_ to set up the sniffer.
+
+Please note that the Wireshark configuration provided in the link above is intended for the Thread protocol. For Zigbee, you'll need to make the following configuration:
+
+1. Go to the Wireshark **Preferences** > **Protocols** > **IEEE 802.15.4**, configure the 802.15.4 as bellow:
+
+.. figure:: ../_static/Wireshark_802154.png
+    :align: center
+    :alt: Wireshark_802154
+    :figclass: align-center
+
+
+2. Go to the Wireshark **Preferences** > **Protocols** > **ZigBee**:
+
+.. figure:: ../_static/Wireshark_Zigbee.png
+    :align: center
+    :alt: Wireshark_Preferences
+    :figclass: align-center
+
+
+3. Add the Pre-configured keys for packet decryption, the default key in the examples is `5A:69:67:42:65:65:41:6C:6C:69:61:6E:63:65:30:39` ("ZigbeeAlliance09")
+
+.. figure:: ../_static/Wireshark_Zigbee_key.png
+    :align: center
+    :alt: Wireshark_Zigbee_key
+    :figclass: align-center
+
+Now you can check the Zigbee packet flow in Wireshark.
+
+2.4.2 Enable Trace Logging
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The trace logging feature outputs additional logs for debugging purpose, it's disabled by default in the SDK.
+
+Here take the :project:`HA_on_off_light <examples/esp_zigbee_HA_sample/HA_on_off_light>` as an example. To enable trace logging, follow these steps:
+
+1. Navigate to the example directory and run the command:
+
+.. code-block:: bash
+
+   idf.py menuconfig
+
+2. Go to **Component config** > **Zigbee** > **Zigbee Enable** > **Zigbee trace log option** > **Zigbee Trace Enable**, enable the ``Zigbee Trace Enable`` option.
+
+3. Call :cpp:func:`esp_zb_set_trace_level_mask` before :cpp:func:`esp_zb_init` to configure the trace level and mask. Please refer to `esp_zigbee_trace.h <https://github.com/espressif/esp-zigbee-sdk/blob/main/components/esp-zigbee-lib/include/esp_zigbee_trace.h>`_ for the masks.
+
+.. code-block:: c
+
+   #include "esp_zigbee_trace.h"
+
+   static void esp_zb_task(void *pvParameters)
+   {
+   #if CONFIG_ESP_ZB_TRACE_ENABLE
+      esp_zb_set_trace_level_mask(ESP_ZB_TRACE_LEVEL_CRITICAL, ESP_ZB_TRACE_SUBSYSTEM_MAC | ESP_ZB_TRACE_SUBSYSTEM_APP);
+   #endif
+
+      /* initialize Zigbee stack */
+      esp_zb_cfg_t zb_nwk_cfg = ESP_ZB_ZED_CONFIG();
+      esp_zb_init(&zb_nwk_cfg);
+      ......
+   }
+
+4. Enabling trace logging will increase code size. You may need to increase `factory` partition size in the ``partitions.csv`` file:
+
+.. code-block:: bash
+
+   # Name,   Type, SubType, Offset,  Size, Flags
+   nvs,        data, nvs,      0x9000,  0x6000,
+   phy_init,   data, phy,      0xf000,  0x1000,
+   factory,    app,  factory,  , 1200K,
+   zb_storage, data, fat,      , 16K,
+   zb_fct,     data, fat,      , 1K,
+
+Finally, build and run the example. You will now see more debugging logs in the output.
+
+.. note::
+
+   If you encounter any difficulties and require assistance, please don't hesitate to open a `Github issue <https://github.com/espressif/esp-zigbee-sdk/issues>`_ and include the sniffer capture file and trace logs.
