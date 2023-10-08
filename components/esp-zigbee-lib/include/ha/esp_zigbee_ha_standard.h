@@ -153,7 +153,7 @@ extern "C" {
             },                                                                                      \
         .on_off_cfg =                                                                               \
             {                                                                                       \
-                .on_off = ZB_ZCL_ON_OFF_ON_OFF_DEFAULT_VALUE,                                       \
+                .on_off = ESP_ZB_ZCL_ON_OFF_ON_OFF_DEFAULT_VALUE,                                   \
             },                                                                                      \
     }
 
