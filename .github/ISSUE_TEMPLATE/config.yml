@@ -1,0 +1,14 @@
+blank_issues_enabled: true
+contact_links:
+  - name: ESP Zigbee SDK Programming Guide
+    url: https://docs.espressif.com/projects/esp-zigbee-sdk
+    about: Documentation for using ESP Zigbee SDK
+  - name: ESP-IDF Programming Guide
+    url: https://docs.espressif.com/projects/esp-idf/en/latest/
+    about: Documentation for configuring and using ESP-IDF
+  - name: Espressif documentation page
+    url: https://www.espressif.com/en/support/download/documents
+    about: Hardware documentation (datasheets, Technical Reference Manual, etc)
+  - name: Technical Inquiries
+    url: https://www.espressif.com/en/contact-us/technical-inquiries
+    about: Feel free to reach out to us if necessary to share your project's schedule and priority
