@@ -505,7 +505,7 @@ def get_args():
     parser.add_argument('--csv',type=str, help='CSV file containing the partition key-values specified by the user.')
     parser.add_argument('-i', '--installcode', default='NULL', type=str, help='The installcode.')
     parser.add_argument('-m', '--mac_address', default='NULL', type=str, help='The mac address.')
-    parser.add_argument('-c', '--channel_mask', default=0x00008000, type=any_base_int, help='The channel mask page0, default channel mask=0x8000, channel:15.')
+    parser.add_argument('-c', '--channel_mask', default=0x07FFF800, type=any_base_int, help='The channel mask page0, default channel mask=0x8000, channel:15.')
     parser.add_argument('-mn', '--manufacturer_name', default='Espressif', type=str, help='The manufacturer name.')
     parser.add_argument('-mc', '--manufacturer_code', default=0x131B, type=any_base_int, help='The manufacturer code.')
     parser.add_argument('--outdir', default=os.getcwd(), help='Output directory to store files created (Default: current directory)')

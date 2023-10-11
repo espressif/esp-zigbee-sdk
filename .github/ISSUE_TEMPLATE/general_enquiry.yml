@@ -1,0 +1,19 @@
+name: General Enquiry
+description: Questions related to Zigbee specification, documentation, and production
+labels: ['Question']
+body:
+  - type: textarea
+    id: question
+    attributes:
+      label: Question
+      description: The question that you have.
+      placeholder: A clear and concise description of what you want to ask.
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context.
+      description: Please add any other context or screenshots about your question.
+    validations:
+      required: false

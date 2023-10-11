@@ -31,31 +31,29 @@ Build the project, flash it to the board, and start the monitor tool to view the
 As you run the example, you will see the following log:
 
 ```
-I (320) gpio: GPIO[8]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0
-I (330) system_api: Base MAC address is not set
-I (330) system_api: read default base MAC address from EFUSE
-I (420) phy: libbtbb version: 6c47ec3, Mar 16 2022, 18:54:24
-I (420) phy: phy_version: 101, bb2a234, Mar 16 2022, 18:54:11
-I (750) ESP_HA_ON_OFF_LIGHT: status: -1
-I (750) ESP_HA_ON_OFF_LIGHT: Zigbee stack initialized
-I (750) ESP_HA_ON_OFF_LIGHT: Start network formation
-I (1260) ESP_HA_ON_OFF_LIGHT: Formed network successfully (Extended PAN ID: ff:fc:7f:c0:f0:bd:97:10, PAN ID: 0x10b9)
-I (1720) ESP_HA_ON_OFF_LIGHT: status: 0
-I (1720) ESP_HA_ON_OFF_LIGHT: Network steering started
-I (5770) ESP_HA_ON_OFF_LIGHT: status: 0
-I (6270) ESP_HA_ON_OFF_LIGHT: status: 0
-I (6310) ESP_HA_ON_OFF_LIGHT: New device commissioned or rejoined (short: 0xdb25)
-I (6850) ESP_HA_ON_OFF_LIGHT: status: 0
-I (6890) ESP_HA_ON_OFF_LIGHT: status: 0
-I (6900) ESP_HA_ON_OFF_LIGHT: status: 0
-I (10950) ESP_HA_ON_OFF_LIGHT: on/off light set to 1
-I (12860) ESP_HA_ON_OFF_LIGHT: on/off light set to 0
-I (14390) ESP_HA_ON_OFF_LIGHT: on/off light set to 1
-I (15950) ESP_HA_ON_OFF_LIGHT: on/off light set to 0
-I (22250) ESP_HA_ON_OFF_LIGHT: on/off light set to 1
-I (22940) ESP_HA_ON_OFF_LIGHT: on/off light set to 0
-I (24760) ESP_HA_ON_OFF_LIGHT: on/off light set to 1
-I (25650) ESP_HA_ON_OFF_LIGHT: on/off light set to 0
+I (390) main_task: Calling app_main()
+I (400) gpio: GPIO[8]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 
+I (400) phy_init: phy_version 220,2dbbbe7,Sep 25 2023,20:39:25
+I (480) phy: libbtbb version: 90c587c, Sep 25 2023, 20:39:57
+I (480) ESP_HA_ON_OFF_LIGHT: ZDO signal: ZDO Config Ready (0x17), status: ESP_FAIL
+I (480) ESP_HA_ON_OFF_LIGHT: Zigbee stack initialized
+I (490) ESP_HA_ON_OFF_LIGHT: Start network formation
+I (490) main_task: Returned from app_main()
+I (1000) ESP_HA_ON_OFF_LIGHT: ZDO signal: NWK Permit Join (0x36), status: ESP_OK
+I (1000) ESP_HA_ON_OFF_LIGHT: Formed network successfully (Extended PAN ID: 60:55:f9:00:00:f6:07:b4, PAN ID: 0x9479, Channel:13)
+I (1480) ESP_HA_ON_OFF_LIGHT: ZDO signal: NWK Permit Join (0x36), status: ESP_OK
+I (1480) ESP_HA_ON_OFF_LIGHT: Network steering started
+I (9220) ESP_HA_ON_OFF_LIGHT: ZDO signal: NWK Device Associated (0x12), status: ESP_OK
+I (9720) ESP_HA_ON_OFF_LIGHT: ZDO signal: ZDO Device Update (0x30), status: ESP_OK
+I (9750) ESP_HA_ON_OFF_LIGHT: New device commissioned or rejoined (short: 0x8ceb)
+I (9910) ESP_HA_ON_OFF_LIGHT: ZDO signal: ZDO Device Authorized (0x2f), status: ESP_OK
+I (9950) ESP_HA_ON_OFF_LIGHT: ZDO signal: NWK Permit Join (0x36), status: ESP_OK
+I (10130) ESP_HA_ON_OFF_LIGHT: ZDO signal: NLME Status Indication (0x32), status: ESP_OK
+I (10390) ESP_HA_ON_OFF_LIGHT: ZDO signal: NLME Status Indication (0x32), status: ESP_OK
+I (21440) ESP_HA_ON_OFF_LIGHT: Received message: endpoint(10), cluster(0x6), attribute(0x0), data size(1)
+I (21440) ESP_HA_ON_OFF_LIGHT: Light sets to On
+I (30320) ESP_HA_ON_OFF_LIGHT: Received message: endpoint(10), cluster(0x6), attribute(0x0), data size(1)
+I (30320) ESP_HA_ON_OFF_LIGHT: Light sets to Off
 ```
 
 ## Light Control Functions

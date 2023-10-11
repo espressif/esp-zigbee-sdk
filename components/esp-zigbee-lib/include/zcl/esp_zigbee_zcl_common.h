@@ -31,6 +31,15 @@ extern "C" {
 #include "esp_zigbee_zcl_pressure_meas.h"
 #include "esp_zigbee_zcl_occupancy_sensing.h"
 #include "esp_zigbee_zcl_window_covering.h"
+#include "esp_zigbee_zcl_thermostat.h"
+#include "esp_zigbee_zcl_fan_control.h"
+#include "esp_zigbee_zcl_thermostat_ui_config.h"
+#include "esp_zigbee_zcl_analog_input.h"
+#include "esp_zigbee_zcl_analog_output.h"
+#include "esp_zigbee_zcl_analog_value.h"
+#include "esp_zigbee_zcl_carbon_dioxide_measurement.h"
+#include "esp_zigbee_zcl_pm2_5_measurement.h"
+#include "esp_zigbee_zcl_multistate_value.h"
 
 /**
  * @brief Application Framework Profile identifiers.
@@ -140,13 +149,15 @@ typedef enum {
     ESP_ZB_ZCL_CLUSTER_ID_THERMOSTAT_UI_CONFIG  = 0x0204U,          /*!< Thermostat user interface configuration cluster identifier. */
     ESP_ZB_ZCL_CLUSTER_ID_COLOR_CONTROL         = 0x0300U,          /*!< Color control cluster identifier. */
     ESP_ZB_ZCL_CLUSTER_ID_BALLAST_CONFIG        = 0x0301U,          /*!< Ballast configuration cluster identifier. */
-    ESP_ZB_ZCL_CLUSTER_ID_ILLUMINANCE_MEASUREMENT  = 0x0400U,       /*!< Illuminance measurement */
-    ESP_ZB_ZCL_CLUSTER_ID_TEMP_MEASUREMENT         = 0x0402U,       /*!< Temperature measurement */
-    ESP_ZB_ZCL_CLUSTER_ID_PRESSURE_MEASUREMENT     = 0x0403U,       /*!< Pressure measurement */
-    ESP_ZB_ZCL_CLUSTER_ID_REL_HUMIDITY_MEASUREMENT = 0x0405U,       /*!< Relative humidity measurement */
-    ESP_ZB_ZCL_CLUSTER_ID_OCCUPANCY_SENSING        = 0x0406U,       /*!< Occupancy sensing */
-    ESP_ZB_ZCL_CLUSTER_ID_IAS_ZONE                 = 0x0500U,       /*!< IAS zone */
-    ESP_ZB_ZCL_CLUSTER_ID_ELECTRICAL_MEASUREMENT   = 0x0b04U,       /*!< Electrical measurement */
+    ESP_ZB_ZCL_CLUSTER_ID_ILLUMINANCE_MEASUREMENT    = 0x0400U,     /*!< Illuminance measurement */
+    ESP_ZB_ZCL_CLUSTER_ID_TEMP_MEASUREMENT           = 0x0402U,     /*!< Temperature measurement */
+    ESP_ZB_ZCL_CLUSTER_ID_PRESSURE_MEASUREMENT       = 0x0403U,     /*!< Pressure measurement */
+    ESP_ZB_ZCL_CLUSTER_ID_REL_HUMIDITY_MEASUREMENT   = 0x0405U,     /*!< Relative humidity measurement */
+    ESP_ZB_ZCL_CLUSTER_ID_OCCUPANCY_SENSING          = 0x0406U,     /*!< Occupancy sensing */
+    ESP_ZB_ZCL_CLUSTER_ID_CARBON_DIOXIDE_MEASUREMENT = 0x040dU,     /*!< Carbon dioxide measurement */
+    ESP_ZB_ZCL_CLUSTER_ID_PM2_5_MEASUREMENT          = 0x042aU,     /*!< PM2.5 measurement */
+    ESP_ZB_ZCL_CLUSTER_ID_IAS_ZONE                   = 0x0500U,     /*!< IAS zone */
+    ESP_ZB_ZCL_CLUSTER_ID_ELECTRICAL_MEASUREMENT     = 0x0b04U,     /*!< Electrical measurement */
 } esp_zb_zcl_cluster_id_t;
 
 /**

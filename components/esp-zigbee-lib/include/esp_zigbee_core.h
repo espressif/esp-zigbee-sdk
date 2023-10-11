@@ -11,6 +11,7 @@ extern "C" {
 #include "esp_err.h"
 #include "zb_vendor.h"
 #include "zb_config_platform.h"
+#include "esp_zigbee_trace.h"
 #include "esp_zigbee_type.h"
 #include "esp_zigbee_attribute.h"
 #include "esp_zigbee_cluster.h"
@@ -70,6 +71,7 @@ typedef enum esp_zb_core_action_callback_id_s {
     ESP_ZB_CORE_SCENES_RECALL_SCENE_CB_ID               = 0x0002,   /*!< Recall scene, refer to esp_zb_zcl_recall_scene_message_t */
     ESP_ZB_CORE_IAS_ZONE_ENROLL_RESPONSE_VALUE_CB_ID    = 0x0003,   /*!< IAS Zone enroll response, refer to esp_zb_zcl_ias_zone_enroll_response_message_t */
     ESP_ZB_CORE_OTA_UPGRADE_VALUE_CB_ID                 = 0x0004,   /*!< Upgrade OTA, refer to esp_zb_zcl_ota_update_message_t */
+    ESP_ZB_CORE_THERMOSTAT_VALUE_CB_ID                  = 0x0005,   /*!< Thermostat value, refer to esp_zb_zcl_thermostat_value_message_t */
     ESP_ZB_CORE_CMD_READ_ATTR_RESP_CB_ID                = 0x1000,   /*!< Read attribute response, refer to esp_zb_zcl_cmd_read_attr_resp_message_t */
     ESP_ZB_CORE_CMD_WRITE_ATTR_RESP_CB_ID               = 0x1001,   /*!< Write attribute response, refer to esp_zb_zcl_cmd_write_attr_resp_message_t */
     ESP_ZB_CORE_CMD_REPORT_CONFIG_RESP_CB_ID            = 0x1002,   /*!< Configure reprot response, refer to esp_zb_zcl_cmd_config_report_resp_message_t */
@@ -403,7 +405,7 @@ uint8_t esp_zb_get_current_channel(void);
 
 /**
  * @brief   Set the tx power.
- * @param[in]  power 8-bit of power value in dB
+ * @param[in]  power 8-bit of power value in dB, ranging from IEEE802154_TXPOWER_VALUE_MIN to IEEE802154_TXPOWER_VALUE_MAX
  */
 void esp_zb_set_tx_power(int8_t power);
 
@@ -622,6 +624,22 @@ void esp_zb_zdo_setup_network_as_distributed(void);
  * @return - True: The current network is distributed, otherwise it is not.
  */
 bool esp_zb_network_is_distributed(void);
+
+/**
+ * @brief Enable or disable the Zigbee device to join a distributed TC network
+ *
+ * @note It is disbaled by default
+ *
+ * @param[in] enabled Enable or disable
+ */
+void esp_zb_enable_joining_to_distributed(bool enabled);
+
+/**
+ * @brief Determine whether the Zigbee device can join the distributed TC network or not
+ *
+ * @return - True: The Zigbee device can join the distributed TC network; otherwise, it cannot
+ */
+bool esp_zb_joining_to_distributed_network_enabled(void);
 #endif
 
 /**

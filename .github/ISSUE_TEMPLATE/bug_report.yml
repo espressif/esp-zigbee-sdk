@@ -1,0 +1,83 @@
+name: Bug Report
+description: Report bugs
+labels: ['Bug']
+body:
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Answers checklist.
+      description: Before submitting a new issue, please follow the checklist and try to find the answer.
+      options:
+        - label: I have read the documentation [ESP Zigbee SDK Programming Guide](https://docs.espressif.com/projects/esp-zigbee-sdk) and the issue is not addressed there.
+          required: true
+        - label: I have updated my IDF branch (master or release) and ESP Zigbee libs ([esp-zboss-lib](https://components.espressif.com/components/espressif/esp-zboss-lib) and [esp-zigbee-lib](https://components.espressif.com/components/espressif/esp-zigbee-lib)) to the latest version and checked that the issue is present there.
+          required: true
+        - label: I have searched the issue tracker for a similar issue and not found a similar issue.
+          required: true
+  - type: input
+    id: idf_version
+    attributes:
+      label: IDF version.
+      description: On which IDF version does this issue occur? Run `git describe --tags` under IDF folder to find it.
+      placeholder: ex. v3.2-dev-1148-g96cd3b75c
+    validations:
+      required: true
+  - type: input
+    id: esp-zigbee-lib
+    attributes:
+      label: esp-zigbee-lib verion.
+      description: On which esp-zigbee-lib version does this issue occur? Check the idf_component.yml of your project.
+      placeholder: ex. 1.0.0
+    validations:
+      required: true
+  - type: input
+    id: esp-zboss-lib
+    attributes:
+      label: esp-zboss-lib verion.
+      description: On which esp-zboss-lib version does this issue occur? Check the idf_component.yml of your project.
+      placeholder: ex. 1.0.0
+    validations:
+      required: true
+  - type: input
+    id: chip_revision
+    attributes:
+      label: Espressif SoC revision.
+      description: On which Espressif SoC does your application run on?
+      placeholder: ex. ESP32-H2
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What is the expected behavior?
+      description: Please provide a clear and concise description of the expected behavior.
+      placeholder: I expected it to...
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: What is the actual behavior?
+      description: Please describe actual behavior.
+      placeholder: Instead it...
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce.
+      description: How do you trigger this bug? Please walk us through it step by step. Please attach your code here.
+      value: |
+        1. Step
+        2. Step
+        3. Step
+        ...
+    validations:
+      required: true
+  - type: textarea
+    id: more-info
+    attributes:
+      label: More Information.
+      description: The [Sniffer capture file and trace logs](https://docs.espressif.com/projects/esp-zigbee-sdk/en/latest/esp32/developing.html##debugging), or any other information would help.
+    validations:
+      required: false

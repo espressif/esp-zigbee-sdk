@@ -41,16 +41,15 @@ I (403) phy: phy_version: 101,1, 7943bb3, Jul 26 2022, 11:31:12
 I (883) ESP_OTA_CLIENT: ZDO signal: 23, status: -1
 I (3543) ESP_OTA_CLIENT: Start network steering
 I (17303) ESP_OTA_CLIENT: Joined network successfully (Extended PAN ID: ff:fc:ca:c0:f0:bd:97:10, PAN ID: 0x47ce)
-I (37093) ESP_OTA_CLIENT: OTA upgrade status:0
-I (37313) ESP_OTA_CLIENT: OTA upgrade status:2
-I (37543) ESP_OTA_CLIENT: OTA upgrade status:2
-.
-.
-I (3014933) ESP_OTA_CLIENT: OTA upgrade status:2
-I (3015163) ESP_OTA_CLIENT: OTA upgrade status:2
-I (3015163) ESP_OTA_CLIENT: OTA upgrade status:5
-I (3015223) ESP_OTA_CLIENT: OTA upgrade status:1
-I (3015223) ESP_OTA_CLIENT: OTA upgrade status:3
+I (37093) ESP_OTA_CLIENT: OTA start
+I (37313) ESP_OTA_CLIENT: OTA receiving ...
+I (37543) ESP_OTA_CLIENT: OTA receiving ...
+...
+I (3014933) ESP_OTA_CLIENT: OTA receiving ...
+I (3015163) ESP_OTA_CLIENT: OTA receiving ...
+I (3015163) ESP_OTA_CLIENT: OTA status: 5
+I (3015223) ESP_OTA_CLIENT: OTA receiving ...
+I (3015223) ESP_OTA_CLIENT: OTA finish
 I (3015223) esp_image: segment 0: paddr=001d0020 vaddr=3c050020 size=09b18h ( 39704) map
 I (3015273) esp_image: segment 1: paddr=001d9b40 vaddr=3fc8d0c0 size=01a58h (  6744) 
 I (3015283) esp_image: segment 2: paddr=001db5a0 vaddr=40380000 size=04a78h ( 19064) 
@@ -70,7 +69,7 @@ I (325) ESP_OTA_CLIENT: OTA example 2.0 is running
 I (325) system_api: Base MAC address is not set
 I (335) system_api: read default base MAC address from EFUSE
 I (385) phy: phy_version: 101,0, 7943bb3, Jul 26 2022, 11:31:12
-I (405) ESP_OTA_CLIENT: ZDO signal: 23, status: -1
+I (405) ESP_OTA_CLIENT: ZDO Config Ready (0x17), status: ESP_FAIL
 I (1025) ESP_OTA_CLIENT: Joined network successfully (Extended PAN ID: ff:fc:74:c0:f0:bd:97:10, PAN ID: 0xc9ed)
 ```
 

@@ -27,7 +27,7 @@ git clone https://github.com/espressif/esp-zigbee-sdk.git
 ```
 
 ## Supported ESP-IDF versions
-* This SDK currently works with ESP-IDF commit [56677da](https://github.com/espressif/esp-idf/tree/56677da) in release/v5.1 branch.
+* This SDK currently works with ESP-IDF release/v5.1 branch.
 
 ## Copyright Notes
 

@@ -38,16 +38,16 @@ I (509) phy: phy_version: 101,1, 7943bb3, Jul 26 2022, 11:31:12
 I (879) ESP_OTA_SERVER: ZDO signal: 23, status: -1
 I (879) ESP_OTA_SERVER: Zigbee stack initialized
 I (879) ESP_OTA_SERVER: Start network formation
-I (1389) ESP_OTA_SERVER: ZDO signal: 54, status: 0
+I (1389) ESP_OTA_SERVER: NWK Permit Join (0x36), status: ESP_OK
 I (1389) ESP_OTA_SERVER: Formed network successfully (Extended PAN ID: ff:fc:74:c0:f0:bd:97:10, PAN ID: 0x31d3)
-I (1849) ESP_OTA_SERVER: ZDO signal: 54, status: 0
+I (1849) ESP_OTA_SERVER: NWK Permit Join (0x36), status: ESP_OK
 I (1849) ESP_OTA_SERVER: Network steering started
-I (2729) ESP_OTA_SERVER: ZDO signal: 18, status: 0
-I (3239) ESP_OTA_SERVER: ZDO signal: 48, status: 0
+I (2729) ESP_OTA_SERVER: NWK Device Associated (0x12), status: ESP_OK
+I (3239) ESP_OTA_SERVER: ZDO Device Update (0x30), status: ESP_OK
 I (3279) ESP_OTA_SERVER: New device commissioned or rejoined (short: 0x7bbd)
 I (3279) ESP_ZIGBEE_OTA: esp zigbee ota server start
-I (3389) ESP_OTA_SERVER: ZDO signal: 47, status: 0
-I (3429) ESP_OTA_SERVER: ZDO signal: 54, status: 0
+I (3389) ESP_OTA_SERVER: ZDO Device Authorized (0x2f), status: ESP_OK
+I (3429) ESP_OTA_SERVER: NWK Permit Join (0x36), status: ESP_OK
 I (3026279) ESP_OTA_SERVER: New device commissioned or rejoined (short: 0x7bbd)
 ```
 

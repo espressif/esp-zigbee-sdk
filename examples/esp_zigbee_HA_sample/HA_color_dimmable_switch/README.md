@@ -31,34 +31,38 @@ Build the project, flash it to the board, and start the monitor tool to view the
 As you run the example, you will see the following log:
 
 ```
-I (318) gpio: GPIO[9]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:2
-I (328) system_api: Base MAC address is not set
-I (328) system_api: read default base MAC address from EFUSE
-I (418) phy: libbtbb version: 6c47ec3, Mar 16 2022, 18:54:24
-I (418) phy: phy_version: 101, bb2a234, Mar 16 2022, 18:54:11
-I (748) ESP_ZB_COLOR_DIMM_SWITCH: status: 255
-I (748) ESP_ZB_COLOR_DIMM_SWITCH: Zigbee stack initialized
-I (748) ESP_ZB_COLOR_DIMM_SWITCH: Start network formation
-I (1258) ESP_ZB_COLOR_DIMM_SWITCH: Formed network successfully (Extended PAN ID: ff:fc:7f:c0:f0:bd:97:10, PAN ID: 0xfa0d)
-I (1718) ESP_ZB_COLOR_DIMM_SWITCH: status: 0
-I (13798) ESP_ZB_COLOR_DIMM_SWITCH: status: 0
-I (14308) ESP_ZB_COLOR_DIMM_SWITCH: status: 0
-I (14348) ESP_ZB_COLOR_DIMM_SWITCH: New device commissioned or rejoined (short: 0xcda0)
-I (14388) ESP_ZB_COLOR_DIMM_SWITCH: User find cb: address:0xcda0, endpoint:10
-I (14888) ESP_ZB_COLOR_DIMM_SWITCH: status: 0
-I (14918) ESP_ZB_COLOR_DIMM_SWITCH: status: 0
-I (17478) ESP_ZB_COLOR_DIMM_SWITCH: send move to level command:5
-I (20988) ESP_ZB_COLOR_DIMM_SWITCH: send color move to color command color_x:19660,color_y:38321
-I (22418) ESP_ZB_COLOR_DIMM_SWITCH: send move to level command:15
-I (23038) ESP_ZB_COLOR_DIMM_SWITCH: send color move to color command color_x:41942,color_y:21626
-I (23438) ESP_ZB_COLOR_DIMM_SWITCH: send move to level command:25
-I (23918) ESP_ZB_COLOR_DIMM_SWITCH: send color move to color command color_x:9830,color_y:3932
-I (24268) ESP_ZB_COLOR_DIMM_SWITCH: send move to level command:35
-I (24698) ESP_ZB_COLOR_DIMM_SWITCH: send color move to color command color_x:19660,color_y:38321
-I (25178) ESP_ZB_COLOR_DIMM_SWITCH: send move to level command:45
-I (25538) ESP_ZB_COLOR_DIMM_SWITCH: send color move to color command color_x:41942,color_y:21626
-I (26058) ESP_ZB_COLOR_DIMM_SWITCH: send move to level command:55
-I (26478) ESP_ZB_COLOR_DIMM_SWITCH: send color move to color command color_x:9830,color_y:3932
+I (390) main_task: Calling app_main()
+I (400) gpio: GPIO[9]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:2 
+I (400) phy_init: phy_version 220,2dbbbe7,Sep 25 2023,20:39:25
+I (470) phy: libbtbb version: 90c587c, Sep 25 2023, 20:39:57
+I (480) ESP_ZB_COLOR_DIMM_SWITCH: ZDO signal: ZDO Config Ready (0x17), status: ESP_FAIL
+I (480) ESP_ZB_COLOR_DIMM_SWITCH: Zigbee stack initialized
+I (480) ESP_ZB_COLOR_DIMM_SWITCH: Start network formation
+I (490) main_task: Returned from app_main()
+I (1000) ESP_ZB_COLOR_DIMM_SWITCH: ZDO signal: NWK Permit Join (0x36), status: ESP_OK
+I (1000) ESP_ZB_COLOR_DIMM_SWITCH: Formed network successfully (Extended PAN ID: 60:55:f9:00:00:f6:07:b4, PAN ID: 0x17ef, Channel:13)
+I (1480) ESP_ZB_COLOR_DIMM_SWITCH: ZDO signal: NWK Permit Join (0x36), status: ESP_OK
+I (1480) ESP_ZB_COLOR_DIMM_SWITCH: Network steering started
+I (17070) ESP_ZB_COLOR_DIMM_SWITCH: ZDO signal: NWK Device Associated (0x12), status: ESP_OK
+I (17570) ESP_ZB_COLOR_DIMM_SWITCH: ZDO signal: ZDO Device Update (0x30), status: ESP_OK
+I (17630) ESP_ZB_COLOR_DIMM_SWITCH: New device commissioned or rejoined (short: 0x85da)
+I (17660) ESP_ZB_COLOR_DIMM_SWITCH: Found dimmable light
+I (17660) ESP_ZB_COLOR_DIMM_SWITCH: Try to bind color control
+I (17660) ESP_ZB_COLOR_DIMM_SWITCH: Try to bind level control
+I (17670) ESP_ZB_COLOR_DIMM_SWITCH: Bound successfully!
+I (17670) ESP_ZB_COLOR_DIMM_SWITCH: Bound successfully!
+I (17680) ESP_ZB_COLOR_DIMM_SWITCH: The light originating from address(0x85da) on endpoint(10)
+I (18140) ESP_ZB_COLOR_DIMM_SWITCH: ZDO signal: ZDO Device Authorized (0x2f), status: ESP_OK
+I (18190) ESP_ZB_COLOR_DIMM_SWITCH: ZDO signal: NWK Permit Join (0x36), status: ESP_OK
+I (19660) ESP_ZB_COLOR_DIMM_SWITCH: Send command for moving light to 5 level
+I (20840) ESP_ZB_COLOR_DIMM_SWITCH: Send command for moving light color to (0x4ccc, 0x95b1)
+I (21840) ESP_ZB_COLOR_DIMM_SWITCH: Send command for moving light to 15 level
+I (22810) ESP_ZB_COLOR_DIMM_SWITCH: Send command for moving light color to (0xa3d6, 0x547a)
+I (29400) ESP_ZB_COLOR_DIMM_SWITCH: Send command for moving light to 25 level
+I (30160) ESP_ZB_COLOR_DIMM_SWITCH: Send command for moving light color to (0x2666, 0xf5c)
+I (58620) ESP_ZB_COLOR_DIMM_SWITCH: ZDO signal: ZDO Device Update (0x30), status: ESP_OK
+I (58730) ESP_ZB_COLOR_DIMM_SWITCH: New device commissioned or rejoined (short: 0x6359)
+
 ```
 
 ## Light Control Functions
