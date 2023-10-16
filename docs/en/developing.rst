@@ -56,40 +56,18 @@ Build following examples in the esp-zigbee-sdk environment which implemented wit
 
 Choose IDF target.
 
-.. only:: esp32
+::
 
-   ::
-
-      idf.py set-target {IDF_TARGET_PATH_NAME}
-
-.. only:: esp32c3
-
-   ::
-
-      idf.py set-target {IDF_TARGET_PATH_NAME}
-      
-.. only:: esp32s3
-
-   ::
-
-      idf.py set-target {IDF_TARGET_PATH_NAME}
-
-.. only:: esp32h2
-
-   ::
-
-      idf.py --preview set-target {IDF_TARGET_PATH_NAME}
+   idf.py set-target {IDF_TARGET_PATH_NAME}
 
 -  If IDF target has not been set explicitly, then ``esp32`` is
    considered as default.
 
-
-(When flashing the SDK for the first time, it is recommended to do
-``idf.py -p PORT erase-flash`` to wipe out entire flash and start out fresh.)
+Build and flash the example.
 
 ::
 
-   idf.py -p PORT flash monitor
+   idf.py -p PORT erase_flash flash monitor
 
 
 2.2 Running example

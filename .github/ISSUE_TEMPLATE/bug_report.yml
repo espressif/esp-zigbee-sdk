@@ -25,7 +25,7 @@ body:
   - type: input
     id: esp-zigbee-lib
     attributes:
-      label: esp-zigbee-lib verion.
+      label: esp-zigbee-lib version.
       description: On which esp-zigbee-lib version does this issue occur? Check the idf_component.yml of your project.
       placeholder: ex. 1.0.0
     validations:
@@ -33,7 +33,7 @@ body:
   - type: input
     id: esp-zboss-lib
     attributes:
-      label: esp-zboss-lib verion.
+      label: esp-zboss-lib version.
       description: On which esp-zboss-lib version does this issue occur? Check the idf_component.yml of your project.
       placeholder: ex. 1.0.0
     validations:
@@ -78,6 +78,6 @@ body:
     id: more-info
     attributes:
       label: More Information.
-      description: The [Sniffer capture file and trace logs](https://docs.espressif.com/projects/esp-zigbee-sdk/en/latest/esp32/developing.html##debugging), or any other information would help.
+      description: The [Sniffer capture file and trace logs](https://docs.espressif.com/projects/esp-zigbee-sdk/en/latest/esp32/developing.html#debugging), or any other information would help.
     validations:
       required: false

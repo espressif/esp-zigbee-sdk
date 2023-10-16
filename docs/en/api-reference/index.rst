@@ -13,6 +13,7 @@ This section provides the ESP Zigbee SDK's APIs that support different kind of s
    esp_zigbee_endpoint
    esp_zigbee_ota
    esp_zigbee_secur
+   esp_zigbee_trace
    esp_zigbee_type
    zcl/index
    zdo/index
