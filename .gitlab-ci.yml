@@ -102,7 +102,7 @@ build_docs:
         expire_in: 1 days
     script:
         - cd docs
-        - build-docs -t esp32 esp32c3 esp32h2 esp32s3 -l en
+        - build-docs -t esp32 esp32c3 esp32h2 esp32s3 esp32c6 -l en
 
 pytest_esp32h2_i154_zigbee_multi_dut:
   stage: target_test
