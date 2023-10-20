@@ -264,27 +264,6 @@ typedef struct esp_zb_endpoint_s {
 } ESP_ZB_PACKED_STRUCT
 esp_zb_endpoint_t;
 
-/**
- * @brief The Zigbee ZCL OTA upgrade server parameter struct.
- *
- */
-typedef struct esp_zb_ota_upgrade_server_parameter_s {
-    uint8_t query_jitter;                     /*!< Query jitter */
-    uint32_t current_time;                    /*!< Current time of OTA server */
-} esp_zb_ota_upgrade_server_parameter_t;
-
-/**
- * @brief The Zigbee ZCL OTA upgrade client parameter struct.
- *
- * @note Currently field control is set to bit mask 1, later will support the other bit mask
- *
- */
-typedef struct esp_zb_ota_upgrade_client_parameter_s {
-    uint16_t query_timer;                    /*!< Time interval for query next image request command */
-    uint16_t hardware_version;               /*!< Version of hardware */
-    uint8_t max_data_size;                   /*!< Maximum data size of query block image */
-} esp_zb_ota_upgrade_client_parameter_t;
-
 /******************* attribute list *******************/
 /**
  * @brief The esp-zigbee data model of list of attribute.

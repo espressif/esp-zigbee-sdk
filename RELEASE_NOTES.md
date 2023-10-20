@@ -1,5 +1,23 @@
 # Espressif Zigbee SDK Release Notes
 
+## 20-Oct-2023
+1.0.1 version release of ESP-ZIGBEE-SDK
+
+### Features
+- Update esp-zboss-lib to v1.0.1
+- Support the effect of level control and on/off cluster
+- Support to scan all touchlink channels 
+- Optimize the Zigbee OTA examples
+- Update the Zigbee OTA README.md
+- Closes: https://github.com/espressif/esp-zigbee-sdk/issues/100
+- Closes: https://github.com/espressif/esp-zigbee-sdk/issues/72
+
+### Bug Fixes
+- Fix the panid setting
+- Fix the reading attribute of zcl timer cluster
+- Increase the endpoint number in the ZCL group table from 4 to 32
+
+
 ## 10-Oct-2023
 1.0.0 version release of ESP-ZIGBEE-SDK
 
