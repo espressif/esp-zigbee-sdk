@@ -5,6 +5,7 @@
 import pathlib
 import pytest
 import time
+import pexpect
 from typing import Tuple
 from pytest_embedded import Dut
 
@@ -152,6 +153,8 @@ def test_zb_cli_zc_ZCL_command(dut: Tuple[Dut, Dut]) -> None:
     light_lvl =5
     # Move to level(with On/Off) command
     time.sleep(2)
+    str_length = str(len(light.expect(pexpect.TIMEOUT, timeout=0.1)))
+    light.expect(r'[\s\S]{%s}' % str(str_length), timeout=10)
     cli.write('zcl -c '+light_nwk_addr+' '+light_endpoint+' 0x0008 04 profile 0x0104 payload 05ffff')
     assert str(light_lvl) == light.expect(r'Light level changes to ([0-9])',timeout=3)[1].decode()
     cli.expect('Done',timeout=3)

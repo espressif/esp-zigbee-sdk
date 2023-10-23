@@ -9,8 +9,24 @@
 extern "C" {
 #endif
 
+#include "esp_err.h"
 #include "esp_zigbee_type.h"
 #include "zcl/esp_zigbee_zcl_common.h"
+
+/**
+ * @brief The basic zcl information for OTA command
+ *
+ */
+typedef struct esp_zb_ota_zcl_information_s {
+    esp_zb_zcl_addr_t src_addr;         /*!< The source address */
+    uint16_t dst_short_addr;            /*!< The destination short address */
+    uint8_t src_endpoint;               /*!< The source endpoint identifier */
+    uint8_t dst_endpoint;               /*!< The destination endpoint identifier */
+    uint16_t cluster_id;                /*!< The cluster identifier */
+    uint16_t profile_id;                /*!< The profile identifier */
+    uint8_t command_id;                 /*!< The command identifier */
+    uint16_t manufacturer_specific;     /*!< The manufacturer specific  data */
+} esp_zb_ota_zcl_information_t;
 
 /**
  * @brief The Zigbee ZCL OTA file header struct.
@@ -24,51 +40,60 @@ typedef struct esp_zb_ota_file_header_s {
 } esp_zb_ota_file_header_t;
 
 /**
- * @brief The Zigbee ZCL OTA config struct for server initialize.
+ * @brief A callback for the OTA Server to retrieve the next OTA data
+ *
+ * @param[in] message The message will provide the basic OTA cluster information, @ref esp_zb_ota_zcl_information_s
+ * @param[in] index   The index of the OTA file
+ * @param[in] size    The size indicates how many bytes the user needs to allocate for the @p data
+ * @param[out] data   The next OTA data that will be transmit to OTA Client by the OTA Server
  *
  */
-typedef struct esp_zb_ota_cfg_s {
-    uint8_t endpoint;                                /*!< Server endpoint */
-    uint32_t ota_upgrade_time;                       /*!< OTA Upgrade time */
-    esp_zb_ota_file_header_t   ota_file_header;      /*!< Config OTA file header */
-    uint8_t *ota_data;                               /*!< OTA app data */
-} esp_zb_ota_cfg_t;
+typedef esp_err_t (*esp_zb_ota_next_data_callback_t)(esp_zb_ota_zcl_information_t message, uint16_t index, uint8_t size, uint8_t **data);
+
+/**
+ * @brief The Zigbee ZCL OTA upgrade client variable configuration struct.
+ *
+ */
+typedef struct esp_zb_zcl_ota_upgrade_client_variable_s {
+    uint16_t timer_query;  /*!< The field indicates the time of querying OTA imagge for OTA upgrade client */
+    uint16_t hw_version;   /*!< The hardware version */
+    uint8_t max_data_size; /*!< The maxinum size of OTA data */
+} esp_zb_zcl_ota_upgrade_client_variable_t;
+
+/**
+ * @brief The Zigbee ZCL OTA upgrade server variable configuration struct.
+ *
+ */
+typedef struct esp_zb_zcl_ota_upgrade_server_variable_s {
+    uint8_t query_jitter;  /*!< Query jitter */
+    uint32_t current_time; /*!< Current time of OTA server */
+    uint8_t file_count;    /*!< The field specifies the maximum number of OTA files for the OTA upgrade server variable. */
+} esp_zb_zcl_ota_upgrade_server_variable_t;
+
+/**
+ * @brief The Zigbee ZCL OTA upgrade server notification request struct
+ *
+ */
+typedef struct esp_zb_ota_upgrade_server_notify_req_s {
+    uint8_t endpoint;                             /*!< The endpoint identifier for ota server cluster */
+    uint8_t index;                                /*!< The index of OTA file */
+    uint8_t notify_on;                            /*!< The field indicates whether send the notification request directly */
+    uint32_t ota_upgrade_time;                    /*!< The time indicates the interval for the OTA file upgrade after the OTA process is completed */
+    esp_zb_ota_file_header_t ota_file_header;     /*!< The header is used to register the basic OTA upgrade information */
+    esp_zb_ota_next_data_callback_t next_data_cb; /*!< The callback is used to retrieve the next OTA data, which will be transmitted to the OTA client side */
+} esp_zb_ota_upgrade_server_notify_req_t;
 
 /********************* Declare functions **************************/
-
 /**
- * @brief   Config OTA server parameters
+ * @brief Notify the image upgrade event of OTA upgrade server
  *
- * @param[in]  config  pointer to the OTA upgrade parameter @ref esp_zb_ota_upgrade_server_parameter_s
- *
+ * @param[in] req The OTA file information request @ref esp_zb_ota_upgrade_server_notify_req_s
+ * @return
+ *      - ESP_OK: On success
+ *      - ESP_ERR_NOT_FOUND: Not found the variable table in the OTA server side
+ *      - ESP_ERR_INVALID_ARG: The input arguments are incorrect or invalid.
  */
-void *esp_zb_ota_server_parameter(esp_zb_ota_upgrade_server_parameter_t *config);
-
-/**
- * @brief   Initialize OTA Upgrade cluster - server part
- *
- * @param[in]  esp_zb_ota_config  pointer to the OTA config @ref esp_zb_ota_cfg_s
- *
- */
-void esp_zb_ota_server_init(esp_zb_ota_cfg_t *esp_zb_ota_config);
-
-/**
- * @brief   Start OTA server
- *
- * @note After initialization of server part to insert OTA file to upgrade mechanism
- *
- */
-void esp_zb_ota_server_start(void);
-
-/**
- * @brief   Config OTA client parameters
- *
- * @param[in]  config  pointer to the OTA upgrade client parameter @ref esp_zb_ota_upgrade_client_parameter_s
- *
- * @note Currently set timer_counter to default value - to do first OTA request after 1 min
- *
- */
-void *esp_zb_ota_client_parameter(esp_zb_ota_upgrade_client_parameter_t *config);
+esp_err_t esp_zb_ota_upgrade_server_notify_req(esp_zb_ota_upgrade_server_notify_req_t *req);
 
 #ifdef __cplusplus
 }

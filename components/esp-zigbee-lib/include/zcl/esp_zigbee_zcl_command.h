@@ -6,6 +6,7 @@
 
 #pragma once
 #include "esp_err.h"
+#include "esp_zigbee_ota.h"
 #include <stdint.h>
 #ifdef __cplusplus
 extern "C" {
@@ -500,14 +501,12 @@ typedef struct esp_zb_zcl_groups_remove_all_groups_cmd_s {
  *
  * @note Get group membership will set enable ZCL response by default, later will support this feature
  *
- * @note Maximum group list size is 10.
- *
  */
 typedef struct esp_zb_zcl_groups_get_group_membership_cmd_s {
     esp_zb_zcl_basic_cmd_t zcl_basic_cmd;                  /*!< Basic command info */
     esp_zb_zcl_address_mode_t address_mode;                /*!< APS addressing mode constants @ref esp_zb_zcl_address_mode_t */
     uint8_t group_count;                                   /*!< Total group count */
-    uint16_t group_list[10];                               /*!< Maximum group list */
+    uint16_t *group_list;                                  /*!< Maximum group list */
 } esp_zb_zcl_groups_get_group_membership_cmd_t;
 
 /**
@@ -798,13 +797,42 @@ typedef struct esp_zb_zcl_ias_zone_enroll_response_message_s {
 } esp_zb_zcl_ias_zone_enroll_response_message_t;
 
 /**
- * @brief The Zigbee zcl ota upgrade device callback message struct
+ * @brief The Zigbee zcl ota upgrade value device callback message struct
  *
  */
-typedef struct esp_zb_zcl_ota_update_message_s {
-    esp_zb_device_cb_common_info_t info;            /*!< The common information for Zigbee device callback */
-    esp_zb_zcl_ota_upgrade_status_t update_status;  /*!< The update status for Zigbee ota update */
-} esp_zb_zcl_ota_update_message_t;
+typedef struct esp_zb_zcl_ota_upgrade_value_message_s {
+    esp_zb_device_cb_common_info_t info;             /*!< The common information for Zigbee device callback */
+    esp_zb_zcl_ota_upgrade_status_t upgrade_status;  /*!< The update status for Zigbee ota update */
+    esp_zb_ota_file_header_t ota_header;             /*!< The header indiates the basic OTA upgrade information */
+    uint16_t payload_size;                           /*!< The OTA payload size */
+    uint8_t *payload;                                /*!< The OTA payload */
+} esp_zb_zcl_ota_upgrade_value_message_t;
+
+/**
+ * @brief The Zigbee zcl ota upgrade server status message struct
+ *
+ */
+typedef struct esp_zb_zcl_ota_upgrade_server_status_message_s {
+    esp_zb_device_cb_common_info_t info;              /*!< The common information for Zigbee device callback */
+    esp_zb_zcl_addr_t zcl_addr;                       /*!< The address information is sourced from the OTA upgrade client */
+    esp_zb_ota_upgrade_server_status_t server_status; /*!< The status of OTA upgrade server, which can refer to esp_zb_ota_upgrade_server_status_t */
+    uint16_t image_type;                              /*!< The image type of OTA file */
+    uint32_t version;                                 /*!< The version of OTA file */
+    uint32_t *upgrade_time;                           /*!< The upgrade time of OTA file, which indicates the interval time when the received OTA image will be updated */
+} esp_zb_zcl_ota_upgrade_server_status_message_t;
+
+/**
+ * @brief The Zigbee zcl ota upgrade server query image message struct
+ *
+ */
+typedef struct esp_zb_zcl_ota_upgrade_server_query_image_message_s {
+    esp_zb_device_cb_common_info_t info; /*!< The common information for Zigbee device callback */
+    esp_zb_zcl_addr_t zcl_addr;          /*!< The address information is sourced from the OTA upgrade client */
+    uint16_t image_type;                 /*!< The image type of OTA file */
+    uint16_t manufacturer_code;          /*!< The manufacturer code of OTA file */
+    uint32_t version;                    /*!< The version code of OTA file */
+    uint8_t *table_idx;                  /*!< The pointer for the index of variable table */
+} esp_zb_zcl_ota_upgrade_server_query_image_message_t;
 
 /**
  * @brief The Zigbee zcl thermostat value callback message struct
