@@ -25,6 +25,7 @@ This section provides the ESP Zigbee SDK's APIs that support different kind of Z
    esp_zigbee_zcl_identify
    esp_zigbee_zcl_illuminance_meas
    esp_zigbee_zcl_level
+   esp_zigbee_zcl_metering
    esp_zigbee_zcl_multistate_value
    esp_zigbee_zcl_occupancy_sensing
    esp_zigbee_zcl_on_off

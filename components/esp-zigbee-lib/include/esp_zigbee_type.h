@@ -489,7 +489,7 @@ typedef struct esp_zb_ota_cluster_cfg_s {
 } esp_zb_ota_cluster_cfg_t;
 
 /**
- * @brief Zigbee standard mandatory atrribute for illuminance measurement cluster
+ * @brief Zigbee standard mandatory attribute for illuminance measurement cluster
  *
  */
 typedef struct esp_zb_illuminance_meas_cluster_cfg_s {
@@ -499,7 +499,7 @@ typedef struct esp_zb_illuminance_meas_cluster_cfg_s {
 } esp_zb_illuminance_meas_cluster_cfg_t;
 
 /**
- * @brief Zigbee standard mandatory atrribute for pressure measurement cluster
+ * @brief Zigbee standard mandatory attribute for pressure measurement cluster
  *
  */
 typedef struct esp_zb_pressure_meas_cluster_cfg_s {
@@ -509,7 +509,7 @@ typedef struct esp_zb_pressure_meas_cluster_cfg_s {
 } esp_zb_pressure_meas_cluster_cfg_t;
 
 /**
- * @brief Zigbee standard mandatory atrribute for electrical measurement cluster
+ * @brief Zigbee standard mandatory attribute for electrical measurement cluster
  *
  */
 typedef struct esp_zb_electrical_meas_cluster_cfg_s {
@@ -517,7 +517,7 @@ typedef struct esp_zb_electrical_meas_cluster_cfg_s {
 } esp_zb_electrical_meas_cluster_cfg_t;
 
 /**
- * @brief Zigbee standard mandatory atrribute for occupancy sensing cluster
+ * @brief Zigbee standard mandatory attribute for occupancy sensing cluster
  *
  */
 typedef struct esp_zb_occupancy_sensing_cluster_cfg_s {
@@ -527,7 +527,7 @@ typedef struct esp_zb_occupancy_sensing_cluster_cfg_s {
 } esp_zb_occupancy_sensing_cluster_cfg_t;
 
 /**
- * @brief Zigbee standard mandatory atrribute for window covering cluster
+ * @brief Zigbee standard mandatory attribute for window covering cluster
  *
  */
 typedef struct esp_zb_window_covering_cluster_cfg_s {
@@ -537,7 +537,7 @@ typedef struct esp_zb_window_covering_cluster_cfg_s {
 } esp_zb_window_covering_cluster_cfg_t;
 
 /**
- * @brief Zigbee standard mandatory atrribute for thermostat cluster
+ * @brief Zigbee standard mandatory attribute for thermostat cluster
  *
  */
 typedef struct esp_zb_thermostat_cluster_cfg_s {
@@ -549,7 +549,7 @@ typedef struct esp_zb_thermostat_cluster_cfg_s {
 } esp_zb_thermostat_cluster_cfg_t;
 
 /**
- * @brief Zigbee standard mandatory atrribute for fan control cluster
+ * @brief Zigbee standard mandatory attribute for fan control cluster
  *
  */
 typedef struct esp_zb_fan_control_cluster_cfg_s {
@@ -558,7 +558,7 @@ typedef struct esp_zb_fan_control_cluster_cfg_s {
 } esp_zb_fan_control_cluster_cfg_t;
 
 /**
- * @brief Zigbee standard mandatory atrribute for thermostat ui configuration cluster
+ * @brief Zigbee standard mandatory attribute for thermostat ui configuration cluster
  *
  */
 typedef struct esp_zb_thermostat_ui_config_cluster_cfg_s {
@@ -567,7 +567,7 @@ typedef struct esp_zb_thermostat_ui_config_cluster_cfg_s {
 } esp_zb_thermostat_ui_config_cluster_cfg_t;
 
 /**
- * @brief Zigbee standard mandatory atrribute for analog input cluster
+ * @brief Zigbee standard mandatory attribute for analog input cluster
  *
  */
 typedef struct esp_zb_analog_input_cluster_cfg_s {
@@ -577,27 +577,27 @@ typedef struct esp_zb_analog_input_cluster_cfg_s {
 } esp_zb_analog_input_cluster_cfg_t;
 
 /**
- * @brief Zigbee standard mandatory atrribute for analog output cluster
+ * @brief Zigbee standard mandatory attribute for analog output cluster
  *
  */
 typedef struct esp_zb_analog_output_cluster_cfg_s {
     bool out_of_service;   /*!< This attribute indicates whether or not the physical output that the cluster represents is in service */
-    uint8_t present_value; /*!< This attribute indicates the current value of the output as appropriate for the cluster */
+    float_t present_value; /*!< This attribute indicates the current value of the output as appropriate for the cluster */
     uint8_t status_flags;  /*!< This attribute indicates the general “health” of the analog sensor */
 } esp_zb_analog_output_cluster_cfg_t;
 
 /**
- * @brief Zigbee standard mandatory atrribute for analog value cluster
+ * @brief Zigbee standard mandatory attribute for analog value cluster
  *
  */
 typedef struct esp_zb_analog_value_cluster_cfg_s {
     bool out_of_service;   /*!< This attribute indicates whether or not the physical value that the cluster represents is in service */
-    uint8_t present_value; /*!< This attribute indicates the current value as appropriate for the cluster */
+    float_t present_value; /*!< This attribute indicates the current value as appropriate for the cluster */
     uint8_t status_flags;  /*!< This attribute indicates the general “health” of the analog sensor */
 } esp_zb_analog_value_cluster_cfg_t;
 
 /**
- * @brief Zigbee standard mandatory atrribute for carbon dioxide measurement cluster
+ * @brief Zigbee standard mandatory attribute for carbon dioxide measurement cluster
  *
  */
 typedef struct esp_zb_carbon_dioxide_measurement_cluster_cfg_s {
@@ -607,7 +607,7 @@ typedef struct esp_zb_carbon_dioxide_measurement_cluster_cfg_s {
 } esp_zb_carbon_dioxide_measurement_cluster_cfg_t;
 
 /**
- * @brief Zigbee standard mandatory atrribute for pm 2.5 measurement cluster
+ * @brief Zigbee standard mandatory attribute for pm 2.5 measurement cluster
  *
  */
 typedef struct esp_zb_pm2_5_measurement_cluster_cfg_s {
@@ -617,7 +617,7 @@ typedef struct esp_zb_pm2_5_measurement_cluster_cfg_s {
 } esp_zb_pm2_5_measurement_cluster_cfg_t;
 
 /**
- * @brief Zigbee standard mandatory atrribute for multistate value cluster
+ * @brief Zigbee standard mandatory attribute for multistate value cluster
  *
  */
 typedef struct esp_zb_multistate_value_cluster_cfg_s {
@@ -626,6 +626,20 @@ typedef struct esp_zb_multistate_value_cluster_cfg_s {
     uint16_t present_value;    /*!< This attribute indicates the current value as appropriate for the cluster */
     uint8_t status_flags;      /*!< This attribute indicates the general “health” of the analog sensor */
 } esp_zb_multistate_value_cluster_cfg_t;
+
+/**
+ * @brief Zigbee standard mandatory attribute for metering cluster
+ *
+ */
+typedef struct esp_zb_metering_cluster_cfg_s {
+    esp_zb_uint48_t current_summation_delivered; /*!< This attribute represents the most recent summed value of Energy, Gas, or Water delivered and consumed in the premises */
+    uint8_t status;                              /*!< This attribute provides indicators reflecting the current error conditions found by the metering device */
+    uint8_t uint_of_measure;                     /*!< This attribute provides a label for the Energy, Gas, or Water being measured by the metering device.
+                                                      refer to esp_zb_zcl_metering_unit_of_measure_t */
+    uint8_t summation_formatting;                /*!< This attribute provides a method to properly decipher the number of digits and the decimal location of the values found in the Summation Information Set */
+    uint8_t metering_device_type;                /*!< This attribute provides a label for identifying the type of metering device (Energy, Gas, Water, Thermal, Heat, Cooling, and mirrored metering devices).
+                                                      refer to esp_zb_zcl_metering_device_type_t */
+} esp_zb_metering_cluster_cfg_t;
 
 /****************** standard device config *********************/
 /**

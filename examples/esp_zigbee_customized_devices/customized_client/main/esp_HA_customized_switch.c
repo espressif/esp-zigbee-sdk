@@ -232,9 +232,15 @@ static esp_err_t zb_read_attr_resp_handler(const esp_zb_zcl_cmd_read_attr_resp_m
     ESP_RETURN_ON_FALSE(message, ESP_FAIL, TAG, "Empty message");
     ESP_RETURN_ON_FALSE(message->info.status == ESP_ZB_ZCL_STATUS_SUCCESS, ESP_ERR_INVALID_ARG, TAG, "Received message: error status(%d)",
                         message->info.status);
-    ESP_LOGI(TAG, "Read attribute response: status(%d), cluster(0x%x), attribute(0x%x), type(0x%x), value(%d)", message->info.status,
-             message->info.cluster, message->attribute.id, message->attribute.data.type,
-             message->attribute.data.value ? *(uint8_t *)message->attribute.data.value : 0);
+
+    esp_zb_zcl_read_attr_resp_variable_t *variable = message->variables;
+    while (variable) {
+        ESP_LOGI(TAG, "Read attribute response: status(%d), cluster(0x%x), attribute(0x%x), type(0x%x), value(%d)", variable->status,
+                 message->info.cluster, variable->attribute.id, variable->attribute.data.type,
+                 variable->attribute.data.value ? *(uint8_t *)variable->attribute.data.value : 0);
+        variable = variable->next;
+    }
+
     return ESP_OK;
 }
 
@@ -243,8 +249,14 @@ static esp_err_t zb_configure_report_resp_handler(const esp_zb_zcl_cmd_config_re
     ESP_RETURN_ON_FALSE(message, ESP_FAIL, TAG, "Empty message");
     ESP_RETURN_ON_FALSE(message->info.status == ESP_ZB_ZCL_STATUS_SUCCESS, ESP_ERR_INVALID_ARG, TAG, "Received message: error status(%d)",
                         message->info.status);
-    ESP_LOGI(TAG, "Configure report response: status(%d), cluster(0x%x), attribute(0x%x)", message->info.status, message->info.cluster,
-             message->attribute_id);
+
+    esp_zb_zcl_config_report_resp_variable_t *variable = message->variables;
+    while (variable) {
+        ESP_LOGI(TAG, "Configure report response: status(%d), cluster(0x%x), attribute(0x%x)", message->info.status, message->info.cluster,
+                 variable->attribute_id);
+        variable = variable->next;
+    }
+
     return ESP_OK;
 }
 

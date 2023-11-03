@@ -40,6 +40,7 @@ extern "C" {
 #include "esp_zigbee_zcl_carbon_dioxide_measurement.h"
 #include "esp_zigbee_zcl_pm2_5_measurement.h"
 #include "esp_zigbee_zcl_multistate_value.h"
+#include "esp_zigbee_zcl_metering.h"
 
 /**
  * @brief Application Framework Profile identifiers.
@@ -158,6 +159,7 @@ typedef enum {
     ESP_ZB_ZCL_CLUSTER_ID_PM2_5_MEASUREMENT          = 0x042aU,     /*!< PM2.5 measurement */
     ESP_ZB_ZCL_CLUSTER_ID_IAS_ZONE                   = 0x0500U,     /*!< IAS zone */
     ESP_ZB_ZCL_CLUSTER_ID_ELECTRICAL_MEASUREMENT     = 0x0b04U,     /*!< Electrical measurement */
+    ESP_ZB_ZCL_CLUSTER_ID_METERING                   = 0x0702U,     /*!< Metering */
 } esp_zb_zcl_cluster_id_t;
 
 /**
@@ -277,6 +279,16 @@ typedef enum {
     ESP_ZB_ZCL_ATTR_ACCESS_INTERNAL   = 0x40U,   /*!< Internal access only Attribute */
 } esp_zb_zcl_attr_access_t;
 
+/**
+ * @brief Put the ZCL attribute value to specific memory
+ * 
+ * @param data_ptr      A pointer of specific memory
+ * @param type          The data type of attribute value
+ * @param value         The value of attribute
+ * @param value_size    The size of attribute value
+ * @return              A pointer indicates the end location in specific memory after a value has been stored
+ */
+uint8_t *esp_zb_zcl_put_attribute_value(uint8_t *data_ptr, uint8_t type, uint8_t *value, uint16_t value_size);
 #ifdef __cplusplus
 }
 #endif
