@@ -373,6 +373,16 @@ esp_zb_attribute_list_t *esp_zb_pm2_5_measurement_cluster_create(esp_zb_pm2_5_me
  */
 esp_zb_attribute_list_t *esp_zb_multistate_value_cluster_create(esp_zb_multistate_value_cluster_cfg_t *multistate_value_cfg);
 
+/**
+ * @brief  Create a standard metering attribute list
+ *
+ * @param[in] metering_cfg  Configuration parameters for this cluster defined by @ref esp_zb_metering_cluster_cfg_s
+ *
+ * @return pointer to attribute list @ref esp_zb_attribute_list_s
+ *
+ */
+esp_zb_attribute_list_t *esp_zb_metering_cluster_create(esp_zb_metering_cluster_cfg_t *metering_cfg);
+
 /**************************************** ADD CLUSTER ***********************************/
 /**
  * @brief Add basic cluster (attribute list) in a cluster list.
@@ -826,6 +836,20 @@ esp_err_t esp_zb_cluster_list_add_pm2_5_measurement_cluster(esp_zb_cluster_list_
 esp_err_t esp_zb_cluster_list_add_multistate_value_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 /**
+ * @brief Add metering cluster (attribute list) in a cluster list.
+ *
+ * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
+ * @param[in] attr_list  An attribute list which wants to add
+ * @param[in] role_mask  A role of server or client for this cluster (attribute list) refer to esp_zb_zcl_cluster_role_t
+ *
+ * @return
+ *      - ESP_OK on success
+ *      - ESP_ERR_INVALID_ARG if cluster list not initialized
+ *
+ */
+esp_err_t esp_zb_cluster_list_add_metering_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
+
+/**
  * @brief Add customised cluster (attribute list) in a cluster list.
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
@@ -1137,7 +1161,7 @@ esp_err_t esp_zb_cluster_list_update_occupancy_sensing_cluster(esp_zb_cluster_li
 esp_err_t esp_zb_cluster_list_update_window_covering_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 /**
- * @brief Update thermostate cluster (attribute list) in a cluster list.
+ * @brief Update thermostat cluster (attribute list) in a cluster list.
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to update
@@ -1261,6 +1285,20 @@ esp_err_t esp_zb_cluster_list_update_pm2_5_measurement_cluster(esp_zb_cluster_li
  *
  */
 esp_err_t esp_zb_cluster_list_update_multistate_value_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
+
+/**
+ * @brief Update metering cluster (attribute list) in a cluster list.
+ *
+ * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
+ * @param[in] attr_list  An attribute list which wants to update
+ * @param[in] role_mask  A role of server or client for this cluster (attribute list) refer to esp_zb_zcl_cluster_role_t
+ *
+ * @return
+ *      - ESP_OK on success
+ *      - ESP_ERR_INVALID_ARG if cluster list not initialized
+ *
+ */
+esp_err_t esp_zb_cluster_list_update_metering_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 /**
  * @brief Update OTA cluster (attribute list) in a cluster list.

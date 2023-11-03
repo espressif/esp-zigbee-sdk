@@ -1,5 +1,26 @@
 # Espressif Zigbee SDK Release Notes
 
+## 03-Nov-2023
+1.0.2 version release of ESP-ZIGBEE-SDK
+
+### Features
+- Update esp-zboss-lib to v1.0.2
+- Support the ZCL metering cluster
+- Support ZCL custom profile
+- Support the ON/OFF command affects the level control cluster
+- Update the SDK document for ZCL metering cluster
+- Update the esp-idf CI tool
+
+### Bug Fixes
+- Fix esp mac issue
+- Fix the data type for analog value/input
+- Fix zcl custom cluster data type
+- Fix zcl general response multiple time
+- Closes: https://github.com/espressif/esp-zigbee-sdk/issues/36
+- Closes: https://github.com/espressif/esp-zigbee-sdk/issues/106
+- Closes: https://github.com/espressif/esp-zigbee-sdk/issues/126
+
+
 ## 20-Oct-2023
 1.0.1 version release of ESP-ZIGBEE-SDK
 

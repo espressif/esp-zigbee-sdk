@@ -40,9 +40,8 @@ typedef enum {
  */
 typedef struct esp_zb_zcl_attribute_data_s {
     esp_zb_zcl_attr_type_t type; /*!< The type of attribute, which can refer to esp_zb_zcl_attr_type_t */
-    uint8_t size;                /*!< The Size of string data type, first byte should be the length of string */
-    void *value;                 /*!< Supported data types u8, s8, u16, s16, u32, s32, char string
-                                    Note that if the type is string, the first byte of value indicates the string length */
+    uint8_t size;                /*!< The value size of attribute  */
+    void *value;                 /*!< The value of attribute, Note that if the type is string/array, the first byte of value indicates the string length */
 } ESP_ZB_PACKED_STRUCT esp_zb_zcl_attribute_data_t;
 
 /**
@@ -713,6 +712,53 @@ typedef struct esp_zb_thermostat_get_relay_status_log_cmd_s {
 } esp_zb_thermostat_get_relay_status_log_cmd_t;
 
 /**
+ * @brief The Zigbee ZCL metering get profile request command struct
+ */
+typedef struct esp_zb_metering_get_profile_cmd_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;                    /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode;                  /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+    esp_zb_zcl_metering_interval_channel_t interval_channel; /*!< Interval channel is used to select the quantity of interest by the 'GetProfileResponse' command */
+    uint32_t end_time;                                       /*!< End time is a 32-bit value (in UTC) used to select an Intervals block from all the Intervals blocks available */
+    uint8_t number_of_periods;                               /*!< Number of periods represents the number of intervals being requested, which cannot exceed MaxNumberOfPeriodsDelivered */
+} esp_zb_metering_get_profile_cmd_t;
+
+/**
+ * @brief The Zigbee ZCL metering request fast poll mode command struct
+ */
+typedef struct esp_zb_metering_request_fast_poll_mode_cmd_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;   /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode; /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+    uint8_t fast_poll_update_period;        /*!< Desired fast poll period (seconds) not to be less than the FastPollUpdatePeriod attribute */
+    uint8_t duration;                       /*!< Desired duration (minutes) for the server to remain in fast poll mode not to exceed 15 minutes */
+} esp_zb_metering_request_fast_poll_mode_cmd_t;
+
+/**
+ * @brief The Zigbee ZCL metering get snapshot command struct
+ */
+typedef struct esp_zb_metering_get_snapshot_cmd_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;                /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode;              /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+    uint32_t earliest_start_time;                        /*!< A UTC Timestamp indicating the earliest time of a snapshot to be returned by a corresponding Publish Snapshot command */
+    uint32_t latest_end_time;                            /*!< A UTC Timestamp indicating the latest time of a snapshot to be returned by a corresponding Publish Snapshot command */
+    uint8_t snapshot_offset;                             /*!< This field identifies the individual snapshot to be returned, where multiple snapshots satisfy the selection criteria specified by the other fields in this command */
+    esp_zb_zcl_metering_snapshot_cause_t snapshot_cause; /*!< This field is used to select only snapshots that were taken due to a specific cause,
+                                                              setting 0xFFFFFFFF indicates that all snapshots should be selected, irrespective of the cause */
+} esp_zb_metering_get_snapshot_cmd_t;
+
+/**
+ * @brief The Zigbee ZCL metering get sampled data command struct
+ */
+typedef struct esp_zb_metering_get_sampled_data_cmd_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;          /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode;        /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+    uint16_t sample_id;                            /*!< Unique identifier allocated to this Sampling session. This field allows devices to match response data with the appropriate request */
+    uint32_t earliest_sample_time;                 /*!< A UTC Timestamp indicating the earliest time of a sample to be returned. Samples with a timestamp equal to or greater than the specified EarliestSampleTime shall be returned */
+    esp_zb_zcl_metering_sample_type_t sample_type; /*!< Sample_type identifies the required type of sampled data */
+    uint16_t number_of_samples;                    /*!< This filed represents the number of samples being requested. This value cannot exceed the size stipulated in the MaxNumberOfSamples field.
+                                                        If fewer samples are available for the time period, only those available are returned */
+} esp_zb_metering_get_sampled_data_cmd_t;
+
+/**
  * @brief The Zigbee ZCL custom cluster command struct
  *
  * @note Support only u8, s8, u16, s16, u32, s32, string  data types.
@@ -725,6 +771,7 @@ typedef struct esp_zb_zcl_custom_cluster_cmd_req_s {
     esp_zb_zcl_address_mode_t address_mode;                 /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
     void *value;                                            /*!< Pointer to value */
     esp_zb_zcl_attr_type_t data_type;                       /*!< Data type to be used */
+    uint16_t profile_id;                                    /*!< Profile id */
     uint16_t cluster_id;                                    /*!< Cluster id */
     uint16_t custom_cmd_id;                                 /*!< Custom command id */
 } esp_zb_zcl_custom_cluster_cmd_req_t;
@@ -737,6 +784,7 @@ typedef struct esp_zb_zcl_custom_cluster_cmd_resp_s {
     esp_zb_zcl_basic_cmd_t zcl_basic_cmd;                   /*!< Basic command info */
     esp_zb_zcl_address_mode_t address_mode;                 /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
     uint8_t status;                                         /*!< Status value */
+    uint16_t profile_id;                                    /*!< Profile id */
     uint16_t cluster_id;                                    /*!< Cluster id */
     uint16_t custom_cmd_resp_id;                            /*!< Custom command response id */
 } esp_zb_zcl_custom_cluster_cmd_resp_t;
@@ -803,7 +851,7 @@ typedef struct esp_zb_zcl_ias_zone_enroll_response_message_s {
 typedef struct esp_zb_zcl_ota_upgrade_value_message_s {
     esp_zb_device_cb_common_info_t info;             /*!< The common information for Zigbee device callback */
     esp_zb_zcl_ota_upgrade_status_t upgrade_status;  /*!< The update status for Zigbee ota update */
-    esp_zb_ota_file_header_t ota_header;             /*!< The header indiates the basic OTA upgrade information */
+    esp_zb_ota_file_header_t ota_header;             /*!< The header indicates the basic OTA upgrade information */
     uint16_t payload_size;                           /*!< The OTA payload size */
     uint8_t *payload;                                /*!< The OTA payload */
 } esp_zb_zcl_ota_upgrade_value_message_t;
@@ -846,18 +894,333 @@ typedef struct esp_zb_zcl_thermostat_value_message_s {
 } esp_zb_zcl_thermostat_value_message_t;
 
 /**
+ * @brief The frame header of Zigbee zcl command struct
+ *
+ * @note frame control field:
+ * |----1 bit---|---------1 bit---------|---1 bit---|----------1 bit-----------|---4 bit---|
+ * | Frame type | Manufacturer specific | Direction | Disable Default Response | Reserved  |
+ *
+ */
+typedef struct esp_zb_zcl_frame_header_s {
+    uint8_t fc;          /*!< A 8-bit Frame control */
+    uint16_t manuf_code; /*!< Manufacturer code */
+    uint8_t tsn;         /*!< Transaction sequence number */
+    uint8_t rssi;        /*!< Signal strength */
+} esp_zb_zcl_frame_header_t;
+
+/**
+ * @brief The Zigbee zcl metering get profile response info offered by user struct
+ *
+ */
+typedef struct esp_zb_zcl_metering_get_profile_resp_info_offered_s {
+    uint32_t end_time;                                                     /*!< It is 32-bit value (in UTC) representing the end time of the most chronologically recent interval being requested */
+    esp_zb_zcl_metering_status_field_t status;                             /*!< Status of 'GetProfile' command */
+    esp_zb_zcl_metering_profile_interval_period_t profile_interval_period; /*!< Represents the interval or time frame used to capture metered Energy, Gas, and Water consumption for profiling purposes */
+    uint8_t number_of_periods_delivered;                                   /*!< Number of periods represents the number of intervals being requested, it cannot exceed the MaxNumberOfPeriodsDelivered attribute.
+                                                                                If fewer intervals are available for the time period, only those available are returned */
+    esp_zb_uint24_t *intervals;                                            /*!< Series of interval data captured using the period specified by the 'ProfileIntervalPeriod' attribute.
+                                                                                The content of the interval data depends of the type of information requested using the Channel field in the 'GetProfile' command,
+                                                                                and will represent the change in that information since the previous interval */
+} esp_zb_zcl_metering_get_profile_resp_info_offered_t;
+
+/**
+ * @brief The Zigbee zcl metering get profile callback message struct
+ *
+ */
+typedef struct esp_zb_zcl_metering_get_profile_message_s {
+    esp_zb_device_cb_common_info_t info;                                   /*!< The common information for Zigbee device callback */
+    esp_zb_zcl_metering_interval_channel_t interval_channel;               /*!< Interval channel is used to select the quantity of interest by the 'GetProfileResponse' command */
+    uint32_t end_time;                                                     /*!< End time is a 32-bit value (in UTC) used to select an Intervals block from all the Intervals blocks available */
+    uint8_t number_of_periods;                                             /*!< Number of periods represents the number of intervals being requested */
+    esp_zb_zcl_metering_get_profile_resp_info_offered_t resp_info_offered; /*!< The info used for 'GetProfileResponse' command, to response 'GetProfile' command.
+                                                                                The info SHOULD be offered by user, otherwise, the response has no sense */
+} esp_zb_zcl_metering_get_profile_message_t;
+
+/**
+ * @brief The Zigbee zcl metering get profile response callback message struct
+ *
+ */
+typedef struct esp_zb_zcl_metering_get_profile_resp_message_s {
+    esp_zb_device_cb_common_info_t info;                                   /*!< The common information for Zigbee device callback */
+    uint32_t end_time;                                                     /*!< Represents the end time of the most chronologically recent interval being requested */
+    esp_zb_zcl_metering_status_field_t status;                             /*!< Status of GetProfile command */
+    esp_zb_zcl_metering_profile_interval_period_t profile_interval_period; /*!< Represents the interval or time frame used to capture metered Energy, Gas, and Water consumption for profiling purposes */
+    uint8_t number_of_periods_delivered;                                   /*!< Represents the number of intervals the device returned */
+    esp_zb_uint24_t *intervals;                                            /*!< Series of interval data captured using the period specified by the ProfileIntervalPeriod field. The content of the interval data depends of
+                                                                                the type of information requested using the Channel field in GetProfile command, and will represent the change in that information since the previous interval */
+} esp_zb_zcl_metering_get_profile_resp_message_t;
+
+/**
+ * @brief The Zigbee zcl metering get profile response info offered by user struct
+ *
+ */
+typedef struct esp_zb_zcl_metering_request_fast_poll_mode_resp_info_offered_s {
+    uint8_t applied_update_period_in_seconds; /*!< The period at which metering data shall be updated, shall be greater than or equal to the minimum FastPollUpdatePeriod Attribute
+                                                   and less than or equal to the FastPollUpdatePeriod in RequestFastPollMode command */
+    uint32_t fast_poll_mode_end_time;         /*!< UTC time that indicates when the metering server will terminate fast poll mode 
+                                                   and resume updating at the rate specified by DefaultUpdatePeriod */
+} esp_zb_zcl_metering_request_fast_poll_mode_resp_info_offered_t;
+
+/**
+ * @brief The Zigbee zcl metering request fast poll mode callback message struct
+ *
+ */
+typedef struct esp_zb_zcl_metering_request_fast_poll_mode_message_s {
+    esp_zb_device_cb_common_info_t info;                                              /*!< The common information for Zigbee device callback */
+    uint8_t fast_poll_update_period;                                                  /*!< Desired fast poll period (seconds) not to be less than the FastPollUpdatePeriod attribute */
+    uint8_t duration;                                                                 /*!< Desired duration (minutes) for the server to remain in fast poll mode not to exceed 15 minutes */
+    esp_zb_zcl_metering_request_fast_poll_mode_resp_info_offered_t resp_info_offered; /*!< The info used for 'RequestFastPollModeResponse' command, to response 'RequestFastPollMode' command.
+                                                                                           The info SHOULD be offered by user, otherwise, the response has no sense */
+} esp_zb_zcl_metering_request_fast_poll_mode_message_t;
+
+/**
+ * @brief The Zigbee zcl metering request fast poll mode response callback message struct
+ *
+ */
+typedef struct esp_zb_zcl_metering_request_fast_poll_mode_resp_message_s {
+    esp_zb_device_cb_common_info_t info;      /*!< The common information for Zigbee device callback */
+    uint8_t applied_update_period_in_seconds; /*!< The period at which metering data shall be updated, shall be greater than or equal to the minimum FastPollUpdatePeriod Attribute
+                                                   and less than or equal to the FastPollUpdatePeriod in 'RequestFastPollMode' command */
+    uint32_t fast_poll_mode_end_time;         /*!< UTC time that indicates when the metering server will terminate fast poll mode 
+                                                   and resume updating at the rate specified by DefaultUpdatePeriod */
+} esp_zb_zcl_metering_request_fast_poll_mode_resp_message_t;
+
+/**
+ * @brief The Zigbee zcl metering snapshot tou delivered sub-payload struct
+ *
+ */
+typedef struct esp_zb_zcl_metering_tou_delivered_payload_s {
+    esp_zb_uint48_t current_summation_delivered;  /*!< An unsigned 48-bit integer that returns the value of the CurrentSummationDelivered attribute at the stated snapshot timestamp */
+    uint32_t bill_to_date_delivered;              /*!< An unsigned 32-bit integer that provides a value for the costs in the current billing period */
+    uint32_t bill_to_date_time_stamp_delivered;   /*!< A UTC timestamp that indicates when the value of the associated BillToDateDelivered parameter was last updated */
+    uint32_t projected_bill_delivered;            /*!< An unsigned 32-bit integer that provides a value indicating what the estimated state of the account will be at the end of the billing period based on past consumption */
+    uint32_t projected_bill_time_stamp_delivered; /*!< A UTC timestamp that indicates when the associated ProjectedBillDelivered parameter was last updated */
+    uint8_t bill_delivered_trailing_digit;        /*!< An 8-bit BitMap used to determine where the decimal point is located in the BillToDateDelivered and ProjectedBillDelivered fields */
+    uint8_t number_of_tiers_in_use;               /*!< An 8-bit integer representing the number of tiers in use at the time the snapshot was taken */
+    esp_zb_uint48_t *tier_summation;              /*!< The Publish Snapshot command contains N elements of CurrentTierNSummationDelivered attributes from the TOU Information Set.
+                                                       The Metering server shall send only the number of tiers in use, as stated in this command */
+} ESP_ZB_PACKED_STRUCT esp_zb_zcl_metering_tou_delivered_payload_t;
+
+/**
+ * @brief The Zigbee zcl metering snapshot tou received sub-payload struct
+ *
+ */
+typedef struct esp_zb_zcl_metering_tou_received_payload_s {
+    esp_zb_uint48_t current_summation_received;  /*!< An unsigned 48-bit integer that returns the value of the CurrentSummationReceived attribute at the stated snapshot timestamp */
+    uint32_t bill_to_date_received;              /*!< An unsigned 32-bit integer that provides a value for the costs in the current billing period */
+    uint32_t bill_to_date_time_stamp_received;   /*!< A UTC timestamp that indicates when the value of the associated BillToDateReceived parameter was last updated */
+    uint32_t projected_bill_received;            /*!< An unsigned 32-bit integer that provides a value indicating what the estimated state of the account will be at the end of the billing period based on past generation */
+    uint32_t projected_bill_time_stamp_received; /*!< A UTC timestamp that indicates when the associated ProjectedBillReceived parameter was last updated */
+    uint8_t bill_received_trailing_digit;        /*!< An 8-bit BitMap used to determine where the decimal point is located in the BillToDateReceived and ProjectedBillReceived fields */
+    uint8_t number_of_tiers_in_use;              /*!< An 8-bit integer representing the number of tiers in use at the time the snapshot was taken */
+    esp_zb_uint48_t *tier_summation;             /*!< The Publish Snapshot command contains N elements of CurrentTierNSummationReceived attributes from the TOU Information Set.
+                                                      The Metering server shall send only the number of tiers in use, as stated in this command */
+} ESP_ZB_PACKED_STRUCT esp_zb_zcl_metering_tou_received_payload_t;
+
+/**
+ * @brief The Zigbee zcl metering snapshot block delivered sub-payload struct
+ *
+ */
+typedef struct esp_zb_zcl_metering_block_tier_delivered_payload_s {
+    esp_zb_uint48_t current_summation_delivered;         /*!< An unsigned 48-bit integer that returns the value of the CurrentSummationDelivered attribute at the stated snapshot timestamp */
+    uint32_t bill_to_date_delivered;                     /*!< An unsigned 32-bit integer that provides a value for the costs in the current billing period */
+    uint32_t bill_to_date_time_stamp_delivered;          /*!< A UTC timestamp that indicates when the value of the associated BillToDateDelivered parameter was last updated */
+    uint32_t projected_bill_delivered;                   /*!< An unsigned 32-bit integer that provides a value indicating what the estimated state of the account will be at the end of the billing period based on past consumption */
+    uint32_t projected_bill_time_stamp_delivered;        /*!< A UTC timestamp that indicates when the associated ProjectedBillDelivered parameter was last updated */
+    uint8_t bill_delivered_trailing_digit;               /*!< An 8-bit BitMap used to determine where the decimal point is located in the BillToDateDelivered and ProjectedBillDelivered fields */
+    uint8_t number_of_tiers_in_use;                      /*!< An 8-bit integer representing the number of tiers in use at the time the snapshot was taken */
+    esp_zb_uint48_t *tier_summation;                     /*!< The Publish Snapshot command contains N elements of CurrentTierNSummationDelivered attributes from the TOU Information Set */
+    uint8_t number_of_tiers_and_block_thresholds_in_use; /*!< An 8-bit BitMap representing the number of tiers and block thresholds in use at the time the snapshot was taken */
+    esp_zb_uint48_t *tier_block_summation;               /*!< The Publish Snapshot command contains N elements of the Block Information Attribute Set (Delivered).
+                                                              The metering server shall send only the number of Tiers and Blocks in use as stated in this command */
+} ESP_ZB_PACKED_STRUCT esp_zb_zcl_metering_block_tier_delivered_payload_t;
+
+/**
+ * @brief The Zigbee zcl metering snapshot block received sub-payload struct
+ *
+ */
+typedef struct esp_zb_zcl_metering_block_tier_received_payload_s {
+    esp_zb_uint48_t current_summation_received;          /*!< An unsigned 48-bit integer that returns the value of the CurrentSummationReceived attribute at the stated snapshot timestamp */
+    uint32_t bill_to_date_received;                      /*!< An unsigned 32-bit integer that provides a value for the costs in the current billing period */
+    uint32_t bill_to_date_time_stamp_received;           /*!< A UTC timestamp that indicates when the value of the associated BillToDateReceived parameter was last updated */
+    uint32_t projected_bill_received;                    /*!< An unsigned 32-bit integer that provides a value indicating what the estimated state of the account will be at the end of the billing period based on past generation */
+    uint32_t projected_bill_time_stamp_received;         /*!< A UTC timestamp that indicates when the associated ProjectedBillReceived parameter was last updated */
+    uint8_t bill_received_trailing_digit;                /*!< An 8-bit BitMap used to determine where the decimal point is located in the BillToDateReceived and ProjectedBillReceived fields */
+    uint8_t number_of_tiers_in_use;                      /*!< An 8-bit integer representing the number of tiers in use at the time the snapshot was taken */
+    esp_zb_uint48_t *tier_summation;                     /*!< The Publish Snapshot command contains N elements of CurrentTierNSummationReceived attributes from the TOU Information Set */
+    uint8_t number_of_tiers_and_block_thresholds_in_use; /*!< An 8-bit BitMap representing the number of tiers and block thresholds in use at the time the snapshot was taken */
+    esp_zb_uint48_t *tier_block_summation;               /*!< The Publish Snapshot command contains N elements of the Block Information Attribute Set (Received).
+                                                              The metering server shall send only the number of Tiers and Blocks in use as stated in this command */
+} ESP_ZB_PACKED_STRUCT esp_zb_zcl_metering_block_tier_received_payload_t;
+
+/**
+ * @brief The Zigbee zcl metering snapshot tou delivered no billing sub-payload struct
+ *
+ */
+typedef struct esp_zb_zcl_metering_tou_delivered_no_billing_payload_s {
+    esp_zb_uint48_t current_summation_delivered; /*!< An unsigned 48-bit integer that returns the value of the CurrentSummationDelivered attribute at the stated snapshot timestamp */
+    uint8_t number_of_tiers_in_use;              /*!< An 8-bit integer representing the number of tiers in use at the time the snapshot was taken */
+    esp_zb_uint48_t *tier_summation;             /*!< The Publish Snapshot command contains N elements of CurrentTierNSummationDelivered attributes from the TOU Information Set.
+                                                      The metering server shall send only the number of Tiers in use as stated in this command */
+} ESP_ZB_PACKED_STRUCT esp_zb_zcl_metering_tou_delivered_no_billing_payload_t;
+
+/**
+ * @brief The Zigbee zcl metering snapshot tou received no billing sub-payload struct
+ *
+ */
+typedef struct esp_zb_zcl_metering_tou_received_no_billing_payload_s {
+    esp_zb_uint48_t current_summation_received; /*!< An unsigned 48-bit integer that returns the value of the CurrentSummationReceived attribute at the stated snapshot timestamp */
+    uint8_t number_of_tiers_in_use;             /*!< An 8-bit integer representing the number of tiers in use at the time the snapshot was taken */
+    esp_zb_uint48_t *tier_summation;            /*!< The Publish Snapshot command contains N elements of CurrentTierNSummationReceived attributes from the TOU Information Set.
+                                                     The metering server shall send only the number of Tiers in use as stated in this command */
+} ESP_ZB_PACKED_STRUCT esp_zb_zcl_metering_tou_received_no_billing_payload_t;
+
+/**
+ * @brief The Zigbee zcl metering snapshot block tier delivered no billing sub-payload struct
+ *
+ */
+typedef struct esp_zb_zcl_metering_block_tier_delivered_no_billing_payload_s {
+
+    esp_zb_uint48_t current_summation_delivered;         /*!< An unsigned 48-bit integer that returns the value of the CurrentSummationDelivered attribute at the stated snapshot timestamp */
+    uint8_t number_of_tiers_in_use;                      /*!< An 8-bit integer representing the number of tiers in use at the time the snapshot was taken */
+    esp_zb_uint48_t *tier_summation;                     /*!< The Publish Snapshot command contains N elements of CurrentTierNSummationDelivered attributes from the TOU Information Set */
+    uint8_t number_of_tiers_and_block_thresholds_in_use; /*!< An 8-bit BitMap representing the number of tiers and block thresholds in use at the time the snapshot was taken */
+    esp_zb_uint48_t *tier_block_summation;               /*!< The Publish Snapshot command contains N elements of the Block Information Attribute Set (Delivered).
+                                                              The metering server shall send only the number of Tiers and Blocks in use as stated in this command */
+} ESP_ZB_PACKED_STRUCT esp_zb_zcl_metering_block_tier_delivered_no_billing_payload_t;
+
+/**
+ * @brief The Zigbee zcl metering snapshot block tier received no billing sub-payload struct
+ *
+ */
+typedef struct esp_zb_zcl_metering_block_tier_received_no_billing_payload_s {
+    esp_zb_uint48_t current_summation_received;          /*!< An unsigned 48-bit integer that returns the value of the CurrentSummationReceived attribute at the stated snapshot timestamp */
+    uint8_t number_of_tiers_in_use;                      /*!< An 8-bit integer representing the number of tiers in use at the time the snapshot was taken */
+    esp_zb_uint48_t *tier_summation;                     /*!< The Publish Snapshot command contains N elements of CurrentTierNSummationReceived attributes from the TOU Information Set */
+    uint8_t number_of_tiers_and_block_thresholds_in_use; /*!< An 8-bit BitMap representing the number of tiers and block thresholds in use at the time the snapshot was taken */
+    esp_zb_uint48_t *tier_block_summation;               /*!< The Publish Snapshot command contains N elements of the Block Information Attribute Set (Received).
+                                                              The metering server shall send only the number of Tiers and Blocks in use as stated in this command */
+} ESP_ZB_PACKED_STRUCT esp_zb_zcl_metering_block_tier_received_no_billing_payload_t;
+
+/**
+ * @brief The Zigbee zcl metering snapshot sub-payload struct
+ *
+ */
+typedef union esp_zb_zcl_metering_snapshot_sub_payload_s{
+    esp_zb_zcl_metering_tou_delivered_payload_t tou_delivered;                                     /*!< @ref esp_zb_zcl_metering_tou_delivered_payload_s */
+    esp_zb_zcl_metering_tou_received_payload_t tou_received;                                       /*!< @ref esp_zb_zcl_metering_tou_received_payload_s */
+    esp_zb_zcl_metering_block_tier_delivered_payload_t block_tier_delivered;                       /*!< @ref esp_zb_zcl_metering_block_tier_delivered_payload_s */
+    esp_zb_zcl_metering_block_tier_received_payload_t block_tier_received;                         /*!< @ref esp_zb_zcl_metering_block_tier_received_payload_s */
+    esp_zb_zcl_metering_tou_delivered_no_billing_payload_t tou_delivered_no_billing;               /*!< @ref esp_zb_zcl_metering_tou_delivered_no_billing_payload_s */
+    esp_zb_zcl_metering_tou_received_no_billing_payload_t tou_received_no_billing;                 /*!< @ref esp_zb_zcl_metering_tou_received_no_billing_payload_s */
+    esp_zb_zcl_metering_block_tier_delivered_no_billing_payload_t block_tier_delivered_no_billing; /*!< @ref esp_zb_zcl_metering_block_tier_delivered_no_billing_payload_s */
+    esp_zb_zcl_metering_block_tier_received_no_billing_payload_t block_tier_received_no_billing;   /*!< @ref esp_zb_zcl_metering_block_tier_received_no_billing_payload_s */
+} ESP_ZB_PACKED_STRUCT esp_zb_zcl_metering_snapshot_sub_payload_t; 
+
+/**
+ * @brief The Zigbee zcl metering snapshot struct
+ *
+ */
+typedef struct esp_zb_zcl_metering_snapshot_s {
+    uint32_t snapshot_id;                                              /*!< Unique identifier allocated by the device creating the snapshot. */
+    uint32_t snapshot_time;                                            /*!< This is a 32-bit value (in UTC Time) representing the time at which the data snapshot was taken. */
+    uint8_t total_snapshots_found;                                     /*!< An 8-bit Integer indicating the number of snapshots found, based on the search criteria defined in the associated GetSnapshot command */
+    esp_zb_zcl_metering_snapshot_cause_t snapshot_cause;               /*!< A 32-bit BitMap indicating the cause of the snapshot */
+    esp_zb_zcl_metering_snapshot_payload_type_t snapshot_payload_type; /*!< The SnapshotPayloadType is an 8-bit enumerator defining the format of the Snapshot Sub-Payload in this message */
+    esp_zb_zcl_metering_snapshot_sub_payload_t snapshot_sub_payload;   /*!< @ref esp_zb_zcl_metering_snapshot_sub_payload_s */
+} ESP_ZB_PACKED_STRUCT esp_zb_zcl_metering_snapshot_t;
+
+/**
+ * @brief The Zigbee zcl metering get snapshot callback message struct
+ *
+ */
+typedef struct esp_zb_zcl_metering_get_snapshot_message_s {
+    esp_zb_device_cb_common_info_t info;                 /*!< The common information for Zigbee device callback */
+    uint32_t earliest_start_time;                        /*!< A UTC Timestamp indicating the earliest time of a snapshot to be returned by a corresponding Publish Snapshot command */
+    uint32_t latest_end_time;                            /*!< A UTC Timestamp indicating the latest time of a snapshot to be returned by a corresponding Publish Snapshot command */
+    uint8_t snapshot_offset;                             /*!< This field identifies the individual snapshot to be returned, where multiple snapshots satisfy the selection criteria specified by the other fields in this command */
+    esp_zb_zcl_metering_snapshot_cause_t snapshot_cause; /*!< This field is used to select only snapshots that were taken due to a specific cause,
+                                                              setting 0xFFFFFFFF indicates that all snapshots should be selected, irrespective of the cause */
+    esp_zb_zcl_metering_snapshot_t resp_info_offered;    /*!< The info used for 'PublishSnapshot' command, to response 'GetSnapshot' command.
+                                                              The info SHOULD be offered by user, otherwise, the response has no sense */
+} esp_zb_zcl_metering_get_snapshot_message_t;
+
+/**
+ * @brief The Zigbee zcl metering publish snapshot struct
+ *
+ */
+typedef struct esp_zb_zcl_metering_publish_snapshot_message_s {
+    esp_zb_device_cb_common_info_t info;                               /*!< The common information for Zigbee device callback */
+    uint32_t snapshot_id;                                              /*!< Unique identifier allocated by the device creating the snapshot. */
+    uint32_t snapshot_time;                                            /*!< This is a 32-bit value (in UTC Time) representing the time at which the data snapshot was taken. */
+    uint8_t total_snapshots_found;                                     /*!< An 8-bit Integer indicating the number of snapshots found, based on the search criteria defined in the associated GetSnapshot command */
+    uint8_t command_index;                                             /*!< The CommandIndex is used to count the payload fragments in the case where the entire payload (snapshot) does not fit into one message */
+    uint8_t total_number_of_commands;                                  /*!< In the case where the entire payload (snapshot) does not fit into one message, the
+                                                                            Total Number of Commands field indicates the total number of sub-commands that will be returned */
+    esp_zb_zcl_metering_snapshot_cause_t snapshot_cause;               /*!< A 32-bit BitMap indicating the cause of the snapshot */
+    esp_zb_zcl_metering_snapshot_payload_type_t snapshot_payload_type; /*!< The SnapshotPayloadType is an 8-bit enumerator defining the format of the Snapshot Sub-Payload in this message */
+    esp_zb_zcl_metering_snapshot_sub_payload_t snapshot_sub_payload;   /*!< @ref esp_zb_zcl_metering_snapshot_sub_payload_s */
+} esp_zb_zcl_metering_publish_snapshot_message_t;
+
+/**
+ * @brief The Zigbee zcl metering get sampled data response info offered by user struct
+ *
+ */
+typedef struct esp_zb_zcl_metering_get_sampled_data_resp_info_offered_s {
+    uint16_t sample_id;                            /*!< Unique identifier allocated to this Sampling session */
+    uint32_t sample_start_time;                    /*!< A UTC Time field to denote the time of the first sample returned */
+    esp_zb_zcl_metering_sample_type_t sample_type; /*!< An 8 bit enumeration that identifies the type of data being sampled */
+    uint16_t sample_request_interval;              /*!< An unsigned 16-bit field representing the interval or time in seconds between samples */
+    uint16_t number_of_samples;                    /*!< Represents the number of samples being requested, cannot exceed MaxNumberOfSamples.
+                                                        And if fewer samples are available for the time period, only those available shall be returned */
+    esp_zb_uint24_t *samples;                      /*!< Series of data samples captured using the interval specified by the Sample RequestInterval field in the StartSampling command.
+                                                        Invalid samples should be marked as 0xFFFFFF */
+} esp_zb_zcl_metering_get_sampled_data_resp_info_offered_t;
+
+/**
+ * @brief The Zigbee zcl metering get sampled data callback message struct
+ *
+ */
+typedef struct esp_zb_zcl_metering_get_sampled_data_message_s {
+    esp_zb_device_cb_common_info_t info;                                        /*!< The common information for Zigbee device callback */
+    uint16_t sample_id;                                                         /*!< Unique identifier allocated to this Sampling session */
+    uint32_t earliest_sample_time;                                              /*!< A UTC Timestamp indicating the earliest time of a sample to be returned */
+    esp_zb_zcl_metering_sample_type_t sample_type;                              /*!< An 8 bit enumeration that identifies the type of data being sampled */
+    uint16_t number_of_samples;                                                 /*!< Represents the number of samples being requested, This value cannot exceed the size stipulated in the MaxNumberOfSamples field in the StartSampling command */
+    esp_zb_zcl_metering_get_sampled_data_resp_info_offered_t resp_info_offered; /*!< The info used for 'GetSampledDataResponse' command, to response 'GetSampledData' command.
+                                                                                     The info SHOULD be offered by user, otherwise, the response has no sense */
+} esp_zb_zcl_metering_get_sampled_data_message_t;
+
+/**
+ * @brief The Zigbee zcl metering get sampled data response callback message struct
+ *
+ */
+typedef struct esp_zb_zcl_metering_get_sampled_data_resp_message_s {
+    esp_zb_device_cb_common_info_t info;           /*!< The common information for Zigbee device callback */
+    uint16_t sample_id;                            /*!< Unique identifier allocated to this Sampling session */
+    uint32_t sample_start_time;                    /*!< A UTC Time field to denote the time of the first sample returned */
+    esp_zb_zcl_metering_sample_type_t sample_type; /*!< An 8 bit enumeration that identifies the type of data being sampled */
+    uint16_t sample_request_interval;              /*!< An unsigned 16-bit field representing the interval or time in seconds between samples */
+    uint16_t number_of_samples;                    /*!< Represents the number of samples being requested, cannot exceed MaxNumberOfSamples.
+                                                        And if fewer samples are available for the time period, only those available shall be returned */
+    esp_zb_uint24_t *samples;                      /*!< Series of data samples captured using the interval specified by the Sample RequestInterval field in the StartSampling command.
+                                                        Invalid samples should be marked as 0xFFFFFF */
+} esp_zb_zcl_metering_get_sampled_data_resp_message_t;
+
+/**
  * @brief The Zigbee zcl command basic application information struct
  *
  */
 typedef struct esp_zb_zcl_cmd_info_s {
-    esp_zb_zcl_status_t status;    /*!< The status of command, which can refer to  esp_zb_zcl_status_t */
-    esp_zb_zcl_addr_t src_address; /*!< The struct of address contains short and ieee address, which can refer to esp_zb_zcl_addr_s */
-    uint16_t dst_address;          /*!< The destination short address of command */
-    uint8_t src_endpoint;          /*!< The source enpoint of command */
-    uint8_t dst_endpoint;          /*!< The destination enpoint of command */
-    uint16_t cluster;              /*!< The cluster id for command */
-    uint16_t profile;              /*!< The application profile identifier*/
-    esp_zb_zcl_command_t command;  /*!< The properties of command */
+    esp_zb_zcl_status_t status;       /*!< The status of command, which can refer to  esp_zb_zcl_status_t */
+    esp_zb_zcl_frame_header_t header; /*!< The command frame properties, which can refer to esp_zb_zcl_frame_field_t */
+    esp_zb_zcl_addr_t src_address;    /*!< The struct of address contains short and ieee address, which can refer to esp_zb_zcl_addr_s */
+    uint16_t dst_address;             /*!< The destination short address of command */
+    uint8_t src_endpoint;             /*!< The source endpoint of command */
+    uint8_t dst_endpoint;             /*!< The destination endpoint of command */
+    uint16_t cluster;                 /*!< The cluster id for command */
+    uint16_t profile;                 /*!< The application profile identifier*/
+    esp_zb_zcl_command_t command;     /*!< The properties of command */
 } esp_zb_zcl_cmd_info_t;
 
 /**
@@ -874,32 +1237,63 @@ typedef struct esp_zb_zcl_report_attr_message_s {
 } esp_zb_zcl_report_attr_message_t;
 
 /**
+ * @brief The variable of Zigbee zcl read attribute response
+ *
+ */
+typedef struct esp_zb_zcl_read_attr_resp_variable_s {
+    esp_zb_zcl_status_t status;                        /*!< The field specifies the status of the read operation on this attribute */
+    esp_zb_zcl_attribute_t attribute;                  /*!< The field contain the current value of this attribute, @ref esp_zb_zcl_attribute_s */
+    struct esp_zb_zcl_read_attr_resp_variable_s *next; /*!< Next variable */
+} esp_zb_zcl_read_attr_resp_variable_t;
+
+/**
  * @brief The Zigbee zcl read attribute response struct
  *
  */
 typedef struct esp_zb_zcl_cmd_read_attr_resp_message_s {
-    esp_zb_zcl_cmd_info_t info;       /*!< The basic information of reading attribute response message that refers to esp_zb_zcl_cmd_info_t */
-    esp_zb_zcl_attribute_t attribute; /*!< The attribute entry of reading attribute response */
+    esp_zb_zcl_cmd_info_t info;                      /*!< The basic information of reading attribute response message that refers to esp_zb_zcl_cmd_info_t */
+    esp_zb_zcl_read_attr_resp_variable_t *variables; /*!< The variable items, @ref esp_zb_zcl_read_attr_resp_variable_s */
 } esp_zb_zcl_cmd_read_attr_resp_message_t;
 
+/**
+ * @brief The variable of Zigbee zcl write attribute response
+ *
+ */
+typedef struct esp_zb_zcl_write_attr_resp_variable_s {
+    esp_zb_zcl_status_t status;                         /*!< The field specifies the status of the write operation on this attribute */
+    uint16_t attribute_id;                              /*!< The attribute id of the write attribute response, please note that when info.status does not equal
+                                                            ESP_ZB_ZCL_STATUS_SUCCESS, the attribute_id is reported; otherwise, it is an invalid value (0xFFFF) */
+    struct esp_zb_zcl_write_attr_resp_variable_s *next; /*!< Next variable */
+} esp_zb_zcl_write_attr_resp_variable_t;
 /**
  * @brief The Zigbee zcl response struct for writing attribute
  *
  */
 typedef struct esp_zb_zcl_cmd_write_attr_resp_message_s {
-    esp_zb_zcl_cmd_info_t info; /*!< The basic information of write attribute response message that refers to esp_zb_zcl_cmd_info_t */
-    uint16_t attribute_id;      /*!< The attribute id of write attribute response, please note that when info.status does not equal
-                                   ESP_ZB_ZCL_STATUS_SUCCESS, the attribute_id is reported; otherwise, it is an invalid value (0xFFFF). */
+    esp_zb_zcl_cmd_info_t info;                       /*!< The basic information of the write attribute response message that refers to esp_zb_zcl_cmd_info_t */
+    esp_zb_zcl_write_attr_resp_variable_t *variables; /*!< The variable items, @ref esp_zb_zcl_write_attr_resp_variable_s */
 } esp_zb_zcl_cmd_write_attr_resp_message_t;
+
+/**
+ * @brief The variable of Zigbee zcl configures report attribute response
+ *
+ */
+typedef struct esp_zb_zcl_config_report_resp_variable_s {
+    esp_zb_zcl_status_t status;                            /*!< The field specifies the status of the Configure Reporting operation attempted on this attribute */
+    uint8_t direction;                                     /*!< The direction field specifies whether values of the attribute are reported (0x00),
+                                                               or whether reports of the attribute are received (0x01).*/
+    uint16_t attribute_id;                                 /*!< The The attribute id of configuring report response, please note that when info.status does not equal
+                                                               ESP_ZB_ZCL_STATUS_SUCCESS, the attribute_id is reported; otherwise, it is an invalid value (0xFFFF). */
+    struct esp_zb_zcl_config_report_resp_variable_s *next; /*!< Next variable */
+} esp_zb_zcl_config_report_resp_variable_t;
 
 /**
  * @brief The Zigbee zcl configure report response struct
  *
  */
 typedef struct esp_zb_zcl_cmd_config_report_resp_message_s {
-    esp_zb_zcl_cmd_info_t info; /*!< The basic information of configuring report response message that refers to esp_zb_zcl_cmd_info_t */
-    uint16_t attribute_id;      /*!< The attribute id of configuring report response, please note that when info.status does not equal
-                                   ESP_ZB_ZCL_STATUS_SUCCESS, the attribute_id is reported; otherwise, it is an invalid value (0xFFFF). */
+    esp_zb_zcl_cmd_info_t info;                          /*!< The basic information of configuring report response message, @ref esp_zb_zcl_cmd_info_s */
+    esp_zb_zcl_config_report_resp_variable_t *variables; /*!< The variable items, @ref esp_zb_zcl_config_report_resp_variable_s */
 } esp_zb_zcl_cmd_config_report_resp_message_t;
 
 /**
@@ -907,14 +1301,14 @@ typedef struct esp_zb_zcl_cmd_config_report_resp_message_s {
  *
  */
 typedef struct esp_zb_zcl_cmd_read_report_config_resp_message_s {
-    esp_zb_zcl_cmd_info_t info; /*!< The basic information of reading report cofiguration response message that refers to esp_zb_zcl_cmd_info_t */
+    esp_zb_zcl_cmd_info_t info; /*!< The basic information of reading report configuration response message that refers to esp_zb_zcl_cmd_info_t */
     uint8_t report_direction;   /*!< Direction: report is client or server */
     uint16_t attribute_id;      /*!< The attribute id, please note that when info.status does not equal ESP_ZB_ZCL_STATUS_SUCCESS,
                                    the attribute_id is reported; otherwise, it is an invalid value (0xFFFF). */
     union {
         struct {
             uint8_t attr_type;     /*!< Attribute type */
-            uint16_t min_interval; /*!< Mininum interval time */
+            uint16_t min_interval; /*!< Minimum interval time */
             uint16_t max_interval; /*!< Maximum interval time */
             uint8_t delta[1];      /*!< Actual reportable change */
         } client;                  /*!< Describes how attribute should be reported */
@@ -925,23 +1319,23 @@ typedef struct esp_zb_zcl_cmd_read_report_config_resp_message_s {
 } esp_zb_zcl_cmd_read_report_config_resp_message_t;
 
 /**
- * @brief Attribute information field for discovering attribtues response struct
+ * @brief Attribute information field for discovering attributes response struct
  *
  */
-typedef struct esp_zb_zcl_attr_info_field_s {
-    uint16_t attr_id;                                   /*!< The attribute identifier */
-    esp_zb_zcl_attr_type_t data_type;                   /*!< The data type of attribute */
-    struct esp_zb_zcl_attr_info_field_s *next;          /*!< Next field */
-} esp_zb_zcl_attr_info_field_t;
+typedef struct esp_zb_zcl_disc_attr_variable_s {
+    uint16_t attr_id;                             /*!< The field contain the identifier of a discovered attribute */
+    esp_zb_zcl_attr_type_t data_type;             /*!< The field contain the data type of the attribute in the same attribute report field */
+    struct esp_zb_zcl_disc_attr_variable_s *next; /*!< Next variable */
+} esp_zb_zcl_disc_attr_variable_t;
 
 /**
  * @brief The Zigbee zcl discover attribute response struct
  *
  */
 typedef struct esp_zb_zcl_cmd_discover_attributes_resp_message_s {
-    esp_zb_zcl_cmd_info_t info;                     /*!< The basic information of configuring report response message that refers to esp_zb_zcl_cmd_info_t */
-    uint8_t is_completed;                           /*!< A value of 0 indicates that there are more attributes to be discovered, otherwise, it is completed */
-    esp_zb_zcl_attr_info_field_t *field_set;        /*!< The attribute information field set, which can refer to esp_zb_zcl_attr_info_field_t */
+    esp_zb_zcl_cmd_info_t info;                 /*!< The basic information of configuring report response message that refers to esp_zb_zcl_cmd_info_t */
+    uint8_t is_completed;                       /*!< A value of 0 indicates that there are more attributes to be discovered, otherwise, it is completed */
+    esp_zb_zcl_disc_attr_variable_t *variables; /*!< The variable items, which can refer to esp_zb_zcl_attr_info_field_t */
 } esp_zb_zcl_cmd_discover_attributes_resp_message_t;
 
 /**
@@ -1395,9 +1789,9 @@ void esp_zb_zcl_groups_remove_all_groups_cmd_req(esp_zb_zcl_groups_remove_all_gr
 void esp_zb_zcl_groups_view_group_cmd_req(esp_zb_zcl_groups_add_group_cmd_t *cmd_req);
 
 /**
- * @brief   Send get group memebership command
+ * @brief   Send get group membership command
  *
- * @param[in]  cmd_req  pointer to the get group memebership command @ref esp_zb_zcl_groups_get_group_membership_cmd_s
+ * @param[in]  cmd_req  pointer to the get group membership command @ref esp_zb_zcl_groups_get_group_membership_cmd_s
  *
  */
 void esp_zb_zcl_groups_get_group_membership_cmd_req(esp_zb_zcl_groups_get_group_membership_cmd_t *cmd_req);
@@ -1545,6 +1939,38 @@ void esp_zb_zcl_thermostat_clear_weekly_schedule_cmd_req(esp_zb_thermostat_clear
  *
  */
 void esp_zb_zcl_thermostat_get_relay_status_log_cmd_req(esp_zb_thermostat_get_relay_status_log_cmd_t *cmd_req);
+
+/**
+ * @brief   Send metering get profile command request
+ *
+ * @param[in]  cmd_req  pointer to the get profile command @ref esp_zb_metering_get_profile_cmd_s
+ *
+ */
+void esp_zb_zcl_metering_get_profile_cmd_req(esp_zb_metering_get_profile_cmd_t *cmd_req);
+
+/**
+ * @brief   Send metering request fast poll mode command request
+ *
+ * @param[in]  cmd_req  pointer to the request fast poll mode command @ref esp_zb_metering_request_fast_poll_mode_cmd_s
+ *
+ */
+void esp_zb_zcl_metering_request_fast_poll_mode_cmd_req(esp_zb_metering_request_fast_poll_mode_cmd_t *cmd_req);
+
+/**
+ * @brief   Send metering get snapshot command request
+ *
+ * @param[in]  cmd_req  pointer to the get snapshot command @ref esp_zb_metering_get_snapshot_cmd_s
+ *
+ */
+void esp_zb_zcl_metering_get_snapshot_cmd_req(esp_zb_metering_get_snapshot_cmd_t *cmd_req);
+
+/**
+ * @brief   Send metering get sampled data command request
+ *
+ * @param[in]  cmd_req  pointer to the get sampled data command @ref esp_zb_metering_get_sampled_data_cmd_s
+ *
+ */
+void esp_zb_zcl_metering_get_sampled_data_cmd_req(esp_zb_metering_get_sampled_data_cmd_t *cmd_req);
 
 /**
  * @brief   Send custom cluster command request

@@ -263,7 +263,7 @@ esp_err_t esp_zb_ias_zone_cluster_add_attr(esp_zb_attribute_list_t *attr_list, u
  * @param[in] cie_ieee_addr The 8-byte IEEE address will be regarded as the IAS message destination address  
  * @return  
  *      - ESP_OK on success
- *      - ESP_FAIL The CIE address has been set, invalid arguement or IAS zone cluster does not exist
+ *      - ESP_FAIL The CIE address has been set, invalid argument or IAS zone cluster does not exist
  * 
  */
 esp_err_t esp_zb_ias_zone_cluster_set_cie_address(uint8_t endpoint, esp_zb_ieee_addr_t cie_ieee_addr);
@@ -506,12 +506,29 @@ esp_err_t esp_zb_pm2_5_measurement_cluster_add_attr(esp_zb_attribute_list_t *att
 esp_err_t esp_zb_multistate_value_cluster_add_attr(esp_zb_attribute_list_t *attr_list, uint16_t attr_id, void *value_p);
 
 /**
+ * @brief Add an attribute in a specified cluster.
+ *
+ * @param[in] attr_list A pointer to attribute list @ref esp_zb_attribute_list_s
+ * @param[in] cluster_id The cluster ID to which the attribute will be added, refer to esp_zb_zcl_cluster_id_t
+ * @param[in] attr_id An attribute id to be added
+ * @param[in] attr_type Type of attribute to be added, refer to esp_zb_zcl_attr_type_t
+ * @param[in] attr_access Access type of attribute to be added, refer to esp_zb_zcl_attr_access_t
+ * @param[in] value_p A pointer to attribute value wants to add
+ *
+ * @return
+ * - ESP_OK on success
+ * - ESP_ERR_INVALID_ARG if attribute is existed or attribute type is unsupported
+ *
+ */
+esp_err_t esp_zb_cluster_add_attr(esp_zb_attribute_list_t *attr_list, uint16_t cluster_id, uint16_t attr_id, uint8_t attr_type, uint8_t attr_access, void *value_p);
+
+/**
 * @brief Add customized attribute in customized cluster.
 *
 * @param[in] attr_list A pointer to attribute list @ref esp_zb_attribute_list_s
 * @param[in] attr_id An attribute id to be added
-* @param[in] attr_type Type of attribute to be added refer to esp_zb_zcl_attr_type
-* @param[in] attr_access Access type of attribute to be added
+* @param[in] attr_type Type of attribute to be added, refer to esp_zb_zcl_attr_type_t
+* @param[in] attr_access Access type of attribute to be added, refer to esp_zb_zcl_attr_access_t
 * @param[in] value_p A pointer to attribute value wants to add
 *
 * @return
