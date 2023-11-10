@@ -38,7 +38,13 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
         ESP_LOGI(TAG, "Touchlink target started");
         break;
     case ESP_ZB_NWK_SIGNAL_PERMIT_JOIN_STATUS:
-        ESP_LOGI(TAG, "Device is on permit join status");
+        if (err_status == ESP_OK) {
+            if (*(uint8_t *)esp_zb_app_signal_get_params(p_sg_p)) {
+                ESP_LOGI(TAG, "Network(0x%04hx) is open for %d seconds", esp_zb_get_pan_id(), *(uint8_t *)esp_zb_app_signal_get_params(p_sg_p));
+            } else {
+                ESP_LOGW(TAG, "Network(0x%04hx) closed, devices joining not allowed.", esp_zb_get_pan_id());
+            }
+        }
         break;
     case ESP_ZB_BDB_SIGNAL_TOUCHLINK_NWK:
         ESP_LOGI(TAG, "Touchlink target : network started");

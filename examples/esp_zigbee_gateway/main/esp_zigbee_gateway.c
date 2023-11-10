@@ -23,7 +23,7 @@
 #include "nvs_flash.h"
 #include "protocol_examples_common.h"
 #include "esp_rcp_update.h"
-#include "esp_coexist_internal.h"
+#include "esp_coexist.h"
 #include "esp_zigbee_gateway.h"
 
 #include "esp_vfs_dev.h"
@@ -159,6 +159,15 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
         dev_annce_params = (esp_zb_zdo_signal_device_annce_params_t *)esp_zb_app_signal_get_params(p_sg_p);
         ESP_LOGI(TAG, "New device commissioned or rejoined (short: 0x%04hx)", dev_annce_params->device_short_addr);
         break;
+    case ESP_ZB_NWK_SIGNAL_PERMIT_JOIN_STATUS:
+        if (err_status == ESP_OK) {
+            if (*(uint8_t *)esp_zb_app_signal_get_params(p_sg_p)) {
+                ESP_LOGI(TAG, "Network(0x%04hx) is open for %d seconds", esp_zb_get_pan_id(), *(uint8_t *)esp_zb_app_signal_get_params(p_sg_p));
+            } else {
+                ESP_LOGW(TAG, "Network(0x%04hx) closed, devices joining not allowed.", esp_zb_get_pan_id());
+            }
+        }
+        break;
     default:
         ESP_LOGI(TAG, "ZDO signal: %s (0x%x), status: %s", esp_zb_zdo_signal_to_string(sig_type), sig_type,
                  esp_err_to_name(err_status));
@@ -209,8 +218,7 @@ void app_main(void)
     ESP_ERROR_CHECK(example_connect());
 #if CONFIG_ESP_COEX_SW_COEXIST_ENABLE
     ESP_ERROR_CHECK(esp_wifi_set_ps(WIFI_PS_MIN_MODEM));
-    coex_enable();
-    coex_schm_status_bit_set(1, 1);
+    esp_coex_wifi_i154_enable();
 #else
     ESP_ERROR_CHECK(esp_wifi_set_ps(WIFI_PS_NONE));
 #endif
