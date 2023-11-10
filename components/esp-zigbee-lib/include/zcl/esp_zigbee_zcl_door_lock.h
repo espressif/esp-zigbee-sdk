@@ -99,6 +99,39 @@ typedef enum {
     ESP_ZB_ZCL_CMD_DOOR_LOCK_CLEAR_ALL_RFID_CODES             = 0x19,  /*!< Clear out all RFIDs on the lock. */
 } esp_zb_zcl_door_lock_cmd_id_t;
 
+/** @brief Door Lock cluster response commands
+*/
+typedef enum {
+  ESP_ZB_ZCL_CMD_DOOR_LOCK_LOCK_DOOR_RES                    = 0x00, /*!< This command is sent in response to a Lock command */
+  ESP_ZB_ZCL_CMD_DOOR_LOCK_UNLOCK_DOOR_RES                  = 0x01, /*!< This command is sent in response to a Unlock command */
+  ESP_ZB_ZCL_CMD_DOOR_LOCK_TOGGLE_RESPONSE                  = 0x02, /*!< This command is sent in response to a Toggle command*/
+  ESP_ZB_ZCL_CMD_DOOR_LOCK_UNLOCK_WITH_TIMEOUT_RESPONSE     = 0x03, /*!< This command is sent in response to an Unlock  */
+  ESP_ZB_ZCL_CMD_DOOR_LOCK_GET_LOG_RECORD_RESPONSE          = 0x04, /*!< Returns the specified log record. */
+  ESP_ZB_ZCL_CMD_DOOR_LOCK_SET_PIN_CODE_RESPONSE            = 0x05, /*!< Returns status of the PIN set command. */
+  ESP_ZB_ZCL_CMD_DOOR_LOCK_GET_PIN_CODE_RESPONSE            = 0x06, /*!< Returns the PIN for the specified user ID. */
+  ESP_ZB_ZCL_CMD_DOOR_LOCK_CLEAR_PIN_CODE_RESPONSE          = 0x07, /*!< Returns pass/fail of the command. */
+  ESP_ZB_ZCL_CMD_DOOR_LOCK_CLEAR_ALL_PIN_CODES_RESPONSE     = 0x08, /*!< Returns pass/fail of the command. */
+  ESP_ZB_ZCL_CMD_DOOR_LOCK_SET_USER_STATUS_RESPONSE         = 0x09, /*!< Returns the pass or fail value for the setting of the user status. */
+  ESP_ZB_ZCL_CMD_DOOR_LOCK_GET_USER_STATUS_RESPONSE         = 0x0A, /*!< Returns the user status for the specified user ID. */
+  ESP_ZB_ZCL_CMD_DOOR_LOCK_SET_WEEKDAY_SCHEDULE_RESPONSE    = 0x0B, /*!< Returns pass/fail of the command. */
+  ESP_ZB_ZCL_CMD_DOOR_LOCK_GET_WEEKDAY_SCHEDULE_RESPONSE    = 0x0C, /*!< Returns the weekly repeating schedule data for the specified schedule ID. */
+  ESP_ZB_ZCL_CMD_DOOR_LOCK_CLEAR_WEEKDAY_SCHEDULE_RESPONSE  = 0x0D, /*!< Returns pass/fail of the command. */
+  ESP_ZB_ZCL_CMD_DOOR_LOCK_SET_YEAR_DAY_SCHEDULE_RESPONSE   = 0x0E, /*!< Returns pass/fail of the command. */
+  ESP_ZB_ZCL_CMD_DOOR_LOCK_GET_YEAR_DAY_SCHEDULE_RESPONSE   = 0x0F, /*!< Returns the weekly repeating schedule data for the specified schedule ID. */
+  ESP_ZB_ZCL_CMD_DOOR_LOCK_CLEAR_YEAR_DAY_SCHEDULE_RESPONSE = 0x10, /*!< Returns pass/fail of the command. */
+  ESP_ZB_ZCL_CMD_DOOR_LOCK_SET_HOLIDAY_SCHEDULE_RESPONSE    = 0x11, /*!< Returns pass/fail of the command. */
+  ESP_ZB_ZCL_CMD_DOOR_LOCK_GET_HOLIDAY_SCHEDULE_RESPONSE    = 0x12, /*!< Returns the Holiday Schedule Entry for the specified Holiday ID. */
+  ESP_ZB_ZCL_CMD_DOOR_LOCK_CLEAR_HOLIDAY_SCHEDULE_RESPONSE  = 0x13, /*!< Returns pass/fail of the command. */
+  ESP_ZB_ZCL_CMD_DOOR_LOCK_SET_USER_TYPE_RESPONSE           = 0x14, /*!< Returns the pass or fail value for the setting of the user type. */
+  ESP_ZB_ZCL_CMD_DOOR_LOCK_GET_USER_TYPE_RESPONSE           = 0x15, /*!< Returns the user type for the specified user ID. */
+  ESP_ZB_ZCL_CMD_DOOR_LOCK_SET_RFID_CODE_RESPONSE           = 0x16, /*!< Returns status of the Set RFID Code command. */
+  ESP_ZB_ZCL_CMD_DOOR_LOCK_GET_RFID_CODE_RESPONSE           = 0x17, /*!< Returns the RFID code for the specified user ID. */
+  ESP_ZB_ZCL_CMD_DOOR_LOCK_CLEAR_RFID_CODE_RESPONSE         = 0x18, /*!< Returns pass/fail of the command. */
+  ESP_ZB_ZCL_CMD_DOOR_LOCK_CLEAR_ALL_RFID_CODES_RESPONSE    = 0x19, /*!< Returns pass/fail of the command. */
+  ESP_ZB_ZCL_CMD_DOOR_LOCK_OPERATION_EVENT_NOTIFICATION_ID  = 0x20, /*!< The door lock server sends out operation event notification when the event is triggered by the various event sources. */
+  ESP_ZB_ZCL_CMD_DOOR_LOCK_PROGRAMMING_EVENT_NOTIFICATION   = 0x21, /*!< The door lock server sends out a programming event notification whenever a programming event takes place on the door lock. */
+} esp_zb_zcl_door_lock_cmd_resp_t;
+
 #ifdef __cplusplus
 }
 #endif

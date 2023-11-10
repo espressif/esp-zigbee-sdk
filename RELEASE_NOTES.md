@@ -1,5 +1,20 @@
 # Espressif Zigbee SDK Release Notes
 
+## 10-Nov-2023
+1.0.3 version release of ESP-ZIGBEE-SDK
+
+### Features
+- Add ZCL door lock cluster callback support
+- Add ZCL local report configuration support
+- Add the close Zigbee network API
+- Closes: https://github.com/espressif/esp-zigbee-sdk/issues/137
+- Closes: https://github.com/espressif/esp-zigbee-sdk/issues/128
+
+### Bug Fixes
+- Fix zb nvram bug
+- Fix off_with_effect of on/off cluster
+
+
 ## 03-Nov-2023
 1.0.2 version release of ESP-ZIGBEE-SDK
 

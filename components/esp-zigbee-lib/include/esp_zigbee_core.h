@@ -82,6 +82,8 @@ typedef enum esp_zb_core_action_callback_id_s {
     ESP_ZB_CORE_METERING_PUBLISH_SNAPSHOT_CB_ID         = 0x0013,   /*!< Metering publish snapshot, refer to esp_zb_zcl_metering_publish_snapshot_message_t */
     ESP_ZB_CORE_METERING_GET_SAMPLED_DATA_CB_ID         = 0x0014,   /*!< Metering get sampled data, refer to esp_zb_zcl_metering_get_sampled_data_message_t */
     ESP_ZB_CORE_METERING_GET_SAMPLED_DATA_RESP_CB_ID    = 0x0015,   /*!< Metering get sampled data response, refer to esp_zb_zcl_metering_get_sampled_data_resp_message_t */
+    ESP_ZB_CORE_DOOR_LOCK_LOCK_DOOR_CB_ID               = 0x0016,   /*!< Lock/unlock door request, refer to esp_zb_zcl_door_lock_lock_door_message_t */
+    ESP_ZB_CORE_DOOR_LOCK_LOCK_DOOR_RESP_CB_ID          = 0x0017,   /*!< Lock/unlock door response, refer to esp_zb_zcl_door_lock_lock_door_resp_message_t */
     ESP_ZB_CORE_CMD_READ_ATTR_RESP_CB_ID                = 0x1000,   /*!< Read attribute response, refer to esp_zb_zcl_cmd_read_attr_resp_message_t */
     ESP_ZB_CORE_CMD_WRITE_ATTR_RESP_CB_ID               = 0x1001,   /*!< Write attribute response, refer to esp_zb_zcl_cmd_write_attr_resp_message_t */
     ESP_ZB_CORE_CMD_REPORT_CONFIG_RESP_CB_ID            = 0x1002,   /*!< Configure reprot response, refer to esp_zb_zcl_cmd_config_report_resp_message_t */
@@ -336,6 +338,15 @@ void esp_zb_set_rx_on_when_idle(bool rx_on);
  *
  */
 bool esp_zb_bdb_is_factory_new(void);
+
+/**
+ * @brief Close Zigbee network
+ *
+ * @return
+ *      - ESP_OK: on success
+ *      - ESP_FAIL: on failure
+ */
+esp_err_t esp_zb_bdb_close_network(void);
 
 /**
  * @brief Set Touchlink NWK channel

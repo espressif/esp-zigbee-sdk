@@ -148,7 +148,7 @@ union esp_zb_zcl_attr_var_u {
 
 /**
  * @brief Type to represent ZCL attribute reporting info structure
- * @note Internal use
+ * 
  */
 typedef struct esp_zb_zcl_reporting_info_s {
     uint8_t direction;              /*!< Direction: report is send or received */
@@ -183,6 +183,7 @@ typedef struct esp_zb_zcl_reporting_info_s {
         uint16_t profile_id; /*!< Profile id */
     }
     dst;        /*!< Union of the ZCL destination */
+    uint16_t manuf_code; /*!< Manufacturer specific code */
 }
 esp_zb_zcl_reporting_info_t;
 

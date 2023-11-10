@@ -1208,6 +1208,25 @@ typedef struct esp_zb_zcl_metering_get_sampled_data_resp_message_s {
 } esp_zb_zcl_metering_get_sampled_data_resp_message_t;
 
 /**
+ * @brief The Zigbee zcl door lock callback message struct
+ *
+ */
+typedef struct esp_zb_zcl_door_lock_lock_door_message_s {
+    esp_zb_device_cb_common_info_t info;  /*!< The common information for Zigbee device callback */
+    esp_zb_zcl_door_lock_cmd_id_t cmd_id; /*!< The lock or unlock command identifier */
+} esp_zb_zcl_door_lock_lock_door_message_t;
+
+/**
+ * @brief The Zigbee zcl door lock repsonse callback message struct
+ *
+ */
+typedef struct esp_zb_zcl_door_lock_lock_door_resp_message_s {
+    esp_zb_device_cb_common_info_t info;    /*!< The common information for Zigbee device callback */
+    esp_zb_zcl_door_lock_cmd_resp_t cmd_id; /*!< The lock or unlock response command identifier */
+    esp_zb_zcl_status_t req_status;         /*!< The status of request command indicates if the message has received successfully. */
+} esp_zb_zcl_door_lock_lock_door_resp_message_t;
+
+/**
  * @brief The Zigbee zcl command basic application information struct
  *
  */
@@ -1987,6 +2006,54 @@ void esp_zb_zcl_custom_cluster_cmd_req(esp_zb_zcl_custom_cluster_cmd_req_t *cmd_
  *
  */
 void esp_zb_zcl_custom_cluster_cmd_resp(esp_zb_zcl_custom_cluster_cmd_resp_t *cmd_req);
+
+/**
+ * @brief Start and enable the attribute reporting.
+ *
+ * @param attr_info The location information of attribute which will be enabled to report
+ * @return
+ *      - ESP_OK: On success
+ *      - ESP_FAIL: The reporting was not set up with @p attr_info
+ */
+esp_err_t esp_zb_zcl_start_attr_reporting(esp_zb_zcl_attr_location_info_t attr_info);
+
+/**
+ * @brief Stop and disable the attribute reporting.
+ *
+ * @param attr_info The location information of attribute which will be disabled to report
+ * @return
+ *      - ESP_OK: On success
+ *      - ESP_FAIL: The reporting was not set down with @p attr_info
+ */
+esp_err_t esp_zb_zcl_stop_attr_reporting(esp_zb_zcl_attr_location_info_t attr_info);
+
+/**
+ * @brief Find the attribute reporting information from the device
+ *
+ * @param attr_info The location information of attribute, which will be utilized for looking up
+ * @return
+ *      - The result of finding the attribute reporting information
+ */
+esp_zb_zcl_reporting_info_t *esp_zb_zcl_find_reporting_info(esp_zb_zcl_attr_location_info_t attr_info);
+
+/**
+ * @brief Update the attribute report information
+ *
+ * @param report_info The attribute reporting information that will be updated for the related attribute
+ * @return
+ *      - ESP_OK: On success
+ *      - ESP_ERR_NOT_FOUND: Not found the attribute
+ *      - ESP_ERR_NO_MEM: Not memory
+ *      - ESP_ERR_INVALID_ARG: Invalid argument
+ *      - ESP_FAIL: On failure
+ */
+esp_err_t esp_zb_zcl_update_reporting_info(esp_zb_zcl_reporting_info_t *report_info);
+
+/**
+ * @brief Reset all reporting information of attributes
+ *
+ */
+void esp_zb_zcl_reset_all_reporting_info(void);
 
 #ifdef __cplusplus
 }

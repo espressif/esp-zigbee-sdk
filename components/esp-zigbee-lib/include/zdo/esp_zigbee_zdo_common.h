@@ -202,6 +202,29 @@ typedef struct esp_zb_zdo_signal_device_update_params_s {
     uint8_t status;                 /*!< Indicates the updated status of the device */
 } esp_zb_zdo_signal_device_update_params_t;
 
+/**
+ * @brief Device authorized signal parameters
+ * @note The authorization_type as following:
+ *          0x00 = Authorization type for legacy devices ( < r21)
+ *              Status:
+ *                  0x00: Authorization success
+ *                  0x01: Authorization failed
+ *          0x01 = Authorization type for r21 device through TCLK
+ *              Status:
+ *                  0x00: Authorization success
+ *                  0x01: Authorization timeout
+ *                  0x02: Authorization failed
+ *          0x02 = Authorization type for SE through CBKE
+ *              Status:
+ *                  0x00: Authorization success
+ */
+typedef struct esp_zb_zdo_signal_device_authorized_params_s {
+    esp_zb_ieee_addr_t long_addr; /*!< Long Address of the updated device */
+    uint16_t short_addr;          /*!< Short Address of the updated device */
+    uint8_t authorization_type;   /*!< Type of the authorization procedure */
+    uint8_t authorization_status; /*!< Status of the authorization procedure which depends on authorization_type */
+} esp_zb_zdo_signal_device_authorized_params_t;
+
 #ifdef __cplusplus
 }
 #endif
