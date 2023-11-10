@@ -280,8 +280,20 @@ typedef enum {
 } esp_zb_zcl_attr_access_t;
 
 /**
+ * @brief The ZCL attribute location information struct
+ *
+ */
+typedef struct esp_zb_zcl_attr_location_info_s {
+    uint8_t endpoint_id;                    /*!< The endpoint identifier on which the cluster id is resident. */
+    esp_zb_zcl_cluster_id_t cluster_id;     /*!< The cluster identifier on which the attribute is resident, refer to esp_zb_zcl_cluster_id_t */
+    esp_zb_zcl_cluster_role_t cluster_role; /*!< The role of cluster, refer to esp_zb_zcl_cluster_role_t */
+    uint16_t manuf_code;                    /*!< The manufacturer code of attribute */
+    uint16_t attr_id;                       /*!< The attribute identifier */
+} esp_zb_zcl_attr_location_info_t;
+
+/**
  * @brief Put the ZCL attribute value to specific memory
- * 
+ *
  * @param data_ptr      A pointer of specific memory
  * @param type          The data type of attribute value
  * @param value         The value of attribute
