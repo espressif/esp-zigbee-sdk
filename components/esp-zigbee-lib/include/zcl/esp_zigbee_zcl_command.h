@@ -184,6 +184,17 @@ typedef struct esp_zb_zcl_identify_cmd_s {
 } esp_zb_zcl_identify_cmd_t;
 
 /**
+ * @brief The Zigbee ZCL identify trigger effect command strcut
+ *
+ */
+typedef struct esp_zb_zcl_identify_trigger_effect_cmd_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;   /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode; /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+    uint8_t effect_id;                      /*!< The field specifies the identify effect to use, refer to esp_zb_zcl_identify_trigger_effect_s */
+    uint8_t effect_variant;                 /*!< The field is used to indicate which variant of the effect, indicated in the effect identifier field, SHOULD be triggered */
+} esp_zb_zcl_identify_trigger_effect_cmd_t;
+
+/**
  * @brief The Zigbee ZCL identify query command struct
  *
  */
@@ -1227,6 +1238,16 @@ typedef struct esp_zb_zcl_door_lock_lock_door_resp_message_s {
 } esp_zb_zcl_door_lock_lock_door_resp_message_t;
 
 /**
+ * @brief The Zigbee zcl identify cluster calls identify effect command message struct
+ *
+ */
+typedef struct esp_zb_zcl_identify_effect_message_s {
+    esp_zb_device_cb_common_info_t info; /*!< The common information for Zigbee device callback */
+    uint8_t effect_id;                   /*!< The field specifies the identify effect to use, refer to esp_zb_zcl_identify_trigger_effect_s */
+    uint8_t effect_variant;              /*!< The field is used to indicate which variant of the effect, indicated in the effect identifier field, SHOULD be triggered */
+} esp_zb_zcl_identify_effect_message_t;
+
+/**
  * @brief The Zigbee zcl command basic application information struct
  *
  */
@@ -1460,8 +1481,11 @@ typedef struct esp_zb_zcl_privilege_command_message_s {
  *
  */
 typedef struct esp_zb_zcl_custom_cluster_command_message_s {
-    esp_zb_zcl_cmd_info_t info;       /*!< The basic information of customized cluster command message that refers to esp_zb_zcl_report_attr_message_t */
-    esp_zb_zcl_attribute_data_t data; /*!< The attribute value of customized cluster */
+    esp_zb_zcl_cmd_info_t info; /*!< The basic information of customized cluster command message that refers to esp_zb_zcl_report_attr_message_t */
+    struct {
+        uint8_t size; /*!< The size of custom data */
+        void *value;  /*!< The value of custom data */
+    } data;           /*!< The custom data */
 } esp_zb_zcl_custom_cluster_command_message_t;
 
 /* read attribute, write attribute, config report and more general command will support later */
@@ -1537,6 +1561,13 @@ void esp_zb_zcl_on_off_cmd_req(esp_zb_zcl_on_off_cmd_t *cmd_req);
  *
  */
 void esp_zb_zcl_identify_cmd_req(esp_zb_zcl_identify_cmd_t *cmd_req);
+
+/**
+ * @brief Send identify trigger effect command
+ *
+ * @param[in] cmd_req pointer to the identify trigger variant command refer to esp_zb_zcl_identify_trigger_variant_cmd_s
+ */
+void esp_zb_zcl_identify_trigger_effect_cmd_req(esp_zb_zcl_identify_trigger_effect_cmd_t *cmd_req);
 
 /**
  * @brief   Send identify query command

@@ -1,5 +1,21 @@
 # Espressif Zigbee SDK Release Notes
 
+## 21-Nov-2023
+1.0.4 version release of ESP-ZIGBEE-SDK
+
+### Features
+- Update esp-zboss-lib to v1.0.3
+- Support Zigbee touchlink and steering switch
+- Support the command with on/off of level control cluster
+- Add the identify_effect device id callback for user
+- Add the identify_effect command
+- Add block mechanism for zb osif iteration
+- Update example partition table
+
+### Bug Fixes
+- Fix the payload of custom cluster
+- Fix the data type of zb keep alive
+
 ## 10-Nov-2023
 1.0.3 version release of ESP-ZIGBEE-SDK
 
