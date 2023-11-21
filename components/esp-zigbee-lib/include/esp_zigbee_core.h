@@ -19,6 +19,7 @@ extern "C" {
 #include "zcl/esp_zigbee_zcl_command.h"
 #include "zdo/esp_zigbee_zdo_command.h"
 #include "bdb/esp_zigbee_bdb_touchlink.h"
+#include "bdb/esp_zigbee_bdb_commissioning.h"
 #include "esp_zigbee_secur.h"
 #include "esp_zigbee_ota.h"
 
@@ -76,14 +77,15 @@ typedef enum esp_zb_core_action_callback_id_s {
     ESP_ZB_CORE_THERMOSTAT_VALUE_CB_ID                  = 0x0007,   /*!< Thermostat value, refer to esp_zb_zcl_thermostat_value_message_t */
     ESP_ZB_CORE_METERING_GET_PROFILE_CB_ID              = 0x0008,   /*!< Metering get profile, refer to esp_zb_zcl_metering_get_profile_message_t */
     ESP_ZB_CORE_METERING_GET_PROFILE_RESP_CB_ID         = 0x0009,   /*!< Metering get profile response, refer to esp_zb_zcl_metering_get_profile_resp_message_t */
-    ESP_ZB_CORE_METERING_REQ_FAST_POLL_MODE_CB_ID       = 0x0010,   /*!< Metering request fast poll mode, refer to esp_zb_zcl_metering_request_fast_poll_mode_message_t */
-    ESP_ZB_CORE_METERING_REQ_FAST_POLL_MODE_RESP_CB_ID  = 0x0011,   /*!< Metering request fast poll mode response, refer to esp_zb_zcl_metering_request_fast_poll_mode_resp_message_t */
-    ESP_ZB_CORE_METERING_GET_SNAPSHOT_CB_ID             = 0x0012,   /*!< Metering get snapshot, refer to esp_zb_zcl_metering_get_snapshot_message_t */
-    ESP_ZB_CORE_METERING_PUBLISH_SNAPSHOT_CB_ID         = 0x0013,   /*!< Metering publish snapshot, refer to esp_zb_zcl_metering_publish_snapshot_message_t */
-    ESP_ZB_CORE_METERING_GET_SAMPLED_DATA_CB_ID         = 0x0014,   /*!< Metering get sampled data, refer to esp_zb_zcl_metering_get_sampled_data_message_t */
-    ESP_ZB_CORE_METERING_GET_SAMPLED_DATA_RESP_CB_ID    = 0x0015,   /*!< Metering get sampled data response, refer to esp_zb_zcl_metering_get_sampled_data_resp_message_t */
-    ESP_ZB_CORE_DOOR_LOCK_LOCK_DOOR_CB_ID               = 0x0016,   /*!< Lock/unlock door request, refer to esp_zb_zcl_door_lock_lock_door_message_t */
-    ESP_ZB_CORE_DOOR_LOCK_LOCK_DOOR_RESP_CB_ID          = 0x0017,   /*!< Lock/unlock door response, refer to esp_zb_zcl_door_lock_lock_door_resp_message_t */
+    ESP_ZB_CORE_METERING_REQ_FAST_POLL_MODE_CB_ID       = 0x000a,   /*!< Metering request fast poll mode, refer to esp_zb_zcl_metering_request_fast_poll_mode_message_t */
+    ESP_ZB_CORE_METERING_REQ_FAST_POLL_MODE_RESP_CB_ID  = 0x000b,   /*!< Metering request fast poll mode response, refer to esp_zb_zcl_metering_request_fast_poll_mode_resp_message_t */
+    ESP_ZB_CORE_METERING_GET_SNAPSHOT_CB_ID             = 0x000c,   /*!< Metering get snapshot, refer to esp_zb_zcl_metering_get_snapshot_message_t */
+    ESP_ZB_CORE_METERING_PUBLISH_SNAPSHOT_CB_ID         = 0x000d,   /*!< Metering publish snapshot, refer to esp_zb_zcl_metering_publish_snapshot_message_t */
+    ESP_ZB_CORE_METERING_GET_SAMPLED_DATA_CB_ID         = 0x000e,   /*!< Metering get sampled data, refer to esp_zb_zcl_metering_get_sampled_data_message_t */
+    ESP_ZB_CORE_METERING_GET_SAMPLED_DATA_RESP_CB_ID    = 0x000f,   /*!< Metering get sampled data response, refer to esp_zb_zcl_metering_get_sampled_data_resp_message_t */
+    ESP_ZB_CORE_DOOR_LOCK_LOCK_DOOR_CB_ID               = 0x0010,   /*!< Lock/unlock door request, refer to esp_zb_zcl_door_lock_lock_door_message_t */
+    ESP_ZB_CORE_DOOR_LOCK_LOCK_DOOR_RESP_CB_ID          = 0x0011,   /*!< Lock/unlock door response, refer to esp_zb_zcl_door_lock_lock_door_resp_message_t */
+    ESP_ZB_CORE_IDENTIFY_EFFECT_CB_ID                   = 0x0012,   /*!< Identify triggers effect request, refer to esp_zb_zcl_identify_effect_message_t */
     ESP_ZB_CORE_CMD_READ_ATTR_RESP_CB_ID                = 0x1000,   /*!< Read attribute response, refer to esp_zb_zcl_cmd_read_attr_resp_message_t */
     ESP_ZB_CORE_CMD_WRITE_ATTR_RESP_CB_ID               = 0x1001,   /*!< Write attribute response, refer to esp_zb_zcl_cmd_write_attr_resp_message_t */
     ESP_ZB_CORE_CMD_REPORT_CONFIG_RESP_CB_ID            = 0x1002,   /*!< Configure reprot response, refer to esp_zb_zcl_cmd_config_report_resp_message_t */
@@ -117,8 +119,8 @@ typedef struct {
  *
  */
 typedef struct {
-    uint16_t ed_timeout; /*!< Set End Device Timeout */
-    uint16_t keep_alive; /*!< Set Keep alive Timeout */
+    uint8_t ed_timeout; /*!< Set End Device Timeout, refer to esp_zb_aging_timeout_t */
+    uint32_t keep_alive; /*!< Set Keep alive Timeout, in milliseconds, with a maximum value of 65,000,000,000.*/
 } esp_zb_zed_cfg_t;
 
 /**
@@ -698,6 +700,16 @@ void esp_zb_sleep_enable(bool enable);
  *
  */
 bool esp_zb_sleep_is_enable(void);
+
+/**
+ * @brief Get bdb_commissioning_status
+ *
+ * @return commissioning_status refer to esp_zb_bdb_commissioning_status_t
+ *
+ */
+#ifndef ZB_MACSPLIT_DEVICE
+esp_zb_bdb_commissioning_status_t esp_zb_get_bdb_commissioning_status(void);
+#endif
 
 #ifdef __cplusplus
 }
