@@ -9,7 +9,7 @@ This test code shows how to configure Zigbee sleepy end device.
 
 * One development board with ESP32-H2 SoC acting as Zigbee end-device (loaded with sleepy_end_device example)
 * A USB cable for power supply and programming
-* Choose another ESP32-H2 as Zigbee coordinator (see [HA_on_off_switch example](../HA_on_off_switch/))
+* Choose another ESP32-H2 as Zigbee coordinator (see [HA_on_off_switch example](../../esp_zigbee_HA_sample/))
 
 ## Configure the project
 
@@ -99,6 +99,10 @@ I (65371) ESP_ZB_SLEEP: Zigbee can sleep
 ```
 
 Please note that due to the default sleep threshold of 20 milliseconds, the device may enter sleep mode frequently and print log `Zigbee can sleep`. If you want to reduce the number of sleep occurrences, you can adjust the sleep threshold using the function `esp_zb_sleep_set_threshold(uint32_t threshold_ms)`. For example, you can set the threshold to a higher value like `esp_zb_sleep_set_threshold(2000); // 2000 milliseconds` after initializing Zigbee with `esp_zb_init(&zb_nwk_cfg);`.
+
+During the deep sleep, a typical power consumption is shown below:
+![H2-light-sleep-power-consumption](image/ESP32H2-light-sleep-power-consumption.png)
+
 ## Troubleshooting
 
 For any technical queries, please open an [issue](https://github.com/espressif/esp-zigbee-sdk/issues) on GitHub. We will get back to you soon.
