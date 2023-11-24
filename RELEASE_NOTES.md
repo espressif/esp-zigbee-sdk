@@ -1,5 +1,24 @@
 # Espressif Zigbee SDK Release Notes
 
+## 23-Nov-2023
+1.0.5 version release of ESP-ZIGBEE-SDK
+
+### Features
+- Updated esp-zboss-lib to v1.0.5
+- Updated esp-zigbee-lib to v1.0.5
+- Increased the maximum number of records in the group table to 32
+- Increased the maximum number of records in the binding table to 64
+- Increased the maximum number of endpoints per device to 64
+
+### Bug Fixes
+- Fixed the invalid endpoint ID in the door lock response
+- Fixed the effect of the OFF command for the level control cluster
+- Fixed the zdo binding table response callback
+- Fixed the touchlink primary channel reset
+- Closes: https://github.com/espressif/esp-zigbee-sdk/issues/150
+- Closes: https://github.com/espressif/esp-zigbee-sdk/issues/65
+
+
 ## 21-Nov-2023
 1.0.4 version release of ESP-ZIGBEE-SDK
 
