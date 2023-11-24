@@ -31,8 +31,8 @@ typedef enum esp_zb_bdb_commissioning_status_s
     ESP_ZB_BDB_STATUS_TCLK_EX_FAILURE,             /*!< The Trust Center link key exchange procedure has failed attempting to join a centralized security network. */
     ESP_ZB_BDB_STATUS_NOT_ON_A_NETWORK,            /*!< A commissioning procedure was forbidden since the node was not currently on a network. */
     ESP_ZB_BDB_STATUS_ON_A_NETWORK,                /*!< A commissioning procedure was forbidden since the node was currently on a network. */
-    ESP_ZB_BDB_STATUS_CANCELLED,                    /*!< The current operation (steering or formation) was cancelled by an app */
-    ESP_ZB_BDB_STATUS_DEV_ANNCE_SEND_FAILURE        /*!< A device announce sending has been failed (e.g. device announce haven't acked by parent router). */
+    ESP_ZB_BDB_STATUS_CANCELLED,                   /*!< The current operation (steering or formation) was cancelled by an app */
+    ESP_ZB_BDB_STATUS_DEV_ANNCE_SEND_FAILURE       /*!< A device announce sending has been failed (e.g. device announce haven't acked by parent router). */
 } esp_zb_bdb_commissioning_status_t;
 
 #ifdef __cplusplus
