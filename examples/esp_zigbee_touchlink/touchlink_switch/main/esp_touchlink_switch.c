@@ -59,10 +59,8 @@ static void esp_zb_buttons_handler(switch_func_pair_t *button_func_pair)
     case SWITCH_ONOFF_TOGGLE_CONTROL:
         /* Send on-off toggle command to remote device */
         esp_zb_zcl_on_off_cmd_t cmd_req;
-        cmd_req.zcl_basic_cmd.dst_addr_u.addr_short = g_device_ctx.on_off_light.short_addr;
-        cmd_req.zcl_basic_cmd.dst_endpoint =g_device_ctx.on_off_light.endpoint;
         cmd_req.zcl_basic_cmd.src_endpoint = HA_ONOFF_SWITCH_ENDPOINT;
-        cmd_req.address_mode = ESP_ZB_APS_ADDR_MODE_16_ENDP_PRESENT;
+        cmd_req.address_mode = ESP_ZB_APS_ADDR_MODE_DST_ADDR_ENDP_NOT_PRESENT;
         cmd_req.on_off_cmd_id = ESP_ZB_ZCL_CMD_ON_OFF_TOGGLE_ID;
         ESP_EARLY_LOGI(TAG, "send 'on_off toggle' command");
         esp_zb_zcl_on_off_cmd_req(&cmd_req);
@@ -72,24 +70,44 @@ static void esp_zb_buttons_handler(switch_func_pair_t *button_func_pair)
     }
 }
 
-static void user_find_cb(esp_zb_zdp_status_t zdo_status, uint16_t addr, uint8_t endpoint, void *user_ctx)
+static void bind_cb(esp_zb_zdp_status_t zdo_status, void *user_ctx)
 {
     if (zdo_status == ESP_ZB_ZDP_STATUS_SUCCESS) {
-        ESP_LOGI(TAG, "User find cb: response_status:%d, address:0x%x, endpoint:%d", zdo_status, addr, endpoint);
-        /* Save into remote device record structure for future use */
-        g_device_ctx.on_off_light.short_addr = addr;
-        g_device_ctx.on_off_light.endpoint = endpoint;
+        ESP_LOGI(TAG, "Bound successfully!");
+        if (user_ctx) {
+            ESP_LOGI(TAG, "The light originating from address(0x%x) on endpoint(%d)", g_device_ctx.on_off_light.short_addr,
+                     g_device_ctx.on_off_light.endpoint);
+        }
     }
 }
 
-void find_light_bulb(zb_uint16_t short_addr)
+static void user_find_cb(esp_zb_zdp_status_t zdo_status, uint16_t addr, uint8_t endpoint, void *user_ctx)
+{
+    if (zdo_status == ESP_ZB_ZDP_STATUS_SUCCESS) {
+        ESP_LOGI(TAG, "Found light");
+        esp_zb_zdo_bind_req_param_t bind_req;
+        g_device_ctx.on_off_light.short_addr = addr;
+        g_device_ctx.on_off_light.endpoint = endpoint;
+        esp_zb_ieee_address_by_short(g_device_ctx.on_off_light.short_addr, g_device_ctx.on_off_light.ieee_addr);
+        esp_zb_get_long_address(bind_req.src_address);
+        bind_req.src_endp = HA_ONOFF_SWITCH_ENDPOINT;
+        bind_req.cluster_id = ESP_ZB_ZCL_CLUSTER_ID_ON_OFF;
+        bind_req.dst_addr_mode = ESP_ZB_ZDO_BIND_DST_ADDR_MODE_64_BIT_EXTENDED;
+        memcpy(bind_req.dst_address_u.addr_long, g_device_ctx.on_off_light.ieee_addr, sizeof(esp_zb_ieee_addr_t));
+        bind_req.dst_endp = endpoint;
+        bind_req.req_dst_addr = esp_zb_get_short_address();
+        ESP_LOGI(TAG, "Try to bind on/off light");
+        esp_zb_zdo_device_bind_req(&bind_req, bind_cb, NULL);
+    }
+}
+
+void find_light_bulb(uint16_t short_addr)
 {
     esp_zb_zdo_match_desc_req_param_t  find_req;
     find_req.addr_of_interest = short_addr;
     find_req.dst_nwk_addr = short_addr;
     /* Find the match on-off light device */
     esp_zb_zdo_find_on_off_light(&find_req, user_find_cb, NULL);
-
     memset(g_device_ctx.pending_dev_addr, 0, sizeof(esp_zb_ieee_addr_t));
 }
 
@@ -97,7 +115,7 @@ void find_light_bulb(zb_uint16_t short_addr)
 static void esp_zb_start_touchlink_commissioning(void)
 {
     esp_zb_bdb_start_top_level_commissioning(ESP_ZB_BDB_TOUCHLINK_COMMISSIONING);
-    ESP_LOGI(TAG, "Start Touchlink commissioning as initiator");
+    ESP_LOGI(TAG, "Scanning as a Touchlink initiator...");
 }
 
 void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
@@ -108,41 +126,40 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
 
     switch (sig_type) {
     case ESP_ZB_ZDO_SIGNAL_SKIP_STARTUP:
-        ESP_LOGI(TAG, "ZB_ZDO_SIGNAL_SKIP_STARTUP: start join");
-        /* If factory new, start Touchlink commissioning, else start only steering */
+        ESP_LOGI(TAG, "Zigbee stack initialized");
+        esp_zb_bdb_start_top_level_commissioning(ESP_ZB_BDB_MODE_INITIALIZATION);
+        break;
+    case ESP_ZB_BDB_SIGNAL_DEVICE_FIRST_START:
+    case ESP_ZB_BDB_SIGNAL_DEVICE_REBOOT:
+        ESP_LOGI(TAG, "Device started up in %s factory-reset mode", esp_zb_bdb_is_factory_new() ? "" : "non");
         if (esp_zb_bdb_is_factory_new()) {
             esp_zb_start_touchlink_commissioning();
-        } 
-        else {
-            esp_zb_bdb_start_top_level_commissioning(ESP_ZB_BDB_MODE_INITIALIZATION);
+        } else {
+            ESP_LOGI(TAG, "Device restarted");
         }
         break;
-    case ESP_ZB_BDB_SIGNAL_DEVICE_REBOOT:
-        ESP_LOGI(TAG, "Device restarted");
-        break;
     case ESP_ZB_BDB_SIGNAL_TOUCHLINK_NWK_STARTED:
+    case ESP_ZB_BDB_SIGNAL_TOUCHLINK_NWK_JOINED_ROUTER:
         esp_zb_bdb_signal_touchlink_nwk_params_t *sig_params = (esp_zb_bdb_signal_touchlink_nwk_params_t *)esp_zb_app_signal_get_params(p_sg_p);
         memcpy(g_device_ctx.pending_dev_addr, sig_params->device_ieee_addr, sizeof(esp_zb_ieee_addr_t));
-
-        ESP_LOGI(TAG, "Touchlink network started");
-        ESP_LOGI(TAG, "Profile: 0x%x, ep: %d", sig_params->profile_id, sig_params->endpoint);
-        break;
-    case ESP_ZB_BDB_SIGNAL_TOUCHLINK_NWK_JOINED_ROUTER:
-        esp_zb_bdb_signal_touchlink_nwk_params_t *joined_router_sig_params = (esp_zb_bdb_signal_touchlink_nwk_params_t *)esp_zb_app_signal_get_params(p_sg_p);
-        memcpy(g_device_ctx.pending_dev_addr, joined_router_sig_params->device_ieee_addr, sizeof(esp_zb_ieee_addr_t));
-        ESP_LOGI(TAG, "Touchlink network joined router");
-        ESP_LOGI(TAG, "Profile: 0x%x, ep: %d", joined_router_sig_params->profile_id, joined_router_sig_params->endpoint);
+        ESP_LOGI(TAG, "Touchlink initiator receives the response for %s network",
+                 sig_type == ESP_ZB_BDB_SIGNAL_TOUCHLINK_NWK_STARTED ? "started" : "router joining");
+        ESP_LOGI(TAG, "Response is from profile: 0x%04hx, endpoint: %d, address: 0x%x%x%x%x%x%x%x%X", sig_params->profile_id, sig_params->endpoint,
+                 sig_params->device_ieee_addr[7], sig_params->device_ieee_addr[6], sig_params->device_ieee_addr[5], sig_params->device_ieee_addr[4],
+                 sig_params->device_ieee_addr[3], sig_params->device_ieee_addr[2], sig_params->device_ieee_addr[1], sig_params->device_ieee_addr[0]);
         break;
     case ESP_ZB_BDB_SIGNAL_TOUCHLINK:
         ESP_LOGI(TAG, "Touchlink commissioning as initiator done");
-        if (err_status == ESP_OK)
-        {
-            ESP_LOGI(TAG, "Touchlink Success, device address: 0x%x %x %x %x %x %x %x %x",g_device_ctx.pending_dev_addr[7],g_device_ctx.pending_dev_addr[6],g_device_ctx.pending_dev_addr[5],
-            g_device_ctx.pending_dev_addr[4], g_device_ctx.pending_dev_addr[3],g_device_ctx.pending_dev_addr[2],g_device_ctx.pending_dev_addr[1], g_device_ctx.pending_dev_addr[0]);
-            
+        esp_zb_ieee_addr_t extended_pan_id;
+        esp_zb_get_extended_pan_id(extended_pan_id);
+        if (err_status == ESP_OK) {
+            ESP_LOGI(TAG,
+                     "Commissioning successfully, network information (Extended PAN ID: %02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x, PAN ID: 0x%04hx,"
+                     "Channel:%d, Short Address: 0x%04hx)",
+                     extended_pan_id[7], extended_pan_id[6], extended_pan_id[5], extended_pan_id[4], extended_pan_id[3], extended_pan_id[2],
+                     extended_pan_id[1], extended_pan_id[0], esp_zb_get_pan_id(), esp_zb_get_current_channel(), esp_zb_get_short_address());
             if (!ESP_ZB_IEEE_ADDR_IS_ZERO(g_device_ctx.pending_dev_addr)) {
-                uint16_t short_addr = esp_zb_address_short_by_ieee(g_device_ctx.pending_dev_addr);
-                find_light_bulb(short_addr);
+                find_light_bulb(esp_zb_address_short_by_ieee(g_device_ctx.pending_dev_addr));
             }
         } else {
             /* Repeat touchlink until any bulb will be found */

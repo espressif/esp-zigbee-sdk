@@ -1,5 +1,26 @@
 # Espressif Zigbee SDK Release Notes
 
+## 08-Dec-2023
+1.0.6 version release of ESP-ZIGBEE-SDK
+
+### Features
+- Updated esp-zboss-lib to v1.0.6
+- Updated esp-zigbee-lib to v1.0.6
+- Supported the touchink and steering mode
+- Supported more APIs for touchlink feature
+- Supported the dual-communication for custom cluster
+- Supported the 16-bit and 32-bit array for custom attribute
+
+### Bug Fixes
+- Fixed zigbee gets group membership crash
+- Fixed zigbee gets scene membership crash
+- Fixed zigbee touchlink initiator scanning
+- Fixed the response of time cluster
+- Fixed the valid range for move_to_level command
+- Closes: https://github.com/espressif/esp-zigbee-sdk/issues/156
+- Closes: https://github.com/espressif/esp-zigbee-sdk/issues/158
+
+
 ## 23-Nov-2023
 1.0.5 version release of ESP-ZIGBEE-SDK
 

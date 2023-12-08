@@ -143,7 +143,7 @@ static esp_err_t zb_ota_upgrade_server_query_image_handler(esp_zb_zcl_ota_upgrad
     ESP_RETURN_ON_FALSE(message.info.status == ESP_ZB_ZCL_STATUS_SUCCESS, ESP_FAIL, TAG, "Failed to parse OTA upgrade server query image message");
     ESP_LOGI(TAG, "OTA upgrade server query image");
     ESP_LOGI(TAG, "OTA client address: 0x%x", message.zcl_addr.u.short_addr);
-    ESP_LOGI(TAG, "OTA version: 0x%lx, image type: 0x%x, manfacturer code: %x, ", message.version, message.image_type, message.manufacturer_code);
+    ESP_LOGI(TAG, "OTA version: 0x%lx, image type: 0x%x, manufacturer code: %x, ", message.version, message.image_type, message.manufacturer_code);
     if (message.table_idx) {
         ESP_LOGI(TAG, "OTA table index: 0x%x", *message.table_idx);
     }

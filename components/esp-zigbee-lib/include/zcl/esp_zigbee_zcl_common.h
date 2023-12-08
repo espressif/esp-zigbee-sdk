@@ -249,7 +249,9 @@ typedef enum {
     ESP_ZB_ZCL_ATTR_TYPE_CHAR_STRING        = 0x42U,        /*!< Character string (array) data type */
     ESP_ZB_ZCL_ATTR_TYPE_LONG_OCTET_STRING  = 0x43U,        /*!< Long octet string */
     ESP_ZB_ZCL_ATTR_TYPE_LONG_CHAR_STRING   = 0x44U,        /*!< Long character string */
-    ESP_ZB_ZCL_ATTR_TYPE_ARRAY              = 0x48U,        /*!< Array data type 2 + sum of content len */
+    ESP_ZB_ZCL_ATTR_TYPE_ARRAY              = 0x48U,        /*!< Array data with 8bit type, size = 2 + sum of content len */
+    ESP_ZB_ZCL_ATTR_TYPE_16BIT_ARRAY        = 0x49U,        /*!< Array data with 16bit type, size = 2 + sum of content len */
+    ESP_ZB_ZCL_ATTR_TYPE_32BIT_ARRAY        = 0x4aU,        /*!< Array data with 32bit type, size = 2 + sum of content len */
     ESP_ZB_ZCL_ATTR_TYPE_STRUCTURE          = 0x4cU,        /*!< Structure data type 2 + sum of content len */
     ESP_ZB_ZCL_ATTR_TYPE_SET                = 0x50U,        /*!< Collection:set, size = sum of len of content */
     ESP_ZB_ZCL_ATTR_TYPE_BAG                = 0x51U,        /*!< Collection:bag, size = sum of len of content */
