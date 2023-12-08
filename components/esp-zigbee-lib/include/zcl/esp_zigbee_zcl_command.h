@@ -772,33 +772,34 @@ typedef struct esp_zb_metering_get_sampled_data_cmd_s {
 /**
  * @brief The Zigbee ZCL custom cluster command struct
  *
- * @note Support only u8, s8, u16, s16, u32, s32, string  data types.
- *
  * @note For string data type, the first byte should be the length of string.
+ *       For array, array16, array32, and long string data types, the first 2 bytes should represent the number of elements in the array.
  *
  */
-typedef struct esp_zb_zcl_custom_cluster_cmd_req_s {
+typedef struct esp_zb_zcl_custom_cluster_cmd_s {
     esp_zb_zcl_basic_cmd_t zcl_basic_cmd;                   /*!< Basic command info */
     esp_zb_zcl_address_mode_t address_mode;                 /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
-    void *value;                                            /*!< Pointer to value */
-    esp_zb_zcl_attr_type_t data_type;                       /*!< Data type to be used */
     uint16_t profile_id;                                    /*!< Profile id */
     uint16_t cluster_id;                                    /*!< Cluster id */
     uint16_t custom_cmd_id;                                 /*!< Custom command id */
-} esp_zb_zcl_custom_cluster_cmd_req_t;
+    esp_zb_zcl_cmd_direction_t direction;                   /*!< Direction of command */
+    struct {
+        esp_zb_zcl_attr_type_t type;                        /*!< The type of custom data, refer to esp_zb_zcl_attr_type_t */
+        void *value;                                        /*!< The value of custom data */
+    } data;                                                 /*!< The custom data */
+} esp_zb_zcl_custom_cluster_cmd_t;
 
 /**
- * @brief The Zigbee ZCL custom cluster command response struct
+ * @brief The Zigbee ZCL custom cluster request command struct
  *
  */
-typedef struct esp_zb_zcl_custom_cluster_cmd_resp_s {
-    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;                   /*!< Basic command info */
-    esp_zb_zcl_address_mode_t address_mode;                 /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
-    uint8_t status;                                         /*!< Status value */
-    uint16_t profile_id;                                    /*!< Profile id */
-    uint16_t cluster_id;                                    /*!< Cluster id */
-    uint16_t custom_cmd_resp_id;                            /*!< Custom command response id */
-} esp_zb_zcl_custom_cluster_cmd_resp_t;
+typedef esp_zb_zcl_custom_cluster_cmd_t esp_zb_zcl_custom_cluster_cmd_req_t;
+
+/**
+ * @brief The Zigbee ZCL custom cluster response command struct
+ *
+ */
+typedef esp_zb_zcl_custom_cluster_cmd_t esp_zb_zcl_custom_cluster_cmd_resp_t;
 
 /*********************** User Message *****************************/
 /**
@@ -1479,6 +1480,8 @@ typedef struct esp_zb_zcl_privilege_command_message_s {
 /**
  * @brief The Zigbee zcl customized cluster message struct
  *
+ * @note For string data type, the first byte should be the length of string.
+ *       For array, array16, array32, and long string data types, the first 2 bytes should represent the number of elements in the array.
  */
 typedef struct esp_zb_zcl_custom_cluster_command_message_s {
     esp_zb_zcl_cmd_info_t info; /*!< The basic information of customized cluster command message that refers to esp_zb_zcl_report_attr_message_t */
@@ -2025,7 +2028,7 @@ void esp_zb_zcl_metering_get_sampled_data_cmd_req(esp_zb_metering_get_sampled_da
 /**
  * @brief   Send custom cluster command request
  *
- * @param[in]  cmd_req  pointer to the send custom cluster command request @ref esp_zb_zcl_custom_cluster_cmd_req_s
+ * @param[in]  cmd_req  pointer to the send custom cluster command request, refer to esp_zb_zcl_custom_cluster_cmd_req_t
  *
  */
 void esp_zb_zcl_custom_cluster_cmd_req(esp_zb_zcl_custom_cluster_cmd_req_t *cmd_req);
@@ -2033,7 +2036,9 @@ void esp_zb_zcl_custom_cluster_cmd_req(esp_zb_zcl_custom_cluster_cmd_req_t *cmd_
 /**
  * @brief   Send custom cluster command response
  *
- * @param[in]  cmd_req  pointer to the send custom cluster command response @ref esp_zb_zcl_custom_cluster_cmd_resp_s
+ * @note The custom response should align in the same direction as the custom request when providing a reply.
+ *
+ * @param[in]  cmd_req  pointer to the send custom cluster command request, refer to esp_zb_zcl_custom_cluster_cmd_resp_t
  *
  */
 void esp_zb_zcl_custom_cluster_cmd_resp(esp_zb_zcl_custom_cluster_cmd_resp_t *cmd_req);

@@ -65,6 +65,8 @@ typedef enum {
 /**
  * @brief Enum of the Zigbee core action callback id
  *
+ * @note If one endpoint possesses the same custom cluster identifier in both client and server roles,
+ *       any request or response command for the custom cluster will only trigger the ESP_ZB_CORE_CMD_CUSTOM_CLUSTER_REQ_CB_ID callback.
  */
 typedef enum esp_zb_core_action_callback_id_s {
     ESP_ZB_CORE_SET_ATTR_VALUE_CB_ID                    = 0x0000,   /*!< Set attribute value, refer to esp_zb_zcl_set_attr_value_message_t */

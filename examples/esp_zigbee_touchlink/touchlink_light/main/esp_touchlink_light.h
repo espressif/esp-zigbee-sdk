@@ -19,9 +19,10 @@
 
 /* Zigbee configuration */
 #define MAX_CHILDREN                    10          /* the max amount of connected devices */
-#define INSTALLCODE_POLICY_ENABLE       false    /* enable the install code policy for security */
+#define INSTALLCODE_POLICY_ENABLE false             /* enable the install code policy for security */
 #define HA_ESP_LIGHT_ENDPOINT           10          /* esp light bulb device endpoint */
-#define ESP_ZB_TOUCHLINK_CHANNEL_MASK   (1l << 11)  /* Zigbee touchlink channel mask use in the example */
+#define ESP_ZB_TOUCHLINK_CHANNEL_MASK (1l << 11)    /* Zigbee touchlink channel mask use in the example */
+#define TOUCHLINK_TARGET_TIMEOUT 60                 /* The timeout for the Touchlink target, measured in seconds */
 
 #define ESP_ZB_ZR_CONFIG()                                                              \
     {                                                                                   \

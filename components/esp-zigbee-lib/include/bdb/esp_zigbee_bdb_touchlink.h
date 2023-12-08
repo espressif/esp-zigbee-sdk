@@ -70,6 +70,39 @@ typedef struct esp_zb_bdb_signal_touchlink_nwk_params_s {
  */
 void esp_zb_touchlink_clear_factory_new(void);
 
+/**
+ * @brief Set the timeout for Touchlink target
+ *
+ * @param[in] timeout The waiting time for the device to exit the Touchlink target mode
+ *
+ */
+void esp_zb_zdo_touchlink_target_set_timeout(uint32_t timeout);
+
+/**
+ * @brief Set the master key for Touchlink
+ *
+ * @param[in] key The master key that will be utilized for the Touchlink network
+ *
+ */
+void esp_zb_zdo_touchlink_set_master_key(uint8_t *key);
+
+/**
+ * @brief Set the RSSI threshold for the Touchlink target
+ *
+ * @note The default value for the RSSI threshold is set to -64
+ * @param[in] rssi_threshold The RSSI threshold determines whether the Touchlink target responds to the initiator
+ *
+ */
+void esp_zb_zdo_touchlink_set_rssi_threshold(int8_t rssi_threshold);
+
+/**
+ * @brief Get the RSSI threshold of Touchlink target
+ *
+ * @return The value of RSSI threshold
+ *
+ */
+int8_t esp_zb_zdo_touchlink_get_rssi_threshold(void);
+
 #ifdef __cplusplus
 }
 #endif
