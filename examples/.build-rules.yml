@@ -72,6 +72,12 @@ examples/esp_zigbee_touchlink/touchlink_switch:
       temporary: true
       reason: the other targets are not tested yet
 
+examples/esp_zigbee_ncp:
+  enable:
+    - if: IDF_TARGET in ["esp32c6", "esp32h2"]
+      temporary: true
+      reason: the other targets are not tested yet
+
 examples/esp_zigbee_rcp:
   enable:
     - if: IDF_TARGET in ["esp32c6", "esp32h2"]

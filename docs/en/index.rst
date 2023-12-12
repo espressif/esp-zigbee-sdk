@@ -15,5 +15,6 @@ Table of Contents
    developing
    certification
    production
+   application
    api-reference/index
    faq
