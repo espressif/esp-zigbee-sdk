@@ -139,19 +139,11 @@ pytest_esp32c6_i154_zigbee_multi_dut:
     tags:
         - deploy_docs
 
-deploy_docs_preview:
-    extends:
-        - .deploy_docs_template
-    variables:
-        TYPE: "preview"
-        DOCS_BUILD_DIR: "${CI_PROJECT_DIR}/docs/_build/"
-        DOCS_DEPLOY_PRIVATEKEY: "$DOCS_PREVIEW_DEPLOY_KEY"
-        DOCS_DEPLOY_SERVER: "$DOCS_PREVIEW_SERVER"
-        DOCS_DEPLOY_SERVER_USER: "$DOCS_PREVIEW_SERVER_USER"
-        DOCS_DEPLOY_PATH: "$DOCS_PREVIEW_PATH"
-        DOCS_DEPLOY_URL_BASE: "https://$DOCS_PREVIEW_SERVER_URL/docs/esp-zigbee-sdk"
-
 deploy_docs_production:
+    only:
+        - main
+        - /^release\/v/
+        - /^v\d+\.\d+/
     extends:
         - .deploy_docs_template
     variables:
