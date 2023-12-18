@@ -17,12 +17,24 @@ from idf_build_apps import LOGGER, App, build_apps, find_apps, setup_logging
 PROJECT_ROOT = Path(__file__).parent.parent.parent.absolute()
 DEF_APP_PATH = PROJECT_ROOT / 'examples'
 APPS_BUILD_PER_JOB = 30
+
 PYTEST_APPS = [
     {"target": "esp32h2", "name": "esp_zigbee_cli"},
     {"target": "esp32h2", "name": "HA_color_dimmable_light"},
+    {"target": "esp32h2", "name": "customized_client"},
+    {"target": "esp32h2", "name": "customized_server"},
+    {"target": "esp32h2", "name": "ota_client"},
+    {"target": "esp32h2", "name": "ota_server"},
+    {"target": "esp32h2", "name": "light_sleep"},
+    {"target": "esp32h2", "name": "touchlink_switch"},
+    {"target": "esp32h2", "name": "touchlink_light"},
+    {"target": "esp32h2", "name": "HA_on_off_light"},
     {"target": "esp32c6", "name": "esp_zigbee_cli"},
     {"target": "esp32c6", "name": "HA_color_dimmable_light"},
+    {"target": "esp32c6", "name": "customized_client"},
+    {"target": "esp32c6", "name": "customized_server"},
 ]
+
 IGNORE_WARNINGS = [
     r"warning: 'init_spiffs' defined but not used",
     r"warning: 'esp_zb_gateway_board_try_update' defined but not used",
@@ -32,16 +44,18 @@ MAINFEST_FILES = [
     str(PROJECT_ROOT / 'examples' / '.build-rules.yml'),
 ]
 
-def _is_pytest_app(app: App) -> bool:
-    for pytest_app in PYTEST_APPS:
+
+def _is_pytest_app(app: App, app_list) -> bool:
+    for pytest_app in app_list:
         if app.name == pytest_app["name"] and app.target == pytest_app["target"]:
             return True
     return False
 
+
 def get_cmake_apps(
-    paths: List[str],
-    target: str,
-    config_rules_str: List[str],
+        paths: List[str],
+        target: str,
+        config_rules_str: List[str],
 ) -> List[App]:
     apps = find_apps(
         paths,
@@ -57,13 +71,15 @@ def get_cmake_apps(
     )
     return apps
 
+
 def update_component_yml_files():
     os.chdir(os.path.join(DEF_APP_PATH, 'esp_zigbee_customized_devices', 'customized_client'))
     os.remove('main/idf_component.yml')
 
     os.chdir(os.path.join(DEF_APP_PATH, 'esp_zigbee_customized_devices', 'customized_server'))
     os.remove('main/idf_component.yml')
-    os.system(f'cp {os.path.join(PROJECT_ROOT, "tools", "managed_component_yml", "light_idf_component.yml")} main/idf_component.yml')
+    os.system(f'cp {os.path.join(PROJECT_ROOT, "tools", "managed_component_yml", "light_idf_component.yml")} main'
+              f'/idf_component.yml')
 
     os.chdir(os.path.join(DEF_APP_PATH, 'esp_zigbee_ota', 'ota_client'))
     os.remove('main/idf_component.yml')
@@ -73,11 +89,14 @@ def update_component_yml_files():
 
     os.chdir(os.path.join(DEF_APP_PATH, 'esp_zigbee_gateway'))
     os.remove('main/idf_component.yml')
-    os.system(f'cp {os.path.join(PROJECT_ROOT, "tools", "managed_component_yml", "gw_idf_component.yml")} main/idf_component.yml')
+    os.system(
+        f'cp {os.path.join(PROJECT_ROOT, "tools", "managed_component_yml", "gw_idf_component.yml")} main'
+        f'/idf_component.yml')
 
     os.chdir(os.path.join(DEF_APP_PATH, 'esp_zigbee_HA_sample', 'HA_color_dimmable_light'))
     os.remove('main/idf_component.yml')
-    os.system(f'cp {os.path.join(PROJECT_ROOT, "tools", "managed_component_yml", "light_idf_component.yml")} main/idf_component.yml')
+    os.system(f'cp {os.path.join(PROJECT_ROOT, "tools", "managed_component_yml", "light_idf_component.yml")} main'
+              f'/idf_component.yml')
 
     os.chdir(os.path.join(DEF_APP_PATH, 'esp_zigbee_HA_sample', 'HA_color_dimmable_switch'))
     os.remove('main/idf_component.yml')
@@ -93,11 +112,15 @@ def update_component_yml_files():
 
     os.chdir(os.path.join(DEF_APP_PATH, 'esp_zigbee_HA_sample', 'HA_on_off_light'))
     os.remove('main/idf_component.yml')
-    os.system(f'cp {os.path.join(PROJECT_ROOT, "tools", "managed_component_yml", "light_idf_component.yml")} main/idf_component.yml')
+    os.system(
+        f'cp {os.path.join(PROJECT_ROOT, "tools", "managed_component_yml", "light_idf_component.yml")} main'
+        f'/idf_component.yml')
 
     os.chdir(os.path.join(DEF_APP_PATH, 'esp_zigbee_touchlink', 'touchlink_light'))
     os.remove('main/idf_component.yml')
-    os.system(f'cp {os.path.join(PROJECT_ROOT, "tools", "managed_component_yml", "light_idf_component.yml")} main/idf_component.yml')
+    os.system(
+        f'cp {os.path.join(PROJECT_ROOT, "tools", "managed_component_yml", "light_idf_component.yml")} main'
+        f'/idf_component.yml')
 
     os.chdir(os.path.join(DEF_APP_PATH, 'esp_zigbee_touchlink', 'touchlink_switch'))
     os.remove('main/idf_component.yml')
@@ -108,8 +131,10 @@ def update_component_yml_files():
     os.chdir(os.path.join(DEF_APP_PATH, 'esp_zigbee_sleep', 'light_sleep'))
     os.remove('main/idf_component.yml')
 
+
 def main(args: argparse.Namespace) -> None:
     current_dir = os.getcwd()
+    # update_sdkconfig_files()
     update_component_yml_files()
     os.chdir(current_dir)
     apps = get_cmake_apps(args.paths, args.target, args.config)
@@ -117,9 +142,9 @@ def main(args: argparse.Namespace) -> None:
     # no_pytest and only_pytest can not be both True
     assert not (args.no_pytest and args.pytest)
     if args.no_pytest:
-        apps_for_build = [app for app in apps if not _is_pytest_app(app)]
+        apps_for_build = [app for app in apps if not _is_pytest_app(app, PYTEST_APPS)]
     elif args.pytest:
-        apps_for_build = [app for app in apps if _is_pytest_app(app)]
+        apps_for_build = [app for app in apps if _is_pytest_app(app, PYTEST_APPS)]
     else:
         apps_for_build = apps[:]
 
@@ -141,6 +166,7 @@ def main(args: argparse.Namespace) -> None:
         copy_sdkconfig=True,
     )
 
+    # revert_sdkconfig_files()
     sys.exit(ret_code)
 
 
@@ -161,11 +187,11 @@ if __name__ == '__main__':
         default=['sdkconfig.ci=default', 'sdkconfig.ci.*=', '=default'],
         action='append',
         help='Adds configurations (sdkconfig file names) to build. This can either be '
-        'FILENAME[=NAME] or FILEPATTERN. FILENAME is the name of the sdkconfig file, '
-        'relative to the project directory, to be used. Optional NAME can be specified, '
-        'which can be used as a name of this configuration. FILEPATTERN is the name of '
-        'the sdkconfig file, relative to the project directory, with at most one wildcard. '
-        'The part captured by the wildcard is used as the name of the configuration.',
+             'FILENAME[=NAME] or FILEPATTERN. FILENAME is the name of the sdkconfig file, '
+             'relative to the project directory, to be used. Optional NAME can be specified, '
+             'which can be used as a name of this configuration. FILEPATTERN is the name of '
+             'the sdkconfig file, relative to the project directory, with at most one wildcard. '
+             'The part captured by the wildcard is used as the name of the configuration.',
     )
     parser.add_argument(
         '--parallel-count', default=1, type=int, help='Number of parallel build jobs.'
