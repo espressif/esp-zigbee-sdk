@@ -41,3 +41,4 @@ This section provides the ESP Zigbee SDK's APIs that support different kind of Z
    esp_zigbee_zcl_thermostat_ui_config
    esp_zigbee_zcl_time
    esp_zigbee_zcl_window_covering
+   esp_zigbee_zcl_green_power

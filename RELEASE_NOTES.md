@@ -1,5 +1,28 @@
 # Espressif Zigbee SDK Release Notes
 
+## 12-Jan-2024
+1.0.8 version release of ESP-ZIGBEE-SDK
+
+### Features
+- Updated esp-zboss-lib to v1.0.8
+- Updated esp-zigbee-lib to v1.0.8
+- Supported Zigbee APS frame fragment
+- Supported Zigbee Green Power feature and examples
+- Supported nvram 16 bytes alignment
+- Added bdb commissioning cancelled APIs
+- Refined the mfg tool
+- Enabled the 802.15.4 receive done handler feature
+- Removed esp32h4 target support
+
+### Bug Fixes
+- Maintained the zcl scene table for every endpoint
+- Fixed zcl command send status callback
+- Fixed the user callback of zcl color control
+- Closes: https://github.com/espressif/esp-zigbee-sdk/issues/191
+- Closes: https://github.com/espressif/esp-zigbee-sdk/issues/190
+- Closes: https://github.com/espressif/esp-zigbee-sdk/issues/82
+
+
 ## 21-Dec-2023
 1.0.7 version release of ESP-ZIGBEE-SDK
 

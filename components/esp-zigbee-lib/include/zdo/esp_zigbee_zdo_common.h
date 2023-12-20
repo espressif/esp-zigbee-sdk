@@ -11,6 +11,10 @@ extern "C" {
 
 #include "esp_zigbee_type.h"
 
+#ifdef CONFIG_ZB_GP_ENABLED
+#include "zgp/esp_zigbee_zgp.h"
+#endif /* CONFIG_ZB_GP_ENABLED */
+
 /**
  * @brief ZDP status values
  * @anchor esp_zb_zdp_status
@@ -224,6 +228,61 @@ typedef struct esp_zb_zdo_signal_device_authorized_params_s {
     uint8_t authorization_type;   /*!< Type of the authorization procedure */
     uint8_t authorization_status; /*!< Status of the authorization procedure which depends on authorization_type */
 } esp_zb_zdo_signal_device_authorized_params_t;
+
+#ifdef CONFIG_ZB_GP_ENABLED
+/**
+ * @brief ZGP approve commissioning parameters
+ *
+ */
+typedef struct esp_zgp_approve_comm_params_s {
+  esp_zb_zgpd_id_t              zgpd_id;                                /*!< ZGPD ID */
+  uint8_t                       device_id;                              /*!< ZGPD device ID */
+  uint16_t                      manuf_id;                               /*!< Manufacturer ID (meaningful if device_id = 0xFE or 0xFF) */
+  uint16_t                      manuf_model_id;                         /*!< Manufacturer model ID (meaningful if device_id = 0xFE or 0xFF) */
+  esp_zb_ieee_addr_t            ieee_addr;                              /*!< ZGPD long IEEE address if available, otherwise filled with zeroes */
+  uint8_t                       pairing_endpoint;                       /*!< Device endpoint, on which commissioning is currently active */
+  esp_zb_zgp_gpd_cmds_list_t    gpd_cmds_list;                          /*!< ZGPD Command list */
+  esp_zb_zgp_cluster_list_t     cluster_list;                           /*!< ZGPD Cluster list */
+  uint8_t                       num_of_reports;                         /*!< total number of different report descriptors that GPD sent during the commissioning process */
+  esp_zb_zgp_raw_report_desc_t  reports[ZB_ZGP_APP_DESCR_REPORTS_NUM];  /*!< array of reports*/
+  bool                          pairing_configuration;                  /*!< It is ZB_TRUE in case this approve signal was triggered by GP Pairing Configuration command */
+  uint8_t                       actions;                                /*!< Pairing configuration actions */
+  uint8_t                       num_of_endpoints;                       /*!< Pairing configuration number of paired endpoints field
+                                                                          - 0x00 and 0xfd: there are no paired endpoints
+                                                                          - 0xff: all matching endpoints are to be paired
+                                                                          - 0xfe: paired endpoints are to be derived by the sink itself
+                                                                          - other values: paired_endpoints field is present and contains the list of local endpoints paired to this GPD
+                                                                        **/
+  uint8_t              paired_endpoints[ZB_ZGP_MAX_PAIRED_ENDPOINTS];   /*!< Paired endpoint numbers */
+} esp_zgp_approve_comm_params_t;
+
+/**
+ * @brief ZGP approve commissioning parameter structure
+ *
+ */
+typedef struct esp_zb_zgp_signal_approve_comm_params_s {
+  esp_zgp_approve_comm_params_t *param;  /*!< Parameter for approving commissioning */
+} esp_zb_zgp_signal_approve_comm_params_t;
+
+/**
+ *  @brief ZGP mode changed parameters
+ *
+ *  Stack passes this parameter to application to notify about GP mode change.
+ */
+typedef struct esp_zb_zgp_signal_mode_change_params_s {
+  esp_zb_zgp_mode_change_reason_t reason; /*!< Reason for mode change, refer to esp_zb_zgp_mode_change_reason_t */
+  esp_zb_zgp_mode_t new_mode;             /*!< New mode */
+} esp_zb_zgp_signal_mode_change_params_t;
+
+/**
+ * @brief ZGP commissioning parameters
+ *
+ */
+typedef struct esp_zb_zgp_signal_commissioning_params_s {
+  esp_zb_zgpd_id_t zgpd_id;         /*!< Pointer to GPD ID */
+  esp_zb_zgp_comm_status_t result;  /*!< commissioning result, refer to esp_zb_zgp_comm_status_t */
+} esp_zb_zgp_signal_commissioning_params_t;
+#endif /* CONFIG_ZB_GP_ENABLED */
 
 #ifdef __cplusplus
 }

@@ -41,6 +41,9 @@ extern "C" {
 #include "esp_zigbee_zcl_pm2_5_measurement.h"
 #include "esp_zigbee_zcl_multistate_value.h"
 #include "esp_zigbee_zcl_metering.h"
+#ifdef ZB_ENABLE_ZGP
+#include "esp_zigbee_zcl_green_power.h"
+#endif
 
 /**
  * @brief Application Framework Profile identifiers.
@@ -53,6 +56,8 @@ typedef enum {
     ESP_ZB_AF_GP_PROFILE_ID     = 0xA1E0U,  /** GreenPower profile ID */
 } esp_zb_af_profile_id_t;
 
+/** Green power special endpoint */
+#define ESP_ZGP_ENDPOINT 242
 /** Non manufacturer specific code for certain attribute */
 #define ESP_ZB_ZCL_ATTR_NON_MANUFACTURER_SPECIFIC 0xFFFFU
 /** Non manufacturer specific code for certain cluster */
@@ -292,6 +297,17 @@ typedef struct esp_zb_zcl_attr_location_info_s {
     uint16_t manuf_code;                    /*!< The manufacturer code of attribute */
     uint16_t attr_id;                       /*!< The attribute identifier */
 } esp_zb_zcl_attr_location_info_t;
+
+/**
+ * @brief Get the size of ZCL attribute value
+ *
+ * @param[in] attr_type  The data type of attribute value
+ * @param[in] attr_value The value of attribute
+ * @return
+ *      - 0x00 - 0xFFFE: The size of attribute value
+ *      - 0xFFFF: Invalid size
+ */
+uint16_t esp_zb_zcl_get_attribute_size(uint8_t attr_type, uint8_t *attr_value);
 
 /**
  * @brief Put the ZCL attribute value to specific memory

@@ -67,10 +67,10 @@ class zb_production_config_ver_2_t(Structure):
     install_code_size = ZB_CCM_KEY_SIZE + ZB_CCM_KEY_CRC_SIZ
     _fields_ = [("crc", c_uint), 
                 ("len", c_ushort),
-                ("version", c_ushort), # hdr (crc + len + version = 8 byres)
+                ("version", c_ushort), # hdr (crc + len + version = 8 bytes)
                 ("aps_channel_mask_list", c_uint * ZB_PROD_CFG_APS_CHANNEL_LIST_SIZE), # 5*4= 20 bytes
-                ("mac_address", c_ubyte * 8), # (8 byres)
-                ("mac_tx_power", c_byte * APS_channel_page_size), # (5*27 = 135 byres)
+                ("mac_address", c_ubyte * 8), # (8 bytes)
+                ("mac_tx_power", c_byte * APS_channel_page_size), # (5*27 = 135 bytes)
                 ("options", c_ubyte),
                 ("install_code", c_ubyte * install_code_size), # (16+2= 18 bytes)
                 ]
@@ -505,7 +505,7 @@ def get_args():
     parser.add_argument('--csv',type=str, help='CSV file containing the partition key-values specified by the user.')
     parser.add_argument('-i', '--installcode', default='NULL', type=str, help='The installcode.')
     parser.add_argument('-m', '--mac_address', default='NULL', type=str, help='The mac address.')
-    parser.add_argument('-c', '--channel_mask', default=0x07FFF800, type=any_base_int, help='The channel mask page0, default channel mask=0x8000, channel:15.')
+    parser.add_argument('-c', '--channel_mask', default=0x07FFF800, type=any_base_int, help='The channel mask page0, default channel mask=0x8000, channel:11~26.')
     parser.add_argument('-mn', '--manufacturer_name', default='Espressif', type=str, help='The manufacturer name.')
     parser.add_argument('-mc', '--manufacturer_code', default=0x131B, type=any_base_int, help='The manufacturer code.')
     parser.add_argument('--outdir', default=os.getcwd(), help='Output directory to store files created (Default: current directory)')

@@ -44,7 +44,7 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
         if (esp_zb_bdb_is_factory_new()) {
             esp_zb_bdb_start_top_level_commissioning(ESP_ZB_BDB_TOUCHLINK_TARGET);
         } else {
-            ESP_LOGI(TAG, "Device restarted");
+            ESP_LOGI(TAG, "Device rebooted");
         }
         break;
     case ESP_ZB_BDB_SIGNAL_TOUCHLINK_TARGET:

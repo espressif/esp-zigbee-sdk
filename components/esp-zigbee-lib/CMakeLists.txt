@@ -14,6 +14,8 @@ if(CONFIG_ZB_ENABLED)
         add_prebuilt_library(esp_zigbee_api_lib "${CMAKE_CURRENT_SOURCE_DIR}/lib/${idf_target}/libesp_zb_api_ed.a" REQUIRES espressif__esp-zboss-lib)
     elseif(CONFIG_ZB_RCP)
         add_prebuilt_library(esp_zigbee_api_lib "${CMAKE_CURRENT_SOURCE_DIR}/lib/${idf_target}/libesp_zb_api_rcp.a" REQUIRES espressif__esp-zboss-lib)
+    elseif(CONFIG_ZB_ZGPD)
+        add_prebuilt_library(esp_zigbee_api_lib "${CMAKE_CURRENT_SOURCE_DIR}/lib/${idf_target}/libesp_zb_api_gpd.a" REQUIRES espressif__esp-zboss-lib)
     endif()
     
 	if(CONFIG_ZB_CLI_ENABLE)

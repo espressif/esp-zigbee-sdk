@@ -850,7 +850,7 @@ esp_err_t esp_zb_cluster_list_add_multistate_value_cluster(esp_zb_cluster_list_t
 esp_err_t esp_zb_cluster_list_add_metering_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 /**
- * @brief Add customised cluster (attribute list) in a cluster list.
+ * @brief Add customized cluster (attribute list) in a cluster list.
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list An attribute list which wants to add
@@ -1315,7 +1315,7 @@ esp_err_t esp_zb_cluster_list_update_metering_cluster(esp_zb_cluster_list_t *clu
 esp_err_t esp_zb_cluster_list_update_ota_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 /**
- * @brief Update Customised cluster (attribute list) in a cluster list.
+ * @brief Update customized cluster (attribute list) in a cluster list.
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to update
