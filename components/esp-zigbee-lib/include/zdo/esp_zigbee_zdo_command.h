@@ -299,7 +299,7 @@ typedef void (*esp_zb_zdo_binding_table_callback_t)(const esp_zb_zdo_binding_tab
  * @param[in] scan_duration Time to spend scanning each channel
  * @param[in] user_cb   A user callback to get the active scan result please refer to esp_zb_zdo_scan_complete_callback_t
  */
-void esp_zb_zdo_active_scan_request(uint32_t channel_mask, uint8_t scan_duration, esp_zb_zdo_scan_complete_callback_t user_cb);
+void esp_zb_active_scan_request(uint32_t channel_mask, uint8_t scan_duration, esp_zb_zdo_scan_complete_callback_t user_cb);
 
 /**
  * @brief   Send bind device request command
