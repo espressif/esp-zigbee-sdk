@@ -35,6 +35,24 @@ typedef enum {
 } esp_zb_zcl_cmd_direction_t;
 
 /**
+ * @brief The application message of ZCL command send status message
+ *
+ */
+typedef struct esp_zb_zcl_command_send_status_s {
+    esp_err_t status;           /*!< command send status */
+    uint8_t tsn;                /*!< Transaction sequence number */
+    uint8_t dst_endpoint;       /*!< Destination endpoint */
+    uint8_t src_endpoint;       /*!< Source endpoint */
+    esp_zb_zcl_addr_t dst_addr; /*!< Destination address */
+} esp_zb_zcl_command_send_status_message_t;
+
+/**
+ * @brief The callback of Zigbee zcl command send status
+ *
+ */
+typedef void (*esp_zb_zcl_command_send_status_callback_t)(esp_zb_zcl_command_send_status_message_t message);
+
+/**
  * @brief The Zigbee zcl cluster attribute value struct
  *
  */
@@ -1380,6 +1398,15 @@ typedef struct esp_zb_zcl_cmd_discover_attributes_resp_message_s {
 } esp_zb_zcl_cmd_discover_attributes_resp_message_t;
 
 /**
+ * @brief The Zigbee command default response struct
+ *
+ */
+typedef struct esp_zb_zcl_cmd_default_resp_message_s {
+    esp_zb_zcl_cmd_info_t info;      /*!< The basic information of configuring report response message that refers to esp_zb_zcl_cmd_info_t */
+    uint8_t resp_to_cmd;             /*!< The field specifies the identifier of the received command to which this command is a response */
+    esp_zb_zcl_status_t status_code; /*!< The field specifies the nature of the error that was detected in the received command, refer to esp_zb_zcl_status_t */
+} esp_zb_zcl_cmd_default_resp_message_t;
+/**
  * @brief The Zigbee zcl group operation response struct
  *
  * @note Operation: add or remove
@@ -1498,16 +1525,18 @@ typedef struct esp_zb_zcl_custom_cluster_command_message_s {
  *
  * @param[in]  cmd_req  pointer to the read_attribute command @ref esp_zb_zcl_read_attr_cmd_s
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_read_attr_cmd_req(esp_zb_zcl_read_attr_cmd_t *cmd_req);
+uint8_t esp_zb_zcl_read_attr_cmd_req(esp_zb_zcl_read_attr_cmd_t *cmd_req);
 
 /**
  * @brief   Send write attribute command
  *
  * @param[in]  cmd_req  pointer to the write attribute command @ref esp_zb_zcl_write_attr_cmd_s
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_write_attr_cmd_req(esp_zb_zcl_write_attr_cmd_t *cmd_req);
+uint8_t esp_zb_zcl_write_attr_cmd_req(esp_zb_zcl_write_attr_cmd_t *cmd_req);
 
 /**
  * @brief   Send report attribute command
@@ -1524,16 +1553,18 @@ esp_err_t esp_zb_zcl_report_attr_cmd_req(esp_zb_zcl_report_attr_cmd_t *cmd_req);
  *
  * @param[in]  cmd_req  pointer to the config report command @ref esp_zb_zcl_config_report_cmd_s
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_config_report_cmd_req(esp_zb_zcl_config_report_cmd_t *cmd_req);
+uint8_t esp_zb_zcl_config_report_cmd_req(esp_zb_zcl_config_report_cmd_t *cmd_req);
 
 /**
  * @brief Send discover attributes command
  *
  * @param[in] cmd_req pointer to the discover attributes command @ref esp_zb_zcl_disc_attr_cmd_s
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_disc_attr_cmd_req(esp_zb_zcl_disc_attr_cmd_t *cmd_req);
+uint8_t esp_zb_zcl_disc_attr_cmd_req(esp_zb_zcl_disc_attr_cmd_t *cmd_req);
 
 /* ZCL basic cluster list command */
 
@@ -1542,8 +1573,9 @@ void esp_zb_zcl_disc_attr_cmd_req(esp_zb_zcl_disc_attr_cmd_t *cmd_req);
  *
  * @param[in]  cmd_req  pointer to the basic command @ref esp_zb_zcl_basic_fact_reset_cmd_s
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_basic_factory_reset_cmd_req(esp_zb_zcl_basic_fact_reset_cmd_t *cmd_req);
+uint8_t esp_zb_zcl_basic_factory_reset_cmd_req(esp_zb_zcl_basic_fact_reset_cmd_t *cmd_req);
 
 /* ZCL on off cluster list command */
 
@@ -1552,8 +1584,9 @@ void esp_zb_zcl_basic_factory_reset_cmd_req(esp_zb_zcl_basic_fact_reset_cmd_t *c
  *
  * @param[in]  cmd_req  pointer to the on-off command @ref esp_zb_zcl_on_off_cmd_s
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_on_off_cmd_req(esp_zb_zcl_on_off_cmd_t *cmd_req);
+uint8_t esp_zb_zcl_on_off_cmd_req(esp_zb_zcl_on_off_cmd_t *cmd_req);
 
 /* ZCL identify cluster list command */
 
@@ -1562,23 +1595,27 @@ void esp_zb_zcl_on_off_cmd_req(esp_zb_zcl_on_off_cmd_t *cmd_req);
  *
  * @param[in]  cmd_req  pointer to the identify command @ref esp_zb_zcl_identify_cmd_s
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_identify_cmd_req(esp_zb_zcl_identify_cmd_t *cmd_req);
+uint8_t esp_zb_zcl_identify_cmd_req(esp_zb_zcl_identify_cmd_t *cmd_req);
 
 /**
  * @brief Send identify trigger effect command
  *
  * @param[in] cmd_req pointer to the identify trigger variant command refer to esp_zb_zcl_identify_trigger_variant_cmd_s
+ *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_identify_trigger_effect_cmd_req(esp_zb_zcl_identify_trigger_effect_cmd_t *cmd_req);
+uint8_t esp_zb_zcl_identify_trigger_effect_cmd_req(esp_zb_zcl_identify_trigger_effect_cmd_t *cmd_req);
 
 /**
  * @brief   Send identify query command
  *
  * @param[in]  cmd_req  pointer to the identify query command @ref esp_zb_zcl_identify_query_cmd_s
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_identify_query_cmd_req(esp_zb_zcl_identify_query_cmd_t *cmd_req);
+uint8_t esp_zb_zcl_identify_query_cmd_req(esp_zb_zcl_identify_query_cmd_t *cmd_req);
 
 /* ZCL level control cluster list command */
 
@@ -1587,56 +1624,63 @@ void esp_zb_zcl_identify_query_cmd_req(esp_zb_zcl_identify_query_cmd_t *cmd_req)
  *
  * @param[in]  cmd_req  pointer to the move to level command @ref esp_zb_zcl_move_to_level_cmd_s
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_level_move_to_level_cmd_req(esp_zb_zcl_move_to_level_cmd_t *cmd_req);
+uint8_t esp_zb_zcl_level_move_to_level_cmd_req(esp_zb_zcl_move_to_level_cmd_t *cmd_req);
 
 /**
  * @brief   Send move to level with on/off effect command
  *
  * @param[in]  cmd_req  pointer to the move to level command @ref esp_zb_zcl_move_to_level_cmd_s
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_level_move_to_level_with_onoff_cmd_req(esp_zb_zcl_move_to_level_cmd_t *cmd_req);
+uint8_t esp_zb_zcl_level_move_to_level_with_onoff_cmd_req(esp_zb_zcl_move_to_level_cmd_t *cmd_req);
 
 /**
  * @brief   Send move level command
  *
  * @param[in]  cmd_req  pointer to the move level command @ref esp_zb_zcl_level_move_cmd_s
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_level_move_cmd_req(esp_zb_zcl_level_move_cmd_t *cmd_req);
+uint8_t esp_zb_zcl_level_move_cmd_req(esp_zb_zcl_level_move_cmd_t *cmd_req);
 
 /**
  * @brief   Send move level with on/off effect command
  *
  * @param[in]  cmd_req  pointer to the move level command @ref esp_zb_zcl_level_move_cmd_s
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_level_move_with_onoff_cmd_req(esp_zb_zcl_level_move_cmd_t *cmd_req);
+uint8_t esp_zb_zcl_level_move_with_onoff_cmd_req(esp_zb_zcl_level_move_cmd_t *cmd_req);
 
 /**
  * @brief   Send step level command
  *
  * @param[in]  cmd_req  pointer to the step level command @ref esp_zb_zcl_level_step_cmd_s
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_level_step_cmd_req(esp_zb_zcl_level_step_cmd_t *cmd_req);
+uint8_t esp_zb_zcl_level_step_cmd_req(esp_zb_zcl_level_step_cmd_t *cmd_req);
 
 /**
  * @brief   Send step level with on/off effect command
  *
  * @param[in]  cmd_req  pointer to the step level command @ref esp_zb_zcl_level_step_cmd_s
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_level_step_with_onoff_cmd_req(esp_zb_zcl_level_step_cmd_t *cmd_req);
+uint8_t esp_zb_zcl_level_step_with_onoff_cmd_req(esp_zb_zcl_level_step_cmd_t *cmd_req);
 
 /**
  * @brief   Send stop level command
  *
  * @param[in]  cmd_req  pointer to the stop level command @ref esp_zb_zcl_level_stop_cmd_s
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_level_stop_cmd_req(esp_zb_zcl_level_stop_cmd_t *cmd_req);
+uint8_t esp_zb_zcl_level_stop_cmd_req(esp_zb_zcl_level_stop_cmd_t *cmd_req);
 
 /* ZCL color control cluster list command */
 
@@ -1645,393 +1689,441 @@ void esp_zb_zcl_level_stop_cmd_req(esp_zb_zcl_level_stop_cmd_t *cmd_req);
  *
  * @param[in]  cmd_req  pointer to the move to hue command @ref esp_zb_zcl_color_move_to_hue_cmd_s
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_color_move_to_hue_cmd_req(esp_zb_zcl_color_move_to_hue_cmd_t *cmd_req);
+uint8_t esp_zb_zcl_color_move_to_hue_cmd_req(esp_zb_zcl_color_move_to_hue_cmd_t *cmd_req);
 
 /**
  * @brief   Send color move hue command
  *
  * @param[in]  cmd_req  pointer to the move hue command @ref esp_zb_zcl_color_move_hue_cmd_s
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_color_move_hue_cmd_req(esp_zb_zcl_color_move_hue_cmd_t *cmd_req);
+uint8_t esp_zb_zcl_color_move_hue_cmd_req(esp_zb_zcl_color_move_hue_cmd_t *cmd_req);
 
 /**
  * @brief   Send color step hue command
  *
  * @param[in]  cmd_req  pointer to the step hue command @ref esp_zb_zcl_color_step_hue_cmd_s
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_color_step_hue_cmd_req(esp_zb_zcl_color_step_hue_cmd_t *cmd_req);
+uint8_t esp_zb_zcl_color_step_hue_cmd_req(esp_zb_zcl_color_step_hue_cmd_t *cmd_req);
 
 /**
  * @brief   Send color move to saturation command
  *
  * @param[in]  cmd_req  pointer to the move to saturation command @ref esp_zb_zcl_color_move_to_saturation_cmd_s
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_color_move_to_saturation_cmd_req(esp_zb_zcl_color_move_to_saturation_cmd_t *cmd_req);
+uint8_t esp_zb_zcl_color_move_to_saturation_cmd_req(esp_zb_zcl_color_move_to_saturation_cmd_t *cmd_req);
 
 /**
  * @brief   Send color move saturation command
  *
  * @param[in]  cmd_req  pointer to the move saturation command @ref esp_zb_zcl_color_move_saturation_cmd_s
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_color_move_saturation_cmd_req(esp_zb_zcl_color_move_saturation_cmd_t *cmd_req);
+uint8_t esp_zb_zcl_color_move_saturation_cmd_req(esp_zb_zcl_color_move_saturation_cmd_t *cmd_req);
 
 /**
  * @brief   Send color step saturation command
  *
  * @param[in]  cmd_req  pointer to the step saturation command @ref esp_zb_zcl_color_step_saturation_cmd_s
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_color_step_saturation_cmd_req(esp_zb_zcl_color_step_saturation_cmd_t *cmd_req);
+uint8_t esp_zb_zcl_color_step_saturation_cmd_req(esp_zb_zcl_color_step_saturation_cmd_t *cmd_req);
 
 /**
  * @brief   Send color move to hue and saturation command
  *
  * @param[in]  cmd_req  pointer to the move to hue and saturation command @ref esp_zb_color_move_to_hue_saturation_cmd_s
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_color_move_to_hue_and_saturation_cmd_req(esp_zb_color_move_to_hue_saturation_cmd_t *cmd_req);
-
+uint8_t esp_zb_zcl_color_move_to_hue_and_saturation_cmd_req(esp_zb_color_move_to_hue_saturation_cmd_t *cmd_req);
 
 /**
  * @brief   Send color move to color command
  *
  * @param[in]  cmd_req  pointer to the move to color command @ref esp_zb_zcl_color_move_to_color_cmd_s
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_color_move_to_color_cmd_req(esp_zb_zcl_color_move_to_color_cmd_t *cmd_req);
+uint8_t esp_zb_zcl_color_move_to_color_cmd_req(esp_zb_zcl_color_move_to_color_cmd_t *cmd_req);
 
 /**
  * @brief   Send color move color command
  *
  * @param[in]  cmd_req  pointer to the move color command @ref esp_zb_zcl_color_move_color_cmd_s
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_color_move_color_cmd_req(esp_zb_zcl_color_move_color_cmd_t *cmd_req);
+uint8_t esp_zb_zcl_color_move_color_cmd_req(esp_zb_zcl_color_move_color_cmd_t *cmd_req);
 
 /**
  * @brief   Send color step color command
  *
  * @param[in]  cmd_req  pointer to the step color command @ref esp_zb_zcl_color_step_color_cmd_s
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_color_step_color_cmd_req(esp_zb_zcl_color_step_color_cmd_t *cmd_req);
+uint8_t esp_zb_zcl_color_step_color_cmd_req(esp_zb_zcl_color_step_color_cmd_t *cmd_req);
 
 /**
  * @brief   Send color stop color command
  *
  * @param[in]  cmd_req  pointer to the stop color command @ref esp_zb_zcl_color_stop_move_step_cmd_s
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_color_stop_move_step_cmd_req(esp_zb_zcl_color_stop_move_step_cmd_t *cmd_req);
+uint8_t esp_zb_zcl_color_stop_move_step_cmd_req(esp_zb_zcl_color_stop_move_step_cmd_t *cmd_req);
 
 /**
  * @brief   Send color control move to color temperature command(0x0a)
  *
  * @param[in]  cmd_req  pointer to the move to color temperature command @ref esp_zb_zcl_color_move_to_color_temperature_cmd_s
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_color_move_to_color_temperature_cmd_req(esp_zb_zcl_color_move_to_color_temperature_cmd_t *cmd_req);
+uint8_t esp_zb_zcl_color_move_to_color_temperature_cmd_req(esp_zb_zcl_color_move_to_color_temperature_cmd_t *cmd_req);
 
 /**
  * @brief   Send color control enhanced move to hue command(0x40)
  *
  * @param[in]  cmd_req  pointer to the enhanced move to hue command @ref esp_zb_zcl_color_enhanced_move_to_hue_cmd_s
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_color_enhanced_move_to_hue_cmd_req(esp_zb_zcl_color_enhanced_move_to_hue_cmd_t *cmd_req);
+uint8_t esp_zb_zcl_color_enhanced_move_to_hue_cmd_req(esp_zb_zcl_color_enhanced_move_to_hue_cmd_t *cmd_req);
 
 /**
  * @brief   Send color control enhanced move hue command(0x41)
  *
  * @param[in]  cmd_req  pointer to the enhanced move hue command @ref esp_zb_zcl_color_enhanced_move_hue_cmd_s
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_color_enhanced_move_hue_cmd_req(esp_zb_zcl_color_enhanced_move_hue_cmd_t *cmd_req);
+uint8_t esp_zb_zcl_color_enhanced_move_hue_cmd_req(esp_zb_zcl_color_enhanced_move_hue_cmd_t *cmd_req);
 
 /**
  * @brief   Send color control enhanced step hue command(0x42)
  *
  * @param[in]  cmd_req  pointer to the enhanced step hue command @ref esp_zb_zcl_color_enhanced_step_hue_cmd_s
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_color_enhanced_step_hue_cmd_req(esp_zb_zcl_color_enhanced_step_hue_cmd_t *cmd_req);
+uint8_t esp_zb_zcl_color_enhanced_step_hue_cmd_req(esp_zb_zcl_color_enhanced_step_hue_cmd_t *cmd_req);
 
 /**
  * @brief   Send color control move to hue and saturation command(0x43)
  *
  * @param[in]  cmd_req  pointer to the enhanced move to hue saturation command @ref esp_zb_zcl_color_enhanced_move_to_hue_saturation_cmd_s
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_color_enhanced_move_to_hue_saturation_cmd_req(esp_zb_zcl_color_enhanced_move_to_hue_saturation_cmd_t *cmd_req);
+uint8_t esp_zb_zcl_color_enhanced_move_to_hue_saturation_cmd_req(esp_zb_zcl_color_enhanced_move_to_hue_saturation_cmd_t *cmd_req);
 
 /**
  * @brief   Send color control color loop set command(0x44)
  *
  * @param[in]  cmd_req  pointer to the color loop set command @ref esp_zb_zcl_color_color_loop_set_cmd_s
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_color_color_loop_set_cmd_req(esp_zb_zcl_color_color_loop_set_cmd_t *cmd_req);
+uint8_t esp_zb_zcl_color_color_loop_set_cmd_req(esp_zb_zcl_color_color_loop_set_cmd_t *cmd_req);
 
 /**
  * @brief   Send color control move color temperature command(0x4b)
  *
  * @param[in]  cmd_req  pointer to the move color temperature command @ref esp_zb_zcl_color_move_color_temperature_cmd_s
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_color_move_color_temperature_cmd_req(esp_zb_zcl_color_move_color_temperature_cmd_t *cmd_req);
+uint8_t esp_zb_zcl_color_move_color_temperature_cmd_req(esp_zb_zcl_color_move_color_temperature_cmd_t *cmd_req);
 
 /**
  * @brief   Send color control step color temperature command(0x4c)
  *
  * @param[in]  cmd_req  pointer to the step color temperature command @ref esp_zb_zcl_color_step_color_temperature_cmd_s
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_color_step_color_temperature_cmd_req(esp_zb_zcl_color_step_color_temperature_cmd_t *cmd_req);
+uint8_t esp_zb_zcl_color_step_color_temperature_cmd_req(esp_zb_zcl_color_step_color_temperature_cmd_t *cmd_req);
 
 /**
  * @brief   Send lock door command
  *
  * @param[in]  cmd_req  pointer to the unlock door command @ref esp_zb_zcl_lock_unlock_door_cmd_s
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_lock_door_cmd_req(esp_zb_zcl_lock_unlock_door_cmd_t *cmd_req);
+uint8_t esp_zb_zcl_lock_door_cmd_req(esp_zb_zcl_lock_unlock_door_cmd_t *cmd_req);
 
 /**
  * @brief   Send unlock door command
  *
  * @param[in]  cmd_req  pointer to the unlock door command @ref esp_zb_zcl_lock_unlock_door_cmd_s
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_unlock_door_cmd_req(esp_zb_zcl_lock_unlock_door_cmd_t *cmd_req);
+uint8_t esp_zb_zcl_unlock_door_cmd_req(esp_zb_zcl_lock_unlock_door_cmd_t *cmd_req);
 
 /**
  * @brief   Send add group command
  *
  * @param[in]  cmd_req  pointer to the add group command @ref esp_zb_zcl_groups_add_group_cmd_s
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_groups_add_group_cmd_req(esp_zb_zcl_groups_add_group_cmd_t *cmd_req);
+uint8_t esp_zb_zcl_groups_add_group_cmd_req(esp_zb_zcl_groups_add_group_cmd_t *cmd_req);
 
 /**
  * @brief   Send remove group command
  *
  * @param[in]  cmd_req  pointer to the add group command @ref esp_zb_zcl_groups_add_group_cmd_s
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_groups_remove_group_cmd_req(esp_zb_zcl_groups_add_group_cmd_t *cmd_req);
+uint8_t esp_zb_zcl_groups_remove_group_cmd_req(esp_zb_zcl_groups_add_group_cmd_t *cmd_req);
 
 /**
  * @brief   Send remove all groups command
  *
  * @param[in]  cmd_req  pointer to the remove all group command @ref esp_zb_zcl_groups_remove_all_groups_cmd_s
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_groups_remove_all_groups_cmd_req(esp_zb_zcl_groups_remove_all_groups_cmd_t *cmd_req);
+uint8_t esp_zb_zcl_groups_remove_all_groups_cmd_req(esp_zb_zcl_groups_remove_all_groups_cmd_t *cmd_req);
 
 /**
  * @brief   Send view group command
  *
  * @param[in]  cmd_req  pointer to the add group command @ref esp_zb_zcl_groups_add_group_cmd_s
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_groups_view_group_cmd_req(esp_zb_zcl_groups_add_group_cmd_t *cmd_req);
+uint8_t esp_zb_zcl_groups_view_group_cmd_req(esp_zb_zcl_groups_add_group_cmd_t *cmd_req);
 
 /**
  * @brief   Send get group membership command
  *
  * @param[in]  cmd_req  pointer to the get group membership command @ref esp_zb_zcl_groups_get_group_membership_cmd_s
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_groups_get_group_membership_cmd_req(esp_zb_zcl_groups_get_group_membership_cmd_t *cmd_req);
+uint8_t esp_zb_zcl_groups_get_group_membership_cmd_req(esp_zb_zcl_groups_get_group_membership_cmd_t *cmd_req);
 
 /**
  * @brief   Send add scene command
  *
  * @param[in]  cmd_req  pointer to the add scene command  @ref esp_zb_zcl_scenes_add_scene_cmd_s
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_scenes_add_scene_cmd_req(esp_zb_zcl_scenes_add_scene_cmd_t *cmd_req);
+uint8_t esp_zb_zcl_scenes_add_scene_cmd_req(esp_zb_zcl_scenes_add_scene_cmd_t *cmd_req);
 
 /**
  * @brief   Send remove scene command
  *
  * @param[in]  cmd_req  pointer to the remove scene command  @ref esp_zb_zcl_scenes_remove_scene_cmd_s
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_scenes_remove_scene_cmd_req(esp_zb_zcl_scenes_remove_scene_cmd_t *cmd_req);
+uint8_t esp_zb_zcl_scenes_remove_scene_cmd_req(esp_zb_zcl_scenes_remove_scene_cmd_t *cmd_req);
 
 /**
  * @brief   Send remove all scenes command
  *
  * @param[in]  cmd_req  pointer to the add scenes command  @ref esp_zb_zcl_scenes_remove_all_scenes_cmd_s
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_scenes_remove_all_scenes_cmd_req(esp_zb_zcl_scenes_remove_all_scenes_cmd_t *cmd_req);
+uint8_t esp_zb_zcl_scenes_remove_all_scenes_cmd_req(esp_zb_zcl_scenes_remove_all_scenes_cmd_t *cmd_req);
 
 /**
  * @brief   Send view scene command
  *
  * @param[in]  cmd_req  pointer to the view scene command  @ref esp_zb_zcl_scenes_view_scene_cmd_s
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_scenes_view_scene_cmd_req(esp_zb_zcl_scenes_view_scene_cmd_t *cmd_req);
+uint8_t esp_zb_zcl_scenes_view_scene_cmd_req(esp_zb_zcl_scenes_view_scene_cmd_t *cmd_req);
 
 /**
  * @brief   Send store scene command
  *
  * @param[in]  cmd_req  pointer to the store scene command  @ref esp_zb_zcl_scenes_store_scene_cmd_s
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_scenes_store_scene_cmd_req(esp_zb_zcl_scenes_store_scene_cmd_t *cmd_req);
+uint8_t esp_zb_zcl_scenes_store_scene_cmd_req(esp_zb_zcl_scenes_store_scene_cmd_t *cmd_req);
 
 /**
  * @brief   Send recall scene command
  *
  * @param[in]  cmd_req  pointer to the recall scene command  @ref esp_zb_zcl_scenes_recall_scene_cmd_s
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_scenes_recall_scene_cmd_req(esp_zb_zcl_scenes_recall_scene_cmd_t *cmd_req);
+uint8_t esp_zb_zcl_scenes_recall_scene_cmd_req(esp_zb_zcl_scenes_recall_scene_cmd_t *cmd_req);
 
 /**
  * @brief   Send get scene membership command
  *
  * @param[in]  cmd_req  pointer to the get scene membership command  @ref esp_zb_zcl_scenes_get_scene_membership_cmd_s
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_scenes_get_scene_membership_cmd_req(esp_zb_zcl_scenes_get_scene_membership_cmd_t *cmd_req);
+uint8_t esp_zb_zcl_scenes_get_scene_membership_cmd_req(esp_zb_zcl_scenes_get_scene_membership_cmd_t *cmd_req);
 
 /**
  * @brief   Send IAS zone enroll response command
  * @note Type 2 cluster from client to server
  * @param[in]  cmd_resp  pointer to the zone enroll response command  @ref esp_zb_zcl_ias_zone_enroll_response_cmd_s
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_ias_zone_enroll_cmd_resp(esp_zb_zcl_ias_zone_enroll_response_cmd_t *cmd_resp);
+uint8_t esp_zb_zcl_ias_zone_enroll_cmd_resp(esp_zb_zcl_ias_zone_enroll_response_cmd_t *cmd_resp);
 
 /**
  * @brief   Send IAS zone status change notification command
  * @note Type 2 cluster from server to client
  * @param[in]  cmd_req  pointer to the ias zone status change notification command  @ref esp_zb_zcl_ias_zone_status_change_notif_cmd_s
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_ias_zone_status_change_notif_cmd_req(esp_zb_zcl_ias_zone_status_change_notif_cmd_t *cmd_req);
+uint8_t esp_zb_zcl_ias_zone_status_change_notif_cmd_req(esp_zb_zcl_ias_zone_status_change_notif_cmd_t *cmd_req);
 
 /**
  * @brief   Send IAS zone enroll request command
  * @note Type 2 cluster from server to client
  * @param[in]  cmd_req  pointer to the ias zone enroll request command @ref esp_zb_zcl_ias_zone_enroll_request_cmd_s
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_ias_zone_enroll_cmd_req(esp_zb_zcl_ias_zone_enroll_request_cmd_t *cmd_req);
+uint8_t esp_zb_zcl_ias_zone_enroll_cmd_req(esp_zb_zcl_ias_zone_enroll_request_cmd_t *cmd_req);
 
 /**
  * @brief   Send window covering cluster command request
  *
  * @param[in]  cmd_req  pointer to the send custom cluster command request @ref esp_zb_zcl_window_covering_cluster_send_cmd_req_s
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_window_covering_cluster_send_cmd_req(esp_zb_zcl_window_covering_cluster_send_cmd_req_t *cmd_req);
+uint8_t esp_zb_zcl_window_covering_cluster_send_cmd_req(esp_zb_zcl_window_covering_cluster_send_cmd_req_t *cmd_req);
 
 /**
  * @brief   Get electrical measurement cluster profile info response
  *
  * @param[in]  cmd_req  pointer to the send custom cluster command response @ref esp_zb_zcl_electrical_profile_info_cmd_resp_s
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_electrical_measurement_cluster_get_profile_info_resp(esp_zb_zcl_electrical_profile_info_cmd_resp_t *cmd_req);
+uint8_t esp_zb_zcl_electrical_measurement_cluster_get_profile_info_resp(esp_zb_zcl_electrical_profile_info_cmd_resp_t *cmd_req);
 
 /**
  * @brief   Get electrical measurement cluster measurement profile response
  *
  * @param[in]  cmd_req  pointer to the send custom cluster command response @ref esp_zb_zcl_electrical_measurement_profile_cmd_resp_s
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_electrical_measurement_cluster_get_measurement_profile_resp(esp_zb_zcl_electrical_measurement_profile_cmd_resp_t *cmd_req);
+uint8_t esp_zb_zcl_electrical_measurement_cluster_get_measurement_profile_resp(esp_zb_zcl_electrical_measurement_profile_cmd_resp_t *cmd_req);
 
 /**
  * @brief   Send thermostat setpoint raise or lower command request
  *
  * @param[in]  cmd_req  pointer to the setpoint raise or lower command @ref esp_zb_zcl_thermostat_setpoint_raise_lower_request_cmd_s
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_thermostat_setpoint_raise_lower_cmd_req(esp_zb_zcl_thermostat_setpoint_raise_lower_request_cmd_t *cmd_req);
+uint8_t esp_zb_zcl_thermostat_setpoint_raise_lower_cmd_req(esp_zb_zcl_thermostat_setpoint_raise_lower_request_cmd_t *cmd_req);
 
 /**
  * @brief   Send thermostat set weekly schedule command request
  *
  * @param[in]  cmd_req  pointer to the set weekly schedule command @ref esp_zb_zcl_thermostat_set_weekly_schedule_request_cmd_s
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_thermostat_set_weekly_schedule_cmd_req(esp_zb_zcl_thermostat_set_weekly_schedule_request_cmd_t *cmd_req);
+uint8_t esp_zb_zcl_thermostat_set_weekly_schedule_cmd_req(esp_zb_zcl_thermostat_set_weekly_schedule_request_cmd_t *cmd_req);
 
 /**
  * @brief   Send thermostat get weekly schedule command request
  *
  * @param[in]  cmd_req  pointer to the get weekly schedule command @ref esp_zb_zcl_thermostat_get_weekly_schedule_request_cmd_s
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_thermostat_get_weekly_schedule_cmd_req(esp_zb_zcl_thermostat_get_weekly_schedule_request_cmd_t *cmd_req);
+uint8_t esp_zb_zcl_thermostat_get_weekly_schedule_cmd_req(esp_zb_zcl_thermostat_get_weekly_schedule_request_cmd_t *cmd_req);
 
 /**
  * @brief   Send thermostat clear weekly schedule command request
  *
  * @param[in]  cmd_req  pointer to the clear weekly schedule command @ref esp_zb_thermostat_clear_weekly_schedule_cmd_s
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_thermostat_clear_weekly_schedule_cmd_req(esp_zb_thermostat_clear_weekly_schedule_cmd_t *cmd_req);
+uint8_t esp_zb_zcl_thermostat_clear_weekly_schedule_cmd_req(esp_zb_thermostat_clear_weekly_schedule_cmd_t *cmd_req);
 
 /**
  * @brief   Send thermostat get relay status log command request
  *
  * @param[in]  cmd_req  pointer to the get relay status log command @ref esp_zb_thermostat_get_relay_status_log_cmd_s
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_thermostat_get_relay_status_log_cmd_req(esp_zb_thermostat_get_relay_status_log_cmd_t *cmd_req);
+uint8_t esp_zb_zcl_thermostat_get_relay_status_log_cmd_req(esp_zb_thermostat_get_relay_status_log_cmd_t *cmd_req);
 
 /**
  * @brief   Send metering get profile command request
  *
  * @param[in]  cmd_req  pointer to the get profile command @ref esp_zb_metering_get_profile_cmd_s
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_metering_get_profile_cmd_req(esp_zb_metering_get_profile_cmd_t *cmd_req);
+uint8_t esp_zb_zcl_metering_get_profile_cmd_req(esp_zb_metering_get_profile_cmd_t *cmd_req);
 
 /**
  * @brief   Send metering request fast poll mode command request
  *
  * @param[in]  cmd_req  pointer to the request fast poll mode command @ref esp_zb_metering_request_fast_poll_mode_cmd_s
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_metering_request_fast_poll_mode_cmd_req(esp_zb_metering_request_fast_poll_mode_cmd_t *cmd_req);
+uint8_t esp_zb_zcl_metering_request_fast_poll_mode_cmd_req(esp_zb_metering_request_fast_poll_mode_cmd_t *cmd_req);
 
 /**
  * @brief   Send metering get snapshot command request
  *
  * @param[in]  cmd_req  pointer to the get snapshot command @ref esp_zb_metering_get_snapshot_cmd_s
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_metering_get_snapshot_cmd_req(esp_zb_metering_get_snapshot_cmd_t *cmd_req);
+uint8_t esp_zb_zcl_metering_get_snapshot_cmd_req(esp_zb_metering_get_snapshot_cmd_t *cmd_req);
 
 /**
  * @brief   Send metering get sampled data command request
  *
  * @param[in]  cmd_req  pointer to the get sampled data command @ref esp_zb_metering_get_sampled_data_cmd_s
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_metering_get_sampled_data_cmd_req(esp_zb_metering_get_sampled_data_cmd_t *cmd_req);
+uint8_t esp_zb_zcl_metering_get_sampled_data_cmd_req(esp_zb_metering_get_sampled_data_cmd_t *cmd_req);
 
 /**
  * @brief   Send custom cluster command request
  *
  * @param[in]  cmd_req  pointer to the send custom cluster command request, refer to esp_zb_zcl_custom_cluster_cmd_req_t
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_custom_cluster_cmd_req(esp_zb_zcl_custom_cluster_cmd_req_t *cmd_req);
+uint8_t esp_zb_zcl_custom_cluster_cmd_req(esp_zb_zcl_custom_cluster_cmd_req_t *cmd_req);
 
 /**
  * @brief   Send custom cluster command response
@@ -2040,8 +2132,9 @@ void esp_zb_zcl_custom_cluster_cmd_req(esp_zb_zcl_custom_cluster_cmd_req_t *cmd_
  *
  * @param[in]  cmd_req  pointer to the send custom cluster command request, refer to esp_zb_zcl_custom_cluster_cmd_resp_t
  *
+ * @return The transaction sequence number
  */
-void esp_zb_zcl_custom_cluster_cmd_resp(esp_zb_zcl_custom_cluster_cmd_resp_t *cmd_req);
+uint8_t esp_zb_zcl_custom_cluster_cmd_resp(esp_zb_zcl_custom_cluster_cmd_resp_t *cmd_req);
 
 /**
  * @brief Start and enable the attribute reporting.

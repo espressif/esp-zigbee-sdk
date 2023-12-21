@@ -1,5 +1,25 @@
 # Espressif Zigbee SDK Release Notes
 
+## 21-Dec-2023
+1.0.7 version release of ESP-ZIGBEE-SDK
+
+### Features
+- Updated esp-zboss-lib to v1.0.7
+- Updated esp-zigbee-lib to v1.0.7
+- Supported zcl color mode callback
+- Supported set starting value before on command
+- Supported zcl send_command_status callback
+- Supported zcl default response callback
+- Closes: https://github.com/espressif/esp-zigbee-sdk/issues/135
+- Closes: https://github.com/espressif/esp-zigbee-sdk/issues/141
+- Closes: https://github.com/espressif/esp-zigbee-sdk/issues/142
+
+### Bug Fixes
+- Fixed zcl level transition time callback 
+- Fixed zigbee touchlink device information request
+- Fixed zigbee broadcast table size
+
+
 ## 08-Dec-2023
 1.0.6 version release of ESP-ZIGBEE-SDK
 
