@@ -30,7 +30,9 @@ from _pytest.runner import CallInfo
 from _pytest.terminal import TerminalReporter
 from pytest_embedded.plugin import multi_dut_argument, multi_dut_fixture
 from pytest_embedded.utils import find_by_suffix
-
+import time
+import glob
+import subprocess
 
 DEFAULT_SDKCONFIG = 'default'
 
@@ -124,12 +126,46 @@ def build_dir(app_path: str, target: Optional[str], config: Optional[str]) -> st
 @pytest.fixture(autouse=True)
 @multi_dut_fixture
 def junit_properties(
-    test_case_name: str, record_xml_attribute: Callable[[str, object], None]
+        test_case_name: str, record_xml_attribute: Callable[[str, object], None]
 ) -> None:
     """
     This fixture is autoused and will modify the junit report test case name to <target>.<config>.<case_name>
     """
     record_xml_attribute('name', test_case_name)
+
+
+@pytest.fixture()
+def teardown_fixture(serial_ports):
+    """
+    A pytest fixture responsible for erasing the flash memory of a list of test devices post-testing.
+    Yields:
+        None: The fixture initially yields control back to the test function without any modification to 'dut'.
+    Returns:
+        None: No return value since the primary purpose is the teardown side effect.
+    """
+    yield
+    # after test, do erase flash process
+    proc = None
+    for serial_port in serial_ports:
+        print(f'erase flash on serial_port: {serial_port}')
+        proc = subprocess.Popen(f'python -m esptool --port {serial_port} erase_flash', shell=True)
+        proc.wait()
+    if proc is not None:
+        proc.kill()
+    time.sleep(1)
+
+
+@pytest.fixture()
+def serial_ports(dut):
+    usb_ports = []
+    for device in dut:
+        serial_port = device.expect(r'Serial port (/dev/ttyUSB[0-9]+)')
+        serial_port = serial_port[1].decode() if serial_port else None
+        usb_ports.append(serial_port)
+    acm_ports = glob.glob('/dev/ttyACM*')
+    serial_port_list = usb_ports + acm_ports
+    print(f'serial_port_list:{serial_port_list}')
+    return serial_port_list
 
 
 ##################
@@ -165,8 +201,8 @@ def pytest_unconfigure(config: Config) -> None:
 
 class IdfPytestEmbedded:
     def __init__(
-        self,
-        target: Optional[str] = None,
+            self,
+            target: Optional[str] = None,
     ):
         # CLI options to filter the test cases
         self.target = target
@@ -216,7 +252,7 @@ class IdfPytestEmbedded:
             ]
 
     def pytest_runtest_makereport(
-        self, item: Function, call: CallInfo[None]
+            self, item: Function, call: CallInfo[None]
     ) -> Optional[TestReport]:
         report = TestReport.from_item_and_call(item, call)
         if report.outcome == 'failed':

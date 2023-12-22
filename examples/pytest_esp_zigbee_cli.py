@@ -53,6 +53,7 @@ def config_zigbee_network(cli: Dut, light: Dut) -> Tuple[bool, str]:
     ],
     indirect=True,
 )
+@pytest.mark.usefixtures('teardown_fixture')
 def test_zb_cli_zc_connection(dut: Tuple[Dut, Dut]) -> None:
     light = dut[1]
     cli = dut[0]
@@ -78,6 +79,7 @@ def test_zb_cli_zc_connection(dut: Tuple[Dut, Dut]) -> None:
     ],
     indirect=True,
 )
+@pytest.mark.usefixtures('teardown_fixture')
 def test_zb_cli_zc_finding_binding(dut: Tuple[Dut, Dut]) -> None:
     light = dut[1]
     cli = dut[0]
@@ -120,6 +122,7 @@ def test_zb_cli_zc_finding_binding(dut: Tuple[Dut, Dut]) -> None:
     ],
     indirect=True,
 )
+@pytest.mark.usefixtures('teardown_fixture')
 def test_zb_cli_zc_ZCL_command(dut: Tuple[Dut, Dut]) -> None:
     light = dut[1]
     cli = dut[0]
@@ -136,6 +139,7 @@ def test_zb_cli_zc_ZCL_command(dut: Tuple[Dut, Dut]) -> None:
     # On command
     cli.write('zcl -c ' + light_nwk_addr + ' ' + light_endpoint + ' 0x0006 01')
     cli.expect('Done', timeout=3)
+    time.sleep(2)
     # read on_off attribute
     cli.write('zcl -a read ' + light_nwk_addr + ' ' + light_endpoint + ' 0x0006 0x0104 0')
     assert str(bool(light_on)) == cli.expect(r'Value: (\w+)', timeout=3)[1].decode()
@@ -143,13 +147,16 @@ def test_zb_cli_zc_ZCL_command(dut: Tuple[Dut, Dut]) -> None:
     time.sleep(2)
     cli.write('zcl -c ' + light_nwk_addr + ' ' + light_endpoint + ' 0x0006 00')
     cli.expect('Done', timeout=3)
+    time.sleep(2)
     # read on_off attribute
     cli.write('zcl -a read ' + light_nwk_addr + ' ' + light_endpoint + ' 0x0006 0x0104 0')
+    time.sleep(2)
     assert str(bool(light_off)) == cli.expect(r'Value: (\w+)', timeout=3)[1].decode()
     # toggle command
     time.sleep(2)
     cli.write('zcl -c ' + light_nwk_addr + ' ' + light_endpoint + ' 0x0006 02')
     cli.expect('Done', timeout=3)
+    time.sleep(2)
     # read on_off attribute
     cli.write('zcl -a read ' + light_nwk_addr + ' ' + light_endpoint + ' 0x0006 0x0104 0')
     assert str(bool(light_on)) == cli.expect(r'Value: (\w+)', timeout=3)[1].decode()
@@ -170,9 +177,11 @@ def test_zb_cli_zc_ZCL_command(dut: Tuple[Dut, Dut]) -> None:
     # Move (with On/Off) command
     time.sleep(2)
     cli.write('zcl -c ' + light_nwk_addr + ' ' + light_endpoint + ' 0x0008 05 profile 0x0104 payload 0105')
+    time.sleep(2)
     cli.expect('Done', timeout=3)
     # read level_control attribute
     cli.write('zcl -a read ' + light_nwk_addr + ' ' + light_endpoint + ' 0x0008 0x0104 0')
+    time.sleep(2)
     cli.expect('Done', timeout=3)
     # Step (with On/Off) command
     time.sleep(2)
@@ -249,6 +258,7 @@ def test_zb_cli_zc_ZCL_command(dut: Tuple[Dut, Dut]) -> None:
     ],
     indirect=True,
 )
+@pytest.mark.usefixtures('teardown_fixture')
 def test_zb_cli_zc_check_leaving(dut: Tuple[Dut, Dut]) -> None:
     light = dut[1]
     cli = dut[0]

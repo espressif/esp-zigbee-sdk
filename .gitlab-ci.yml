@@ -43,6 +43,18 @@ before_script:
   - cd ${ESP_ZIGBEE_SDK_PATH}
   - pip install -r tools/ci/requirements-build.txt
 
+.build_rcp_gateway: &build_rcp_gateway
+  - mv $CI_PROJECT_DIR/examples/esp_zigbee_gateway/sdkconfig.defaults $CI_PROJECT_DIR/examples/esp_zigbee_gateway/sdkconfig.defaults.ori
+  - cp $CI_PROJECT_DIR/tools/ci/sdkconfig_for_gateway_ci.defaults $CI_PROJECT_DIR/examples/esp_zigbee_gateway/sdkconfig.defaults
+  - cd $CI_PROJECT_DIR/examples/esp_zigbee_rcp
+  - idf.py set-target esp32h2
+  - idf.py build
+  - cd $CI_PROJECT_DIR/examples/esp_zigbee_gateway
+  - idf.py set-target esp32s3
+  - idf.py build
+  - mv $CI_PROJECT_DIR/examples/esp_zigbee_gateway/sdkconfig.defaults.ori $CI_PROJECT_DIR/examples/esp_zigbee_gateway/sdkconfig.defaults
+  - cd ${ESP_ZIGBEE_SDK_PATH}
+
 build_non_pytest_examples:
   stage: build
   image: ${CI_DOCKER_REGISTRY}/esp-env-v5.3:1
@@ -89,6 +101,30 @@ build_pytest_examples:
   tags:
     - build
 
+build_pytest_gateway:
+    stage: build
+    image: ${CI_DOCKER_REGISTRY}/esp-env-v5.3:1
+    artifacts:
+      paths:
+        - "**/build*/size.json"
+        - "**/build*/build_log.txt"
+        - "**/build*/*.bin"
+        - "**/build*/*.map"
+        - "**/build*/*.elf"
+        - "**/build*/flasher_args.json"
+        - "**/build*/flash_project_args"
+        - "**/build*/config/sdkconfig.json"
+        - "**/build*/bootloader/*.bin"
+        - "**/build*/partition_table/*.bin"
+      when: always
+      expire_in: 4 days
+    script:
+      - *update_zigbee_lib_script
+      - python tools/ci/build_apps.py ./examples --rcp_gateway
+      - *build_rcp_gateway
+    tags:
+      - build
+
 build_docs:
     stage: build
     image: $CI_DOCKER_REGISTRY/esp-idf-doc-env-v5.3:1-1
@@ -123,6 +159,16 @@ pytest_esp32c6_i154_zigbee_multi_dut:
     - pip install -r tools/ci/requirements-pytest.txt
     - find examples/ -name "pytest_*.py" | xargs pytest --target esp32c6 -m zigbee_multi_dut
   tags: ["esp32c6", "zigbee_multi_dut"]
+
+pytest_esp32s3_i154_zigbee_multi_dut:
+  stage: target_test
+  image: ${CI_DOCKER_REGISTRY}/target-test-env-v5.3:1
+  needs:
+    - build_pytest_gateway
+  script:
+    - pip install -r tools/ci/requirements-pytest.txt
+    - find examples/ -name "pytest_*.py" | xargs pytest --target esp32s3 -m zigbee_multi_dut
+  tags: ["esp32s3", "zigbee_multi_dut"]
 
 .deploy_docs_template:
     stage: docs
