@@ -4,7 +4,7 @@ import time
 import pytest
 from constants import ZigbeeCIConstants
 from functools import wraps
-import os
+import re
 
 BASIC_CURRENT_DIR_CLIENT = str(pathlib.Path(__file__).parent) + '/esp_zigbee_customized_devices/customized_client'
 BASIC_CURRENT_DIR_SERVER = str(pathlib.Path(__file__).parent) + '/esp_zigbee_customized_devices/customized_server'
@@ -21,6 +21,10 @@ sleep_pytest_build_dir = CLI_CURRENT_DIR_CLIENT + '|' + SLEEP_CURRENT_DIR_SERVER
 SWITCH_CURRENT_DIR_SERVER = str(pathlib.Path(__file__).parent) + '/esp_zigbee_touchlink/touchlink_switch'
 LIGHT_CURRENT_DIR_CLIENT = str(pathlib.Path(__file__).parent) + '/esp_zigbee_touchlink/touchlink_light'
 touchlink_pytest_build_dir = SWITCH_CURRENT_DIR_SERVER + '|' + LIGHT_CURRENT_DIR_CLIENT
+
+HA_CURRENT_DIR_SERVER = str(pathlib.Path(__file__).parent) + '/esp_zigbee_HA_sample/HA_on_off_light'
+GATEWAY_CURRENT_DIR_CLIENT = str(pathlib.Path(__file__).parent) + '/esp_zigbee_gateway'
+gateway_pytest_build_dir = HA_CURRENT_DIR_SERVER + '|' + GATEWAY_CURRENT_DIR_CLIENT
 
 
 def expect_decorator(pattern):
@@ -52,36 +56,17 @@ def get_formed_network_parameters(matched_values):
     return matched_values
 
 
-@expect_decorator(r"status\((\d+)\),\s*address\(0x([0-9a-fA-F]+)\),\s*endpoint\((\d+)\)")
+@expect_decorator(r"Match desc response: status\((\d+)\),\s*address\(0x([0-9a-fA-F]+)\),\s*endpoint\((\d+)\)")
 def get_match_desc_response_values(matched_values):
     status_value, address_value, endpoint_value = matched_values
     print(f"Status: {status_value}, Address: {address_value}, Endpoint: {endpoint_value}")
     return matched_values
 
 
-@expect_decorator(r'status\((\d+)\) and endpoint count\((\d+)\)')
+@expect_decorator(r'Active endpoint response: status\((\d+)\) and endpoint count\((\d+)\)')
 def get_active_endpoint_response_values(matched_values):
     status_value, endpoint_count_value = matched_values
     print(f"Status: {status_value}, Endpoint Count: {endpoint_count_value}")
-    return matched_values
-
-
-@expect_decorator(r"status\((\d+)\), "
-                  r"device_id\((\d+)\), "
-                  r"app_version\((\d+)\), "
-                  r"profile_id\(0x([0-9a-fA-F]+)\), "
-                  r"endpoint_ID\((\d+)\)")
-def get_simple_desc_response_values(matched_values):
-    status_value, device_id_value, app_version_value, profile_id_value, endpoint_id_value = matched_values
-    print(f"Status: {status_value}, Device ID: {device_id_value}, App Version: {app_version_value}, "
-          f"Profile ID: {profile_id_value}, Endpoint ID: {endpoint_id_value}")
-    return matched_values
-
-
-@expect_decorator(r"Bind response from address\(0x([0-9a-fA-F]+)\), endpoint\((\d+)\) with status\((\d+)\)")
-def get_bind_response_values(matched_values):
-    address_value, endpoint_value, status_value = matched_values
-    print(f"Address: {address_value}, Endpoint: {endpoint_value}, Status: {status_value}")
     return matched_values
 
 
@@ -115,7 +100,7 @@ def get_ota_receives_data(matched_values):
     return matched_values
 
 
-def check_zigbee_network_status(client, server):
+def check_zigbee_network_status(client, server, sleep_time=10):
     extended_pan_id_server, pan_id_server, channel_server, short_address_server = get_formed_network_parameters(server)
 
     assert extended_pan_id_server.strip('0:') != ''
@@ -124,7 +109,7 @@ def check_zigbee_network_status(client, server):
     assert short_address_server == ZigbeeCIConstants.default_id
 
     # sleep to wait client join the network
-    time.sleep(10)
+    time.sleep(sleep_time)
     extended_pan_id_client, pan_id_client, channel_client, short_address_client = get_formed_network_parameters(client)
     assert extended_pan_id_client.strip('0:') != ''
     assert pan_id_client != ZigbeeCIConstants.default_id
@@ -172,6 +157,7 @@ def check_zigbee_sleep_intervals(dut):
 @pytest.mark.esp32c6
 @pytest.mark.zigbee_multi_dut
 @pytest.mark.parametrize('count, app_path, erase_all', [(2, basic_pytest_build_dir, 'y'), ], indirect=True, )
+@pytest.mark.usefixtures('teardown_fixture')
 def test_zb_basic(dut, count, app_path, erase_all):
     client = dut[0]
     server = dut[1]
@@ -186,17 +172,55 @@ def test_zb_basic(dut, count, app_path, erase_all):
     assert status_value == '0'
     assert endpoint_count_value == '1'
 
-    status_value, device_id_value, app_version_value, profile_id_value, endpoint_id_value = \
-        get_simple_desc_response_values(client)
+    # The output order of desc and bind logs is indeterminate, so use one pattern
+    desc_or_bind_regex = (
+        r"Simple desc response: status\((\d+)\), "
+        r"device_id\((\d+)\), "
+        r"app_version\((\d+)\), "
+        r"profile_id\(0x([0-9a-fA-F]+)\), "
+        r"endpoint_ID\((\d+)\)|"
+        r"Bind response from address\(0x([0-9a-fA-F]+)\), endpoint\((\d+)\) with status\((\d+)\)"
+    )
+    timeout_duration = 10
+    desc_match_result = None
+    bind_match_result = None
+    # Loop until we match both patterns or timeout
+    start_time = time.time()
+    while time.time() - start_time < timeout_duration:
+        match_result = client.expect(desc_or_bind_regex, timeout=timeout_duration)
+        if match_result:
+            if "Simple desc response" in match_result.string.decode():
+                desc_match_result = match_result.group(0)
+            elif "Bind response from address" in match_result.string.decode():
+                bind_match_result = match_result.group(0)
+        if desc_match_result and bind_match_result:
+            break
+    print(f'desc_match_result: {desc_match_result}')
+    print(f'bind_match_result: {bind_match_result}')
+    pattern = re.compile(
+        rb'status\((\d+)\), device_id\((\d+)\), app_version\((\d+)\), profile_id\(0x([0-9a-fA-F]+)\), '
+        rb'endpoint_ID\((\d+)\)')
+    match = pattern.search(desc_match_result)
+    if match:
+        status_desc = match.group(1).decode()
+        device_id = match.group(2).decode()
+        app_version = match.group(3).decode()
+        profile_id_hex = match.group(4).decode()
+        endpoint_id = match.group(5).decode()
 
-    assert status_value == app_version_value == '0'
-    assert device_id_value == '256'
-    assert profile_id_value == '104'
-    assert endpoint_id_value == '10'
+        assert status_desc == app_version == '0'
+        assert device_id == '256'
+        assert profile_id_hex == '104'
+        assert endpoint_id == '10'
+    pattern = re.compile(rb'address\(0x([0-9a-fA-F]+)\), endpoint\((\d+)\) with status\((\d+)\)')
+    match = pattern.search(desc_match_result)
+    if match:
+        address = bind_match_result.group(1).decode()
+        endpoint = bind_match_result.group(2).decode()
+        status_bind = bind_match_result.group(3).decode()
 
-    address_value, endpoint_value, status_value = get_bind_response_values(client)
-    assert address_value == status_value == '0'
-    assert endpoint_value == '1'
+        assert address == status_bind == '0'
+        assert endpoint == '1'
 
     address, src_endpoint, dst_endpoint, cluster = get_received_report_values(client)
     assert address == '0'
@@ -210,6 +234,7 @@ def test_zb_basic(dut, count, app_path, erase_all):
 @pytest.mark.esp32h2
 @pytest.mark.zigbee_multi_dut
 @pytest.mark.parametrize('count, app_path, erase_all', [(2, ota_pytest_build_dir, 'y'), ], indirect=True, )
+@pytest.mark.usefixtures('teardown_fixture')
 def test_zb_ota(dut, count, app_path, erase_all):
     client = dut[0]
     server = dut[1]
@@ -237,6 +262,7 @@ def test_zb_ota(dut, count, app_path, erase_all):
 @pytest.mark.esp32h2
 @pytest.mark.zigbee_multi_dut
 @pytest.mark.parametrize('count, app_path, erase_all', [(2, sleep_pytest_build_dir, 'y'), ], indirect=True, )
+@pytest.mark.usefixtures('teardown_fixture')
 def test_zb_sleep(dut, count, app_path, erase_all):
     cli = dut[0]
     sleep_device = dut[1]
@@ -273,6 +299,7 @@ def test_zb_sleep(dut, count, app_path, erase_all):
 @pytest.mark.esp32h2
 @pytest.mark.zigbee_multi_dut
 @pytest.mark.parametrize('count, app_path, erase_all', [(2, touchlink_pytest_build_dir, 'y'), ], indirect=True, )
+@pytest.mark.usefixtures('teardown_fixture')
 def test_zb_touch_link(dut, count, app_path, erase_all):
     switch = dut[0]
     light = dut[1]
@@ -288,3 +315,19 @@ def test_zb_touch_link(dut, count, app_path, erase_all):
     light.expect('Touchlink target commissioning finished')
     switch.expect('Bound successfully!')
 
+
+# Case 9: Zigbee gateway test
+@pytest.mark.order(9)
+@pytest.mark.esp32s3
+@pytest.mark.zigbee_multi_dut
+@pytest.mark.parametrize('count, app_path, target', [(2, gateway_pytest_build_dir, 'esp32h2|esp32s3'), ],
+                         indirect=True, )
+@pytest.mark.usefixtures('teardown_fixture')
+def test_zb_gateway(dut, count, app_path, target):
+    gateway_device = dut[1]
+    ha_device = dut[0]
+    # add sleep time to wait rcp update ready
+    time.sleep(30)
+    gateway_device.expect(r'\*\*\* MATCH VERSION! \*\*\*', timeout=6)
+    # add sleep time to wait gateway Network steering
+    check_zigbee_network_status(ha_device, gateway_device, sleep_time=190)

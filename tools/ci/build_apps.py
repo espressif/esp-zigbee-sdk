@@ -35,6 +35,8 @@ PYTEST_APPS = [
     {"target": "esp32c6", "name": "customized_server"},
 ]
 
+GATEWAY_APPS = [{"target": "esp32h2", "name": "HA_on_off_light"}, ]
+
 IGNORE_WARNINGS = [
     r"warning: 'init_spiffs' defined but not used",
     r"warning: 'esp_zb_gateway_board_try_update' defined but not used",
@@ -145,6 +147,8 @@ def main(args: argparse.Namespace) -> None:
         apps_for_build = [app for app in apps if not _is_pytest_app(app, PYTEST_APPS)]
     elif args.pytest:
         apps_for_build = [app for app in apps if _is_pytest_app(app, PYTEST_APPS)]
+    elif args.rcp_gateway:
+        apps_for_build = [app for app in apps if _is_pytest_app(app, GATEWAY_APPS)]
     else:
         apps_for_build = apps[:]
 
@@ -216,6 +220,11 @@ if __name__ == '__main__':
         '--collect-size-info',
         type=argparse.FileType('w'),
         help='If specified, the test case name and size info json will be written to this file',
+    )
+    parser.add_argument(
+        '--rcp_gateway',
+        action="store_true",
+        help='Only build rcp_gateway pytest apps, definded in GATEWAY_APPS',
     )
 
     arguments = parser.parse_args()
