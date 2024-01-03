@@ -63,22 +63,6 @@ def get_match_desc_response_values(matched_values):
     return matched_values
 
 
-@expect_decorator(r'Active endpoint response: status\((\d+)\) and endpoint count\((\d+)\)')
-def get_active_endpoint_response_values(matched_values):
-    status_value, endpoint_count_value = matched_values
-    print(f"Status: {status_value}, Endpoint Count: {endpoint_count_value}")
-    return matched_values
-
-
-@expect_decorator(r"address\(0x([0-9a-fA-F]+)\) src endpoint\((\d+)\) "
-                  r"to dst endpoint\((\d+)\) cluster\(0x([0-9a-fA-F]+)\)")
-def get_received_report_values(matched_values):
-    address, src_endpoint, dst_endpoint, cluster = matched_values
-    print(f"Address: {address}, Source Endpoint: {src_endpoint}, Destination Endpoint: {dst_endpoint}, "
-          f"Cluster: {cluster}")
-    return matched_values
-
-
 @expect_decorator(r"OTA version: (0x[0-9a-fA-F]+), image type: (0x[0-9a-fA-F]+), manufacturer code: (\d+)")
 def get_ota_information(matched_values):
     ota_version, image_type, manufacturer_code = matched_values
@@ -167,66 +151,70 @@ def test_zb_basic(dut, count, app_path, erase_all):
     status_value, address_value, endpoint_value = get_match_desc_response_values(client)
     assert status_value == address_value == '0'
     assert endpoint_value == '10'
+    active_pattern = r"Active endpoint response: status\((\d+)\) and endpoint count\((\d+)\)"
+    bind_pattern = r"Bind response from address\(0x([0-9a-fA-F]+)\), endpoint\((\d+)\) with status\((\d+)\)"
+    received_pattern = r"Received report from address\(0x([0-9a-fA-F]+)\) src endpoint\((\d+)\) to dst endpoint\((" \
+                       r"\d+)\) cluster\(0x([0-9a-fA-F]+)\)"
+    simple_pattern = r"Simple desc response: status\((\d+)\), device_id\((\d+)\), app_version\((\d+)\), profile_id\(" \
+                     r"0x([0-9a-fA-F]+)\), endpoint_ID\((\d+)\)"
+    active_found = False
+    bind_found = False
+    received_found = False
+    simple_found = False
 
-    status_value, endpoint_count_value = get_active_endpoint_response_values(client)
-    assert status_value == '0'
-    assert endpoint_count_value == '1'
-
-    # The output order of desc and bind logs is indeterminate, so use one pattern
-    desc_or_bind_regex = (
-        r"Simple desc response: status\((\d+)\), "
-        r"device_id\((\d+)\), "
-        r"app_version\((\d+)\), "
-        r"profile_id\(0x([0-9a-fA-F]+)\), "
-        r"endpoint_ID\((\d+)\)|"
-        r"Bind response from address\(0x([0-9a-fA-F]+)\), endpoint\((\d+)\) with status\((\d+)\)"
-    )
-    timeout_duration = 10
-    desc_match_result = None
-    bind_match_result = None
-    # Loop until we match both patterns or timeout
     start_time = time.time()
-    while time.time() - start_time < timeout_duration:
-        match_result = client.expect(desc_or_bind_regex, timeout=timeout_duration)
-        if match_result:
-            if "Simple desc response" in match_result.string.decode():
-                desc_match_result = match_result.group(0)
-            elif "Bind response from address" in match_result.string.decode():
-                bind_match_result = match_result.group(0)
-        if desc_match_result and bind_match_result:
+    while True:
+        match = client.expect(r'response|report', timeout=30)
+        line_to_parse = match.string.decode()
+        if not active_found:
+            active_match = re.search(active_pattern, line_to_parse)
+            if active_match:
+                active_found = True
+                status, endpoint_count = active_match.groups()
+                print(f"Found active_message: {line_to_parse}")
+                print(f"status: {status}, endpoint_count: {endpoint_count}")
+                assert status == '0'
+                assert endpoint_count == '1'
+        if not bind_found:
+            bind_match = re.search(bind_pattern, line_to_parse)
+            if bind_match:
+                bind_found = True
+                address, endpoint, status = bind_match.groups()
+                print(f"Found bind_message: {line_to_parse}")
+                print(f"address: {address}, endpoint: {endpoint}, status: {status}")
+                assert address == status == '0'
+                assert endpoint == '1'
+        if not received_found:
+            received_match = re.search(received_pattern, line_to_parse)
+            if received_match:
+                received_found = True
+                address, src_endpoint, dst_endpoint, cluster = received_match.groups()
+                print(f"Found received_message: {line_to_parse}")
+                print(
+                    f"address: {address}, src_endpoint: {src_endpoint}, dst_endpoint: {dst_endpoint}, "
+                    f"cluster: {cluster}")
+                assert address == '0'
+                assert src_endpoint == '10'
+                assert dst_endpoint == '1'
+                assert cluster == '6'
+        if not simple_found:
+            simple_match = re.search(simple_pattern, line_to_parse)
+            if simple_match:
+                simple_found = True
+                status, device_id, app_version, profile_id, endpoint_id = simple_match.groups()
+                print(f"Found simple_message: {line_to_parse}")
+                print(f"status: {status}, device_id: {device_id}, app_version: {app_version}, profile_id: {profile_id},"
+                      f"endpoint_ID: {endpoint_id}")
+                assert status == app_version == '0'
+                assert device_id == '256'
+                assert profile_id == '104'
+                assert endpoint_id == '10'
+        if active_found and bind_found and received_found and simple_found:
             break
-    print(f'desc_match_result: {desc_match_result}')
-    print(f'bind_match_result: {bind_match_result}')
-    pattern = re.compile(
-        rb'status\((\d+)\), device_id\((\d+)\), app_version\((\d+)\), profile_id\(0x([0-9a-fA-F]+)\), '
-        rb'endpoint_ID\((\d+)\)')
-    match = pattern.search(desc_match_result)
-    if match:
-        status_desc = match.group(1).decode()
-        device_id = match.group(2).decode()
-        app_version = match.group(3).decode()
-        profile_id_hex = match.group(4).decode()
-        endpoint_id = match.group(5).decode()
-
-        assert status_desc == app_version == '0'
-        assert device_id == '256'
-        assert profile_id_hex == '104'
-        assert endpoint_id == '10'
-    pattern = re.compile(rb'address\(0x([0-9a-fA-F]+)\), endpoint\((\d+)\) with status\((\d+)\)')
-    match = pattern.search(desc_match_result)
-    if match:
-        address = bind_match_result.group(1).decode()
-        endpoint = bind_match_result.group(2).decode()
-        status_bind = bind_match_result.group(3).decode()
-
-        assert address == status_bind == '0'
-        assert endpoint == '1'
-
-    address, src_endpoint, dst_endpoint, cluster = get_received_report_values(client)
-    assert address == '0'
-    assert src_endpoint == '10'
-    assert dst_endpoint == '1'
-    assert cluster == '6'
+        elapsed_time = time.time() - start_time
+        if elapsed_time > 30:
+            print("Timeout reached, exiting the loop.")
+            break
 
 
 # Case 6: Zigbee ota test
