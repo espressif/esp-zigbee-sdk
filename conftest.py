@@ -135,7 +135,7 @@ def junit_properties(
 
 
 @pytest.fixture()
-def teardown_fixture(serial_ports):
+def teardown_fixture(serial_ports, dut):
     """
     A pytest fixture responsible for erasing the flash memory of a list of test devices post-testing.
     Yields:
@@ -144,7 +144,9 @@ def teardown_fixture(serial_ports):
         None: No return value since the primary purpose is the teardown side effect.
     """
     yield
-    # after test, do erase flash process
+    # after test, close dut monitor, and do erase flash process
+    for device in dut:
+        device.serial.stop_redirect_thread()
     proc = None
     for serial_port in serial_ports:
         print(f'erase flash on serial_port: {serial_port}')
