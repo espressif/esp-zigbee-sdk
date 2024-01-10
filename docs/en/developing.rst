@@ -48,7 +48,6 @@ Build following examples in the esp-zigbee-sdk environment which implemented wit
 -  :project:`esp_zigbee_ota_client <examples/esp_zigbee_ota/ota_client>`
 -  :project:`esp_zigbee_ota_server <examples/esp_zigbee_ota/ota_server>`
 -  :project:`esp_zigbee_gateway <examples/esp_zigbee_gateway>`
--  :project:`esp_zigbee_rcp <examples/esp_zigbee_rcp>`
 -  :project:`esp_zigbee_touchlink <examples/esp_zigbee_touchlink>`
 
 2.1.4 Flashing the Firmware

@@ -50,7 +50,8 @@ before_script:
 .build_rcp_gateway: &build_rcp_gateway
   - mv $CI_PROJECT_DIR/examples/esp_zigbee_gateway/sdkconfig.defaults $CI_PROJECT_DIR/examples/esp_zigbee_gateway/sdkconfig.defaults.ori
   - cp $CI_PROJECT_DIR/tools/ci/sdkconfig_for_gateway_ci.defaults $CI_PROJECT_DIR/examples/esp_zigbee_gateway/sdkconfig.defaults
-  - cd $CI_PROJECT_DIR/examples/esp_zigbee_rcp
+  - cd $IDF_PATH/examples/openthread/ot_rcp
+  - echo "CONFIG_OPENTHREAD_NCP_VENDOR_HOOK=y" >> sdkconfig.defaults
   - idf.py set-target esp32h2
   - idf.py build
   - cd $CI_PROJECT_DIR/examples/esp_zigbee_gateway

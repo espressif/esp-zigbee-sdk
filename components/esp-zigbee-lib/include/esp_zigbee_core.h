@@ -679,21 +679,6 @@ esp_err_t esp_zb_bdb_cancel_formation(void);
  */
 esp_err_t esp_zb_device_register(esp_zb_ep_list_t *ep_list);
 
-/**
- * @brief  Zigbee stack minior initialization for RCP.
- *
- * @warning It is ONLY for RCP initialization for limited Zigbee stack init
- */
-void esp_zb_rcp_init(void);
-
-/**
- * @brief  Zigbee main loop iteration for RCP
- *
- * @warning It is ONLY for RCP main loop iteration.
- *
- */
-void esp_zb_rcp_main_loop_iteration(void);
-
 #ifdef ZB_DISTRIBUTED_SECURITY_ON
 /**
  * @brief Enable or disable the Zigbee distributed network.

@@ -58,7 +58,7 @@ def main():
     bootloader_path = os.path.join(base_dir, 'bootloader', 'bootloader.bin')
     partition_table_path = os.path.join(
             base_dir, 'partition_table', 'partition-table.bin')
-    rcp_firmware_path = os.path.join(base_dir, 'esp_zigbee_rcp.bin')
+    rcp_firmware_path = os.path.join(base_dir, 'esp_ot_rcp.bin')
     with open(args.target_file, 'wb') as fout:
         image_header_size = RCP_IMAGE_HEADER_SIZE
         if args.gw_firmware:

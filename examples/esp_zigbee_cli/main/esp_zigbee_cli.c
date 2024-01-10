@@ -174,5 +174,5 @@ void app_main(void)
     zigbee_stack_init();
 
     xTaskCreate(zb_cli_console_task, "zb_cli_console_task", 4096, NULL, 9, NULL);
-    xTaskCreate(zb_main_loop_task, "zb_main_loop_task", 4096, NULL, 10, NULL);
+    xTaskCreate(zb_main_loop_task, "zb_main_loop_task", 8192, NULL, 10, NULL);
 }
