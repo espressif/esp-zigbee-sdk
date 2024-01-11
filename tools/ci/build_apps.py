@@ -33,6 +33,9 @@ PYTEST_APPS = [
     {"target": "esp32c6", "name": "HA_color_dimmable_light"},
     {"target": "esp32c6", "name": "customized_client"},
     {"target": "esp32c6", "name": "customized_server"},
+    {"target": "esp32c6", "name": "light_sleep"},
+    {"target": "esp32c6", "name": "touchlink_switch"},
+    {"target": "esp32c6", "name": "touchlink_light"},
 ]
 
 GATEWAY_APPS = [{"target": "esp32h2", "name": "HA_on_off_light"}, ]

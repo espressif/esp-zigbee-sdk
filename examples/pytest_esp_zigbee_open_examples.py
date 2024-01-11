@@ -174,7 +174,8 @@ def test_zb_basic(dut, count, app_path, erase_all):
                 print(f"Found active_message: {line_to_parse}")
                 print(f"status: {status}, endpoint_count: {endpoint_count}")
                 assert status == '0'
-                assert endpoint_count == '1'
+                # release/v1.0.8 change endpoint_count to 2
+                assert endpoint_count == '2'
         if not bind_found:
             bind_match = re.search(bind_pattern, line_to_parse)
             if bind_match:
@@ -248,6 +249,7 @@ def test_zb_ota(dut, count, app_path, erase_all):
 # Case 7: Zigbee light sleep test
 @pytest.mark.order(7)
 @pytest.mark.esp32h2
+@pytest.mark.esp32c6
 @pytest.mark.zigbee_multi_dut
 @pytest.mark.parametrize('count, app_path, erase_all', [(2, sleep_pytest_build_dir, 'y'), ], indirect=True, )
 @pytest.mark.usefixtures('teardown_fixture')
@@ -285,6 +287,7 @@ def test_zb_sleep(dut, count, app_path, erase_all):
 # Case 8: Zigbee touchlink test
 @pytest.mark.order(8)
 @pytest.mark.esp32h2
+@pytest.mark.esp32c6
 @pytest.mark.zigbee_multi_dut
 @pytest.mark.parametrize('count, app_path, erase_all', [(2, touchlink_pytest_build_dir, 'y'), ], indirect=True, )
 @pytest.mark.usefixtures('teardown_fixture')
