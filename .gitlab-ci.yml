@@ -65,8 +65,6 @@ build_non_pytest_examples:
   image: ${CI_DOCKER_REGISTRY}/esp-env-v5.3:1
   artifacts:
     paths:
-      - "**/build*/size.json"
-      - "**/build*/build_log.txt"
       - "**/build*/*.bin"
       - "**/build*/flasher_args.json"
       - "**/build*/config/sdkconfig.json"
@@ -83,13 +81,24 @@ build_non_pytest_examples:
   tags:
     - build
 
+build_non_pytest_host:
+    stage: build
+    image: ${CI_DOCKER_REGISTRY}/esp-env-v5.3:1
+    artifacts:
+      when: always
+      expire_in: 4 days
+    script:
+      - *setup_idf
+      - cd ${ESP_ZIGBEE_SDK_PATH}
+      - python tools/ci/build_apps.py ./examples --host
+    tags:
+      - build
+
 build_pytest_examples:
   stage: build
   image: ${CI_DOCKER_REGISTRY}/esp-env-v5.3:1
   artifacts:
     paths:
-      - "**/build*/size.json"
-      - "**/build*/build_log.txt"
       - "**/build*/*.bin"
       - "**/build*/*.map"
       - "**/build*/*.elf"
@@ -111,8 +120,6 @@ build_pytest_gateway:
     image: ${CI_DOCKER_REGISTRY}/esp-env-v5.3:1
     artifacts:
       paths:
-        - "**/build*/size.json"
-        - "**/build*/build_log.txt"
         - "**/build*/*.bin"
         - "**/build*/*.map"
         - "**/build*/*.elf"
