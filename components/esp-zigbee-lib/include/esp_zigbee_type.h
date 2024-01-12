@@ -37,6 +37,7 @@ typedef union {
 #define ESP_ZB_ZCL_ADDR_TYPE_IEEE_GPD        1U
 #define ESP_ZB_ZCL_ADDR_TYPE_SRC_ID_GPD      2U
 #define ESP_ZB_ZCL_ADDR_TYPE_IEEE            3U
+#define ESP_ZB_CCM_KEY_SIZE                  16U
 
 /**
  * @brief Type to represent source address of ZCL message

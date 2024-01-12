@@ -89,3 +89,15 @@ examples/esp_zigbee_sleep/light_sleep:
     - if: IDF_TARGET in ["esp32c6", "esp32h2"]
       temporary: true
       reason: the other targets are not tested yet
+
+examples/esp_zigbee_greenpower/esp_zigbee_gpc:
+  enable:
+    - if: IDF_TARGET in ["esp32c6", "esp32h2"]
+      temporary: true
+      reason: the other targets are not tested yet
+
+examples/esp_zigbee_greenpower/esp_zigbee_gpd:
+  enable:
+    - if: IDF_TARGET in ["esp32c6", "esp32h2"]
+      temporary: true
+      reason: the other targets are not tested yet

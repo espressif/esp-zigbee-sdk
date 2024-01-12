@@ -14,6 +14,10 @@ extern "C" {
 #include "esp_zigbee_type.h"
 #include "esp_zigbee_zcl_common.h"
 
+#ifdef CONFIG_ZB_GP_ENABLED
+#include "zgp/esp_zigbee_zgp.h"
+#endif /* CONFIG_ZB_GP_ENABLED */
+
 /** Enum of the Zigbee ZCL address mode
  * @note Defined the ZCL command of address_mode.
  * @anchor esp_zb_zcl_address_mode_t
@@ -807,6 +811,79 @@ typedef struct esp_zb_zcl_custom_cluster_cmd_s {
     } data;                                                 /*!< The custom data */
 } esp_zb_zcl_custom_cluster_cmd_t;
 
+#ifdef CONFIG_ZB_GP_ENABLED
+/**
+ * @brief The request structure for GPP commissioning enter
+ *
+ */
+typedef struct esp_zgp_zcl_proxy_commissioning_enter_s {
+    uint8_t exit_mode;              /*!< Exit mode, refer to esp_zgp_commissioning_exit_mode_t */
+    uint16_t commissioning_window;  /*!< Commissioning window */
+} esp_zgp_zcl_proxy_commissioning_enter_req_t;
+
+/**
+ * @brief The request structure for GPP commissioning
+ *
+ */
+typedef struct esp_zgp_zcl_proxy_commissioning_s {
+    uint8_t options;                /*!< Option: Exit mode(3rd bit), Channel present(4th bit), Reserved(5-7th bit) */
+    uint8_t channel;                /*!< The devices should stay on the operational channel.*/
+    uint16_t commissioning_window;  /*!< Flag of the Exit mode sub-field is set to 0b1 */
+} esp_zgp_zcl_proxy_commissioning_req_t;
+
+/**
+ * @brief The request structure for managing pairing information by GPS
+ *
+ */
+typedef struct esp_zgp_zcl_pairing_req_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;   /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode; /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+    uint32_t options;                       /*!< 24-bit indicates the properties of request */
+    esp_zb_zgpd_addr_t zgpd_id;             /*!< The value of the GPD identifier */
+    uint8_t endpoint;                       /*!< Endpoint of ZGPD if APP_ID eq 0010 */
+    uint8_t dev_id;                         /*!< Device identifier */
+    uint8_t *key;                           /*!< The security key */
+    uint8_t forward_radius;                 /*!< Radius in the groupcast forwarding of the GPDF packet */
+    uint16_t assigned_alias;                /*!< Assigned alias in the groupcast forwarding of the GPDF packet */
+    uint16_t group_id;                      /*!< Group identifier */
+    uint32_t sec_frame_counter;             /*!< Security frame counter of ZGPD */
+} esp_zgp_zcl_pairing_req_t;
+
+/**
+ * @brief The request structure for sink table information
+ *
+ */
+typedef struct esp_zgp_zcl_gp_sink_table_req_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;   /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode; /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+    uint8_t index;                          /*!< The index of request sink table */
+    uint8_t options;                        /*!< Option: app_id(1-3rd bit), refer to esp_zb_zgp_app_id_t. req_type(4th bit), refer to esp_zgp_table_request_entries_type_t */
+    esp_zb_zgpd_id_t *zgpd_id;              /*!< The green power device identifier */
+} esp_zgp_zcl_gp_sink_table_req_t;
+
+/**
+ * @brief The request structure for proxy table information
+ *
+ */
+typedef esp_zgp_zcl_gp_sink_table_req_t esp_zgp_zcl_gp_proxy_table_req_t;
+
+/**
+ * @brief The request structure for configuring the Sink Table of a GPS
+ *
+ */
+typedef struct esp_zgp_zcl_pairing_configuration_req_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;           /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode;         /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+    esp_zb_zgp_sink_tbl_ent_t *ent;                 /*!< Sink table entry */
+    uint8_t actions;                                /*!< The configuration action, refer to esp_zgp_pairing_config_action_t */
+    uint8_t num_paired_endpoints;                   /*!< The number of endpoints listed in the Paired endpoints field */
+    uint8_t *paired_endpoints;                      /*!< The paired endpoints */
+    uint8_t app_info;                               /*!< Application infomation */
+    uint8_t num_gpd_commands;                       /*!< The number of gpd command listed in the gpd_command field */
+    uint8_t *gpd_commands;                          /*!< The green power command list */
+} esp_zgp_zcl_pairing_configuration_req_t;
+#endif /* CONFIG_ZB_GP_ENABLED */
+
 /**
  * @brief The Zigbee ZCL custom cluster request command struct
  *
@@ -1513,10 +1590,20 @@ typedef struct esp_zb_zcl_privilege_command_message_s {
 typedef struct esp_zb_zcl_custom_cluster_command_message_s {
     esp_zb_zcl_cmd_info_t info; /*!< The basic information of customized cluster command message that refers to esp_zb_zcl_report_attr_message_t */
     struct {
-        uint8_t size; /*!< The size of custom data */
-        void *value;  /*!< The value of custom data */
-    } data;           /*!< The custom data */
+        uint16_t size; /*!< The size of custom data */
+        void *value;   /*!< The value of custom data */
+    } data;            /*!< The custom data */
 } esp_zb_zcl_custom_cluster_command_message_t;
+
+#ifdef CONFIG_ZB_GP_ENABLED
+/**
+ * @brief The message for receiving the green power command
+ *
+ */
+typedef struct esp_zb_zcl_cmd_green_power_recv_message_s {
+    esp_zb_zcl_cmd_info_t info;                 /*!< The basic information of  message that refers to esp_zb_zcl_cmd_info_t */
+} esp_zb_zcl_cmd_green_power_recv_message_t;
+#endif /* CONFIG_ZB_GP_ENABLED */
 
 /* read attribute, write attribute, config report and more general command will support later */
 
@@ -2124,6 +2211,69 @@ uint8_t esp_zb_zcl_metering_get_sampled_data_cmd_req(esp_zb_metering_get_sampled
  * @return The transaction sequence number
  */
 uint8_t esp_zb_zcl_custom_cluster_cmd_req(esp_zb_zcl_custom_cluster_cmd_req_t *cmd_req);
+
+#ifdef CONFIG_ZB_GP_ENABLED
+/**
+ * @brief Perform Proxy Commissioning mode enter request
+ *
+ * @param[in] req The parameter of request, refer to  esp_zgp_zcl_proxy_commissioning_enter_req_t
+ *
+ * @return The transaction sequence number
+ */
+uint8_t esp_zgp_zcl_proxy_commissioning_mode_enter_cmd_req(esp_zgp_zcl_proxy_commissioning_enter_req_t *req);
+
+/**
+ * @brief Perform Proxy Commissioning mode level request
+ *
+ * @return The transaction sequence number
+ */
+uint8_t esp_zgp_zcl_proxy_commissioning_mode_leave_cmd_req(void);
+
+/**
+ * @brief Perform Proxy Commissioning mode request
+ *
+ * @param[in] req The parameter of request, refer to esp_zgp_zcl_proxy_commissioning_req_t
+ *
+ * @return The transaction sequence number
+ */
+uint8_t esp_zgp_zcl_proxy_commissioning_mode_cmd_req(esp_zgp_zcl_proxy_commissioning_req_t *req);
+
+/**
+ * @brief Perform GP Pairing request
+ *
+ * @param[in] req The parameter of request, refer to esp_zgp_zcl_pairing_req_t
+ *
+ * @return The transaction sequence number
+ */
+uint8_t esp_zgp_zcl_pairing_cmd_req(esp_zgp_zcl_pairing_req_t *req);
+
+/**
+ * @brief Send zcl gp sink table request
+ *
+ * @param[in] req The parameter of request, refer to esp_zgp_zcl_gp_sink_table_req_t
+ *
+ * @return The transaction sequence number
+ */
+uint8_t esp_zgp_zcl_gp_sink_table_cmd_req(esp_zgp_zcl_gp_sink_table_req_t *req);
+
+/**
+ * @brief Send zcl gp proxy table request
+ *
+ * @param[in] req The parameter of request, refer to esp_zgp_zcl_gp_proxy_table_req_t
+ *
+ * @return The transaction sequence number
+ */
+uint8_t esp_zgp_zcl_gp_proxy_table_cmd_req(esp_zgp_zcl_gp_proxy_table_req_t *req);
+
+/**
+ * @brief Send zcl gp pairing configuration command
+ *
+ * @param[in] req The parameter of request, refer to esp_zgp_zcl_pairing_configuration_req_t
+ *
+ * @return The transaction sequence number
+ */
+uint8_t esp_zgp_zcl_pairing_configuration_cmd_req(esp_zgp_zcl_pairing_configuration_req_t *req);
+#endif /* CONFIG_ZB_GP_ENABLED */
 
 /**
  * @brief   Send custom cluster command response

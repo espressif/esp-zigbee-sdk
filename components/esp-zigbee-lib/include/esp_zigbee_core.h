@@ -30,6 +30,10 @@ extern "C" {
 #define ESP_ZB_SLEEP_MAXIMUM_THRESHOLD_MS 86400000U /*! Maximum sleep threshold*/
 #endif                                              /** CONFIG_ZB_ZED */
 
+#ifdef CONFIG_ZB_GP_ENABLED
+#define ESP_ZGP_GPBB_DEFAULT_FUNCTIONALITY 0x9ac3f /*!< GPP functionality, refer to esp_zgp_gpp_functionality_t */
+#endif /* CONFIG_ZB_GP_ENABLED */
+
 /** Enum of the Zigbee network device type
  * @anchor esp_zb_nwk_device_type_t
  */
@@ -106,6 +110,7 @@ typedef enum esp_zb_core_action_callback_id_s {
     ESP_ZB_CORE_CMD_CUSTOM_CLUSTER_RESP_CB_ID           = 0x1041,   /*!< Custom Cluster response, refer to esp_zb_zcl_custom_cluster_command_message_t */
     ESP_ZB_CORE_CMD_PRIVILEGE_COMMAND_REQ_CB_ID         = 0x1050,   /*!< Custom Cluster request, refer to esp_zb_zcl_privilege_command_message_t */
     ESP_ZB_CORE_CMD_PRIVILEGE_COMMAND_RESP_CB_ID        = 0x1051,   /*!< Custom Cluster response, refer to esp_zb_zcl_privilege_command_message_t */
+    ESP_ZB_CORE_CMD_GREEN_POWER_RECV_CB_ID              = 0x1F00,   /*!< Green power cluster command receiving, refer to esp_zb_zcl_cmd_green_power_recv_message_t */
     ESP_ZB_CORE_REPORT_ATTR_CB_ID                       = 0x2000,   /*!< Attribute Report, refer to esp_zb_zcl_report_attr_message_t */
 } esp_zb_core_action_callback_id_t;
 
@@ -274,6 +279,7 @@ bool esp_zb_zcl_delete_privilege_command(uint8_t endpoint, uint16_t cluster, uin
 /**
  * @brief Set the ZCL scenes cluster scene table for users.
  *
+ * @param[in] endpoint          The endpoint identifier
  * @param[in] group_id          The group id of scene, which will be used to find scenes table record
  * @param[in] scene_id          The scene id of scene, which will be used to find scenes table record
  * @param[in] transition_time   The transition time of scene, whose unit is 100 milliseconds
@@ -282,13 +288,25 @@ bool esp_zb_zcl_delete_privilege_command(uint8_t endpoint, uint16_t cluster, uin
  *      - ESP_OK: on success
  *      - ESP_FAIL: the group id or scene id is invalid
  */
-esp_err_t esp_zb_zcl_scenes_table_store(uint16_t group_id, uint8_t scene_id, uint16_t transition_time, esp_zb_zcl_scenes_extension_field_t *field);
+esp_err_t esp_zb_zcl_scenes_table_store(uint8_t endpoint, uint16_t group_id, uint8_t scene_id, uint16_t transition_time, esp_zb_zcl_scenes_extension_field_t *field);
 
 /**
  * @brief View the zcl scene table
  *
+ * @param[in] endpoint The specific endpoint identifier
  */
-void esp_zb_zcl_scenes_table_show(void);
+void esp_zb_zcl_scenes_table_show(uint8_t endpoint);
+
+/**
+ * @brief Clear zcl scenes table by index
+ *
+ * @param[in] index The index of scenes table
+ * @return
+ *       - ESP_OK: on success
+ *       - ESP_ERR_INVALID: id out of range
+ *       - ESP_FAILED: failed to clear scene table
+ */
+esp_err_t esp_zb_zcl_scenes_table_clear_by_index(uint16_t index);
 
 /**
  * @brief  Zigbee stack initialization.
@@ -609,6 +627,33 @@ void esp_zb_scheduler_alarm_cancel(esp_zb_callback_t cb, uint8_t param);
  *
  */
 void esp_zb_set_bdb_commissioning_mode(esp_zb_bdb_commissioning_mode_mask_t commissioning_mode);
+
+/**
+ * @brief Set BDB commissioning mode
+ *
+ * @return commissioning mode, refer to esp_zb_bdb_commissioning_mode_mask_t
+ */
+esp_zb_bdb_commissioning_mode_mask_t esp_zb_get_bdb_commissioning_mode(void);
+
+/**
+ * @brief Schedule to cancel Steering procedure for a node not on a network
+ *
+ * @note The signal ESP_ZB_BDB_SIGNAL_STEERING_CANCELLED with the status of this operation will be raised.
+ * @return
+ *      - ESP_OK: on success
+ *      - ESP_FAIL: on failed
+ */
+esp_err_t esp_zb_bdb_cancel_steering(void);
+
+/**
+ * @brief Schedule to cancel Formation procedure
+ *
+ * @note The signal ESP_ZB_BDB_SIGNAL_FORMATION_CANCELLED with the status of the operation will be raised.
+ * @return
+ *      - ESP_OK: on success
+ *      - ESP_FAIL: on failed
+ */
+esp_err_t esp_zb_bdb_cancel_formation(void);
 
 /* ZCL attribute, cluster, endpoint, device related */
 

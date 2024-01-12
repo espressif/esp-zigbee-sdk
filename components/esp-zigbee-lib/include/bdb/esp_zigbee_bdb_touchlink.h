@@ -5,6 +5,7 @@
  */
 
 #pragma once
+#include "esp_err.h"
 #include <stdint.h>
 #ifdef __cplusplus
 extern "C" {
@@ -103,6 +104,14 @@ void esp_zb_zdo_touchlink_set_rssi_threshold(int8_t rssi_threshold);
  */
 int8_t esp_zb_zdo_touchlink_get_rssi_threshold(void);
 
+/**
+ * @brief Schedule to cancel touchlink target commissioning procedure
+ *
+ * @return
+ *    - RET_OK: On success
+ *    - RET_ERROR: Not in touchlink target procedure
+ */
+esp_err_t esp_zb_bdb_cancel_touchlink_target(void);
 #ifdef __cplusplus
 }
 #endif

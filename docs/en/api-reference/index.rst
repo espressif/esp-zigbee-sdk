@@ -18,3 +18,4 @@ This section provides the ESP Zigbee SDK's APIs that support different kind of s
    zcl/index
    zdo/index
    bdb/index
+   zgp/index

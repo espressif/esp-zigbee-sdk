@@ -64,9 +64,13 @@ INPUT = \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_thermostat.h                  \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_time.h                        \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_window_covering.h             \
+    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_green_power.h                 \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/zdo/esp_zigbee_zdo_command.h                     \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/zdo/esp_zigbee_zdo_common.h                      \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/bdb/esp_zigbee_bdb_touchlink.h                   \
+    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zgp/esp_zigbee_zgp.h                             \
+    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zgp/esp_zigbee_zgpd.h                            \
+    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zgp/esp_zigbee_zgps.h                            \
 
 
 ## Get warnings for functions that have no documentation for their parameters or return value
