@@ -1,4 +1,4 @@
-5. API Reference
+6. API Reference
 ================
 
 This section provides the ESP Zigbee SDK's APIs that support different kind of scenario in Zigbee production and development phase.
@@ -19,3 +19,4 @@ This section provides the ESP Zigbee SDK's APIs that support different kind of s
    zdo/index
    bdb/index
    zgp/index
+   esp_zigbee_ncp

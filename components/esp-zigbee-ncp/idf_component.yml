@@ -1,0 +1,6 @@
+version: "1.0.0"
+description: esp-zigbee-ncp library component
+url: https://github.com/espressif/esp-zigbee-sdk
+dependencies:
+  idf: ">=5.0"
+  cmake_utilities: "0.*"

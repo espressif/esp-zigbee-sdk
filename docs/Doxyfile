@@ -71,6 +71,7 @@ INPUT = \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/zgp/esp_zigbee_zgp.h                             \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/zgp/esp_zigbee_zgpd.h                            \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/zgp/esp_zigbee_zgps.h                            \
+    $(PROJECT_PATH)/components/esp-zigbee-ncp/include/esp_zb_ncp.h                                     \
 
 
 ## Get warnings for functions that have no documentation for their parameters or return value
