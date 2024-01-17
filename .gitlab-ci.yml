@@ -34,6 +34,8 @@ before_script:
   - cd $CI_PROJECT_DIR
   - git clone --depth=1 -b $CI_COMMIT_REF_NAME ${ESP_ZBOSS_REPO_URL} || git clone --depth=1 -b master ${ESP_ZBOSS_REPO_URL}
   - cd ${ESP_ZBOSS_LIB_PATH}
+  - echo $(git branch --show-current)
+  - echo $(git log -1 --oneline)
   - cp -r ${ESP_ZBOSS_LIB_PATH} ${IDF_PATH}/components/espressif__esp-zboss-lib
 
 .update_zigbee_lib_script: &update_zigbee_lib_script
@@ -41,6 +43,8 @@ before_script:
   - *setup_esp_zboss_lib
   - cp -r ${ESP_ZIGBEE_SDK_PATH}/components/esp-zigbee-lib ${IDF_PATH}/components/esp-zigbee-lib
   - cd ${ESP_ZIGBEE_SDK_PATH}
+  - echo $(git branch --show-current)
+  - echo $(git log -1 --oneline)
   - pip install -r tools/ci/requirements-build.txt
 
 .build_rcp_gateway: &build_rcp_gateway
