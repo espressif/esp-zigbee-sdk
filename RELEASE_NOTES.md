@@ -1,5 +1,27 @@
 # Espressif Zigbee SDK Release Notes
 
+## 19-Jan-2024
+1.0.9 version release of ESP-ZIGBEE-SDK
+
+### Features
+- Updated esp-zboss-lib to v1.0.9
+- Updated esp-zigbee-lib to v1.0.9
+- Added bdb open network API
+- Added apsde user APIs
+- Added color control remaining_time(0x0002) attribute support
+- Added set and bag data type for custom cluster
+
+### Bug Fixes
+- Fixed the effect of fragment for broadcast frame
+- Fixed crashing for touchlink initiator device with multi-endpoint
+- Fixed data type of esp_zb_zcl_color_move_color_cmd_t
+- Fixed data type of esp_zb_ias_zone_cluster_cfg_t
+- Fixed rcp failure
+- Closes: https://github.com/espressif/esp-zigbee-sdk/issues/216
+- Closes: https://github.com/espressif/esp-zigbee-sdk/issues/221
+- Closes: https://github.com/espressif/esp-zigbee-sdk/issues/223
+
+
 ## 12-Jan-2024
 1.0.8 version release of ESP-ZIGBEE-SDK
 

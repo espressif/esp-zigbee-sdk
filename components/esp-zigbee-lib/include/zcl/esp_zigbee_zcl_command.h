@@ -62,7 +62,7 @@ typedef void (*esp_zb_zcl_command_send_status_callback_t)(esp_zb_zcl_command_sen
  */
 typedef struct esp_zb_zcl_attribute_data_s {
     esp_zb_zcl_attr_type_t type; /*!< The type of attribute, which can refer to esp_zb_zcl_attr_type_t */
-    uint8_t size;                /*!< The value size of attribute  */
+    uint16_t size;               /*!< The value size of attribute  */
     void *value;                 /*!< The value of attribute, Note that if the type is string/array, the first byte of value indicates the string length */
 } ESP_ZB_PACKED_STRUCT esp_zb_zcl_attribute_data_t;
 
@@ -372,8 +372,8 @@ typedef struct esp_zb_zcl_color_move_to_color_cmd_s {
 typedef struct esp_zb_zcl_color_move_color_cmd_s {
     esp_zb_zcl_basic_cmd_t zcl_basic_cmd;               /*!< Basic command info */
     esp_zb_zcl_address_mode_t address_mode;             /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
-    uint16_t rate_x;                                    /*!< specifies the rate of movement in steps per second of color x */
-    uint16_t rate_y;                                    /*!< specifies the rate of movement in steps per second of color y */
+    int16_t rate_x;                                     /*!< specifies the rate of movement in steps per second of color x */
+    int16_t rate_y;                                     /*!< specifies the rate of movement in steps per second of color y */
 } esp_zb_zcl_color_move_color_cmd_t;
 
 /**
@@ -796,6 +796,7 @@ typedef struct esp_zb_metering_get_sampled_data_cmd_s {
  *
  * @note For string data type, the first byte should be the length of string.
  *       For array, array16, array32, and long string data types, the first 2 bytes should represent the number of elements in the array.
+ *       The size of data is only required when the type is ESP_ZB_ZCL_ATTR_TYPE_SET, ESP_ZB_ZCL_ATTR_TYPE_BAG, or CUSTOM_TYPE.
  *
  */
 typedef struct esp_zb_zcl_custom_cluster_cmd_s {
@@ -807,6 +808,7 @@ typedef struct esp_zb_zcl_custom_cluster_cmd_s {
     esp_zb_zcl_cmd_direction_t direction;                   /*!< Direction of command */
     struct {
         esp_zb_zcl_attr_type_t type;                        /*!< The type of custom data, refer to esp_zb_zcl_attr_type_t */
+        uint16_t size;                                      /*!< The size of custom data */
         void *value;                                        /*!< The value of custom data */
     } data;                                                 /*!< The custom data */
 } esp_zb_zcl_custom_cluster_cmd_t;
