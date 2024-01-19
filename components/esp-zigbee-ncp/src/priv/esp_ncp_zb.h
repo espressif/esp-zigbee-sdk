@@ -50,6 +50,15 @@ typedef struct {
     uint8_t     outputClusterCount;                     /*!< The number of cluster IDs in outputClusterList */
 } ESP_NCP_ZB_PACKED_STRUCT esp_ncp_zb_endpoint_t;
 
+/**
+ * @brief Type to represent the application information on the NCP.
+ *
+ */
+typedef struct {
+    uint32_t user_cb;                   /*!< A ZDO match desc request callback */
+    uint32_t user_ctx;                  /*!< User information context */
+} esp_ncp_zb_user_cb_t;
+
 /** Definition of the frame ID on the NCP.
  *
  */
@@ -97,6 +106,8 @@ typedef struct {
 #define ESP_NCP_NETWORK_SECURE_MODE_GET         0x0029  /*!< Get the network security mode */
 #define ESP_NCP_NETWORK_SECURE_MODE_SET         0x002A  /*!< Set the network security mode */
 #define ESP_NCP_NETWORK_PREDEFINED_PANID        0x002B  /*!< Enable or disable predefined network panid */
+#define ESP_NCP_NETWORK_SHORT_TO_IEEE           0x002C  /*!< Get the network IEEE address by the short address */
+#define ESP_NCP_NETWORK_IEEE_TO_SHORT           0x002D  /*!< Get the network short address by the IEEE address */
 #define ESP_NCP_ZCL_ENDPOINT_ADD                0x0100  /*!< Configures endpoint information on the NCP */
 #define ESP_NCP_ZCL_ENDPOINT_DEL                0x0101  /*!< Remove endpoint information on the NCP */
 #define ESP_NCP_ZCL_ATTR_READ                   0x0102  /*!< Read attribute data on NCP endpoints */
@@ -108,6 +119,7 @@ typedef struct {
 #define ESP_NCP_ZCL_REPORT_CONFIG               0x0108  /*!< Report configure on NCP endpoints */
 #define ESP_NCP_ZDO_BIND_SET                    0x0200  /*!< Create a binding between two endpoints on two nodes */
 #define ESP_NCP_ZDO_UNBIND_SET                  0x0201  /*!< Remove a binding between two endpoints on two nodes */
+#define ESP_NCP_ZDO_FIND_MATCH                  0x0202  /*!< Send match desc request to find matched Zigbee device */
 
 /**
  * @brief   Process the frame ID on the NCP and response it to the host.

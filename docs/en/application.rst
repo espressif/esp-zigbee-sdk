@@ -178,6 +178,10 @@ The format of the ESP ZNSP frame is as follows:
 |          | NETWORK_SECURE_MODE_SET         | 0x002A         | Set the network security mode                                                            | 
 |          +---------------------------------+----------------+------------------------------------------------------------------------------------------+ 
 |          | NETWORK_PREDEFINED_PANID        | 0x002B         | Enable or disable predefined network panid                                               | 
+|          +---------------------------------+----------------+------------------------------------------------------------------------------------------+ 
+|          | NETWORK_SHORT_TO_IEEE           | 0x002C         | Get the network IEEE address by the short address                                        |
+|          +---------------------------------+----------------+------------------------------------------------------------------------------------------+ 
+|          | NETWORK_IEEE_TO_SHORT           | 0x002D         | Get the network short address by the IEEE address                                        |
 +----------+---------------------------------+----------------+------------------------------------------------------------------------------------------+
 | ZCL      | ZCL_ENDPOINT_ADD                | 0x0100         | Configures endpoint information on the NCP                                               | 
 |          +---------------------------------+----------------+------------------------------------------------------------------------------------------+ 
@@ -200,6 +204,8 @@ The format of the ESP ZNSP frame is as follows:
 |  ZDO     | ZDO_BIND_SET                    | 0x0200         | Create a binding between two endpoints on two nodes                                      | 
 |          +---------------------------------+----------------+------------------------------------------------------------------------------------------+ 
 |          | ZDO_UNBIND_SET                  | 0x0201         | Remove a binding between two endpoints on two nodes                                      | 
+|          +---------------------------------+----------------+------------------------------------------------------------------------------------------+ 
+|          | ZDO_FIND_MATCH                  | 0x0202         | Send match desc request to find matched Zigbee device                                    | 
 +----------+---------------------------------+----------------+------------------------------------------------------------------------------------------+
 
 5.1.7 Network Frame ID Details
@@ -792,6 +798,32 @@ Enable or disable predefined network panid
 +------------------------+--------------------------------------------------------------------------------------------------+
 | Response Parameters:                                                                                                      |
 |                        | esp_ncp_status_t status:         Status value indicating success or the reason for failure       |
++------------------------+--------------------------------------------------------------------------------------------------+
+
+5.1.7.43 NETWORK_SHORT_TO_IEEE
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Get the network IEEE address by the short address
+
++------------------------+--------------------------------------------------------------------------------------------------+
+| Command Parameters:                                                                                                       |
+|                        | uint16_t short_addr                      : The Zigbee device short address                       |
++------------------------+--------------------------------------------------------------------------------------------------+
+| Response Parameters:                                                                                                      |
+|                        | uint8_t[8] ieee_addr                      : The Zigbee device long address                       |
++------------------------+--------------------------------------------------------------------------------------------------+
+
+5.1.7.44 NETWORK_IEEE_TO_SHORT
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Get the network short address by the IEEE address
+
++------------------------+--------------------------------------------------------------------------------------------------+
+| Command Parameters:                                                                                                       |
+|                        | uint8_t[8] ieee_addr                      : The Zigbee device long address                       |
++------------------------+--------------------------------------------------------------------------------------------------+
+| Response Parameters:                                                                                                      |
+|                        | uint16_t short_addr                      : The Zigbee device short address                       |
 +------------------------+--------------------------------------------------------------------------------------------------+
 
 5.1.8 ZCL Frame ID Details
@@ -1418,20 +1450,16 @@ Create a binding between two endpoints on two nodes
 |                        | uint8_t[8] addr_short_long            : The destination address for the binding entry            |
 |                        | uint8_t dst_endp                      : The destination endpoint for the binding entry           |
 |                        | uint16_t req_dst_addr                 : Destination address of the request send to               |
+|                        | uint32_t user_cb                      : A ZDO match desc request callback                        |
+|                        | uint32_t user_ctx                     : User information context                                 |
 +------------------------+--------------------------------------------------------------------------------------------------+
 | Response Parameters:                                                                                                      |
 |                        | esp_ncp_status_t status:         Status value indicating success or the reason for failure       |
 +------------------------+--------------------------------------------------------------------------------------------------+
 | Notify Parameters:                                                                                                        |
 |                        | uint8_t zdo_status                    : Status value indicating success or the reason for failure|
-|                        | uint8_t[8] src_address                : The IEEE address for the source                          |
-|                        | uint8_t src_endp                      : The source endpoint for the binding entry                |
-|                        | uint16_t cluster_id                   : The identifier of the cluster on the source device that  |
-|                        |                                         is bound to the destination                              |
-|                        | uint8_t dst_addr_mode                 : The destination address mode                             |
-|                        | uint8_t[8] addr_short_long            : The destination address for the binding entry            |
-|                        | uint8_t dst_endp                      : The destination endpoint for the binding entry           |
-|                        | uint16_t req_dst_addr                 : Destination address of the request send to               |
+|                        | uint32_t user_cb                    : A ZDO match desc request callback                          |
+|                        | uint32_t user_ctx                   : User information context                                   |
 +------------------------+--------------------------------------------------------------------------------------------------+
 
 5.1.9.2 ZDO_UNBIND_SET
@@ -1449,20 +1477,43 @@ Remove a binding between two endpoints on two nodes
 |                        | uint8_t[8] addr_short_long            : The destination address for the binding entry            |
 |                        | uint8_t dst_endp                      : The destination endpoint for the binding entry           |
 |                        | uint16_t req_dst_addr                 : Destination address of the request send to               |
+|                        | uint32_t user_cb                      : A ZDO match desc request callback                        |
+|                        | uint32_t user_ctx                     : User information context                                 |
 +------------------------+--------------------------------------------------------------------------------------------------+
 | Response Parameters:                                                                                                      |
 |                        | esp_ncp_status_t status:         Status value indicating success or the reason for failure       |
 +------------------------+--------------------------------------------------------------------------------------------------+
 | Notify Parameters:                                                                                                        |
 |                        | uint8_t zdo_status                    : Status value indicating success or the reason for failure|
-|                        | uint8_t[8] src_address                : The IEEE address for the source                          |
-|                        | uint8_t src_endp                      : The source endpoint for the binding entry                |
-|                        | uint16_t cluster_id                   : The identifier of the cluster on the source device that  |
-|                        |                                         is bound to the destination                              |
-|                        | uint8_t dst_addr_mode                 : The destination address mode                             |
-|                        | uint8_t[8] addr_short_long            : The destination address for the binding entry            |
-|                        | uint8_t dst_endp                      : The destination endpoint for the binding entry           |
-|                        | uint16_t req_dst_addr                 : Destination address of the request send to               |
+|                        | uint32_t user_cb                    : A ZDO match desc request callback                          |
+|                        | uint32_t user_ctx                   : User information context                                   |
++------------------------+--------------------------------------------------------------------------------------------------+
+
+5.1.9.2 ZDO_FIND_MATCH
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Send match desc request to find matched Zigbee device
+
++------------------------+--------------------------------------------------------------------------------------------------+
+| Command Parameters:                                                                                                       |
+|                        | uint32_t user_cb                    : A ZDO match desc request callback                          |
+|                        | uint32_t user_ctx;                  : User information context                                   |
+|                        | uint16_t dst_nwk_addr;              : NWK address that request sent to                           |
+|                        | uint16_t addr_of_interest;          : NWK address of interest                                    |
+|                        | uint16_t profile_id;                : Profile ID to be match at the destination                  |
+|                        | uint8_t num_in_clusters;            : The number of input clusters for matching cluster server   |
+|                        | uint8_t num_out_clusters;           : The number of output clusters for matching cluster client  |
+|                        | uint16_t[] cluster_list;            : The cluster ID with size num_in_clusters + num_out_clusters|
++------------------------+--------------------------------------------------------------------------------------------------+
+| Response Parameters:                                                                                                      |
+|                        | esp_ncp_status_t status:         Status value indicating success or the reason for failure       |
++------------------------+--------------------------------------------------------------------------------------------------+
+| Notify Parameters:                                                                                                        |
+|                        | uint8_t  zdo_status                 : The ZDO response status                                    |
+|                        | uint16_t addr                       : A short address of the device response                     |
+|                        | uint8_t  endpoint                   : An endpoint of the device response                         |
+|                        | uint32_t user_cb                    : A ZDO match desc request callback                          |
+|                        | uint32_t user_ctx;                  : User information context                                   |
 +------------------------+--------------------------------------------------------------------------------------------------+
 
 .. note::
