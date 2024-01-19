@@ -83,6 +83,15 @@ static void esp_zb_gateway_board_try_update(const char *rcp_version_str)
         } else {
             ESP_LOGI(TAG, "*** MATCH VERSION! ***");
             esp_rcp_mark_image_verified(true);
+#if CONFIG_EXAMPLE_CONNECT_WIFI
+            ESP_ERROR_CHECK(example_connect());
+#if CONFIG_ESP_COEX_SW_COEXIST_ENABLE
+            ESP_ERROR_CHECK(esp_wifi_set_ps(WIFI_PS_MIN_MODEM));
+            esp_coex_wifi_i154_enable();
+#else
+            ESP_ERROR_CHECK(esp_wifi_set_ps(WIFI_PS_NONE));
+#endif
+#endif
         }
     } else {
         ESP_LOGI(TAG, "RCP firmware not found in storage, will reboot to try next image");
@@ -219,19 +228,10 @@ void app_main(void)
     ESP_ERROR_CHECK(esp_zb_gateway_console_init());
 #endif
 
-#if CONFIG_EXAMPLE_CONNECT_WIFI
-    ESP_ERROR_CHECK(example_connect());
-#if CONFIG_ESP_COEX_SW_COEXIST_ENABLE
-    ESP_ERROR_CHECK(esp_wifi_set_ps(WIFI_PS_MIN_MODEM));
-    esp_coex_wifi_i154_enable();
-#else
-    ESP_ERROR_CHECK(esp_wifi_set_ps(WIFI_PS_NONE));
-#endif
-#endif
 #if(CONFIG_ZIGBEE_GW_AUTO_UPDATE_RCP)
     esp_rcp_update_config_t rcp_update_config = ESP_ZB_RCP_UPDATE_CONFIG();
     ESP_ERROR_CHECK(init_spiffs());
     ESP_ERROR_CHECK(esp_rcp_update_init(&rcp_update_config));
 #endif
-    xTaskCreate(esp_zb_task, "Zigbee_main", 4096, NULL, 5, NULL);
+    xTaskCreate(esp_zb_task, "Zigbee_main", 8192, NULL, 5, NULL);
 }

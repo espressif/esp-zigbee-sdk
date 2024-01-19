@@ -158,12 +158,8 @@ def teardown_fixture(serial_ports, dut):
 
 
 @pytest.fixture()
-def serial_ports(dut):
-    usb_ports = []
-    for device in dut:
-        serial_port = device.expect(r'Serial port (/dev/ttyUSB[0-9]+)')
-        serial_port = serial_port[1].decode() if serial_port else None
-        usb_ports.append(serial_port)
+def serial_ports():
+    usb_ports = glob.glob('/dev/ttyUSB*')
     acm_ports = glob.glob('/dev/ttyACM*')
     serial_port_list = usb_ports + acm_ports
     print(f'serial_port_list:{serial_port_list}')

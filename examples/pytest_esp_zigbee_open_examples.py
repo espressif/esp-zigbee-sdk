@@ -163,15 +163,15 @@ def test_zb_basic(dut, count, app_path, erase_all):
     simple_found = False
 
     start_time = time.time()
-    while True:
-        match = client.expect(r'response|report', timeout=30)
+    count = 0
+    match = client.expect(r'Received report information: attribute', timeout=30)
+    while count < 2:
         line_to_parse = match.string.decode()
         if not active_found:
             active_match = re.search(active_pattern, line_to_parse)
             if active_match:
                 active_found = True
                 status, endpoint_count = active_match.groups()
-                print(f"Found active_message: {line_to_parse}")
                 print(f"status: {status}, endpoint_count: {endpoint_count}")
                 assert status == '0'
                 # release/v1.0.8 change endpoint_count to 2
@@ -181,7 +181,6 @@ def test_zb_basic(dut, count, app_path, erase_all):
             if bind_match:
                 bind_found = True
                 address, endpoint, status = bind_match.groups()
-                print(f"Found bind_message: {line_to_parse}")
                 print(f"address: {address}, endpoint: {endpoint}, status: {status}")
                 assert address == status == '0'
                 assert endpoint == '1'
@@ -190,7 +189,6 @@ def test_zb_basic(dut, count, app_path, erase_all):
             if received_match:
                 received_found = True
                 address, src_endpoint, dst_endpoint, cluster = received_match.groups()
-                print(f"Found received_message: {line_to_parse}")
                 print(
                     f"address: {address}, src_endpoint: {src_endpoint}, dst_endpoint: {dst_endpoint}, "
                     f"cluster: {cluster}")
@@ -203,7 +201,6 @@ def test_zb_basic(dut, count, app_path, erase_all):
             if simple_match:
                 simple_found = True
                 status, device_id, app_version, profile_id, endpoint_id = simple_match.groups()
-                print(f"Found simple_message: {line_to_parse}")
                 print(f"status: {status}, device_id: {device_id}, app_version: {app_version}, profile_id: {profile_id},"
                       f"endpoint_ID: {endpoint_id}")
                 assert status == app_version == '0'
@@ -215,6 +212,10 @@ def test_zb_basic(dut, count, app_path, erase_all):
         elapsed_time = time.time() - start_time
         if elapsed_time > 30:
             print("Timeout reached, exiting the loop.")
+            break
+        if match is not None:
+            count += 1
+        if count == 2:
             break
 
 
@@ -318,7 +319,8 @@ def test_zb_gateway(dut, count, app_path, target):
     gateway_device = dut[1]
     ha_device = dut[0]
     # add sleep time to wait rcp update ready
-    time.sleep(30)
+    time.sleep(15)
     gateway_device.expect(r'\*\*\* MATCH VERSION! \*\*\*', timeout=6)
     # add sleep time to wait gateway Network steering
-    check_zigbee_network_status(ha_device, gateway_device, sleep_time=190)
+    time.sleep(20)
+    check_zigbee_network_status(ha_device, gateway_device, sleep_time=15)

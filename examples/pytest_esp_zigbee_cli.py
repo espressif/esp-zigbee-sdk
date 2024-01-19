@@ -142,6 +142,7 @@ def test_zb_cli_zc_ZCL_command(dut: Tuple[Dut, Dut]) -> None:
     time.sleep(2)
     # read on_off attribute
     cli.write('zcl -a read ' + light_nwk_addr + ' ' + light_endpoint + ' 0x0006 0x0104 0')
+    time.sleep(2)
     assert str(bool(light_on)) == cli.expect(r'Value: (\w+)', timeout=3)[1].decode()
     # Off command
     time.sleep(2)
@@ -204,6 +205,9 @@ def test_zb_cli_zc_ZCL_command(dut: Tuple[Dut, Dut]) -> None:
     # Move to color command
     time.sleep(2)
     cli.write('zcl -c ' + light_nwk_addr + ' ' + light_endpoint + ' 0x0300 07 profile 0x0104 payload 983039320000')
+    light.expect(r'Light color x changes to 0x', timeout=3)
+    light.expect(r'Light color y changes to 0x', timeout=3)
+    time.sleep(0.5)
     assert hex(light_color_x) == light.expect(r'Light color x changes to (0x\w+)', timeout=3)[1].decode()
     assert hex(light_color_y) == light.expect(r'Light color y changes to (0x\w+)', timeout=3)[1].decode()
     cli.expect('Done', timeout=3)

@@ -370,6 +370,17 @@ void esp_zb_set_rx_on_when_idle(bool rx_on);
 bool esp_zb_bdb_is_factory_new(void);
 
 /**
+ * @brief Open Zigbee network
+ *
+ * @param[in] permit_duration Zigbee network open time
+ * @return
+ *      - ESP_OK: on success
+ *      - ESP_ERR_NO_MEM: not memory
+ *      - ESP_FAILED: on failed
+ */
+esp_err_t esp_zb_bdb_open_network(uint8_t permit_duration);
+
+/**
  * @brief Close Zigbee network
  *
  * @return
