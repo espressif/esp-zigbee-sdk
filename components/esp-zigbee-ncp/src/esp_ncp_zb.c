@@ -17,6 +17,7 @@
 #include "esp_zigbee_core.h"
 #include "zdo/esp_zigbee_zdo_command.h"
 #include "zcl/esp_zigbee_zcl_common.h"
+#include "aps/esp_zigbee_aps.h"
 
 #include "esp_ncp_bus.h"
 #include "esp_ncp_frame.h"
@@ -41,6 +42,11 @@ static uint32_t s_primary_channel = 0;
     }                                       \
 }                                           \
 
+typedef struct {
+    uint16_t  cluster_id;
+    esp_err_t (*add_cluster_fn)(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
+    esp_err_t (*del_cluster_fn)(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
+} esp_ncp_zb_cluster_fn_t;
 
 static void esp_ncp_zb_bdb_start_top_level_commissioning_cb(uint8_t mode_mask)
 {
@@ -51,11 +57,12 @@ static void esp_ncp_zb_bind_cb(esp_zb_zdp_status_t zdo_status, void *user_ctx)
 {
     esp_ncp_header_t ncp_header = { 
         .sn = esp_random() % 0xFF,
+        .id = ESP_NCP_ZDO_BIND_SET,
     };
 
     typedef struct {
-        esp_zb_zdp_status_t  zdo_status;
-        esp_zb_zdo_bind_req_param_t zdo_bind_param;
+        esp_zb_zdp_status_t    zdo_status;
+        esp_ncp_zb_user_cb_t   zdo_cb;                   /*!< A ZDO match desc request callback */
     } ESP_NCP_ZB_PACKED_STRUCT esp_ncp_zb_bind_parameters_t;
 
     esp_ncp_zb_bind_parameters_t parameters = { 
@@ -63,20 +70,92 @@ static void esp_ncp_zb_bind_cb(esp_zb_zdp_status_t zdo_status, void *user_ctx)
     };
 
     if (user_ctx) {
-        memcpy(&parameters.zdo_bind_param, user_ctx, sizeof(esp_zb_zdo_bind_req_param_t));
+        memcpy(&parameters.zdo_cb, user_ctx, sizeof(esp_ncp_zb_user_cb_t));
         free(user_ctx);
     }
 
-    ncp_header.id = ESP_NCP_ZDO_BIND_SET;
     esp_ncp_noti_input(&ncp_header, &parameters, sizeof(esp_ncp_zb_bind_parameters_t));
+}
+
+static void esp_ncp_zb_unbind_cb(esp_zb_zdp_status_t zdo_status, void *user_ctx)
+{
+    esp_ncp_header_t ncp_header = { 
+        .sn = esp_random() % 0xFF,
+        .id = ESP_NCP_ZDO_UNBIND_SET,
+    };
+
+    typedef struct {
+        esp_zb_zdp_status_t    zdo_status;
+        esp_ncp_zb_user_cb_t   zdo_cb;                   /*!< A ZDO match desc request callback */
+    } ESP_NCP_ZB_PACKED_STRUCT esp_ncp_zb_unbind_parameters_t;
+
+    esp_ncp_zb_unbind_parameters_t parameters = { 
+        .zdo_status = zdo_status,
+    };
+
+    if (user_ctx) {
+        memcpy(&parameters.zdo_cb, user_ctx, sizeof(esp_ncp_zb_user_cb_t));
+        free(user_ctx);
+    }
+
+    esp_ncp_noti_input(&ncp_header, &parameters, sizeof(esp_ncp_zb_unbind_parameters_t));
+}
+
+static void esp_ncp_zb_find_match_cb(esp_zb_zdp_status_t zdo_status, uint16_t addr, uint8_t endpoint, void *user_ctx)
+{
+    esp_ncp_header_t ncp_header = {
+        .sn = esp_random() % 0xFF,
+        .id = ESP_NCP_ZDO_FIND_MATCH,
+    };
+
+    typedef struct {
+        esp_zb_zdp_status_t    zdo_status;
+        uint16_t               addr;
+        uint8_t                endpoint;
+        esp_ncp_zb_user_cb_t   zdo_cb;                   /*!< A ZDO match desc request callback */
+    } ESP_NCP_ZB_PACKED_STRUCT esp_ncp_zb_find_parameters_t;
+
+    esp_ncp_zb_find_parameters_t parameters = {
+        .zdo_status = zdo_status,
+        .addr = addr,
+        .endpoint = endpoint,
+    };
+
+    if (user_ctx) {
+        memcpy(&parameters.zdo_cb, user_ctx, sizeof(esp_ncp_zb_user_cb_t));
+        free(user_ctx);
+    }
+
+    esp_ncp_noti_input(&ncp_header, &parameters, sizeof(esp_ncp_zb_find_parameters_t));
 }
 
 static void esp_ncp_zb_zdo_scan_complete_handler(esp_zb_zdp_status_t zdo_status, uint8_t count, esp_zb_network_descriptor_t *nwk_descriptor)
 {
-    for (int i = 0; i < count; i ++) {
-        ESP_LOGI(TAG, "PAN id(0x%02x), Extended PAN id(%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x)", nwk_descriptor[i].short_pan_id, 
-        nwk_descriptor[i].extended_pan_id[7], nwk_descriptor[i].extended_pan_id[6], nwk_descriptor[i].extended_pan_id[5], nwk_descriptor[i].extended_pan_id[4], 
-        nwk_descriptor[i].extended_pan_id[3], nwk_descriptor[i].extended_pan_id[2], nwk_descriptor[i].extended_pan_id[1], nwk_descriptor[i].extended_pan_id[0]);
+    esp_ncp_header_t ncp_header = {
+        .sn = esp_random() % 0xFF,
+        .id = ESP_NCP_NETWORK_SCAN_COMPLETE_HANDLER
+    };
+
+    typedef struct {
+        esp_zb_zdp_status_t    zdo_status;
+        uint8_t                count;
+    } ESP_NCP_ZB_PACKED_STRUCT esp_ncp_zb_scan_parameters_t;
+
+    uint16_t outlen = sizeof(esp_ncp_zb_scan_parameters_t) + (count * sizeof(esp_zb_network_descriptor_t));
+    uint8_t *output = calloc(1, outlen);
+
+    if (output) {
+        esp_ncp_zb_scan_parameters_t *scan_data = (esp_ncp_zb_scan_parameters_t *)output;
+        scan_data->zdo_status = zdo_status;
+        scan_data->count = count;
+
+        if (nwk_descriptor && count) {
+            memcpy(scan_data + sizeof(esp_ncp_zb_scan_parameters_t), nwk_descriptor, (count * sizeof(esp_zb_network_descriptor_t)));
+        }
+
+        esp_ncp_noti_input(&ncp_header, output, outlen);
+        free(output);
+        output = NULL;
     }
 }
 
@@ -163,9 +242,31 @@ static esp_err_t esp_ncp_zb_report_configure_resp_handler(const esp_zb_zcl_cmd_c
     ESP_RETURN_ON_FALSE(message->info.status == ESP_ZB_ZCL_STATUS_SUCCESS, ESP_ERR_INVALID_ARG, TAG, "Received message: error status(%d)",
                         message->info.status);
     ESP_LOGI(TAG, "Configure report response: status(%d), cluster(0x%x)", message->info.status, message->info.cluster);
-    for (esp_zb_zcl_config_report_resp_variable_t *variables = message->variables; variables != NULL; variables = variables->next) {
-        ESP_LOGI(TAG, "status(0x%x), direction(%d), attribute(0x%x)", variables->status, variables->direction, variables->attribute_id);
+
+    uint16_t data_head_len = sizeof(esp_zb_zcl_cmd_info_t);
+    uint16_t id_len = sizeof(uint16_t), status_len = sizeof(esp_zb_zcl_status_t), direction_len = sizeof(uint8_t);
+    uint8_t index = 0;
+    uint16_t length = (data_head_len + 1);
+    uint8_t *outbuf = calloc(1, length);
+    uint8_t variables_data_len = (status_len + direction_len + id_len);
+
+    if (outbuf) {
+        memcpy(outbuf, &message->info, data_head_len);
+        for (esp_zb_zcl_config_report_resp_variable_t *variables = message->variables; variables != NULL; variables = variables->next) {
+            ESP_LOGI(TAG, "status(0x%x), direction(%d), attribute(0x%x)", variables->status, variables->direction, variables->attribute_id);
+            length += variables_data_len;
+
+            outbuf = realloc(outbuf, length);
+            memcpy(&outbuf[length - variables_data_len], &variables->status, variables_data_len);
+
+            index ++;
+        }
+        outbuf[data_head_len] = index;
     }
+
+    *output = outbuf;
+    *outlen = length;
+
     return ESP_OK;
 }
 
@@ -590,7 +691,8 @@ static esp_err_t esp_ncp_zb_start_scan_fn(const uint8_t *input, uint16_t inlen, 
     esp_err_t ret = ESP_OK;
     esp_ncp_status_t status = ESP_NCP_ERR_FATAL;
     
-    // esp_zb_active_scan_request(*(uint32_t *)(input), *(uint8_t *)(input + sizeof(uint32_t)), esp_ncp_zb_zdo_scan_complete_handler);
+    void esp_zb_zdo_active_scan_request(uint32_t channel_mask, uint8_t scan_duration, esp_zb_zdo_scan_complete_callback_t user_cb);
+    esp_zb_zdo_active_scan_request(*(uint32_t *)(input), *(uint8_t *)(input + sizeof(uint32_t)), esp_ncp_zb_zdo_scan_complete_handler);
 
     ESP_NCP_ZB_STATUS();
 
@@ -628,11 +730,29 @@ static esp_err_t esp_ncp_zb_set_bind_fn(const uint8_t *input, uint16_t inlen, ui
     esp_ncp_status_t status = (ret == ESP_OK) ? ESP_NCP_SUCCESS : ESP_NCP_ERR_FATAL;
 
     if (input) {
-        esp_zb_zdo_bind_req_param_t *bind_req = calloc(1, sizeof(esp_zb_zdo_bind_req_param_t));
+        uint32_t *bind_req = calloc(1, sizeof(esp_ncp_zb_user_cb_t));
         if (bind_req) {
-            memcpy(bind_req, input, inlen);
+            memcpy(bind_req, input + (inlen - sizeof(esp_ncp_zb_user_cb_t)), sizeof(esp_ncp_zb_user_cb_t));
         }
         esp_zb_zdo_device_bind_req((esp_zb_zdo_bind_req_param_t *)input, esp_ncp_zb_bind_cb, (void *)bind_req);
+    }
+
+    ESP_NCP_ZB_STATUS();
+
+    return ret;
+}
+
+static esp_err_t esp_ncp_zb_set_unbind_fn(const uint8_t *input, uint16_t inlen, uint8_t **output, uint16_t *outlen)
+{
+    esp_err_t ret = input ? ESP_OK : ESP_ERR_INVALID_ARG;
+    esp_ncp_status_t status = (ret == ESP_OK) ? ESP_NCP_SUCCESS : ESP_NCP_ERR_FATAL;
+
+    if (input) {
+        uint32_t *bind_req = calloc(1, sizeof(esp_ncp_zb_user_cb_t));
+        if (bind_req) {
+            memcpy(bind_req, input + (inlen - sizeof(esp_ncp_zb_user_cb_t)), sizeof(esp_ncp_zb_user_cb_t));
+        }
+        esp_zb_zdo_device_unbind_req((esp_zb_zdo_bind_req_param_t *)input, esp_ncp_zb_unbind_cb, (void *)bind_req);
     }
 
     ESP_NCP_ZB_STATUS();
@@ -662,6 +782,55 @@ static esp_err_t esp_ncp_zb_stack_status_fn(const uint8_t *input, uint16_t inlen
     return ret;
 }
 
+static esp_ncp_zb_cluster_fn_t cluster_list_fn_table[] = {
+    { ESP_ZB_ZCL_CLUSTER_ID_BASIC                      , esp_zb_cluster_list_add_basic_cluster , NULL },
+    { ESP_ZB_ZCL_CLUSTER_ID_POWER_CONFIG               , esp_zb_cluster_list_add_power_config_cluster , NULL },
+    { ESP_ZB_ZCL_CLUSTER_ID_DEVICE_TEMP_CONFIG         , esp_zb_cluster_list_add_custom_cluster , NULL },
+    { ESP_ZB_ZCL_CLUSTER_ID_IDENTIFY                   , esp_zb_cluster_list_add_identify_cluster , NULL },
+    { ESP_ZB_ZCL_CLUSTER_ID_GROUPS                     , esp_zb_cluster_list_add_groups_cluster , NULL },
+    { ESP_ZB_ZCL_CLUSTER_ID_SCENES                     , esp_zb_cluster_list_add_scenes_cluster , NULL },
+    { ESP_ZB_ZCL_CLUSTER_ID_ON_OFF                     , esp_zb_cluster_list_add_on_off_cluster , NULL },
+    { ESP_ZB_ZCL_CLUSTER_ID_ON_OFF_SWITCH_CONFIG       , esp_zb_cluster_list_add_on_off_switch_config_cluster , NULL },
+    { ESP_ZB_ZCL_CLUSTER_ID_LEVEL_CONTROL              , esp_zb_cluster_list_add_level_cluster , NULL },
+    { ESP_ZB_ZCL_CLUSTER_ID_ALARMS                     , esp_zb_cluster_list_add_custom_cluster , NULL },
+    { ESP_ZB_ZCL_CLUSTER_ID_TIME                       , esp_zb_cluster_list_add_time_cluster , NULL },
+    { ESP_ZB_ZCL_CLUSTER_ID_RSSI_LOCATION              , esp_zb_cluster_list_add_custom_cluster , NULL },
+    { ESP_ZB_ZCL_CLUSTER_ID_ANALOG_INPUT               , esp_zb_cluster_list_add_analog_input_cluster , NULL },
+    { ESP_ZB_ZCL_CLUSTER_ID_ANALOG_OUTPUT              , esp_zb_cluster_list_add_analog_output_cluster , NULL },
+    { ESP_ZB_ZCL_CLUSTER_ID_ANALOG_VALUE               , esp_zb_cluster_list_add_analog_value_cluster , NULL },
+    { ESP_ZB_ZCL_CLUSTER_ID_BINARY_INPUT               , esp_zb_cluster_list_add_binary_input_cluster , NULL },
+    { ESP_ZB_ZCL_CLUSTER_ID_BINARY_OUTPUT              , esp_zb_cluster_list_add_custom_cluster , NULL },
+    { ESP_ZB_ZCL_CLUSTER_ID_BINARY_VALUE               , esp_zb_cluster_list_add_custom_cluster , NULL },
+    { ESP_ZB_ZCL_CLUSTER_ID_MULTI_INPUT                , esp_zb_cluster_list_add_custom_cluster , NULL },
+    { ESP_ZB_ZCL_CLUSTER_ID_MULTI_OUTPUT               , esp_zb_cluster_list_add_custom_cluster , NULL },
+    { ESP_ZB_ZCL_CLUSTER_ID_MULTI_VALUE                , esp_zb_cluster_list_add_multistate_value_cluster , NULL },
+    { ESP_ZB_ZCL_CLUSTER_ID_COMMISSIONING              , esp_zb_cluster_list_add_touchlink_commissioning_cluster , NULL },
+    { ESP_ZB_ZCL_CLUSTER_ID_OTA_UPGRADE                , esp_zb_cluster_list_add_ota_cluster , NULL },
+    { ESP_ZB_ZCL_CLUSTER_ID_POLL_CONTROL               , esp_zb_cluster_list_add_custom_cluster , NULL },
+    { ESP_ZB_ZCL_CLUSTER_ID_GREEN_POWER                , esp_zb_cluster_list_add_custom_cluster , NULL },
+    { ESP_ZB_ZCL_CLUSTER_ID_KEEP_ALIVE                 , esp_zb_cluster_list_add_custom_cluster , NULL },
+    { ESP_ZB_ZCL_CLUSTER_ID_SHADE_CONFIG               , esp_zb_cluster_list_add_shade_config_cluster , NULL },
+    { ESP_ZB_ZCL_CLUSTER_ID_DOOR_LOCK                  , esp_zb_cluster_list_add_door_lock_cluster , NULL },
+    { ESP_ZB_ZCL_CLUSTER_ID_WINDOW_COVERING            , esp_zb_cluster_list_add_window_covering_cluster , NULL },
+    { ESP_ZB_ZCL_CLUSTER_ID_PUMP_CONFIG_CONTROL        , esp_zb_cluster_list_add_custom_cluster , NULL },
+    { ESP_ZB_ZCL_CLUSTER_ID_THERMOSTAT                 , esp_zb_cluster_list_add_thermostat_cluster , NULL },
+    { ESP_ZB_ZCL_CLUSTER_ID_FAN_CONTROL                , esp_zb_cluster_list_add_fan_control_cluster , NULL },
+    { ESP_ZB_ZCL_CLUSTER_ID_DEHUMID_CONTROL            , esp_zb_cluster_list_add_custom_cluster , NULL },
+    { ESP_ZB_ZCL_CLUSTER_ID_THERMOSTAT_UI_CONFIG       , esp_zb_cluster_list_add_thermostat_ui_config_cluster , NULL },
+    { ESP_ZB_ZCL_CLUSTER_ID_COLOR_CONTROL              , esp_zb_cluster_list_add_color_control_cluster , NULL },
+    { ESP_ZB_ZCL_CLUSTER_ID_BALLAST_CONFIG             , esp_zb_cluster_list_add_custom_cluster , NULL },
+    { ESP_ZB_ZCL_CLUSTER_ID_ILLUMINANCE_MEASUREMENT    , esp_zb_cluster_list_add_illuminance_meas_cluster , NULL },
+    { ESP_ZB_ZCL_CLUSTER_ID_TEMP_MEASUREMENT           , esp_zb_cluster_list_add_temperature_meas_cluster , NULL },
+    { ESP_ZB_ZCL_CLUSTER_ID_PRESSURE_MEASUREMENT       , esp_zb_cluster_list_add_pressure_meas_cluster , NULL },
+    { ESP_ZB_ZCL_CLUSTER_ID_REL_HUMIDITY_MEASUREMENT   , esp_zb_cluster_list_add_humidity_meas_cluster , NULL },
+    { ESP_ZB_ZCL_CLUSTER_ID_OCCUPANCY_SENSING          , esp_zb_cluster_list_add_occupancy_sensing_cluster , NULL },
+    { ESP_ZB_ZCL_CLUSTER_ID_CARBON_DIOXIDE_MEASUREMENT , esp_zb_cluster_list_add_carbon_dioxide_measurement_cluster , NULL },
+    { ESP_ZB_ZCL_CLUSTER_ID_PM2_5_MEASUREMENT          , esp_zb_cluster_list_add_pm2_5_measurement_cluster , NULL },
+    { ESP_ZB_ZCL_CLUSTER_ID_IAS_ZONE                   , esp_zb_cluster_list_add_ias_zone_cluster , NULL },
+    { ESP_ZB_ZCL_CLUSTER_ID_ELECTRICAL_MEASUREMENT     , esp_zb_cluster_list_add_electrical_meas_cluster , NULL },
+    { ESP_ZB_ZCL_CLUSTER_ID_METERING                   , esp_zb_cluster_list_add_metering_cluster , NULL },
+};
+
 static esp_err_t esp_ncp_zb_add_endpoint_fn(const uint8_t *input, uint16_t inlen, uint8_t **output, uint16_t *outlen)
 {
     uint16_t data_head_len = sizeof(esp_ncp_zb_endpoint_t);
@@ -678,7 +847,6 @@ static esp_err_t esp_ncp_zb_add_endpoint_fn(const uint8_t *input, uint16_t inlen
     }
 
     if (s_start_flag && (ncp_endpoint->inputClusterCount || ncp_endpoint->outputClusterCount)) {
-        uint8_t test_attr = 0;
         uint16_t inputClusterLength = ncp_endpoint->inputClusterCount * sizeof(uint16_t);
         uint16_t outputClusterLength = ncp_endpoint->outputClusterCount * sizeof(uint16_t);
         uint16_t *inputClusterList = inputClusterLength ? calloc(1, inputClusterLength) : NULL;
@@ -697,39 +865,22 @@ static esp_err_t esp_ncp_zb_add_endpoint_fn(const uint8_t *input, uint16_t inlen
         for (int i = 0; i < ncp_endpoint->inputClusterCount; i ++) {
             esp_zb_attribute_list_t *esp_zb_cluster = esp_zb_zcl_attr_list_create(inputClusterList[i]);
             ESP_LOGI(TAG, "inputClusterList %02x", inputClusterList[i]);
-            switch (inputClusterList[i]) {
-                case ESP_ZB_ZCL_CLUSTER_ID_BASIC:
-                    esp_zb_basic_cluster_add_attr(esp_zb_cluster, ESP_ZB_ZCL_ATTR_BASIC_ZCL_VERSION_ID, &test_attr);
-                    esp_zb_basic_cluster_add_attr(esp_zb_cluster, ESP_ZB_ZCL_ATTR_BASIC_POWER_SOURCE_ID, &test_attr);
-                    esp_zb_cluster_list_add_basic_cluster(esp_zb_cluster_list, esp_zb_cluster, ESP_ZB_ZCL_CLUSTER_SERVER_ROLE);
+            for (int j = 0; j < sizeof(cluster_list_fn_table) / sizeof(cluster_list_fn_table[0]); j ++) {
+                if (inputClusterList[i] == cluster_list_fn_table[j].cluster_id) {
+                    cluster_list_fn_table[j].add_cluster_fn(esp_zb_cluster_list, esp_zb_cluster, ESP_ZB_ZCL_CLUSTER_SERVER_ROLE);
                     break;
-                case ESP_ZB_ZCL_CLUSTER_ID_IDENTIFY:
-                    esp_zb_identify_cluster_add_attr(esp_zb_cluster, ESP_ZB_ZCL_ATTR_IDENTIFY_IDENTIFY_TIME_ID, &test_attr);
-                    esp_zb_cluster_list_add_identify_cluster(esp_zb_cluster_list, esp_zb_cluster, ESP_ZB_ZCL_CLUSTER_SERVER_ROLE);
-                    break;
-                case ESP_ZB_ZCL_CLUSTER_ID_ON_OFF:
-                    esp_zb_cluster_list_add_on_off_cluster(esp_zb_cluster_list, esp_zb_cluster, ESP_ZB_ZCL_CLUSTER_SERVER_ROLE);
-                    break;
-                default:
-                    break;
+                }
             }
         }
 
         for (int i = 0; i < ncp_endpoint->outputClusterCount; i ++) {
             esp_zb_attribute_list_t *esp_zb_cluster = esp_zb_zcl_attr_list_create(outputClusterList[i]);
             ESP_LOGI(TAG, "outputClusterList %02x", outputClusterList[i]);
-            switch (outputClusterList[i]) {
-                case ESP_ZB_ZCL_CLUSTER_ID_BASIC:
-                    esp_zb_cluster_list_add_basic_cluster(esp_zb_cluster_list, esp_zb_cluster, ESP_ZB_ZCL_CLUSTER_CLIENT_ROLE);
+            for (int j = 0; j < sizeof(cluster_list_fn_table) / sizeof(cluster_list_fn_table[0]); j ++) {
+                if (outputClusterList[i] == cluster_list_fn_table[j].cluster_id) {
+                    cluster_list_fn_table[j].add_cluster_fn(esp_zb_cluster_list, esp_zb_cluster, ESP_ZB_ZCL_CLUSTER_CLIENT_ROLE);
                     break;
-                case ESP_ZB_ZCL_CLUSTER_ID_IDENTIFY:
-                    esp_zb_cluster_list_add_identify_cluster(esp_zb_cluster_list, esp_zb_cluster, ESP_ZB_ZCL_CLUSTER_CLIENT_ROLE);
-                    break;
-                case ESP_ZB_ZCL_CLUSTER_ID_ON_OFF:
-                    esp_zb_cluster_list_add_on_off_cluster(esp_zb_cluster_list, esp_zb_cluster, ESP_ZB_ZCL_CLUSTER_CLIENT_ROLE);
-                    break;
-                default:
-                    break;
+                }
             }
         }
 
@@ -948,7 +1099,7 @@ static esp_err_t esp_ncp_zb_zcl_write_fn(const uint8_t *input, uint16_t inlen, u
             .direction = zcl_data->direction,
             .data = {
                 .type = zcl_data->type,
-                .value = input + sizeof(esp_ncp_zb_zcl_data_t),
+                .value = (void *)(input + sizeof(esp_ncp_zb_zcl_data_t)),
             }
         };
 
@@ -963,7 +1114,7 @@ static esp_err_t esp_ncp_zb_zcl_write_fn(const uint8_t *input, uint16_t inlen, u
                 cmd_req.data.value = data_value;
                 break;
             default:
-                cmd_req.data.value = input + sizeof(esp_ncp_zb_zcl_data_t);
+                cmd_req.data.value = (void *)(input + sizeof(esp_ncp_zb_zcl_data_t));
                 break;
         }
 
@@ -998,9 +1149,7 @@ static esp_err_t esp_ncp_zb_long_addr_fn(const uint8_t *input, uint16_t inlen, u
     *output = calloc(1, *outlen);
     
     if (*output) {
-        esp_zb_ieee_addr_t addr;
-        esp_zb_get_long_address(addr);
-        memcpy(*output, addr, *outlen);
+        esp_zb_get_long_address(*output);
     }
 
     return (*output) ? ESP_OK : ESP_ERR_NO_MEM;
@@ -1048,7 +1197,7 @@ static esp_err_t esp_ncp_zb_primary_key_get_fn(const uint8_t *input, uint16_t in
 
 static esp_err_t esp_ncp_zb_primary_key_set_fn(const uint8_t *input, uint16_t inlen, uint8_t **output, uint16_t *outlen)
 {
-    esp_err_t ret = (input && inlen == 16 ) ? esp_zb_secur_network_key_set(input) : ESP_ERR_INVALID_ARG;
+    esp_err_t ret = (input && inlen == 16 ) ? esp_zb_secur_network_key_set((uint8_t *)input) : ESP_ERR_INVALID_ARG;
     esp_ncp_status_t status = (ret == ESP_OK) ? ESP_NCP_SUCCESS : ESP_NCP_ERR_FATAL;
 
     ESP_NCP_ZB_STATUS();
@@ -1113,7 +1262,7 @@ static esp_err_t esp_ncp_zb_short_addr_set_fn(const uint8_t *input, uint16_t inl
 
 static esp_err_t esp_ncp_zb_long_addr_set_fn(const uint8_t *input, uint16_t inlen, uint8_t **output, uint16_t *outlen)
 {
-    esp_err_t ret = (input && inlen == sizeof(esp_zb_ieee_addr_t) ) ? esp_zb_set_long_address(input) : ESP_ERR_INVALID_ARG;
+    esp_err_t ret = (input && inlen == sizeof(esp_zb_ieee_addr_t) ) ? esp_zb_set_long_address((uint8_t *)input) : ESP_ERR_INVALID_ARG;
     esp_ncp_status_t status = (ret == ESP_OK) ? ESP_NCP_SUCCESS : ESP_NCP_ERR_FATAL;
 
     ESP_NCP_ZB_STATUS();
@@ -1224,6 +1373,89 @@ static esp_err_t esp_ncp_zb_use_predefined_nwk_panid_set_fn(const uint8_t *input
     return ret;
 }
 
+static esp_err_t esp_ncp_zb_address_short_by_ieee_get_fn(const uint8_t *input, uint16_t inlen, uint8_t **output, uint16_t *outlen)
+{
+    esp_err_t ret = (input && inlen == sizeof(esp_zb_ieee_addr_t)) ? ESP_OK : ESP_ERR_INVALID_ARG;
+    esp_ncp_status_t status = (ret == ESP_OK) ? ESP_NCP_SUCCESS : ESP_NCP_ERR_FATAL;
+
+    if (status == ESP_NCP_SUCCESS) {
+        uint16_t shotr_addr = esp_zb_address_short_by_ieee((uint8_t *)input);
+
+        *outlen = sizeof(uint16_t);
+        *output = calloc(1, *outlen);
+
+        if (*output) {
+            memcpy(*output, &shotr_addr, *outlen);
+        }
+    }
+
+    return (*output) ? ESP_OK : ESP_ERR_NO_MEM;
+}
+
+static esp_err_t esp_ncp_zb_ieee_address_by_short_get_fn(const uint8_t *input, uint16_t inlen, uint8_t **output, uint16_t *outlen)
+{
+    esp_err_t ret = (input && inlen == sizeof(uint16_t) ) ? ESP_OK : ESP_ERR_INVALID_ARG;
+    esp_ncp_status_t status = (ret == ESP_OK) ? ESP_NCP_SUCCESS : ESP_NCP_ERR_FATAL;
+
+    if (status == ESP_NCP_SUCCESS) {
+        uint16_t shotr_addr = 0;
+        esp_zb_ieee_addr_t ieee_addr;
+        memcpy(&shotr_addr, input, inlen);
+
+        esp_zb_ieee_address_by_short(shotr_addr, ieee_addr);
+
+        *outlen = sizeof(esp_zb_ieee_addr_t);
+        *output = calloc(1, *outlen);
+
+        if (*output) {
+            memcpy(*output, ieee_addr, *outlen);
+        }
+    }
+
+    return (*output) ? ESP_OK : ESP_ERR_NO_MEM;
+}
+
+static esp_err_t esp_ncp_zb_find_match_fn(const uint8_t *input, uint16_t inlen, uint8_t **output, uint16_t *outlen)
+{
+    esp_err_t ret = ESP_OK;
+
+    typedef struct {
+        esp_ncp_zb_user_cb_t user_ctx;      /*!< A ZDO match desc request callback */
+        uint16_t dst_nwk_addr;              /*!< NWK address that request sent to */
+        uint16_t addr_of_interest;          /*!< NWK address of interest */
+        uint16_t profile_id;                /*!< Profile ID to be match at the destination which refers to esp_zb_af_profile_id_t */
+        uint8_t num_in_clusters;            /*!< The number of input clusters provided for matching cluster server */
+        uint8_t num_out_clusters;           /*!< The number of output clusters provided for matching cluster client */
+    } __attribute__ ((packed)) esp_zb_zdo_match_desc_t;
+
+    if (input) {
+        esp_zb_zdo_match_desc_t *zdo_data = (esp_zb_zdo_match_desc_t *)input;
+        esp_zb_zdo_match_desc_req_param_t desc_req = {
+            .dst_nwk_addr = zdo_data->dst_nwk_addr,
+            .addr_of_interest = zdo_data->addr_of_interest,
+            .profile_id = zdo_data->profile_id,
+            .num_in_clusters = zdo_data->num_in_clusters,
+            .num_out_clusters = zdo_data->num_out_clusters,
+            .cluster_list = (inlen != sizeof(esp_zb_zdo_match_desc_t)) ? (uint16_t *)(input + sizeof(esp_zb_zdo_match_desc_t)) : NULL,
+        };
+
+        uint32_t *user_ctx = calloc(1, sizeof(esp_ncp_zb_user_cb_t));
+        if (user_ctx) {
+            memcpy(user_ctx, input, sizeof(esp_ncp_zb_user_cb_t));
+        }
+
+        ret = esp_zb_zdo_match_cluster(&desc_req, esp_ncp_zb_find_match_cb, user_ctx);
+    } else {
+        ret = ESP_ERR_INVALID_ARG;
+    }
+
+    esp_ncp_status_t status = (ret == ESP_OK) ? ESP_NCP_SUCCESS : ESP_NCP_ERR_FATAL;
+
+    ESP_NCP_ZB_STATUS();
+
+    return ret;
+}
+
 static const esp_ncp_zb_func_t ncp_zb_func_table[] = {
     {ESP_NCP_NETWORK_INIT, esp_ncp_zb_network_init_fn},
     {ESP_NCP_NETWORK_PAN_ID_SET, esp_ncp_zb_pan_id_set_fn},
@@ -1245,7 +1477,7 @@ static const esp_ncp_zb_func_t ncp_zb_func_table[] = {
     {ESP_NCP_NETWORK_PERMIT_JOINING, NULL},
     {ESP_NCP_NETWORK_LEAVENETWORK, NULL},
     {ESP_NCP_NETWORK_SHORT_ADDRESS_GET, esp_ncp_zb_short_addr_fn},
-    {ESP_NCP_NETWORK_LONG_ADDRESS_SET, esp_ncp_zb_long_addr_fn},
+    {ESP_NCP_NETWORK_LONG_ADDRESS_GET, esp_ncp_zb_long_addr_fn},
     {ESP_NCP_NETWORK_CHANNEL_GET, esp_ncp_zb_current_channel_fn},
     {ESP_NCP_NETWORK_PRIMARY_CHANNEL_GET, esp_ncp_zb_primary_channel_get_fn},
     {ESP_NCP_NETWORK_PRIMARY_KEY_GET, esp_ncp_zb_primary_key_get_fn},
@@ -1266,6 +1498,8 @@ static const esp_ncp_zb_func_t ncp_zb_func_table[] = {
     {ESP_NCP_NETWORK_SECURE_MODE_GET, esp_ncp_zb_nwk_security_mode_fn},
     {ESP_NCP_NETWORK_SECURE_MODE_SET, esp_ncp_zb_nwk_security_mode_set_fn},
     {ESP_NCP_NETWORK_PREDEFINED_PANID, esp_ncp_zb_use_predefined_nwk_panid_set_fn},
+    {ESP_NCP_NETWORK_SHORT_TO_IEEE, esp_ncp_zb_ieee_address_by_short_get_fn},
+    {ESP_NCP_NETWORK_IEEE_TO_SHORT, esp_ncp_zb_address_short_by_ieee_get_fn},
     {ESP_NCP_ZCL_ENDPOINT_ADD, esp_ncp_zb_add_endpoint_fn},
     {ESP_NCP_ZCL_ENDPOINT_DEL, esp_ncp_zb_del_endpoint_fn},
     {ESP_NCP_ZCL_ATTR_READ, esp_ncp_zb_read_attr_fn},
@@ -1276,7 +1510,8 @@ static const esp_ncp_zb_func_t ncp_zb_func_table[] = {
     {ESP_NCP_ZCL_WRITE, esp_ncp_zb_zcl_write_fn},
     {ESP_NCP_ZCL_REPORT_CONFIG, NULL},
     {ESP_NCP_ZDO_BIND_SET, esp_ncp_zb_set_bind_fn},
-    {ESP_NCP_ZDO_UNBIND_SET, NULL},
+    {ESP_NCP_ZDO_UNBIND_SET, esp_ncp_zb_set_unbind_fn},
+    {ESP_NCP_ZDO_FIND_MATCH, esp_ncp_zb_find_match_fn},
 };
 
 esp_err_t esp_ncp_zb_output(esp_ncp_header_t *ncp_header, const void *buffer, uint16_t len)
