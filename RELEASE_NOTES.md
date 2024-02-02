@@ -1,5 +1,32 @@
 # Espressif Zigbee SDK Release Notes
 
+## 2-Feb-2024
+1.1.0 version release of ESP-ZIGBEE-SDK
+
+### Features
+- Updated esp-zboss-lib to v1.1.0
+- Updated esp-zigbee-lib to v1.1.0
+- Added more commands support for cli example
+- Added zigbee stack lock support
+- Added reset factory to default APIs
+- Added zll identify callback
+- Added zigbee device announcement APIs
+- Replaced the macsplit of the gateway with Radio Spinel
+- Replaced zigbee rcp example with ot-rcp example
+
+### Bug Fixes
+- Fixed the error trigger the zcl identify timer upon write_req
+- Fixed Zigbee color control downward movement failure
+- Fixed Zigbee color control step color failure
+- Fixed the scan_response for touchlink scan req handler
+- Fixed touchlink transaction id
+- Corrected the check for clearing touchlink factory new
+- Rectified the logic of touchlink set network key
+- Fixed touchlink target does not not send join router response with failure status
+- Fixed the erase-NVRAM operation of device leave network for touchlink
+- Fixed esp_zigbee_gateway build error on Win11
+- Closes: https://github.com/espressif/esp-zigbee-sdk/issues/231
+
 ## 19-Jan-2024
 1.0.9 version release of ESP-ZIGBEE-SDK
 

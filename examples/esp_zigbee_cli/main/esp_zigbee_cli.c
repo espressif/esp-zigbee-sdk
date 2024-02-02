@@ -78,12 +78,13 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
         if (err_status == ESP_OK) {
             esp_zb_ieee_addr_t extended_pan_id;
             esp_zb_get_extended_pan_id(extended_pan_id);
-            ESP_LOGI(TAG, "Join or form %s network", esp_zb_network_is_distributed() ? "distributed" : "centralized");
             ESP_LOGI(TAG,
                      "Formed network successfully (Extended PAN ID: %02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x, PAN ID: 0x%04hx, Channel:%d, Short "
                      "Address: 0x%04hx)",
                      extended_pan_id[7], extended_pan_id[6], extended_pan_id[5], extended_pan_id[4], extended_pan_id[3], extended_pan_id[2],
                      extended_pan_id[1], extended_pan_id[0], esp_zb_get_pan_id(), esp_zb_get_current_channel(), esp_zb_get_short_address());
+            ESP_LOGI(TAG, "Join or form %s network", esp_zb_network_is_distributed() ? "distributed" : "centralized");
+            esp_zb_bdb_open_network(180);
         } else {
             ESP_LOGW(TAG, "Failed to form network");
         }

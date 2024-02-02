@@ -17,6 +17,7 @@ command **<d/h:arg> ...** : the ellipsis after an argument means that the preced
 - [extpanid](#extpanid)
 - [panid](#panid)
 - [channel](#channel)
+- [channel_mask](#channel_mask)
 - [start](#start)
 - [commissioning](#commissioning)
 - [ic](#ic)
@@ -160,30 +161,53 @@ I (983554) : get panid: 0x1122
 ### channel
 Configure the 2.4GHz `channel` for Zigbee to establish communication.
 
-*bdb -c <d:n> <x:n>*  
-- <d:channel>: A integer type ranges from 11 to 26 for the primary channel, Oherwise, treat n as bitmask.
-- <x:channel_mask>: A integer type ranges from 0x00000800 to 0x07FFF800 for the secondary channel, Oherwise, treat n as bitmask.
+*bdb -c <d:n>*  
+- <d:n>: A integer type ranges from 11 to 26, Oherwise, treat n as bitmask.
+
+**Note**
+- Set action only before bdb start. Read action only after bdb start.
+
+Set Zigbee `channel` to 24.
+```bash
+> bdb -c 24
+I (977414) : Setting channel to 24
+```
+
+Get Zigbee 2.4GHz channel:   
+
+*bdb -c get*   
+```bash
+> bdb -c get
+I (1064419) : Primary channel(s): 24
+I (1064429) : Secondary channel(s): 24
+```
+
+### channel_mask
+Configure the 2.4GHz `channel` for Zigbee to establish communication.
+
+*bdb -h <x:channel_mask> <x:channel_mask>*  
+- <x:primary_channel_mask>: A integer type ranges from 0x00000800 to 0x07FFF800 for the secondary channel, Oherwise, treat as bitmask.
+- <x:secondary_channel_mask>: A integer type ranges from 0x00000800 to 0x07FFF800 for the secondary channel, Oherwise, treat as bitmask.
 
 **Note**
 - Set action only before bdb start. Read action only after bdb start.
 
 Set Zigbee `channel`
 ```bash
-> bdb -c help
+> bdb -h help
 I (55834) : 
-Primary channel is range from 11 to 26
-Secondary channel is range from 0x00000800 to 0x07FFF800
+Primary and Secondary channel is range from 0x00000800 to 0x07FFF800
 I (55834) : Done
-> bdb -c 11
-I (73034) : Set primary channel: 11
+> bdb -h 0x00000800
+I (73034) : Set primary channel: 0x00000800
 I (73034) : Done
-> bdb -c 11 0x07FFF800
-I (85624) : Set primary channel: 11
+> bdb -h 0x00000800 0x07FFF800
+I (85624) : Set primary channel: 0x00000800
 I (85634) : Set secondary channel: 0x07fff800
 I (85634) : Done
-> bdb -c get
+> bdb -h get
 I (94244) : 
-Primary: 11
+Primary: 0x00000800
 Secondary: 0x07fff800
 I (94254) : Done
 ```
@@ -429,11 +453,8 @@ I (79294) : Router role set
 > bdb -t d
 I (82504) : Set distributed network
 I (82504) : Done
-> bdb -c 1
-E (84414) : Primary channel out of range
-I (84414) : Failed
 > bdb -c 11
-I (89614) : Set primary channel: 11
+I (89614) : Setting channel to 11
 I (89614) : Done
 > tlk -k 00112233445566778899aabbccddeeff
 I (146654) : 
@@ -466,7 +487,7 @@ I (4221) : Router role set
 I (7741) : Set distributed network
 I (7741) : Done
 > bdb -c 11
-I (9491) : Set primary channel: 11
+I (9491) : Setting channel to 11
 I (9491) : Done
 > tlk -t help
 I (34341) : Duration of Touchlink target commissioning
