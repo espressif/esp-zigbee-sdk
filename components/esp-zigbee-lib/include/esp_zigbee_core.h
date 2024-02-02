@@ -92,9 +92,10 @@ typedef enum esp_zb_core_action_callback_id_s {
     ESP_ZB_CORE_DOOR_LOCK_LOCK_DOOR_CB_ID               = 0x0010,   /*!< Lock/unlock door request, refer to esp_zb_zcl_door_lock_lock_door_message_t */
     ESP_ZB_CORE_DOOR_LOCK_LOCK_DOOR_RESP_CB_ID          = 0x0011,   /*!< Lock/unlock door response, refer to esp_zb_zcl_door_lock_lock_door_resp_message_t */
     ESP_ZB_CORE_IDENTIFY_EFFECT_CB_ID                   = 0x0012,   /*!< Identify triggers effect request, refer to esp_zb_zcl_identify_effect_message_t */
+    ESP_ZB_CORE_BASIC_RESET_TO_FACTORY_RESET_CB_ID      = 0x0013,   /*!< Reset all clusters of endpoint to factory default, refer to esp_zb_zcl_basic_reset_factory_default_message_t  */
     ESP_ZB_CORE_CMD_READ_ATTR_RESP_CB_ID                = 0x1000,   /*!< Read attribute response, refer to esp_zb_zcl_cmd_read_attr_resp_message_t */
     ESP_ZB_CORE_CMD_WRITE_ATTR_RESP_CB_ID               = 0x1001,   /*!< Write attribute response, refer to esp_zb_zcl_cmd_write_attr_resp_message_t */
-    ESP_ZB_CORE_CMD_REPORT_CONFIG_RESP_CB_ID            = 0x1002,   /*!< Configure reprot response, refer to esp_zb_zcl_cmd_config_report_resp_message_t */
+    ESP_ZB_CORE_CMD_REPORT_CONFIG_RESP_CB_ID            = 0x1002,   /*!< Configure report response, refer to esp_zb_zcl_cmd_config_report_resp_message_t */
     ESP_ZB_CORE_CMD_READ_REPORT_CFG_RESP_CB_ID          = 0x1003,   /*!< Read report configuration response, refer to esp_zb_zcl_cmd_read_report_config_resp_message_t */
     ESP_ZB_CORE_CMD_DISC_ATTR_RESP_CB_ID                = 0x1004,   /*!< Discover attributes response, refer to esp_zb_zcl_cmd_discover_attributes_resp_message_t */
     ESP_ZB_CORE_CMD_DEFAULT_RESP_CB_ID                  = 0x1005,   /*!< Default response, refer to esp_zb_zcl_cmd_default_resp_message_t */
@@ -199,6 +200,17 @@ typedef uint8_t (*esp_zb_cli_resp_callback_t)(uint8_t bufid);
 typedef void (*esp_zb_identify_notify_callback_t)(uint8_t identify_on);
 
 /**
+ * @brief ZCL reset default attribute callback
+ *
+ * @param[in] endpoint   The Endpoint identifier
+ * @param[in] cluster_id The cluster identifier
+ * @param[in] curr_attr  The current attribute information
+ *
+ * @return The default attribute value will be set to
+ */
+typedef void *(*esp_zb_zcl_reset_default_attr_callback_t)(uint8_t endpoint, uint16_t cluster_id, esp_zb_zcl_attribute_t curr_attr);
+
+/**
  * @brief Register the Zigbee core action handler
  *
  * @param[in] cb A callback that user can handle the Zigbee action, refer to esp_zb_core_callback_t
@@ -283,7 +295,7 @@ bool esp_zb_zcl_delete_privilege_command(uint8_t endpoint, uint16_t cluster, uin
  * @param[in] group_id          The group id of scene, which will be used to find scenes table record
  * @param[in] scene_id          The scene id of scene, which will be used to find scenes table record
  * @param[in] transition_time   The transition time of scene, whose unit is 100 milliseconds
- * @param[in] field             The pointer to zcl senes extension field list
+ * @param[in] field             The pointer to zcl sense extension field list
  * @return
  *      - ESP_OK: on success
  *      - ESP_FAIL: the group id or scene id is invalid
@@ -388,6 +400,15 @@ esp_err_t esp_zb_bdb_open_network(uint8_t permit_duration);
  *      - ESP_FAIL: on failure
  */
 esp_err_t esp_zb_bdb_close_network(void);
+
+/**
+ * @brief Check if device has joined network or not
+ *
+ * @return
+ *      - true: device is joined
+ *      - false: device is not joined
+ */
+bool esp_zb_bdb_dev_joined(void);
 
 /**
  * @brief Set Touchlink NWK channel
@@ -530,6 +551,39 @@ esp_err_t esp_zb_bdb_start_top_level_commissioning(uint8_t mode_mask);
 void esp_zb_factory_reset(void);
 
 /**
+ * @brief Reset all endpoints to factory default
+ *
+ * @note If @p cb is not set or @p cb return NULL, the default attribute value will be set to zero
+ * @param[in] reset_report Whether reset report of clusters or not
+ * @param[in] cb The user can utilize the callback to set default attribute value
+ *
+ * @return
+ *      - ESP_OK: on success
+ *      - ESP_FAIL: on failed
+ */
+esp_err_t esp_zb_zcl_reset_all_endpoints_to_factory_default(bool reset_report, esp_zb_zcl_reset_default_attr_callback_t cb);
+
+/**
+ * @brief Reset endpoint to factory default
+ *
+ * @note If @p cb is not set or @p cb return NULL, the default attribute value will be set to zero
+ * @param[in] endpoint      The endpoint identifier which will be reset
+ * @param[in] reset_report  Whether reset report of clusters or not
+ * @param[in] cb The user can utilize the callback to set default attribute value
+ *
+ * @return
+ *      - ESP_OK: on success
+ *      - ESP_FAIL: on failed
+ */
+esp_err_t esp_zb_zcl_reset_endpoint_to_factory_default(uint8_t endpoint, bool reset_report, esp_zb_zcl_reset_default_attr_callback_t cb);
+
+/**
+ * @brief Reset the non-volatile data to factory default
+ *
+ */
+void esp_zb_zcl_reset_nvram_to_factory_default(void);
+
+/**
  * @brief   Start Zigbee function.
  *
  * @param[in] autostart - true    autostart mode
@@ -564,6 +618,22 @@ void esp_zb_factory_reset(void);
  *
  */
 esp_err_t esp_zb_start(bool autostart);
+
+/**
+ * @brief  Acquire Zigbee lock.
+ *
+ * @note It's mandatory to acquire the lock before calling any Zigbee SDK APIs, except that the call site is in Zigbee callbacks.
+ * @return
+ *      - true: on success
+ *
+ */
+bool esp_zb_lock_acquire(TickType_t block_ticks);
+
+/**
+ * @brief  Release Zigbee lock.
+ *
+ */
+void esp_zb_lock_release(void);
 
 /**
  * @brief  Zigbee main loop iteration.
@@ -679,22 +749,24 @@ esp_err_t esp_zb_bdb_cancel_formation(void);
  */
 esp_err_t esp_zb_device_register(esp_zb_ep_list_t *ep_list);
 
-/**
- * @brief  Zigbee stack minior initialization for RCP.
- *
- * @warning It is ONLY for RCP initialization for limited Zigbee stack init
- */
-void esp_zb_rcp_init(void);
-
-/**
- * @brief  Zigbee main loop iteration for RCP
- *
- * @warning It is ONLY for RCP main loop iteration.
- *
- */
-void esp_zb_rcp_main_loop_iteration(void);
-
 #ifdef ZB_DISTRIBUTED_SECURITY_ON
+
+/**
+ * @brief Set trust center policy state to distributed or not
+ *
+ * @param[in] enabled The trust center policy state
+ */
+void esp_zb_tc_policy_set_distributed_security(bool enabled);
+
+/**
+ * @brief Check the trust center policy is distributed
+ *
+ * @return
+ *      - true: trust center policy is set as distributed
+ *      - false: trust center policy is not set as distributed
+ */
+bool esp_zb_tc_policy_get_distributed_security();
+
 /**
  * @brief Enable or disable the Zigbee distributed network.
  *
@@ -718,7 +790,7 @@ bool esp_zb_network_is_distributed(void);
 /**
  * @brief Enable or disable the Zigbee device to join a distributed TC network
  *
- * @note It is disbaled by default
+ * @note It is disabled by default
  *
  * @param[in] enabled Enable or disable
  */
@@ -735,7 +807,7 @@ bool esp_zb_joining_to_distributed_network_enabled(void);
 /**
  * @brief Set the sleep threshold on the device. When the scheduler detects that the device can enter sleep mode, it will notify the application with the signal ESP_ZB_COMMON_SIGNAL_CAN_SLEEP.
  * The device cannot enter sleep mode when the sleep interval is less than this threshold.
- * Default sleep threshold is 20 milliseconds, beacuse do not sleep when it is less then 1 Beacon Interval to wake up.
+ * Default sleep threshold is 20 milliseconds, because do not sleep when it is less then 1 Beacon Interval to wake up.
  *
  * @param[in] threshold_ms Sleep threshold in milliseconds
  *

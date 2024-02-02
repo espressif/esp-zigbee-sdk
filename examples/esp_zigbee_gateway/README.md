@@ -3,24 +3,17 @@
 
 # Gateway Example
 
-This example demonstrates how to build a Zigbee Gateway device. It runs on a Wi-Fi SoC such as ESP32, ESP32-C3 and ESP32-S3, with an 802.15.4 SoC like ESP32-H2 running [esp_zigbee_rcp](../esp_zigbee_rcp) to provide 802.15.4 radio.
-
-The example could also run on a single SoC which supports both Wi-Fi and Zigbee (e.g., ESP32-C6), but since there is only one RF path in ESP32-C6, which means Wi-Fi and Zigbee can't receive simultaneously, it has a significant impact on performance. Hence the two SoCs solution is recommended.
-
+This example demonstrates how to build a Zigbee Gateway device. It runs on a Wi-Fi SoC such as ESP32, ESP32-C3 and ESP32-S3, with an 802.15.4 SoC like ESP32-H2 running [ot_rcp](https://github.com/espressif/esp-idf/tree/master/examples/openthread/ot_rcp) to provide 802.15.4 radio.
 
 ## Hardware Required
 
 * One development board with ESP32 or ESP32-S3 SoC acting as Zigbee gateway (loaded with esp_zigbee_gateway example)
 * A USB cable for power supply and programming
 * Five jumper wires for UART (TX, RX, RST, BOOT and GND)
-* Gateway doesn't function alone. Choose ESP32-H2 as Zigbee rcp (see [esp_zigbee_rcp example](../esp_zigbee_rcp))
+* Gateway doesn't function alone. Choose ESP32-H2 as rcp (see [ot_rcp example](https://github.com/espressif/esp-idf/tree/master/examples/openthread/ot_rcp))
 * **Flash** Zigbee rcp on the ESP32-H2 DevKitC first **before** connecting to Zigbee gateway, if auto rcp update feature is disable.
 * Connect the two SoCs via UART, below is an example setup with ESP32-DevKitC and ESP32-H2-DevKitC:
 ![Zigbee_gateway](zigbee-gateway-esp32-esp32h2.jpg)
-
-## Configure the project
-
-Before project configuration and build, make sure to set the correct chip target using `idf.py set-target` command.
 
 ### Standalone Modules
 
@@ -35,6 +28,8 @@ ESP32 pin     | ESP32-H2 pin
    GPIO18     |    GPIO9(BOOT)
 
 TX, RX, RST and BOOT pin from ESP32 side can be configured by user in `idf.py menuconfig` under menu "ESP Zigbee gateway rcp update".
+
+TX, RX pins from ESP32-H2 should be configured in [ot_rcp example](https://github.com/espressif/esp-idf/tree/master/examples/openthread/ot_rcp) via "OpenThread RCP Example > Configure RCP UART pin manually" options.
 
 Other pin number is also available for user to configure if needed.
 
@@ -51,6 +46,10 @@ The two SoCs are connected with following interfaces:
 
 No jumper wires needed. No `idf.py menuconfig` under menu "ESP Zigbee gateway rcp update" configure to change.
 
+## Configure the project
+
+Before project configuration and build, make sure to set the correct chip target using `idf.py set-target` command.
+
 ## Erase the NVRAM 
 
 Before flash it to the board, it is recommended to erase NVRAM if user doesn't want to keep the previous examples or other projects stored info 
@@ -60,7 +59,10 @@ using `idf.py -p PORT erase-flash`
 
 The esp_zigbee_gateway supports updating the RCP image. Generate rcp image before building the esp_zigbee_gateway example.
 
-Build the [esp_zigbee_rcp](../esp_zigbee_rcp) example. Later in the esp_zigbee_gateway building process, the built RCP image will be automatically packed into the esp_zigbee_gateway firmware. See detail in [CMakeLists.txt](main/CMakeLists.txt).
+Build the [ot_rcp](https://github.com/espressif/esp-idf/tree/master/examples/openthread/ot_rcp) example. Later in the esp_zigbee_gateway building process, the built RCP image will be automatically packed into the esp_zigbee_gateway firmware. See detail in [CMakeLists.txt](main/CMakeLists.txt).
+
+Notes:
+- `OPENTHREAD_NCP_VENDOR_HOOK` of `ot_rcp` should be selected via menuconfig.
 
 ## Build and Flash
 

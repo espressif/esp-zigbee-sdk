@@ -78,12 +78,6 @@ examples/esp_zigbee_ncp:
       temporary: true
       reason: the other targets are not tested yet
 
-examples/esp_zigbee_rcp:
-  enable:
-    - if: IDF_TARGET in ["esp32c6", "esp32h2"]
-      temporary: true
-      reason: the other targets are not tested yet
-
 examples/esp_zigbee_sleep/deep_sleep:
   enable:
     - if: IDF_TARGET in ["esp32c6", "esp32h2"]

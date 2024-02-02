@@ -13,6 +13,7 @@
  */
 #include <fcntl.h>
 #include <string.h>
+#include "esp_check.h"
 #include "esp_log.h"
 #include "esp_netif.h"
 #include "freertos/FreeRTOS.h"
@@ -30,8 +31,8 @@
 #include "esp_vfs_usb_serial_jtag.h"
 #include "driver/usb_serial_jtag.h"
 
-#if (!defined ZB_MACSPLIT_HOST && defined ZB_MACSPLIT_DEVICE)
-#error Only Zigbee gateway host device should be defined
+#if CONFIG_OPENTHREAD_SPINEL_ONLY
+#include "esp_radio_spinel.h"
 #endif
 
 static const char *TAG = "ESP_ZB_GATEWAY";
@@ -65,7 +66,7 @@ esp_err_t esp_zb_gateway_console_init(void)
 static void esp_zb_gateway_update_rcp(void)
 {
     /* Deinit uart to transfer UART to the serial loader */
-    esp_zb_macsplit_uart_deinit();
+    esp_zb_rcp_deinit();
     if (esp_rcp_update() != ESP_OK) {
         esp_rcp_mark_image_verified(false);
     }
@@ -83,15 +84,6 @@ static void esp_zb_gateway_board_try_update(const char *rcp_version_str)
         } else {
             ESP_LOGI(TAG, "*** MATCH VERSION! ***");
             esp_rcp_mark_image_verified(true);
-#if CONFIG_EXAMPLE_CONNECT_WIFI
-            ESP_ERROR_CHECK(example_connect());
-#if CONFIG_ESP_COEX_SW_COEXIST_ENABLE
-            ESP_ERROR_CHECK(esp_wifi_set_ps(WIFI_PS_MIN_MODEM));
-            esp_coex_wifi_i154_enable();
-#else
-            ESP_ERROR_CHECK(esp_wifi_set_ps(WIFI_PS_NONE));
-#endif
-#endif
         }
     } else {
         ESP_LOGI(TAG, "RCP firmware not found in storage, will reboot to try next image");
@@ -121,20 +113,20 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
     esp_err_t err_status = signal_struct->esp_err_status;
     esp_zb_app_signal_type_t sig_type = *p_sg_p;
     esp_zb_zdo_signal_device_annce_params_t *dev_annce_params = NULL;
-    esp_zb_zdo_signal_macsplit_dev_boot_params_t *rcp_version = NULL;
 
     switch (sig_type) {
     case ESP_ZB_ZDO_SIGNAL_SKIP_STARTUP:
+#if CONFIG_EXAMPLE_CONNECT_WIFI
+            ESP_ERROR_CHECK(example_connect());
+#if CONFIG_ESP_COEX_SW_COEXIST_ENABLE
+            ESP_ERROR_CHECK(esp_wifi_set_ps(WIFI_PS_MIN_MODEM));
+            esp_coex_wifi_i154_enable();
+#else
+            ESP_ERROR_CHECK(esp_wifi_set_ps(WIFI_PS_NONE));
+#endif
+#endif
         ESP_LOGI(TAG, "Zigbee stack initialized");
         esp_zb_bdb_start_top_level_commissioning(ESP_ZB_BDB_MODE_INITIALIZATION);
-        break;
-    case ESP_ZB_MACSPLIT_DEVICE_BOOT:
-        ESP_LOGI(TAG, "Zigbee rcp device booted");
-        rcp_version = (esp_zb_zdo_signal_macsplit_dev_boot_params_t *)esp_zb_app_signal_get_params(p_sg_p);
-        ESP_LOGI(TAG, "Running RCP Version: %s", rcp_version->version_str);
-#if(CONFIG_ZIGBEE_GW_AUTO_UPDATE_RCP)
-        esp_zb_gateway_board_try_update(rcp_version->version_str);
-#endif
         break;
     case ESP_ZB_BDB_SIGNAL_DEVICE_FIRST_START:
     case ESP_ZB_BDB_SIGNAL_DEVICE_REBOOT:
@@ -189,25 +181,41 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
     }
 }
 
-void rcp_error_handler(uint8_t connect_timeout)
+void rcp_error_handler(void)
 {
-    ESP_LOGI(TAG, "RCP connection failed timeout:%d seconds", connect_timeout);
 #if(CONFIG_ZIGBEE_GW_AUTO_UPDATE_RCP)
-    ESP_LOGI(TAG, "Timeout! Re-flashing RCP");
+    ESP_LOGI(TAG, "Re-flashing RCP");
     esp_zb_gateway_update_rcp();
 #endif
+    esp_restart();
 }
+
+#if CONFIG_OPENTHREAD_SPINEL_ONLY
+static esp_err_t check_ot_rcp_version(void)
+{
+    char internal_rcp_version[RCP_VERSION_MAX_SIZE];
+    ESP_RETURN_ON_ERROR(esp_radio_spinel_rcp_version_get(internal_rcp_version, ESP_RADIO_SPINEL_ZIGBEE), TAG, "Fail to get rcp version from radio spinel");
+    ESP_LOGI(TAG, "Running RCP Version: %s", internal_rcp_version);
+#if(CONFIG_ZIGBEE_GW_AUTO_UPDATE_RCP)
+    esp_zb_gateway_board_try_update(internal_rcp_version);
+#endif
+    return ESP_OK;
+}
+#endif
 
 static void esp_zb_task(void *pvParameters)
 {
+#if CONFIG_OPENTHREAD_SPINEL_ONLY
+    esp_radio_spinel_register_rcp_failure_handler(rcp_error_handler, ESP_RADIO_SPINEL_ZIGBEE);
+#endif
     /* initialize Zigbee stack */
     esp_zb_cfg_t zb_nwk_cfg = ESP_ZB_ZC_CONFIG();
     esp_zb_init(&zb_nwk_cfg);
+#if CONFIG_OPENTHREAD_SPINEL_ONLY
+    ESP_ERROR_CHECK(check_ot_rcp_version());
+#endif
     esp_zb_set_primary_network_channel_set(ESP_ZB_PRIMARY_CHANNEL_MASK);
     ESP_ERROR_CHECK(esp_zb_start(false));
-#if(CONFIG_ZB_RADIO_MACSPLIT_UART)
-    esp_zb_add_rcp_failure_cb(rcp_error_handler);
-#endif
     esp_zb_main_loop_iteration();
     esp_rcp_update_deinit();
     vTaskDelete(NULL);

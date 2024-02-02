@@ -109,9 +109,6 @@ def update_component_yml_files():
     os.chdir(os.path.join(DEF_APP_PATH, 'esp_zigbee_HA_sample', 'HA_on_off_switch'))
     os.remove('main/idf_component.yml')
 
-    os.chdir(os.path.join(DEF_APP_PATH, 'esp_zigbee_rcp'))
-    os.remove('main/idf_component.yml')
-
     os.chdir(os.path.join(DEF_APP_PATH, 'esp_zigbee_cli'))
     os.remove('main/idf_component.yml')
 

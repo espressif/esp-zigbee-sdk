@@ -1346,6 +1346,14 @@ typedef struct esp_zb_zcl_identify_effect_message_s {
 } esp_zb_zcl_identify_effect_message_t;
 
 /**
+ * @brief The Zigbee zcl basic cluster reset to factory defualt message
+ *
+ */
+typedef struct esp_zb_zcl_basic_reset_factory_default_message_s {
+    esp_zb_device_cb_common_info_t info; /*!< The common information for Zigbee device callback */
+} esp_zb_zcl_basic_reset_factory_default_message_t;
+
+/**
  * @brief The Zigbee zcl command basic application information struct
  *
  */

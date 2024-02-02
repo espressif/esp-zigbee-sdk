@@ -47,6 +47,13 @@ typedef enum esp_zb_touchlink_action_s {
 typedef bool (*esp_zb_touchlink_action_allowed_callback_t)(uint8_t action);
 
 /**
+ * @brief Zll identify callback
+ *
+ * @param[in] identify_on An indication that needs start or stop identify
+ */
+typedef void (*esp_zb_zll_identify_req_callback_t)(bool identify_on);
+
+/**
  * @brief Register the Zigbee touchlink action check handler
  *
  * @param[in] callback A callback that allow the user to determine whether the touchlink device
@@ -112,6 +119,14 @@ int8_t esp_zb_zdo_touchlink_get_rssi_threshold(void);
  *    - RET_ERROR: Not in touchlink target procedure
  */
 esp_err_t esp_zb_bdb_cancel_touchlink_target(void);
+
+/**
+ * @brief Register ZLL identify request handler
+ *
+ * @param[in] cb A callback for zll identify notificaion, refer to esp_zb_zll_identify_req_callback_t
+ */
+void esp_zb_zll_identify_req_handler_register(esp_zb_zll_identify_req_callback_t cb);
+
 #ifdef __cplusplus
 }
 #endif

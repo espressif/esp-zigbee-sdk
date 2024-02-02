@@ -267,7 +267,10 @@ def test_zb_sleep(dut, count, app_path, erase_all):
     cli.write('bdb -s')
     cli.expect('Started coordinator', timeout=6)
     time.sleep(2)
-
+    cli.write('bdb -a init')
+    time.sleep(1)
+    cli.write('bdb -a form')
+    time.sleep(2)
     network_params = check_zigbee_network_status(sleep_device, cli)
     sleep_device_short_address = network_params['client']['short_address']
     check_zigbee_sleep_intervals(sleep_device)

@@ -19,7 +19,7 @@
 #define ZIGBEE_CHANNEL                  13          /* initial channel setting */
 #define ESP_ZIGBEE_CLI_ENDPOINT         64          /* config Zigbee CLI endpoint */
 #define MAX_CHILDREN                    10          /* the max amount of connected devices */
-#define INSTALLCODE_POLICY_ENABLE       true    /* enable the install code policy for security */
+#define INSTALLCODE_POLICY_ENABLE       false       /* enable the install code policy for security */
 
 #if CONFIG_SOC_IEEE802154_SUPPORTED
 #define ESP_ZB_DEFAULT_RADIO_CONFIG()                         \
@@ -35,7 +35,7 @@
             .port = 1,                                        \
             .uart_config =                                    \
                 {                                             \
-                    .baud_rate = 115200,                      \
+                    .baud_rate = 460800,                      \
                     .data_bits = UART_DATA_8_BITS,            \
                     .parity = UART_PARITY_DISABLE,            \
                     .stop_bits = UART_STOP_BITS_1,            \

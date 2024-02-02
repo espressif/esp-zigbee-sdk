@@ -1,7 +1,7 @@
 menu "ESP Zigbee CLI example"
 
     menu "Board UART port Configuration"
-    depends on ZB_RADIO_MACSPLIT_UART
+    depends on ZB_RADIO_SPINEL_UART
         config PIN_TO_RCP_TX
             int "Pin to RCP TX"
             default "5"
