@@ -12,10 +12,12 @@
  * CONDITIONS OF ANY KIND, either express or implied.
  */
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+#include "esp_zigbee_core.h"
 #include "nvs.h"
 #include "nvs_flash.h"
 #include "esp_log.h"
@@ -51,39 +53,23 @@ uint8_t esp_zb_cli_agent_handler(uint8_t bufid)
     return false;
 }
 
-static void bdb_start_top_level_commissioning_cb(uint8_t mode_mask)
-{
-    ESP_ERROR_CHECK(esp_zb_bdb_start_top_level_commissioning(mode_mask));
-}
-
-
+/**
+ * More application signals can be added by the user according to specific requirements
+ */
 void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
 {
     uint32_t *p_sg_p                    = signal_struct->p_app_signal;
     esp_err_t err_status                = signal_struct->esp_err_status;
-    esp_zb_app_signal_type_t sig_type    = *p_sg_p;
-    esp_zb_nwk_device_type_t  role      = esp_zb_get_network_device_role();
+    esp_zb_app_signal_type_t sig_type = *p_sg_p;
     esp_zb_zdo_signal_device_annce_params_t *dev_annce_params = NULL;
     esp_zb_zdo_signal_leave_indication_params_t *leave_ind_params = NULL;
     switch (sig_type) {
-    case ESP_ZB_ZDO_SIGNAL_LEAVE:
-        /* The ESP Zigbee CLI Agent will not attempt to rejoin the network after it receives the LEAVE command. */
-        if (err_status == ESP_OK) {
-            ESP_LOGI(TAG, "leave network, status: %s", esp_err_to_name(err_status));
-        } else {
-            ESP_LOGE(TAG, "Unable to leave network, status: %s", esp_err_to_name(err_status));
-        }
-        break;
     case ESP_ZB_ZDO_SIGNAL_SKIP_STARTUP:
-        esp_zb_bdb_start_top_level_commissioning(ESP_ZB_BDB_MODE_INITIALIZATION);
+        ESP_LOGI(TAG, "Zigbee stack startup");
         break;
     case ESP_ZB_BDB_SIGNAL_DEVICE_FIRST_START:
         if (err_status == ESP_OK) {
-            if (role != ESP_ZB_DEVICE_TYPE_COORDINATOR) {
-                esp_zb_bdb_start_top_level_commissioning(ESP_ZB_BDB_MODE_NETWORK_STEERING);
-            } else {
-                esp_zb_bdb_start_top_level_commissioning(ESP_ZB_BDB_MODE_NETWORK_FORMATION);
-            }
+            ESP_LOGI(TAG, "Device started up in %s factory-reset mode", esp_zb_bdb_is_factory_new() ? "" : "non");
         } else {
             ESP_LOGE(TAG, "Failed to initialize Zigbee stack");
         }
@@ -92,21 +78,65 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
         if (err_status == ESP_OK) {
             esp_zb_ieee_addr_t extended_pan_id;
             esp_zb_get_extended_pan_id(extended_pan_id);
-            ESP_LOGI(TAG, "Formed network successfully (Extended PAN ID: %02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x, PAN ID: 0x%04hx, Channel:%d, Short Address: 0x%04hx)",
-                     extended_pan_id[7], extended_pan_id[6], extended_pan_id[5], extended_pan_id[4],
-                     extended_pan_id[3], extended_pan_id[2], extended_pan_id[1], extended_pan_id[0],
-                     esp_zb_get_pan_id(), esp_zb_get_current_channel(), esp_zb_get_short_address());
-            esp_zb_bdb_start_top_level_commissioning(ESP_ZB_BDB_MODE_NETWORK_STEERING);
+            ESP_LOGI(TAG, "Join or form %s network", esp_zb_network_is_distributed() ? "distributed" : "centralized");
+            ESP_LOGI(TAG,
+                     "Formed network successfully (Extended PAN ID: %02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x, PAN ID: 0x%04hx, Channel:%d, Short "
+                     "Address: 0x%04hx)",
+                     extended_pan_id[7], extended_pan_id[6], extended_pan_id[5], extended_pan_id[4], extended_pan_id[3], extended_pan_id[2],
+                     extended_pan_id[1], extended_pan_id[0], esp_zb_get_pan_id(), esp_zb_get_current_channel(), esp_zb_get_short_address());
         } else {
-            ESP_LOGI(TAG, "Restart network formation");
-            esp_zb_scheduler_alarm((esp_zb_callback_t)bdb_start_top_level_commissioning_cb, ESP_ZB_BDB_MODE_NETWORK_FORMATION, 1000);
+            ESP_LOGW(TAG, "Failed to form network");
         }
         break;
     case ESP_ZB_BDB_SIGNAL_STEERING:
         if (err_status == ESP_OK) {
             ESP_LOGI(TAG, "Joined network successfully");
         } else {
-            esp_zb_scheduler_alarm((esp_zb_callback_t)bdb_start_top_level_commissioning_cb, ESP_ZB_BDB_MODE_NETWORK_STEERING, 1000);
+            ESP_LOGW(TAG, "Not found network");
+        }
+        break;
+    case ESP_ZB_BDB_SIGNAL_TOUCHLINK_TARGET:
+        ESP_LOGI(TAG, "Touchlink target is ready, awaiting commissioning");
+        break;
+    case ESP_ZB_BDB_SIGNAL_TOUCHLINK_NWK:
+        if (err_status == ESP_OK) {
+            esp_zb_ieee_addr_t extended_pan_id;
+            esp_zb_get_extended_pan_id(extended_pan_id);
+            ESP_LOGI(TAG,
+                     "Commissioning successfully, network information (Extended PAN ID: %02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x, PAN ID: 0x%04hx, "
+                     "Channel:%d, Short Address: 0x%04hx)",
+                     extended_pan_id[7], extended_pan_id[6], extended_pan_id[5], extended_pan_id[4], extended_pan_id[3], extended_pan_id[2],
+                     extended_pan_id[1], extended_pan_id[0], esp_zb_get_pan_id(), esp_zb_get_current_channel(), esp_zb_get_short_address());
+        }
+        break;
+    case ESP_ZB_BDB_SIGNAL_TOUCHLINK_TARGET_FINISHED:
+        if (err_status == ESP_OK) {
+            ESP_LOGI(TAG, "Touchlink target commissioning finished");
+        } else {
+            ESP_LOGI(TAG, "Touchlink target commissioning failed");
+        }
+        break;
+    case ESP_ZB_BDB_SIGNAL_TOUCHLINK_NWK_STARTED:
+    case ESP_ZB_BDB_SIGNAL_TOUCHLINK_NWK_JOINED_ROUTER:
+        ESP_LOGI(TAG, "Touchlink initiator receives the response for %s network",
+                 sig_type == ESP_ZB_BDB_SIGNAL_TOUCHLINK_NWK_STARTED ? "started" : "router joining");
+        esp_zb_bdb_signal_touchlink_nwk_params_t *sig_params = (esp_zb_bdb_signal_touchlink_nwk_params_t *)esp_zb_app_signal_get_params(p_sg_p);
+        ESP_LOGI(TAG, "Response is from profile: 0x%04hx, endpoint: %d, address: 0x%x%x%x%x%x%x%x%X", sig_params->profile_id, sig_params->endpoint,
+                 sig_params->device_ieee_addr[7], sig_params->device_ieee_addr[6], sig_params->device_ieee_addr[5], sig_params->device_ieee_addr[4],
+                 sig_params->device_ieee_addr[3], sig_params->device_ieee_addr[2], sig_params->device_ieee_addr[1], sig_params->device_ieee_addr[0]);
+        break;
+    case ESP_ZB_BDB_SIGNAL_TOUCHLINK:
+        ESP_LOGI(TAG, "Touchlink commissioning as initiator done");
+        esp_zb_ieee_addr_t extended_pan_id;
+        esp_zb_get_extended_pan_id(extended_pan_id);
+        if (err_status == ESP_OK) {
+            ESP_LOGI(TAG,
+                     "Commissioning successfully, network information (Extended PAN ID: %02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x, PAN ID: 0x%04hx, "
+                     "Channel:%d, Short Address: 0x%04hx)",
+                     extended_pan_id[7], extended_pan_id[6], extended_pan_id[5], extended_pan_id[4], extended_pan_id[3], extended_pan_id[2],
+                     extended_pan_id[1], extended_pan_id[0], esp_zb_get_pan_id(), esp_zb_get_current_channel(), esp_zb_get_short_address());
+        } else {
+            ESP_LOGW(TAG, "Not scan response for Touchlink initiator");
         }
         break;
     case ESP_ZB_ZDO_SIGNAL_DEVICE_ANNCE:
@@ -128,6 +158,14 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
             }
         }
         break;
+    case ESP_ZB_ZDO_SIGNAL_LEAVE:
+        if (err_status == ESP_OK) {
+            esp_zb_zcl_reset_all_endpoints_to_factory_default(true, NULL);
+            ESP_LOGI(TAG, "leave network, status: %s", esp_err_to_name(err_status));
+        } else {
+            ESP_LOGE(TAG, "Unable to leave network, status: %s", esp_err_to_name(err_status));
+        }
+        break;
     default:
         ESP_LOGI(TAG, "ZDO signal: %s (0x%x), status: %s", esp_zb_zdo_signal_to_string(sig_type), sig_type,
                  esp_err_to_name(err_status));
@@ -140,10 +178,12 @@ void zigbee_stack_init(void)
     esp_zb_cfg_t zb_nwk_cfg = ESP_ZB_ZC_CONFIG();
     esp_zb_init(&zb_nwk_cfg);
     ESP_ERROR_CHECK(esp_zb_set_primary_network_channel_set(1 << ZIGBEE_CHANNEL));
-    esp_zb_nvram_erase_at_start(true);
+    ESP_ERROR_CHECK(esp_zb_set_secondary_network_channel_set(ESP_ZB_TRANSCEIVER_ALL_CHANNELS_MASK));
+    esp_zb_set_rx_on_when_idle(true);
+
     /* Set ESP Zigbee endpoint to CLI*/
     zb_cli_set_endpoint(ESP_ZIGBEE_CLI_ENDPOINT);
-    /* set the configuration tool device config */
+    /* Note that more endpoints can be added to support more application for cli */
     esp_zb_configuration_tool_cfg_t config_tool_cfg = ESP_ZB_DEFAULT_CONFIGURATION_TOOL_CONFIG();
     esp_zb_ep_list_t *esp_zb_configuration_tool_ep = esp_zb_configuration_tool_ep_create(ESP_ZIGBEE_CLI_ENDPOINT, &config_tool_cfg);
     esp_zb_device_register(esp_zb_configuration_tool_ep);

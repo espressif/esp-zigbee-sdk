@@ -11,17 +11,22 @@ command **<d:arg1> <h:arg2>**: a single letter before an argument name defines t
 &nbsp;&nbsp;&nbsp;&nbsp;d: decimal values (arg1).  
 command **<d/h:arg> ...** : the ellipsis after an argument means that the preceding argument can be repeated several times.  
 
-## Zigbee CLI Command List  
+## Zigbee CLI Command List
+- [radio](#radio)  
 - [role](#role)
 - [extpanid](#extpanid)
 - [panid](#panid)
 - [channel](#channel)
 - [start](#start)
+- [commissioning](#commissioning)
 - [ic](#ic)
 - [legacy](#legacy)
+- [nwktype](#nwktype)
 - [nwkkey](#nwkkey)
+- [nwkstate](#nwkstate)
 - [factory](#factory)
 - [child](#child)
+- [touchlink](#touchlink)
 - [active_ep](#active_ep)
 - [simple](#simple)
 - [match](#match)
@@ -34,6 +39,7 @@ command **<d/h:arg> ...** : the ellipsis after an argument means that the preced
 - [eui64](#eui64)
 - [short](#short)
 - [mgmt_leave](#mgmt_leave)
+- [device_announcement](#device_announcement)
 - [zcl_command](#zcl_command)
 - [attr_read](#attr_read)
 - [attr_write](#attr_write)
@@ -45,14 +51,47 @@ command **<d/h:arg> ...** : the ellipsis after an argument means that the preced
 
 ## Zigbee CLI Command Details
 
+### radio
+Configure the IEEE802154 radio state of device.
+
+*bdb -d <on/off>*   
+- <on/off>: Turn on(default) or off IEEE802154 radio
+
+Get help
+```bash
+on: turn on radio
+off: turn off radio
+I (52374) : Done
+```
+Set radio to on
+```bash
+> bdb -d off
+I (116954) : IEEE802154 radio off
+I (116954) : Done
+```
+Set radio to on
+```bash
+> bdb -d on
+I (142464) : IEEE802154 radio on
+I (142464) : Done
+```
+
+Set radio state
+```bash
+> bdb -d get
+I (239694) : Radio is on
+I (239694) : Done
+```
+
 ### role
 Configure the role of device in zigbee network.
 
-*bdb -r <zc/zr>*   
+*bdb -r <zc/zr/zed>*   
 - <zc/zr>: The role indicates Zigbee coordinator or Zigbee router.
 
 **Note**
 - Set action only before bdb start. Read action only after bdb start.
+- The zed role is the router with zed functionality.
 
 Set the `coordinator` or `router` role to the Zigbee device.
 ```bash
@@ -121,25 +160,70 @@ I (983554) : get panid: 0x1122
 ### channel
 Configure the 2.4GHz `channel` for Zigbee to establish communication.
 
-*bdb -c <d:n>*  
-- <d:n>: A integer type ranges from 11 to 26, Oherwise, treat n as bitmask.
+*bdb -c <d:n> <x:n>*  
+- <d:channel>: A integer type ranges from 11 to 26 for the primary channel, Oherwise, treat n as bitmask.
+- <x:channel_mask>: A integer type ranges from 0x00000800 to 0x07FFF800 for the secondary channel, Oherwise, treat n as bitmask.
 
 **Note**
 - Set action only before bdb start. Read action only after bdb start.
 
-Set Zigbee `channel` to 24.
+Set Zigbee `channel`
 ```bash
-> bdb -c 24
-I (977414) : Setting channel to 24
+> bdb -c help
+I (55834) : 
+Primary channel is range from 11 to 26
+Secondary channel is range from 0x00000800 to 0x07FFF800
+I (55834) : Done
+> bdb -c 11
+I (73034) : Set primary channel: 11
+I (73034) : Done
+> bdb -c 11 0x07FFF800
+I (85624) : Set primary channel: 11
+I (85634) : Set secondary channel: 0x07fff800
+I (85634) : Done
+> bdb -c get
+I (94244) : 
+Primary: 11
+Secondary: 0x07fff800
+I (94254) : Done
 ```
 
-Get Zigbee 2.4GHz channel:   
+### commissioning
+Configure the commissioning mode for Zigbee to establish network.
 
-*bdb -c get*   
+*bdb -a <mode>*  
+- <mode>: Zigbee commissioning mode
+
+**Note**
+- Set action only after bdb start.
+
+Set Zigbee `commissioning mode` to establish network
 ```bash
-> bdb -c get
-I (1064419) : Primary channel(s): 24
-I (1064429) : Secondary channel(s): 24
+ bdb -s
+I (16124) : Started router
+I (16134) : Done
+I (16144) ESP_ZB_CLI: ZDO signal: ZDO Config Ready (0x17), status: ESP_FAIL
+I (16144) ESP_ZB_CLI: Zigbee stack startup
+> bdb -a help
+I (18774) : 
+init: network initialized
+steering: network steering
+form: network formation
+binding: finding N binding                      
+initiator: touchlink initiator commissioning
+target: touchlink target commissioning
+I (18774) : Done
+> bdb -a init
+I (20704) : Done
+I (20714) ESP_ZB_CLI: Device started up in  factory-reset mode
+> bdb -a steering
+I (33974) : Done
+> W (34164) ESP_ZB_CLI: Not found network
+> bdb -a form
+I (48494) : Done
+> W (48664) ESP_ZB_CLI: Network(0x5e2e) closed, devices joining not allowed.
+I (48674) ESP_ZB_CLI: Join or form distributed network
+I (48674) ESP_ZB_CLI: Formed network successfully (Extended PAN ID: 60:55:f9:ff:fe:f7:2e:46, PAN ID: 0x5e2e, Channel:11, Short Address: 0x552c)
 ```
 
 ### start
@@ -221,6 +305,31 @@ I (54039534) : Done
 I (54046354) : Done
 ```
 
+### nwktype
+Set the type for zigbee network.
+
+*bdb -t <type>*
+- <h:key>:  An 16-Byte for network key of zigbee.
+
+**Note**
+- Set action only before bdb start.
+bdb
+```bash
+> bdb -t help
+I (368414) : 
+c: centralized network
+d: distributed network
+I (368414) : Done
+> bdb -t c
+I (394314) : Set centralized network
+I (394314) : Done
+> bdb -t get
+I (398334) : Centralized network
+I (398334) : Done
+>
+```
+
+
 ### nwkkey
 Set the network key for zigbee device to encrypt network message.
 
@@ -237,17 +346,48 @@ Set key:00112233445566778899aabbccddeeff
 I (14364) : Done
 ```
 
+### nwkstate
+Set the state for zigbee network.
+
+*bdb -t <state>*
+- <state>:  The state of zigbee network
+
+**Note**
+- Set action only after bdb start.
+
+Set the zigbee network state
+```bash
+> bdb -o help
+I (248234) : 
+close: Close network
+open x: open network x seconds
+I (248234) : Done
+> bdb -o open 112
+I (260774) : Open network 112 seconds
+I (260784) : Done
+> bdI (261654) ESP_ZB_CLI: Network(0x5e2e) is open for 112 seconds
+> bdb -o close
+I (267444) : Close network
+I (267444) : Done
+> W (268274) ESP_ZB_CLI: Network(0x5e2e) closed, devices joining not allowed.
+>
+```
+
 ### factory
 Perform a factory reset via local action.
 
-*bdb -f*  
-
-**Note**
-- The device will perform the NLME leave and clean all Zigbee persistent data except the outgoing NWK frame counter and application datasets (if any).
+*bdb -f <level>*
+- <level>: The level of factory reset
 
 ```bash
-> bdb -f 
-I (95824) : Done
+> bdb -f help
+I (411844) : 
+0: reset_local
+1: restart
+2: earse_nvram
+I (411844) : Done
+> bdb -f 1
+I (450534) : Restart
 ```
 
 ### child
@@ -263,6 +403,102 @@ Set the max amount of children to 1 for Zigbee device.
 ```bash
 > bdb -m 1
 I (226424) : Setting max children to: 1
+```
+
+### touchlink
+Zigbee Touchlink commands list
+
+*tlk -t <d:timeout>*
+- <d:timeout>: Configure Touchlink target timeout.
+
+*tlk -r <d:rssi>* 
+- <d:rssi> Configure RSSI threshold of touchlink.
+
+*tlk -k <n:key>*  
+- <n:key> Configure master key of touchlink.
+
+
+**Note**
+- Setting only before bdb start.
+
+The process of using cli to establish Zigbee network
+- Initiator
+```bash
+> bdb -r zr
+I (79294) : Router role set
+> bdb -t d
+I (82504) : Set distributed network
+I (82504) : Done
+> bdb -c 1
+E (84414) : Primary channel out of range
+I (84414) : Failed
+> bdb -c 11
+I (89614) : Set primary channel: 11
+I (89614) : Done
+> tlk -k 00112233445566778899aabbccddeeff
+I (146654) : 
+Set touchlink key:00112233445566778899aabbccddeeff
+I (146654) : Done
+I (146654) : Done
+> bdb -s
+I (180994) : Started router
+I (181004) : Done
+I (181014) ESP_ZB_CLI: ZDO signal: ZDO Config Ready (0x17), status: ESP_FAIL
+I (181014) ESP_ZB_CLI: Zigbee stack startup
+> bdb -i init
+> bdb -a init
+I (192764) : Done
+I (192774) ESP_ZB_CLI: Device started up in  factory-reset mode
+> bdb -a initiator
+I (198484) : Done
+> I (202344) ESP_ZB_CLI: Touchlink initiator receives the response for started network
+I (202344) ESP_ZB_CLI: Response is from profile: 0x0104, endpoint: 64, address: 0x6055f9fffef72e16
+W (203464) ESP_ZB_CLI: Network(0xe3f5) closed, devices joining not allowed.
+I (203464) ESP_ZB_CLI: Commissioning successfully, network information (Extended PAN ID: 60:55:f9:ff:fe:f7:2e:16, PAN ID: 0xe3f5, Channel:11, Short Address: 0x09f9)
+I (203474) ESP_ZB_CLI: Touchlink target commissioning finished
+```
+
+- Target
+```bash
+> bdb -r zr
+I (4221) : Router role set
+> bdb -t d
+I (7741) : Set distributed network
+I (7741) : Done
+> bdb -c 11
+I (9491) : Set primary channel: 11
+I (9491) : Done
+> tlk -t help
+I (34341) : Duration of Touchlink target commissioning
+I (34341) : Done
+> tlk -t 60
+I (40471) : Duration: 60 seconds
+I (40471) : Done
+> tlk -r help
+I (47351) : RSSI threshold(default -64) of Touchlink target, which ranges from -127 to 127
+I (47351) : Done
+> tlk -r -54
+I (60801) : RSSI: -54
+I (60801) : Done
+> tlk -r get
+I (68151) : RSSI: -54
+I (68151) : Done
+> bdb -s
+I (154411) : Started router
+I (154421) : Done
+I (154431) ESP_ZB_CLI: ZDO signal: ZDO Config Ready (0x17), status: ESP_FAIL
+I (154431) ESP_ZB_CLI: Zigbee stack startup
+> bdb -a init
+I (159071) : Done
+I (159081) ESP_ZB_CLI: Device started up in  factory-reset mode
+> bdb -a target
+I (169831) : Done
+I (169851) ESP_ZB_CLI: Touchlink target is ready, awaiting commissioning
+> W (198441) ESP_ZB_CLI: Network(0xe3f5) closed, devices joining not allowed.
+I (198451) ESP_ZB_CLI: Commissioning successfully, network information (Extended PAN ID: 60:55:f9:ff:fe:f7:2e:16, PAN ID: 0xe3f5, Channel:11, Short Address: 0xdc73)
+I (198461) ESP_ZB_CLI: Touchlink target commissioning finished
+I (200771) ESP_ZB_CLI: ZDO signal: ZDO Device Update (0x30), status: ESP_OK
+I (200851) ESP_ZB_CLI: New device commissioned or rejoined (short: 0x09f9)
 ```
 
 ### active_ep
@@ -484,6 +720,16 @@ Done
 Send a mgmt leave request to the device with the `short address(0x4eaa)`, and ask it to remove itself and all its children from the network.
 ```bash
 > zdo -l 0x4eaa children
+Done
+```
+
+### device_announcement
+Send a zdo device announcement command
+
+*zdo -t*
+
+```bash
+> zdo -t
 Done
 ```
 
