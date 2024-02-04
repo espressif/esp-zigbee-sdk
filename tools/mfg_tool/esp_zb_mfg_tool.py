@@ -30,8 +30,7 @@ except Exception as e:
 
 
 try:
-    sys.path.insert(0, os.getenv('IDF_PATH') + '/components/nvs_flash/nvs_partition_generator/')
-    import nvs_partition_gen
+    import esp_idf_nvs_partition_gen.nvs_partition_gen as nvs_partition_gen
 except Exception as e:
     print(e)
     sys.exit('Please check IDF_PATH')
@@ -441,8 +440,6 @@ def generate(args):
     args.outdir = os.path.join(args.outdir, '')
     # if csv is not present creat a sigle device for generate binary
     file_name = os.getcwd() + '/sigle_device.csv'
-    if not os.path.exists(file_name):
-        os.mknod(file_name)
     
     # The input key value do not through csv file
     if args.csv is None:
