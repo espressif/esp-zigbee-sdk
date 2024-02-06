@@ -1,4 +1,16 @@
 # Espressif Zigbee SDK Release Notes
+## 6-Feb-2024
+1.1.1 version release of ESP-ZIGBEE-SDK
+
+### Features
+- Updated esp-zboss-lib to v1.1.1
+- Updated esp-zigbee-lib to v1.1.1
+- Support touchlink commissioning cluster get group id command and response
+- Support touchlink commissioning cluster get endpoint list command and response
+- Support touchlink commissioning cluster endpoint information command
+
+### Bug Fixes
+- Fixed the color control step loop handler, when step value less than time transition.
 
 ## 2-Feb-2024
 1.1.0 version release of ESP-ZIGBEE-SDK
