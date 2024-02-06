@@ -1615,6 +1615,119 @@ typedef struct esp_zb_zcl_cmd_green_power_recv_message_s {
 } esp_zb_zcl_cmd_green_power_recv_message_t;
 #endif /* CONFIG_ZB_GP_ENABLED */
 
+/**
+ * @brief The Zigbee touchlink group information record struct
+ *
+ */
+typedef struct esp_zb_touchlink_get_group_info_record_s {
+    uint16_t group_id;   /*!< The identifier of the group described by this record */
+    uint8_t group_type;  /*!< The group type shall indicate the meaning of a group in the user interface. In the current version of this specification, this value shall be set to 0x00 */
+    struct esp_zb_touchlink_get_group_info_record_s *next; /*!< Next variable */
+} esp_zb_touchlink_get_group_info_record_t;
+
+/**
+ * @brief The Zigbee ZCL touchlink commissioning get group identifiers response struct
+ *
+ */
+typedef struct esp_zb_zcl_touchlink_get_group_identifiers_resp_message_s {
+    esp_zb_zcl_cmd_info_t info; /*!< The basic information of touclink get group identifiers response that refers to esp_zb_zcl_cmd_info_t */
+    uint8_t total;           /*!< The total number of group identifiers supported by the device */
+    uint8_t start_idx;       /*!< The internal starting index from which the following group identifiers are taken */
+    uint8_t count;           /*!< The number of entries in the group information record list field */
+    esp_zb_touchlink_get_group_info_record_t *group_info_record_list;  /*!< Group information record list , {{Group identifier, Group type}, ... , {Group identifier, Group type}} */
+} esp_zb_touchlink_get_group_identifiers_resp_message_t;
+
+/**
+ * @brief The Zigbee touchlink endpoint list record struct
+ *
+ */
+typedef struct esp_zb_touchlink_get_endpoint_list_record_s {
+    uint16_t addr_short; /*!< The short network address of the device specified by the current endpoint information record */
+    uint8_t endpoint;    /*!< The identifier of the endpoint on the device specified by the network address field */
+    uint16_t profile_id; /*!< The identifier of the profile supported on the endpoint */
+    uint16_t device_id;  /*!< The identifier of the device description supported on the endpoint */
+    uint8_t version;     /*!< Specifies the version of the device description supported by the sub-device on the endpoin */
+    struct esp_zb_touchlink_get_endpoint_list_record_s *next; /*!< Next variable */
+} esp_zb_touchlink_get_endpoint_list_record_t;
+
+/**
+ * @brief The Zigbee ZCL touchlink commissioning get endpoint list response struct
+ *
+ */
+typedef struct esp_zb_zcl_touchlink_get_endpoint_list_resp_message_s {
+    esp_zb_zcl_cmd_info_t info; /*!< The basic information of touclink get endpoint list response that refers to esp_zb_zcl_cmd_info_t */
+    uint8_t total;           /*!< The total number of endpoints supported by the device */
+    uint8_t start_idx;       /*!< The internal starting index from which the following list of endpoints are taken */
+    uint8_t count;           /*!< The number of entries in the endpoint information record list field */
+    esp_zb_touchlink_get_endpoint_list_record_t *endpoint_record_list;  /*!< Endpoint record list , {{Network address, Endpoint identifier, Profile identifier, Device identifier, Version},
+                                                                        ... , {Network address, Endpoint identifier, Profile identifier, Device identifier, Version}} */
+} esp_zb_zcl_touchlink_get_endpoint_list_resp_message_t;
+
+/**
+ * @brief The Zigbee ZCL touchlink commissioning endpoint information struct
+ *
+ */
+typedef struct esp_zb_touchlink_endpoint_information_record_s {
+    esp_zb_ieee_addr_t addr_long;         /*!< The IEEE address of the local device */
+    uint16_t addr_short;                  /**< The short network address of the local device */
+    uint8_t endpoint_id;                  /*!< The identifier of the local endpoint */
+    uint16_t profile_id;                  /*!< The identifier of the profile supported on the endpoint specified in the endpoint identifier field */
+    uint16_t device_id;                   /*!< The identifier of the device description supported on the endpoint specified in the endpoint identifier field */
+    uint8_t device_version;               /*!< The version of the device description supported by the sub-device on the endpoint specified by the endpoint identifier field */
+    bool is_record;                       /*!< The parameter indicates whether the endpoint information is recorded in the record list */
+} esp_zb_touchlink_endpoint_information_record_t;
+
+/**
+ * @brief The Zigbee touchlink get group identifiers request command struct
+ *
+ */
+typedef struct esp_zb_touchlink_send_get_group_identifiers_cmd_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd; /*!< Basic command info */
+    uint8_t start_index;                  /*!< The index (starting from 0) at which to start returning group identifiers. */
+} esp_zb_touchlink_send_get_group_identifiers_cmd_t;
+
+/**
+ * @brief The Zigbee touchlink get endpoint list request command struct
+ *
+ */
+typedef struct esp_zb_touchlink_send_get_endpoint_list_cmd_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd; /*!< Basic command info */
+    uint8_t start_index;                  /*!< The index (starting from 0) at which to start returning endpoint identifiers. */
+} esp_zb_touchlink_send_get_endpoint_list_cmd_t;
+
+/**
+ * @brief The Zigbee touchlink endpoint information request command struct
+ *
+ */
+typedef struct esp_zb_touchlink_send_endpoint_information_cmd_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd; /*!< Basic command info */
+    uint8_t endpoint_id;                  /*!< The identifier of the local endpoint */
+    uint16_t profile_id;                  /*!< The identifier of the profile supported on the endpoint specified in the endpoint identifier field. */
+    uint16_t device_id;                   /*!< The identifier of the device description supported on the endpoint specified in the endpoint identifier field */
+    uint8_t device_version;               /*!< Device version;the most significant 4 bits shall be set to 0x0 */
+} esp_zb_touchlink_send_endpoint_information_cmd_t;
+
+/* @brief   Send touchlink get group identifiers request command
+ *
+ * @param[in] cmd_req Pointer to the get group identifiers request command, refer to esp_zb_touchlink_send_get_group_identifiers_cmd_t
+ *
+ */
+void esp_zb_touchlink_send_get_group_identifiers_cmd_req(esp_zb_touchlink_send_get_group_identifiers_cmd_t *cmd_req);
+
+/* @brief   Send touchlink get endpoint list request command
+ *
+ * @param[in] cmd_req Pointer to the get endpoint list request command, refer to esp_zb_touchlink_send_get_endpoint_list_cmd_t
+ *
+ */
+void esp_zb_touchlink_send_get_endpoint_list_cmd_req(esp_zb_touchlink_send_get_endpoint_list_cmd_t *cmd_req);
+
+/* @brief   Send touchlink endpoint information request command
+ *
+ * @param[in] cmd_req Pointer to the endpoint information request command, refer to esp_zb_touchlink_send_endpoint_information_cmd_t
+ *
+ */
+void esp_zb_touchlink_send_ep_info_cmd_req(esp_zb_touchlink_send_endpoint_information_cmd_t *cmd_req);
+
 /* read attribute, write attribute, config report and more general command will support later */
 
 /**
