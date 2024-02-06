@@ -120,6 +120,9 @@ typedef struct {
 #define ESP_NCP_ZDO_BIND_SET                    0x0200  /*!< Create a binding between two endpoints on two nodes */
 #define ESP_NCP_ZDO_UNBIND_SET                  0x0201  /*!< Remove a binding between two endpoints on two nodes */
 #define ESP_NCP_ZDO_FIND_MATCH                  0x0202  /*!< Send match desc request to find matched Zigbee device */
+#define ESP_NCP_APS_DATA_REQUEST                0x0300  /*!< Request the aps data */
+#define ESP_NCP_APS_DATA_INDICATION             0x0301  /*!< Indication the aps data */
+#define ESP_NCP_APS_DATA_CONFIRM                0x0302  /*!< Confirm the aps data */
 
 /**
  * @brief   Process the frame ID on the NCP and response it to the host.

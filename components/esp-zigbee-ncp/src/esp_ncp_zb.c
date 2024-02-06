@@ -30,6 +30,8 @@ static const char *TAG = "ESP_NCP_ZB";
 static bool s_init_flag = false;
 static bool s_start_flag = false;
 static uint32_t s_primary_channel = 0;
+static QueueHandle_t s_aps_data_confirm;    /*!< The queue handler for sync between the host and NCP */
+static QueueHandle_t s_aps_data_indication; /*!< The queue handler for sync between the host and NCP */
 
 #define ESP_NCP_ZB_STATUS()                 \
 {                                           \
@@ -47,6 +49,145 @@ typedef struct {
     esp_err_t (*add_cluster_fn)(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
     esp_err_t (*del_cluster_fn)(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 } esp_ncp_zb_cluster_fn_t;
+
+typedef struct {
+    uint16_t        id;                     /*!< Frame id on the event */
+    uint16_t        size;                   /*!< Data size on the event */
+    void            *data;                  /*!< Data on the event */
+} esp_ncp_zb_ctx_t;
+
+static esp_err_t esp_ncp_zb_aps_data_handle(uint16_t id, const void *buffer, uint16_t len)
+{
+    QueueHandle_t event_queue = (id == ESP_NCP_APS_DATA_CONFIRM) ? s_aps_data_confirm : s_aps_data_indication;
+    if (event_queue) {
+        BaseType_t ret = 0;
+        esp_ncp_zb_ctx_t ncp_ctx = {
+            .id = id,
+            .size = len,
+        };
+
+        if (buffer) {
+            ncp_ctx.data = calloc(1, len);
+            memcpy(ncp_ctx.data, buffer, len);
+        }
+
+        if (xPortInIsrContext() == pdTRUE) {
+            ret = xQueueSendFromISR(event_queue, &ncp_ctx, NULL);
+        } else {
+            ret = xQueueSend(event_queue, &ncp_ctx, 0);
+        }
+        return (ret == pdTRUE) ? ESP_OK : ESP_FAIL ;
+    } else {
+        esp_ncp_header_t ncp_header = {
+            .sn = esp_random() % 0xFF,
+            .id = id,
+        };
+        return esp_ncp_noti_input(&ncp_header, buffer, len);
+    }
+}
+
+static bool esp_ncp_zb_aps_data_indication_handler(esp_zb_apsde_data_ind_t ind)
+{
+    typedef struct {
+        uint8_t states;                     /*!< The states of the device */
+        uint8_t dst_addr_mode;              /*!< Reserved, the addressing mode for the destination address used in this primitive and of the APDU that has been received.*/
+        esp_zb_addr_u dst_addr;             /*!< The individual device address or group address to which the ASDU is directed.*/
+        uint8_t dst_endpoint;               /*!< The target endpoint on the local entity to which the ASDU is directed.*/
+        uint8_t src_addr_mode;              /*!< Reserved, The addressing mode for the source address used in this primitive and of the APDU that has been received.*/
+        esp_zb_addr_u src_addr;             /*!< The individual device address of the entity from which the ASDU has been received.*/
+        uint8_t src_endpoint;               /*!< The number of the individual endpoint of the entity from which the ASDU has been received.*/
+        uint16_t profile_id;                /*!< The identifier of the profile from which this frame originated.*/
+        uint16_t cluster_id;                /*!< The identifier of the received object.*/
+        uint8_t indication_status;          /*!< The status of the incoming frame processing, 0: on success */
+        uint8_t security_status;            /*!< UNSECURED if the ASDU was received without any security. SECURED_NWK_KEY if the received ASDU was secured with the NWK key.*/
+        uint8_t lqi;                        /*!< The link quality indication delivered by the NLDE.*/
+        int rx_time;                        /*!< Reserved, a time indication for the received packet based on the local clock */
+        uint32_t asdu_length;               /*!< The number of octets comprising the ASDU being indicated by the APSDE.*/
+    } ESP_NCP_ZB_PACKED_STRUCT esp_ncp_zb_aps_data_ind_t;
+
+    uint16_t outlen = sizeof(esp_ncp_zb_aps_data_ind_t) + ind.asdu_length;
+    uint8_t *output = calloc(1, outlen);
+    if (!output) {
+        return false;
+    }
+
+    esp_ncp_zb_aps_data_ind_t *aps_data = (esp_ncp_zb_aps_data_ind_t *)output;
+    aps_data->dst_addr_mode = ind.dst_addr_mode;
+    if (ind.dst_addr_mode == ESP_ZB_APS_ADDR_MODE_64_ENDP_PRESENT) {
+        memcpy(aps_data->dst_addr.addr_long, &ind.dst_short_addr, sizeof(esp_zb_ieee_addr_t));
+    } else {
+        aps_data->dst_addr.addr_short = ind.dst_short_addr;
+    }
+    aps_data->dst_endpoint = ind.dst_endpoint;
+
+    aps_data->src_addr_mode = ind.src_addr_mode;
+    if (ind.src_addr_mode == ESP_ZB_APS_ADDR_MODE_64_ENDP_PRESENT) {
+        memcpy(aps_data->src_addr.addr_long, &ind.src_short_addr, sizeof(esp_zb_ieee_addr_t));
+    } else {
+        aps_data->src_addr.addr_short = ind.src_short_addr;
+    }
+    aps_data->src_endpoint = ind.src_endpoint;
+
+    aps_data->states = ESP_NCP_INDICATION;
+    aps_data->profile_id = ind.profile_id;
+    aps_data->cluster_id = ind.cluster_id;
+
+    aps_data->indication_status = ind.status;
+    aps_data->security_status   = ind.security_status;
+    aps_data->lqi = ind.lqi;
+    aps_data->rx_time = ind.rx_time;
+
+    aps_data->asdu_length = ind.asdu_length;
+    if (ind.asdu && ind.asdu_length) {
+        memcpy(output + sizeof(esp_ncp_zb_aps_data_ind_t), ind.asdu, ind.asdu_length);
+    }
+
+    esp_ncp_zb_aps_data_handle(ESP_NCP_APS_DATA_INDICATION, output, outlen);
+    free(output);
+    output = NULL;
+
+    ESP_LOGI(TAG, "%s %d", __func__, __LINE__);
+    return s_aps_data_indication ? true : false;
+}
+
+static void esp_ncp_zb_aps_data_confirm_handler(esp_zb_apsde_data_confirm_t confirm)
+{
+    typedef struct {
+        uint8_t states;                     /*!< The states of the device */
+        uint8_t dst_addr_mode;              /*!< The addressing mode for the destination address used in this primitive and of the APDU to be transferred.*/
+        esp_zb_zcl_basic_cmd_t basic_cmd;   /*!< Basic command info */
+        int tx_time;                        /*!< Reserved */
+        uint8_t  confirm_status;            /*!< The status of data confirm. 0: success, otherwise failed */
+        uint32_t asdu_length;               /*!< The length of ASDU*/
+    } ESP_NCP_ZB_PACKED_STRUCT esp_ncp_zb_aps_data_confirm_t;
+
+    uint16_t outlen = sizeof(esp_ncp_zb_aps_data_confirm_t) + confirm.asdu_length;
+    uint8_t *output = calloc(1, outlen);
+    if (!output) {
+        return;
+    }
+
+    esp_ncp_zb_aps_data_confirm_t *aps_data = (esp_ncp_zb_aps_data_confirm_t *)output;
+    memcpy(&aps_data->basic_cmd.dst_addr_u, &confirm.dst_addr, sizeof(esp_zb_addr_u));
+    aps_data->basic_cmd.dst_endpoint = confirm.dst_endpoint;
+    aps_data->basic_cmd.src_endpoint = confirm.src_endpoint;
+    aps_data->dst_addr_mode = confirm.dst_addr_mode;
+
+    aps_data->states = ESP_NCP_CONFIRM;
+    aps_data->tx_time = confirm.tx_time;
+    aps_data->confirm_status = confirm.status;
+    aps_data->asdu_length = confirm.asdu_length;
+
+    if (confirm.asdu && confirm.asdu_length) {
+        memcpy(output + sizeof(esp_ncp_zb_aps_data_confirm_t), confirm.asdu, confirm.asdu_length);
+    }
+
+    esp_ncp_zb_aps_data_handle(ESP_NCP_APS_DATA_CONFIRM, output, outlen);
+    free(output);
+    output = NULL;
+
+    ESP_LOGI(TAG, "%s %d", __func__, __LINE__);
+}
 
 static void esp_ncp_zb_bdb_start_top_level_commissioning_cb(uint8_t mode_mask)
 {
@@ -1456,6 +1597,105 @@ static esp_err_t esp_ncp_zb_find_match_fn(const uint8_t *input, uint16_t inlen, 
     return ret;
 }
 
+static esp_err_t esp_ncp_zb_aps_data_request_fn(const uint8_t *input, uint16_t inlen, uint8_t **output, uint16_t *outlen)
+{
+    esp_err_t ret = input ? ESP_OK : ESP_ERR_INVALID_ARG;
+
+    typedef struct {
+        esp_zb_zcl_basic_cmd_t basic_cmd;                       /*!< Basic command info */
+        uint8_t  dst_addr_mode;                                 /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+        uint16_t profile_id;                                    /*!< Profile id */
+        uint16_t cluster_id;                                    /*!< Cluster id */
+        uint8_t tx_options;                                     /*!< The transmission options for the ASDU to be transferred, refer to esp_zb_apsde_tx_opt_t */
+        bool use_alias;                                         /*!< The next higher layer may use the UseAlias parameter to request alias usage by NWK layer for the current frame.*/
+        esp_zb_addr_u alias_src_addr;                           /*!< The source address to be used for this NSDU. If the use_alias is true */
+        uint8_t alias_seq_num;                                  /*!< The sequence number to be used for this NSDU. If the use_alias is true */
+        uint8_t radius;                                         /*!< The distance, in hops, that a transmitted frame will be allowed to travel through the network.*/
+        uint32_t asdu_length;                                   /*!< The number of octets comprising the ASDU to be transferred */
+    } ESP_NCP_ZB_PACKED_STRUCT esp_zb_aps_data_t;
+
+    if (input) {
+        esp_zb_aps_data_t *aps_data = (esp_zb_aps_data_t *)input;
+        esp_zb_apsde_data_req_t data_req = {
+            .dst_addr_mode  = aps_data->dst_addr_mode,
+            .dst_short_addr = aps_data->basic_cmd.dst_addr_u.addr_short,
+            .dst_endpoint   = aps_data->basic_cmd.dst_endpoint,
+            .src_endpoint   = aps_data->basic_cmd.src_endpoint,
+            .profile_id     = aps_data->profile_id,
+            .cluster_id     = aps_data->cluster_id,
+            .tx_options     = aps_data->tx_options,
+            .use_alias      = aps_data->use_alias,
+            .alias_src_addr = aps_data->alias_src_addr.addr_short,
+            .alias_seq_num  = aps_data->alias_seq_num,
+            .radius         = aps_data->radius,
+            .asdu_length    = aps_data->asdu_length,
+            .asdu           = aps_data->asdu_length ? (uint8_t *)(input + sizeof(esp_zb_aps_data_t)) : NULL,
+        };
+
+        ESP_LOGI(TAG, "dst_addr_mode %0x, dst_short_addr %02x, dst_endpoint %0x, src_endpoint %0x, profile_id %02x, cluster_id %02x, tx_options %02x, use_alias %02x, radius %0x",
+                        data_req.dst_addr_mode, data_req.dst_short_addr, data_req.dst_endpoint, data_req.src_endpoint, data_req.profile_id, data_req.cluster_id,
+                        data_req.tx_options, data_req.use_alias, data_req.radius);
+
+        if (data_req.asdu && data_req.asdu_length) {
+            ESP_LOG_BUFFER_HEX_LEVEL(TAG, data_req.asdu, data_req.asdu_length, ESP_LOG_DEBUG);
+        }
+
+        esp_zb_aps_data_indication_handler_register(esp_ncp_zb_aps_data_indication_handler);
+        esp_zb_aps_data_confirm_handler_register(esp_ncp_zb_aps_data_confirm_handler);
+        ret = esp_zb_aps_data_request(&data_req);
+    }
+
+    esp_ncp_status_t status = (ret == ESP_OK) ? ESP_NCP_SUCCESS : ESP_NCP_ERR_FATAL;
+
+    ESP_NCP_ZB_STATUS();
+
+    return ret;
+}
+
+static esp_err_t esp_ncp_zb_aps_data_indication_fn(const uint8_t *input, uint16_t inlen, uint8_t **output, uint16_t *outlen)
+{
+    esp_ncp_zb_ctx_t ncp_ctx;
+
+    if (!s_aps_data_indication) {
+        s_aps_data_indication = xQueueCreate(NCP_EVENT_QUEUE_LEN, sizeof(esp_ncp_zb_ctx_t));
+    }
+
+    if (s_aps_data_indication && (xQueueReceive(s_aps_data_indication, &ncp_ctx, pdMS_TO_TICKS(100)) == pdTRUE)) {
+        *outlen = ncp_ctx.size;
+        *output = ncp_ctx.data;
+    } else {
+        *outlen = sizeof(uint8_t);
+        *output = calloc(1, *outlen);
+        if (*output) {
+            *(*output) = ESP_NCP_CONNECTED;
+        }
+    }
+
+    return (*output) ? ESP_OK : ESP_ERR_NO_MEM;
+}
+
+static esp_err_t esp_ncp_zb_aps_data_confirm_fn(const uint8_t *input, uint16_t inlen, uint8_t **output, uint16_t *outlen)
+{
+    esp_ncp_zb_ctx_t ncp_ctx;
+
+    if (!s_aps_data_confirm) {
+        s_aps_data_confirm = xQueueCreate(NCP_EVENT_QUEUE_LEN, sizeof(esp_ncp_zb_ctx_t));
+    }
+
+    if (s_aps_data_confirm && xQueueReceive(s_aps_data_confirm, &ncp_ctx, pdMS_TO_TICKS(100)) == pdTRUE) {
+        *outlen = ncp_ctx.size;
+        *output = ncp_ctx.data;
+    } else {
+        *outlen = sizeof(uint8_t);
+        *output = calloc(1, *outlen);
+        if (*output) {
+            *(*output) = ESP_NCP_CONNECTED;
+        }
+    }
+
+    return (*output) ? ESP_OK : ESP_ERR_NO_MEM;
+}
+
 static const esp_ncp_zb_func_t ncp_zb_func_table[] = {
     {ESP_NCP_NETWORK_INIT, esp_ncp_zb_network_init_fn},
     {ESP_NCP_NETWORK_PAN_ID_SET, esp_ncp_zb_pan_id_set_fn},
@@ -1512,6 +1752,9 @@ static const esp_ncp_zb_func_t ncp_zb_func_table[] = {
     {ESP_NCP_ZDO_BIND_SET, esp_ncp_zb_set_bind_fn},
     {ESP_NCP_ZDO_UNBIND_SET, esp_ncp_zb_set_unbind_fn},
     {ESP_NCP_ZDO_FIND_MATCH, esp_ncp_zb_find_match_fn},
+    {ESP_NCP_APS_DATA_REQUEST, esp_ncp_zb_aps_data_request_fn},
+    {ESP_NCP_APS_DATA_INDICATION, esp_ncp_zb_aps_data_indication_fn},
+    {ESP_NCP_APS_DATA_CONFIRM, esp_ncp_zb_aps_data_confirm_fn},
 };
 
 esp_err_t esp_ncp_zb_output(esp_ncp_header_t *ncp_header, const void *buffer, uint16_t len)

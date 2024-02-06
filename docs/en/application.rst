@@ -207,6 +207,12 @@ The format of the ESP ZNSP frame is as follows:
 |          +---------------------------------+----------------+------------------------------------------------------------------------------------------+ 
 |          | ZDO_FIND_MATCH                  | 0x0202         | Send match desc request to find matched Zigbee device                                    | 
 +----------+---------------------------------+----------------+------------------------------------------------------------------------------------------+
+|  APS     | APS_DATA_REQUEST                | 0x0300         | Request the aps data                                                                     |
+|          +---------------------------------+----------------+------------------------------------------------------------------------------------------+
+|          | APS_DATA_INDICATION             | 0x0301         | Indication the aps data                                                                  |
+|          +---------------------------------+----------------+------------------------------------------------------------------------------------------+
+|          | APS_DATA_CONFIRM                | 0x0302         | Confirm the aps data                                                                     |
++----------+---------------------------------+----------------+------------------------------------------------------------------------------------------+
 
 5.1.7 Network Frame ID Details
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1075,7 +1081,7 @@ Get the network short address by the IEEE address
 | Measurement|                                                                    |                +---------------------------------------------------------------------------------------------------+                                            |
 |            |                                                                    |                | uint8_t interval_period                : The Profile interval period                              |                                            |
 |            |                                                                    |                +---------------------------------------------------------------------------------------------------+                                            |
-|            |                                                                    |                | uuint8_t max_number_of_intervals       : The Profile max number of intervals                      |                                            |
+|            |                                                                    |                | uint8_t max_number_of_intervals       : The Profile max number of intervals                       |                                            |
 |            |                                                                    |                +---------------------------------------------------------------------------------------------------+                                            |
 |            |                                                                    |                | uuint16_t attributes_size              : The Profile attributes size                              |                                            |
 |            |                                                                    |                +---------------------------------------------------------------------------------------------------+                                            |
@@ -1171,14 +1177,14 @@ Configures endpoint information on the NCP
 
 +------------------------+--------------------------------------------------------------------------------------------------+
 | Command Parameters:                                                                                                       |
-|                        | uint8_t     endpoint                  :  The application endpoint to be added.                   |
-|                        | uint16_t    profileId                 :  The endpoint's application profile.                     |
-|                        | uint16_t    deviceId                  :  The endpoint's device ID within the application profile.|
-|                        | uint8_t     appFlags                  :  The version and flags indicate description availability.|
-|                        | uint8_t     inputClusterCount         :  The number of cluster IDs in inputClusterList.          |
-|                        | uint8_t     outputClusterCount        :  The number of cluster IDs in outputClusterList.         |
-|                        | uint16_t[]  inputClusterList          :  Input cluster IDs the endpoint will accept.             |
-|                        | uint16_t[]  outputClusterList         :  Output cluster IDs the endpoint may send.               |
+|                        | uint8_t     endpoint                  :  The application endpoint to be added                    |
+|                        | uint16_t    profileId                 :  The endpoint's application profile                      |
+|                        | uint16_t    deviceId                  :  The endpoint's device ID within the application profile |
+|                        | uint8_t     appFlags                  :  The version and flags indicate description availability |
+|                        | uint8_t     inputClusterCount         :  The number of cluster IDs in inputClusterList           |
+|                        | uint8_t     outputClusterCount        :  The number of cluster IDs in outputClusterList          |
+|                        | uint16_t[]  inputClusterList          :  Input cluster IDs the endpoint will accept              |
+|                        | uint16_t[]  outputClusterList         :  Output cluster IDs the endpoint may send                |
 +------------------------+--------------------------------------------------------------------------------------------------+
 | Response Parameters:                                                                                                      |
 |                        | esp_ncp_status_t status:         Status value indicating success or the reason for failure       |
@@ -1191,14 +1197,14 @@ Remove endpoint information on the NCP
 
 +------------------------+--------------------------------------------------------------------------------------------------+
 | Command Parameters:                                                                                                       |
-|                        | uint8_t     endpoint                  :  The application endpoint to be added.                   |
-|                        | uint16_t    profileId                 :  The endpoint's application profile.                     |
-|                        | uint16_t    deviceId                  :  The endpoint's device ID within the application profile.|
-|                        | uint8_t     appFlags                  :  The version and flags indicate description availability.|
-|                        | uint8_t     inputClusterCount         :  The number of cluster IDs in inputClusterList.          |
-|                        | uint8_t     outputClusterCount        :  The number of cluster IDs in outputClusterList.         |
-|                        | uint16_t[]  inputClusterList          :  Input cluster IDs the endpoint will accept.             |
-|                        | uint16_t[]  outputClusterList         :  Output cluster IDs the endpoint may send.               |
+|                        | uint8_t     endpoint                  :  The application endpoint to be added                    |
+|                        | uint16_t    profileId                 :  The endpoint's application profile                      |
+|                        | uint16_t    deviceId                  :  The endpoint's device ID within the application profile |
+|                        | uint8_t     appFlags                  :  The version and flags indicate description availability |
+|                        | uint8_t     inputClusterCount         :  The number of cluster IDs in inputClusterList           |
+|                        | uint8_t     outputClusterCount        :  The number of cluster IDs in outputClusterList          |
+|                        | uint16_t[]  inputClusterList          :  Input cluster IDs the endpoint will accept              |
+|                        | uint16_t[]  outputClusterList         :  Output cluster IDs the endpoint may send                |
 +------------------------+--------------------------------------------------------------------------------------------------+
 | Response Parameters:                                                                                                      |
 |                        | esp_ncp_status_t status:         Status value indicating success or the reason for failure       |
@@ -1211,39 +1217,39 @@ Read attribute data on NCP endpoints
 
 +------------------------+--------------------------------------------------------------------------------------------------+
 | Command Parameters:                                                                                                       |
-|                        | uint8_t[8]  dst_addr                  : The single short address or group address.               |
-|                        | uint8_t   dst_endpoint                : Destination Endpoint ID.                                 |
-|                        | uint8_t   src_endpoint                : Source Endpoint ID.                                      |
-|                        | uint8_t   address_mode                : ZCL address mode.                                        |
-|                        | uint16_t  cluster                     : Cluster ID.                                              |
-|                        | uint8_t   attr_number                 : Attribute number.                                        |
-|                        | uint16_t[]  attributeId               : Attribute ID.                                            |
+|                        | uint8_t[8]  dst_addr                  : The single short address or group address                |
+|                        | uint8_t   dst_endpoint                : Destination Endpoint ID                                  |
+|                        | uint8_t   src_endpoint                : Source Endpoint ID                                       |
+|                        | uint8_t   address_mode                : ZCL address mode                                         |
+|                        | uint16_t  cluster                     : Cluster ID                                               |
+|                        | uint8_t   attr_number                 : Attribute number                                         |
+|                        | uint16_t[]  attributeId               : Attribute ID                                             |
 +------------------------+--------------------------------------------------------------------------------------------------+
 | Response Parameters:                                                                                                      |
 |                        | esp_ncp_status_t status:         Status value indicating success or the reason for failure       |
 +------------------------+--------------------------------------------------------------------------------------------------+
 | Notify Parameters:                                                                                                        |
 |                        | uint8_t     status                : Status                                                       |
-|                        | uint8_t     fc;                   : A 8-bit Frame control                                        |
-|                        | uint16_t    manuf_code;           : Manufacturer code                                            |   
-|                        | uint8_t     tsn;                  : Transaction sequence number                                  |
-|                        | uint8_t     rssi;                 : Signal strength                                              |
+|                        | uint8_t     fc                    : A 8-bit Frame control                                        |
+|                        | uint16_t    manuf_code            : Manufacturer code                                            |
+|                        | uint8_t     tsn                   : Transaction sequence number                                  |
+|                        | uint8_t     rssi                  : Signal strength                                              |
 |                        | uint8_t     addr_type             : address type see esp_zb_zcl_address_type_t                   |
 |                        | uint8_t[8]  device_addr           : Long address of device requested to leave device             |
-|                        | uint16_t dst_address;             : The destination short address of command                     |
-|                        | uint8_t src_endpoint;             : The source endpoint of command                               |
-|                        | uint8_t dst_endpoint;             : The destination endpoint of command                          |
-|                        | uint16_t cluster;                 : The cluster id for command                                   |
-|                        | uint16_t profile;                 : The application profile identifier                           |
-|                        | uint8_t id;                       : The command id                                               |
-|                        | uint8_t direction;                : The command direction                                        |
-|                        | uint8_t is_common;                : The command is common type                                   |
-|                        | uint8_t   attr_number             : Attribute number.                                            |
-|                        | uint8_t attr_status;              : The status of the read operation on this attribute           |
-|                        | uint16_t  attributeId                 : Attribute ID.                                            |
-|                        | uint8_t   dataType                    : Attribute data type.                                     |
-|                        | uint8_t   dataLength                  : Attribute data length.                                   |
-|                        | uint8_t[] data                        : Attribute data.                                          |
+|                        | uint16_t dst_address              : The destination short address of command                     |
+|                        | uint8_t src_endpoint              : The source endpoint of command                               |
+|                        | uint8_t dst_endpoint              : The destination endpoint of command                          |
+|                        | uint16_t cluster                  : The cluster id for command                                   |
+|                        | uint16_t profile                  : The application profile identifier                           |
+|                        | uint8_t id                        : The command id                                               |
+|                        | uint8_t direction                 : The command direction                                        |
+|                        | uint8_t is_common                 : The command is common type                                   |
+|                        | uint8_t   attr_number             : Attribute number                                             |
+|                        | uint8_t attr_status               : The status of the read operation on this attribute           |
+|                        | uint16_t  attributeId             : Attribute ID                                                 |
+|                        | uint8_t   dataType                : Attribute data type                                          |
+|                        | uint8_t   dataLength              : Attribute data length                                        |
+|                        | uint8_t[] data                    : Attribute data                                               |
 +------------------------+--------------------------------------------------------------------------------------------------+
 
 5.1.8.5 ZCL_ATTR_WRITE
@@ -1253,39 +1259,39 @@ Write attribute data on NCP endpoints
 
 +------------------------+--------------------------------------------------------------------------------------------------+
 | Command Parameters:                                                                                                       |
-|                        | uint8_t[8]  dst_addr                  : The single short address or group address.               |
-|                        | uint8_t   dst_endpoint                : Destination Endpoint ID.                                 |
-|                        | uint8_t   src_endpoint                : Source Endpoint ID.                                      |
-|                        | uint8_t   address_mode                : ZCL address mode.                                        |
-|                        | uint16_t  cluster                     : Cluster ID.                                              |
-|                        | uint8_t   attr_number                 : Attribute number.                                        |
-|                        | uint16_t  attributeId                 : Attribute ID.                                            |
-|                        | uint8_t   dataType                    : Attribute data type.                                     |
-|                        | uint8_t   dataLength                  : Attribute data length.                                   |
-|                        | uint8_t[] data                        : Attribute data.                                          |
+|                        | uint8_t[8]  dst_addr                  : The single short address or group address                |
+|                        | uint8_t   dst_endpoint                : Destination Endpoint ID                                  |
+|                        | uint8_t   src_endpoint                : Source Endpoint ID                                       |
+|                        | uint8_t   address_mode                : ZCL address mode                                         |
+|                        | uint16_t  cluster                     : Cluster ID                                               |
+|                        | uint8_t   attr_number                 : Attribute number                                         |
+|                        | uint16_t  attributeId                 : Attribute ID                                             |
+|                        | uint8_t   dataType                    : Attribute data type                                      |
+|                        | uint8_t   dataLength                  : Attribute data length                                    |
+|                        | uint8_t[] data                        : Attribute data                                           |
 +------------------------+--------------------------------------------------------------------------------------------------+
 | Response Parameters:                                                                                                      |
 |                        | esp_ncp_status_t status:         Status value indicating success or the reason for failure       |
 +------------------------+--------------------------------------------------------------------------------------------------+
 | Notify Parameters:                                                                                                        |
 |                        | uint8_t     status                : Status                                                       |
-|                        | uint8_t     fc;                   : A 8-bit Frame control                                        |
-|                        | uint16_t    manuf_code;           : Manufacturer code                                            |   
-|                        | uint8_t     tsn;                  : Transaction sequence number                                  |
-|                        | uint8_t     rssi;                 : Signal strength                                              |
+|                        | uint8_t     fc                    : A 8-bit Frame control                                        |
+|                        | uint16_t    manuf_code            : Manufacturer code                                            |
+|                        | uint8_t     tsn                   : Transaction sequence number                                  |
+|                        | uint8_t     rssi                  : Signal strength                                              |
 |                        | uint8_t     addr_type             : address type see esp_zb_zcl_address_type_t                   |
 |                        | uint8_t[8]  device_addr           : Long address of device requested to leave device             |
-|                        | uint16_t dst_address;             : The destination short address of command                     |
-|                        | uint8_t src_endpoint;             : The source endpoint of command                               |
-|                        | uint8_t dst_endpoint;             : The destination endpoint of command                          |
-|                        | uint16_t cluster;                 : The cluster id for command                                   |
-|                        | uint16_t profile;                 : The application profile identifier                           |
-|                        | uint8_t id;                       : The command id                                               |
-|                        | uint8_t direction;                : The command direction                                        |
-|                        | uint8_t is_common;                : The command is common type                                   |
-|                        | uint8_t   attr_number             : Attribute number.                                            |
-|                        | uint8_t attr_status;              : The status of the read operation on this attribute           |
-|                        | uint16_t  attributeId             : Attribute ID.                                                |
+|                        | uint16_t dst_address              : The destination short address of command                     |
+|                        | uint8_t src_endpoint              : The source endpoint of command                               |
+|                        | uint8_t dst_endpoint              : The destination endpoint of command                          |
+|                        | uint16_t cluster                  : The cluster id for command                                   |
+|                        | uint16_t profile                  : The application profile identifier                           |
+|                        | uint8_t id                        : The command id                                               |
+|                        | uint8_t direction                 : The command direction                                        |
+|                        | uint8_t is_common                 : The command is common type                                   |
+|                        | uint8_t   attr_number             : Attribute number                                             |
+|                        | uint8_t attr_status               : The status of the read operation on this attribute           |
+|                        | uint16_t  attributeId             : Attribute ID                                                 |
 +------------------------+--------------------------------------------------------------------------------------------------+
 
 5.1.8.6 ZCL_ATTR_REPORT        
@@ -1295,13 +1301,13 @@ Report attribute data on NCP endpoints
 
 +------------------------+--------------------------------------------------------------------------------------------------+
 | Command Parameters:                                                                                                       |
-|                        | uint8_t[8]  dst_addr                  : The single short address or group address.               |
-|                        | uint8_t   dst_endpoint                : Destination Endpoint ID.                                 |
-|                        | uint8_t   src_endpoint                : Source Endpoint ID.                                      |
-|                        | uint8_t   address_mode                : ZCL address mode.                                        |
-|                        | uint16_t  clusterID                   : Cluster ID to report.                                    |
-|                        | uint8_t   cluster_role                : Cluster role.                                            |
-|                        | uint16_t  attributeID                 : Attribute ID to report.                                  |
+|                        | uint8_t[8]  dst_addr                  : The single short address or group address                |
+|                        | uint8_t   dst_endpoint                : Destination Endpoint ID                                  |
+|                        | uint8_t   src_endpoint                : Source Endpoint ID                                       |
+|                        | uint8_t   address_mode                : ZCL address mode                                         |
+|                        | uint16_t  clusterID                   : Cluster ID to report                                     |
+|                        | uint8_t   cluster_role                : Cluster role                                             |
+|                        | uint16_t  attributeID                 : Attribute ID to report                                   |
 +------------------------+--------------------------------------------------------------------------------------------------+
 | Response Parameters:                                                                                                      |
 |                        | esp_ncp_status_t status:         Status value indicating success or the reason for failure       |
@@ -1313,11 +1319,11 @@ Report attribute data on NCP endpoints
 |                        | uint8_t     src_endpoint          : The endpoint id which comes from report device               |
 |                        | uint8_t     dst_endpoint          : The destination endpoint id                                  |
 |                        | uint16_t    cluster               : The cluster id that reported                                 |
-|                        | uint8_t     attr_number           : Attribute number.                                            |
+|                        | uint8_t     attr_number           : Attribute number                                             |
 |                        | uint16_t    id                    : The identify of attribute                                    |
 |                        | uint8_t     type                  : The type of attribute,                                       |
 |                        | uint8_t     size                  : The value size of attribute                                  |
-|                        | uint8_t[]   data                  : Attribute data.                                              |
+|                        | uint8_t[]   data                  : Attribute data                                               |
 +------------------------+--------------------------------------------------------------------------------------------------+
 
 5.1.8.7 ZCL_ATTR_DISC 
@@ -1327,35 +1333,35 @@ Discover attribute data on NCP endpoints
 
 +------------------------+--------------------------------------------------------------------------------------------------+
 | Command Parameters:                                                                                                       |
-|                        | uint8_t[8]  dst_addr                  : The single short address or group address.               |
-|                        | uint8_t   dst_endpoint                : Destination Endpoint ID.                                 |
-|                        | uint8_t   src_endpoint                : Source Endpoint ID.                                      |
-|                        | uint8_t   address_mode                : ZCL address mode.                                        |
+|                        | uint8_t[8]  dst_addr                  : The single short address or group address                |
+|                        | uint8_t   dst_endpoint                : Destination Endpoint ID                                  |
+|                        | uint8_t   src_endpoint                : Source Endpoint ID                                       |
+|                        | uint8_t   address_mode                : ZCL address mode                                         |
 |                        | uint16_t  cluster_id                  : The cluster identifier                                   |
-|                        | uint16_t  start_attr_id;              : The attribute identifier to begin the discover           |
-|                        | uint8_t   max_attr_number;            : The maximum number of attribute identifiers.             |
-|                        | uint8_t   direction;                  : The command direction.                                   |
+|                        | uint16_t  start_attr_id               : The attribute identifier to begin the discover           |
+|                        | uint8_t   max_attr_number             : The maximum number of attribute identifiers              |
+|                        | uint8_t   direction                   : The command direction                                    |
 +------------------------+--------------------------------------------------------------------------------------------------+
 | Response Parameters:                                                                                                      |
 |                        | esp_ncp_status_t status:         Status value indicating success or the reason for failure       |
 +------------------------+--------------------------------------------------------------------------------------------------+
 | Notify Parameters:                                                                                                        |
 |                        | uint8_t     status                : Status                                                       |
-|                        | uint8_t     fc;                   : A 8-bit Frame control                                        |
-|                        | uint16_t    manuf_code;           : Manufacturer code                                            |   
-|                        | uint8_t     tsn;                  : Transaction sequence number                                  |
-|                        | uint8_t     rssi;                 : Signal strength                                              |
+|                        | uint8_t     fc                    : A 8-bit Frame control                                        |
+|                        | uint16_t    manuf_code            : Manufacturer code                                            |
+|                        | uint8_t     tsn                   : Transaction sequence number                                  |
+|                        | uint8_t     rssi                  : Signal strength                                              |
 |                        | uint8_t     addr_type             : address type see esp_zb_zcl_address_type_t                   |
 |                        | uint8_t[8]  device_addr           : Long address of device requested to leave device             |
-|                        | uint16_t dst_address;             : The destination short address of command                     |
-|                        | uint8_t src_endpoint;             : The source endpoint of command                               |
-|                        | uint8_t dst_endpoint;             : The destination endpoint of command                          |
-|                        | uint16_t cluster;                 : The cluster id for command                                   |
-|                        | uint16_t profile;                 : The application profile identifier                           |
-|                        | uint8_t id;                       : The command id                                               |
-|                        | uint8_t direction;                : The command direction                                        |
-|                        | uint8_t is_common;                : The command is common type                                   |
-|                        | uint8_t     attr_number           : Attribute number.                                            |
+|                        | uint16_t dst_address              : The destination short address of command                     |
+|                        | uint8_t src_endpoint              : The source endpoint of command                               |
+|                        | uint8_t dst_endpoint              : The destination endpoint of command                          |
+|                        | uint16_t cluster                  : The cluster id for command                                   |
+|                        | uint16_t profile                  : The application profile identifier                           |
+|                        | uint8_t id                        : The command id                                               |
+|                        | uint8_t direction                 : The command direction                                        |
+|                        | uint8_t is_common                 : The command is common type                                   |
+|                        | uint8_t     attr_number           : Attribute number                                             |
 |                        | uint16_t    id                    : The identify of attribute                                    |
 |                        | uint8_t     type                  : The type of attribute,                                       |
 +------------------------+--------------------------------------------------------------------------------------------------+
@@ -1372,17 +1378,17 @@ Write ZCL command on NCP endpoints
 
 +------------------------+--------------------------------------------------------------------------------------------------+
 | Command Parameters:                                                                                                       |
-|                        | uint8_t[8]  dst_addr                  : The single short address or group address.               |
-|                        | uint8_t   dst_endpoint                : Destination Endpoint ID.                                 |
-|                        | uint8_t   src_endpoint                : Source Endpoint ID.                                      |
-|                        | uint8_t   address_mode                : ZCL address mode.                                        |
+|                        | uint8_t[8]  dst_addr                  : The single short address or group address                |
+|                        | uint8_t   dst_endpoint                : Destination Endpoint ID                                  |
+|                        | uint8_t   src_endpoint                : Source Endpoint ID                                       |
+|                        | uint8_t   address_mode                : ZCL address mode                                         |
 |                        | uint16_t profile_id                   : Profile id                                               |
 |                        | uint16_t cluster_id                   : Cluster id                                               |
 |                        | uint16_t cmd_id                       : ZCL and custom command id                                |
 |                        | uint8_t  direction                    : Direction of command                                     |
-|                        | uint8_t   dataType                    : Command data type.                                       |
-|                        | uint8_t   dataLength                  : Command data length.                                     |
-|                        | uint8_t[] data                        : Command data.                                            |
+|                        | uint8_t   dataType                    : Command data type                                        |
+|                        | uint8_t   dataLength                  : Command data length                                      |
+|                        | uint8_t[] data                        : Command data                                             |
 +------------------------+--------------------------------------------------------------------------------------------------+
 | Response Parameters:                                                                                                      |
 |                        | esp_ncp_status_t status:         Status value indicating success or the reason for failure       |
@@ -1395,41 +1401,41 @@ Report configure on NCP endpoints
 
 +------------------------+--------------------------------------------------------------------------------------------------+
 | Command Parameters:                                                                                                       |
-|                        | uint8_t[8]  dst_addr                  : The single short address or group address.               |
-|                        | uint8_t   dst_endpoint                : Destination Endpoint ID.                                 |
-|                        | uint8_t   src_endpoint                : Source Endpoint ID.                                      |
-|                        | uint8_t   address_mode                : ZCL address mode.                                        |
+|                        | uint8_t[8]  dst_addr                  : The single short address or group address                |
+|                        | uint8_t   dst_endpoint                : Destination Endpoint ID                                  |
+|                        | uint8_t   src_endpoint                : Source Endpoint ID                                       |
+|                        | uint8_t   address_mode                : ZCL address mode                                         |
 |                        | uint16_t  cluster_id                  : The cluster identifier                                   |
-|                        | uint16_t  record_number;              : The Number of report configuration record                |
-|                        | uint8_t direction;                    : The direction of the attribute are reported operation    |
-|                        | uint16_t attributeID;                 : Attribute ID to report                                   |
-|                        | uint8_t attrType;                     : Attribute type to Report                                 |
-|                        | uint16_t min_interval;                : Minimum reporting interval                               |
-|                        | uint16_t max_interval;                : Maximum reporting interval                               |
+|                        | uint16_t  record_number               : The Number of report configuration record                |
+|                        | uint8_t direction                     : The direction of the attribute are reported operation    |
+|                        | uint16_t attributeID                  : Attribute ID to report                                   |
+|                        | uint8_t attrType                      : Attribute type to Report                                 |
+|                        | uint16_t min_interval                 : Minimum reporting interval                               |
+|                        | uint16_t max_interval                 : Maximum reporting interval                               |
 +------------------------+--------------------------------------------------------------------------------------------------+
 | Response Parameters:                                                                                                      |
 |                        | esp_ncp_status_t status:         Status value indicating success or the reason for failure       |
 +------------------------+--------------------------------------------------------------------------------------------------+
 | Notify Parameters:                                                                                                        |
 |                        | uint8_t     status                : Status                                                       |
-|                        | uint8_t     fc;                   : A 8-bit Frame control                                        |
-|                        | uint16_t    manuf_code;           : Manufacturer code                                            |   
-|                        | uint8_t     tsn;                  : Transaction sequence number                                  |
-|                        | uint8_t     rssi;                 : Signal strength                                              |
+|                        | uint8_t     fc                    : A 8-bit Frame control                                        |
+|                        | uint16_t    manuf_code            : Manufacturer code                                            |
+|                        | uint8_t     tsn                   : Transaction sequence number                                  |
+|                        | uint8_t     rssi                  : Signal strength                                              |
 |                        | uint8_t     addr_type             : address type see esp_zb_zcl_address_type_t                   |
 |                        | uint8_t[8]  device_addr           : Long address of device requested to leave device             |
-|                        | uint16_t dst_address;             : The destination short address of command                     |
-|                        | uint8_t src_endpoint;             : The source endpoint of command                               |
-|                        | uint8_t dst_endpoint;             : The destination endpoint of command                          |
-|                        | uint16_t cluster;                 : The cluster id for command                                   |
-|                        | uint16_t profile;                 : The application profile identifier                           |
-|                        | uint8_t id;                       : The command id                                               |
-|                        | uint8_t direction;                : The command direction                                        |
-|                        | uint8_t is_common;                : The command is common type                                   |
-|                        | uint8_t     attr_number           : Attribute number.                                            |
-|                        | uint8_t attr_status;              : The status of the reported operation on this attribute       |
-|                        | uint8_t direction;                : The direction of the attribute are reported operation        |
-|                        | uint16_t  attributeId             : Attribute ID.                                                |
+|                        | uint16_t dst_address              : The destination short address of command                     |
+|                        | uint8_t src_endpoint              : The source endpoint of command                               |
+|                        | uint8_t dst_endpoint              : The destination endpoint of command                          |
+|                        | uint16_t cluster                  : The cluster id for command                                   |
+|                        | uint16_t profile                  : The application profile identifier                           |
+|                        | uint8_t id                        : The command id                                               |
+|                        | uint8_t direction                 : The command direction                                        |
+|                        | uint8_t is_common                 : The command is common type                                   |
+|                        | uint8_t     attr_number           : Attribute number                                             |
+|                        | uint8_t attr_status               : The status of the reported operation on this attribute       |
+|                        | uint8_t direction                 : The direction of the attribute are reported operation        |
+|                        | uint16_t  attributeId             : Attribute ID                                                 |
 +------------------------+--------------------------------------------------------------------------------------------------+
 
 5.1.9 ZDO Frame ID Details
@@ -1458,8 +1464,8 @@ Create a binding between two endpoints on two nodes
 +------------------------+--------------------------------------------------------------------------------------------------+
 | Notify Parameters:                                                                                                        |
 |                        | uint8_t zdo_status                    : Status value indicating success or the reason for failure|
-|                        | uint32_t user_cb                    : A ZDO match desc request callback                          |
-|                        | uint32_t user_ctx                   : User information context                                   |
+|                        | uint32_t user_cb                      : A ZDO match desc request callback                        |
+|                        | uint32_t user_ctx                     : User information context                                 |
 +------------------------+--------------------------------------------------------------------------------------------------+
 
 5.1.9.2 ZDO_UNBIND_SET
@@ -1485,8 +1491,8 @@ Remove a binding between two endpoints on two nodes
 +------------------------+--------------------------------------------------------------------------------------------------+
 | Notify Parameters:                                                                                                        |
 |                        | uint8_t zdo_status                    : Status value indicating success or the reason for failure|
-|                        | uint32_t user_cb                    : A ZDO match desc request callback                          |
-|                        | uint32_t user_ctx                   : User information context                                   |
+|                        | uint32_t user_cb                      : A ZDO match desc request callback                        |
+|                        | uint32_t user_ctx                     : User information context                                 |
 +------------------------+--------------------------------------------------------------------------------------------------+
 
 5.1.9.2 ZDO_FIND_MATCH
@@ -1497,13 +1503,13 @@ Send match desc request to find matched Zigbee device
 +------------------------+--------------------------------------------------------------------------------------------------+
 | Command Parameters:                                                                                                       |
 |                        | uint32_t user_cb                    : A ZDO match desc request callback                          |
-|                        | uint32_t user_ctx;                  : User information context                                   |
-|                        | uint16_t dst_nwk_addr;              : NWK address that request sent to                           |
-|                        | uint16_t addr_of_interest;          : NWK address of interest                                    |
-|                        | uint16_t profile_id;                : Profile ID to be match at the destination                  |
-|                        | uint8_t num_in_clusters;            : The number of input clusters for matching cluster server   |
-|                        | uint8_t num_out_clusters;           : The number of output clusters for matching cluster client  |
-|                        | uint16_t[] cluster_list;            : The cluster ID with size num_in_clusters + num_out_clusters|
+|                        | uint32_t user_ctx                   : User information context                                   |
+|                        | uint16_t dst_nwk_addr               : NWK address that request sent to                           |
+|                        | uint16_t addr_of_interest           : NWK address of interest                                    |
+|                        | uint16_t profile_id                 : Profile ID to be match at the destination                  |
+|                        | uint8_t num_in_clusters             : The number of input clusters for matching cluster server   |
+|                        | uint8_t num_out_clusters            : The number of output clusters for matching cluster client  |
+|                        | uint16_t[] cluster_list             : The cluster ID with size num_in_clusters + num_out_clusters|
 +------------------------+--------------------------------------------------------------------------------------------------+
 | Response Parameters:                                                                                                      |
 |                        | esp_ncp_status_t status:         Status value indicating success or the reason for failure       |
@@ -1513,7 +1519,111 @@ Send match desc request to find matched Zigbee device
 |                        | uint16_t addr                       : A short address of the device response                     |
 |                        | uint8_t  endpoint                   : An endpoint of the device response                         |
 |                        | uint32_t user_cb                    : A ZDO match desc request callback                          |
-|                        | uint32_t user_ctx;                  : User information context                                   |
+|                        | uint32_t user_ctx                   : User information context                                   |
++------------------------+--------------------------------------------------------------------------------------------------+
+
+5.1.10 APS Frame ID Details
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+5.1.10.1 APS_DATA_REQUEST
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Request the aps data
+
++------------------------+--------------------------------------------------------------------------------------------------+
+| Command Parameters:                                                                                                       |
+|                        | uint8_t[8] dst_address                : The IEEE address for the source                          |
+|                        | uint8_t dst_endpoint                  : The number of the individual endpoint                    |
+|                        | uint8_t src_endpoint                  : The individual endpoint of the entity                    |
+|                        | uint8_t dst_addr_mode                 : The destination address mode                             |
+|                        | uint16_t profile_id                   : The profile id                                           |
+|                        | uint16_t cluster_id                   : The cluster id                                           |
+|                        | uint8_t tx_options                    : The transmission options for the ASDU to be transferred  |
+|                        | bool use_alias                        : Use the UseAlias parameter to request                    |
+|                        | uint8_t[8] alias_src_addr             : The source address to be used, If the use_alias is true  |
+|                        | uint8_t alias_seq_num                 : The transmission options for the ASDU to be transferred  |
+|                        | uint8_t radius                        : The distance that a transmitted frame to travel          |
+|                        | uint32_t asdu_length                  : The number of octets comprising the ASDU being request   |
+|                        | uint8_t asdu[]                        : The set of octets comprising the ASDU to be transferred  |
++------------------------+--------------------------------------------------------------------------------------------------+
+| Response Parameters:                                                                                                      |
+|                        | esp_ncp_status_t status:         Status value indicating success or the reason for failure       |
++------------------------+--------------------------------------------------------------------------------------------------+
+
+5.1.10.2 APS_DATA_INDICATION
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Indication the aps data
+
++------------------------+--------------------------------------------------------------------------------------------------+
+| Command Parameters:                                                                                                       |
+|                        |        None                                                                                      |
++------------------------+--------------------------------------------------------------------------------------------------+
+| Response Parameters:                                                                                                      |
+|                        | uint8_t states;                     : The states of the device                                   |
+|                        | uint8_t dst_addr_mode               : The dest addr mode used in this primitive and of the APDU  |
+|                        | uint8_t[8] dst_addr                 : The individual device address or group address to directed |
+|                        | uint8_t dst_endpoint                : The target endpoint on the local entity to directed        |
+|                        | uint8_t src_addr_mode               : The source addr mode used in this primitive and of the APDU|
+|                        | uint8_t[8] src_addr                 : The individual device address which the ASDU was received  |
+|                        | uint8_t src_endpoint                : The individual endpoint number which the ASDU was received |
+|                        | uint16_t profile_id                 : The identifier of the profile which this frame originated  |
+|                        | uint16_t cluster_id                 : The identifier of the received cluster                     |
+|                        | uint8_t indication_status           : The status of the incoming frame processing                |
+|                        | uint8_t security_status             : The ASDU without any security or secured with NWK key      |
+|                        | uint8_t lqi                         : The link quality indication delivered by the NLDE          |
+|                        | uint32_t rx_time                    : The time indication for the received packet                |
+|                        | uint32_t asdu_length                : The number of octets comprising the ASDU being indicated   |
+|                        | uint8_t asdu[]                      : The set of octets comprising the ASDU to be indicated      |
++------------------------+--------------------------------------------------------------------------------------------------+
+| Notify Parameters:                                                                                                        |
+|                        | uint8_t states;                     : The states of the device                                   |
+|                        | uint8_t dst_addr_mode               : The dest addr mode used in this primitive and of the APDU  |
+|                        | uint8_t[8] dst_addr                 : The individual device address or group address to directed |
+|                        | uint8_t dst_endpoint                : The target endpoint on the local entity to directed        |
+|                        | uint8_t src_addr_mode               : The source addr mode used in this primitive and of the APDU|
+|                        | uint8_t[8] src_addr                 : The individual device address which the ASDU was received  |
+|                        | uint8_t src_endpoint                : The individual endpoint number which the ASDU was received |
+|                        | uint16_t profile_id                 : The identifier of the profile which this frame originated  |
+|                        | uint16_t cluster_id                 : The identifier of the received cluster                     |
+|                        | uint8_t indication_status           : The status of the incoming frame processing                |
+|                        | uint8_t security_status             : The ASDU without any security or secured with NWK key      |
+|                        | uint8_t lqi                         : The link quality indication delivered by the NLDE          |
+|                        | uint32_t rx_time                    : The time indication for the received packet                |
+|                        | uint32_t asdu_length                : The number of octets comprising the ASDU being indicated   |
+|                        | uint8_t asdu[]                      : The set of octets comprising the ASDU to be indicated      |
++------------------------+--------------------------------------------------------------------------------------------------+
+
+5.1.10.3 APS_DATA_CONFIRM
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Confirm the aps data
+
++------------------------+--------------------------------------------------------------------------------------------------+
+| Command Parameters:                                                                                                       |
+|                        |        None                                                                                      |
++------------------------+--------------------------------------------------------------------------------------------------+
+| Response Parameters:                                                                                                      |
+|                        | uint8_t states;                     : The states of the device                                   |
+|                        | uint8_t dst_addr_mode               : The dest addr mode used in this primitive and of the APDU  |
+|                        | uint8_t[8] dst_address              : The IEEE address for the dest                              |
+|                        | uint8_t dst_endpoint                : The individual endpoint of the dest                        |
+|                        | uint8_t src_endpoint                : The individual endpoint of the source                      |
+|                        | uint32_t tx_time                    : The time confirm for the transferred packet                |
+|                        | uint8_t  confirm_status             : The status of data confirm                                 |
+|                        | uint32_t asdu_length                : The number of octets comprising the ASDU being confirmed   |
+|                        | uint8_t asdu[]                      : The set of octets comprising the ASDU to be confirm        |
++------------------------+--------------------------------------------------------------------------------------------------+
+| Notify Parameters:                                                                                                        |
+|                        | uint8_t states;                     : The states of the device                                   |
+|                        | uint8_t dst_addr_mode               : The dest addr mode used in this primitive and of the APDU  |
+|                        | uint8_t[8] dst_address              : The IEEE address for the dest                              |
+|                        | uint8_t dst_endpoint                : The individual endpoint of the dest                        |
+|                        | uint8_t src_endpoint                : The individual endpoint of the source                      |
+|                        | uint32_t tx_time                    : The time confirm for the transferred packet                |
+|                        | uint8_t  confirm_status             : The status of data confirm                                 |
+|                        | uint32_t asdu_length                : The number of octets comprising the ASDU being confirmed   |
+|                        | uint8_t asdu[]                      : The set of octets comprising the ASDU to be confirm        |
 +------------------------+--------------------------------------------------------------------------------------------------+
 
 .. note::
