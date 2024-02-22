@@ -31,7 +31,8 @@ extern "C" {
 #endif                                              /** CONFIG_ZB_ZED */
 
 #ifdef CONFIG_ZB_GP_ENABLED
-#define ESP_ZGP_GPBB_DEFAULT_FUNCTIONALITY 0x9ac3f /*!< GPP functionality, refer to esp_zgp_gpp_functionality_t */
+#define ESP_ZGP_GPPB_DEFAULT_FUNCTIONALITY 0x9ac2f /*!< GPP functionality, refer to esp_zgp_gpp_functionality_t */
+#define ESP_ZGP_GPS_DEFAULT_FUNCTIONALITY 0x9ac2f /*!< GPS functionality, refer to esp_zgp_gps_functionality_t */
 #endif /* CONFIG_ZB_GP_ENABLED */
 
 /** Enum of the Zigbee network device type
@@ -382,6 +383,20 @@ void esp_zb_set_rx_on_when_idle(bool rx_on);
  *
  */
 bool esp_zb_bdb_is_factory_new(void);
+
+/**
+ * @brief Get the scan duration of beacon
+ *
+ * @return Scan duration
+ */
+uint8_t esp_zb_bdb_get_scan_duration(void);
+
+/**
+ * @brief Set the scan duration of beacon
+ *
+ * @param[in] duration  Scan time is  ((1 << duration) + 1) * 15.36 ms
+ */
+void esp_zb_bdb_set_scan_duration(uint8_t duration);
 
 /**
  * @brief Open Zigbee network

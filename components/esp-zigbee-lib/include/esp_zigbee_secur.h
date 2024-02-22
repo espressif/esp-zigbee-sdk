@@ -155,6 +155,20 @@ esp_err_t esp_zb_secur_primary_network_key_get(uint8_t *key);
  */
 esp_err_t esp_zb_secur_network_key_set(uint8_t *key);
 
+/**
+ * @brief Get the minimum LQI values for device joining the network
+ *
+ * @return The minimum LQI values
+ */
+uint8_t esp_zb_secur_network_min_join_lqi_get(void);
+
+/**
+ * @brief Set the minimum LQI value for device joining the network
+ *
+ * @param[in] lqi The LQI values
+ */
+void esp_zb_secur_network_min_join_lqi_set(uint8_t lqi);
+
 #ifdef __cplusplus
 }
 #endif

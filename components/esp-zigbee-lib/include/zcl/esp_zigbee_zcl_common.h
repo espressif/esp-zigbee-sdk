@@ -299,6 +299,29 @@ typedef struct esp_zb_zcl_attr_location_info_s {
 } esp_zb_zcl_attr_location_info_t;
 
 /**
+ * @brief ZCL Cluster Check Attribute Value Handler, which should be called before attribute change and checks if new value is in correct range
+ *        and can be applied.
+ *
+ * @param[in] attr_id  ZCL Attribute ID
+ * @param[in] endpoint Device endpoint
+ * @param[in] value    Pointer to the new Attribute Value
+ *
+ * @return The result of check value whose value refer to esp_err_t
+ */
+typedef signed int (*esp_zb_zcl_cluster_check_value_callback_t)(uint16_t attr_id, uint8_t endpoint, uint8_t *value);
+
+/**
+ * @brief ZCL Cluster Write Attribute Handler, which should be called before attribute change (if any cluster-specific action needs to
+ *        be bound to attribute change, it can be placed in this handler).
+ *
+ * @param[in] endpoint   Device endpoint
+ * @param[in] attr_id    ZCL Attribute ID
+ * @param[in] new_value  Pointer to the new Attribute Value
+ * @param[in] manuf_code Manufacturer specific code
+ */
+typedef void (*esp_zb_zcl_cluster_write_attr_callback_t)(uint8_t endpoint, uint16_t attr_id, uint8_t *new_value, uint16_t manuf_code);
+
+/**
  * @brief Get the size of ZCL attribute value
  *
  * @param[in] attr_type  The data type of attribute value
