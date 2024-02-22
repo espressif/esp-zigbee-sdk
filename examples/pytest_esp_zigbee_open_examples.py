@@ -4,7 +4,6 @@ import time
 import pytest
 from constants import ZigbeeCIConstants
 from functools import wraps
-import re
 
 BASIC_CURRENT_DIR_CLIENT = str(pathlib.Path(__file__).parent) + '/esp_zigbee_customized_devices/customized_client'
 BASIC_CURRENT_DIR_SERVER = str(pathlib.Path(__file__).parent) + '/esp_zigbee_customized_devices/customized_server'
@@ -22,7 +21,7 @@ SWITCH_CURRENT_DIR_SERVER = str(pathlib.Path(__file__).parent) + '/esp_zigbee_to
 LIGHT_CURRENT_DIR_CLIENT = str(pathlib.Path(__file__).parent) + '/esp_zigbee_touchlink/touchlink_light'
 touchlink_pytest_build_dir = SWITCH_CURRENT_DIR_SERVER + '|' + LIGHT_CURRENT_DIR_CLIENT
 
-HA_CURRENT_DIR_SERVER = str(pathlib.Path(__file__).parent) + '/esp_zigbee_HA_sample/HA_on_off_light'
+HA_CURRENT_DIR_SERVER = str(pathlib.Path(__file__).parent) + '/esp_zigbee_cli'
 GATEWAY_CURRENT_DIR_CLIENT = str(pathlib.Path(__file__).parent) + '/esp_zigbee_gateway'
 gateway_pytest_build_dir = HA_CURRENT_DIR_SERVER + '|' + GATEWAY_CURRENT_DIR_CLIENT
 
@@ -81,6 +80,41 @@ def get_ota_transmits_data(matched_values):
 def get_ota_receives_data(matched_values):
     progress, total = matched_values
     print(f"progress: {progress}, total: {total}")
+    return matched_values
+
+
+@expect_decorator(r'status\((\d+)\) and endpoint count\((\d+)\)')
+def get_active_endpoint_response_values(matched_values):
+    status_value, endpoint_count_value = matched_values
+    print(f"Status: {status_value}, Endpoint Count: {endpoint_count_value}")
+    return matched_values
+
+
+@expect_decorator(r"status\((\d+)\), "
+                  r"device_id\((\d+)\), "
+                  r"app_version\((\d+)\), "
+                  r"profile_id\(0x([0-9a-fA-F]+)\), "
+                  r"endpoint_ID\((\d+)\)")
+def get_simple_desc_response_values(matched_values):
+    status_value, device_id_value, app_version_value, profile_id_value, endpoint_id_value = matched_values
+    print(f"Status: {status_value}, Device ID: {device_id_value}, App Version: {app_version_value}, "
+          f"Profile ID: {profile_id_value}, Endpoint ID: {endpoint_id_value}")
+    return matched_values
+
+
+@expect_decorator(r"Bind response from address\(0x([0-9a-fA-F]+)\), endpoint\((\d+)\) with status\((\d+)\)")
+def get_bind_response_values(matched_values):
+    address_value, endpoint_value, status_value = matched_values
+    print(f"Address: {address_value}, Endpoint: {endpoint_value}, Status: {status_value}")
+    return matched_values
+
+
+@expect_decorator(r"address\(0x([0-9a-fA-F]+)\) src endpoint\((\d+)\) "
+                  r"to dst endpoint\((\d+)\) cluster\(0x([0-9a-fA-F]+)\)")
+def get_received_report_values(matched_values):
+    address, src_endpoint, dst_endpoint, cluster = matched_values
+    print(f"Address: {address}, Source Endpoint: {src_endpoint}, Destination Endpoint: {dst_endpoint}, "
+          f"Cluster: {cluster}")
     return matched_values
 
 
@@ -151,72 +185,29 @@ def test_zb_basic(dut, count, app_path, erase_all):
     status_value, address_value, endpoint_value = get_match_desc_response_values(client)
     assert status_value == address_value == '0'
     assert endpoint_value == '10'
-    active_pattern = r"Active endpoint response: status\((\d+)\) and endpoint count\((\d+)\)"
-    bind_pattern = r"Bind response from address\(0x([0-9a-fA-F]+)\), endpoint\((\d+)\) with status\((\d+)\)"
-    received_pattern = r"Received report from address\(0x([0-9a-fA-F]+)\) src endpoint\((\d+)\) to dst endpoint\((" \
-                       r"\d+)\) cluster\(0x([0-9a-fA-F]+)\)"
-    simple_pattern = r"Simple desc response: status\((\d+)\), device_id\((\d+)\), app_version\((\d+)\), profile_id\(" \
-                     r"0x([0-9a-fA-F]+)\), endpoint_ID\((\d+)\)"
-    active_found = False
-    bind_found = False
-    received_found = False
-    simple_found = False
 
-    start_time = time.time()
-    count = 0
-    match = client.expect(r'Received report information: attribute', timeout=30)
-    while count < 2:
-        line_to_parse = match.string.decode()
-        if not active_found:
-            active_match = re.search(active_pattern, line_to_parse)
-            if active_match:
-                active_found = True
-                status, endpoint_count = active_match.groups()
-                print(f"status: {status}, endpoint_count: {endpoint_count}")
-                assert status == '0'
-                # release/v1.0.8 change endpoint_count to 2
-                assert endpoint_count == '2'
-        if not bind_found:
-            bind_match = re.search(bind_pattern, line_to_parse)
-            if bind_match:
-                bind_found = True
-                address, endpoint, status = bind_match.groups()
-                print(f"address: {address}, endpoint: {endpoint}, status: {status}")
-                assert address == status == '0'
-                assert endpoint == '1'
-        if not received_found:
-            received_match = re.search(received_pattern, line_to_parse)
-            if received_match:
-                received_found = True
-                address, src_endpoint, dst_endpoint, cluster = received_match.groups()
-                print(
-                    f"address: {address}, src_endpoint: {src_endpoint}, dst_endpoint: {dst_endpoint}, "
-                    f"cluster: {cluster}")
-                assert address == '0'
-                assert src_endpoint == '10'
-                assert dst_endpoint == '1'
-                assert cluster == '6'
-        if not simple_found:
-            simple_match = re.search(simple_pattern, line_to_parse)
-            if simple_match:
-                simple_found = True
-                status, device_id, app_version, profile_id, endpoint_id = simple_match.groups()
-                print(f"status: {status}, device_id: {device_id}, app_version: {app_version}, profile_id: {profile_id},"
-                      f"endpoint_ID: {endpoint_id}")
-                assert status == app_version == '0'
-                assert device_id == '256'
-                assert profile_id == '104'
-                assert endpoint_id == '10'
-        if active_found and bind_found and received_found and simple_found:
-            break
-        elapsed_time = time.time() - start_time
-        if elapsed_time > 30:
-            print("Timeout reached, exiting the loop.")
-            break
-        if match is not None:
-            count += 1
-        if count == 2:
-            break
+    status_value, endpoint_count_value = get_active_endpoint_response_values(client)
+    assert status_value == '0'
+    # release/v1.0.8 change endpoint_count to 2
+    assert endpoint_count_value == '2'
+
+    status_value, device_id_value, app_version_value, profile_id_value, endpoint_id_value = \
+        get_simple_desc_response_values(client)
+
+    assert status_value == app_version_value == '0'
+    assert device_id_value == '256'
+    assert profile_id_value == '104'
+    assert endpoint_id_value == '10'
+
+    address_value, endpoint_value, status_value = get_bind_response_values(client)
+    assert address_value == status_value == '0'
+    assert endpoint_value == '1'
+
+    address, src_endpoint, dst_endpoint, cluster = get_received_report_values(client)
+    assert address == '0'
+    assert src_endpoint == '10'
+    assert dst_endpoint == '1'
+    assert cluster == '6'
 
 
 # Case 6: Zigbee ota test
@@ -320,10 +311,39 @@ def test_zb_touch_link(dut, count, app_path, erase_all):
 @pytest.mark.usefixtures('teardown_fixture')
 def test_zb_gateway(dut, count, app_path, target):
     gateway_device = dut[1]
-    ha_device = dut[0]
+    cli_device = dut[0]
     # add sleep time to wait rcp update ready
     time.sleep(15)
     gateway_device.expect(r'\*\*\* MATCH VERSION! \*\*\*', timeout=6)
     # add sleep time to wait gateway Network steering
-    time.sleep(20)
-    check_zigbee_network_status(ha_device, gateway_device, sleep_time=15)
+    time.sleep(10)
+    extended_pan_id_server, pan_id_server, channel_server, short_address_server = \
+        get_formed_network_parameters(gateway_device)
+
+    assert extended_pan_id_server.strip('0:') != ''
+    assert pan_id_server != ZigbeeCIConstants.default_id
+    assert ZigbeeCIConstants.channel_min <= int(channel_server) <= ZigbeeCIConstants.channel_max
+    assert short_address_server == ZigbeeCIConstants.default_id
+
+    cli_device.write(f'bdb -c {channel_server}')
+    cli_device.write('bdb -r zr')
+    cli_device.expect('Router role set')
+    cli_device.write('bdb -s')
+    cli_device.write('bdb -a init')
+    cli_device.expect('Device started up in  factory-reset mode')
+    cli_device.write('bdb -a steering')
+    short_address_cli_get_by_gateway = gateway_device.expect(r"short: (0x[a-fA-F0-9]{4})")[1].decode()
+    time.sleep(2)
+    cli_device.expect('Joined network successfully')
+
+    cli_device.write('zdo -s')
+    short_address_cli = cli_device.expect(r"short addr:(0x[a-fA-F0-9]{4})", timeout=5)[1].decode()
+    print(f'short_address_cli_get_by_gateway: {short_address_cli_get_by_gateway}')
+    print(f'short_address_cli: {short_address_cli}')
+    assert short_address_cli_get_by_gateway == short_address_cli
+    cli_device.write('bdb -p get')
+    pan_id_cli = cli_device.expect(r"get panid: (0x[a-fA-F0-9]{4})")[1].decode()
+    assert pan_id_cli == pan_id_server
+    cli_device.write('bdb -c get')
+    channel_cli = cli_device.expect(r"Primary channel\(s\): (\d+)")[1].decode()
+    assert channel_cli == channel_server

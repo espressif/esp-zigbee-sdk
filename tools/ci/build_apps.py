@@ -40,7 +40,7 @@ PYTEST_APPS = [
     {"target": "esp32c6", "name": "touchlink_light"},
 ]
 
-GATEWAY_APPS = [{"target": "esp32h2", "name": "HA_on_off_light"}, ]
+GATEWAY_APPS = [{"target": "esp32h2", "name": "esp_zigbee_cli"}, ]
 
 IGNORE_WARNINGS = [
     r"warning: 'init_spiffs' defined but not used",
