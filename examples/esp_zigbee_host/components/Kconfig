@@ -1,0 +1,106 @@
+menu "Zigbee NCP Host"
+
+    choice HOST_BUS_MODE
+        bool "Host Connection Mode"
+        default HOST_BUS_MODE_UART
+        help
+            Select which mode does the device connection with the host, support UART.
+
+        config HOST_BUS_MODE_UART
+            bool "UART"
+    endchoice
+
+    config HOST_BUS_MODE
+        int
+        default 0 if HOST_BUS_MODE_UART
+
+    if HOST_BUS_MODE_UART
+        config HOST_BUS_UART_BAUD_RATE
+            int 
+            default 115200
+            range 9600 891200
+            prompt "UART baud rate"
+            help
+                Set UART baud rate.
+        
+        config HOST_BUS_UART_BYTE_SIZE
+            int 
+            default 3
+            range 0 3
+            prompt "UART word length"
+            help
+                Set UART word length are defined as follows:
+
+                - 0x0: 5bits
+                - 0x1: 6bits
+                - 0x2: 7bits
+                - 0x3: 8bits
+
+        config HOST_BUS_UART_STOP_BITS
+            int 
+            default 1
+            range 1 3
+            prompt "UART stop bits"
+            help
+                Set UART stop bits are defined as follows:
+
+                - 0x1, 1bit
+                - 0x2, 1.5bits
+                - 0x3, 2bits
+
+        config HOST_BUS_UART_FLOW_CONTROL
+            int 
+            default 0
+            range 0 3
+            prompt "UART HW flow control mode"
+            help
+                Set UART HW flow control mode are defined as follows:
+
+                - 0x0, disable hardware flow control
+                - 0x1, enable RX hardware flow control (rts)
+                - 0x2, enable TX hardware flow control (cts)
+                - 0x3, enable hardware flow control
+        
+        config HOST_BUS_UART_NUM
+            int
+            range 0 2
+            default 1
+            prompt "UART number"
+            help
+                Set UART number.
+        
+        config HOST_BUS_UART_RX_PIN
+            int 
+            default -1
+            range -1 30
+            prompt "UART RX pin"
+            help
+                Set UART RX pin.
+        
+        config HOST_BUS_UART_TX_PIN
+            int 
+            default -1
+            range -1 30
+            prompt "UART TX pin"
+            help
+                Set UART TX pin.
+        
+        config HOST_BUS_UART_RTS_PIN
+            int 
+            default -1
+            range -1 30
+            prompt "UART rts pin"
+            help
+                Set UART rts pin.
+        
+        config HOST_BUS_UART_CTS_PIN
+            int 
+            default -1
+            range -1 30
+            prompt "UART cts pin"
+            help
+                Set UART cts pin.
+
+    endif # HOST_BUS_MODE_UART
+
+endmenu
