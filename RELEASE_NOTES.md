@@ -1,4 +1,27 @@
 # Espressif Zigbee SDK Release Notes
+
+## 22-Feb-2024
+1.1.2 version release of ESP-ZIGBEE-SDK
+
+### Features
+- Updated esp-zboss-lib to v1.1.2
+- Updated esp-zigbee-lib to v1.1.2
+- Added on/off off_with_effect, on_with_recall_global_scene and on_with_timed_off command
+- Added zcl custom cluster handler update API
+- Added device joining network minimum lqi setting API
+- Added beacon scan duration setting API
+- Changed the minimum custom cluster value to 0x8000
+
+### Bug Fixes
+- Fixed green power attribute setting
+- Fixed green power device type
+- Fixed assert of zcl malformed packet
+- Fixed distributed router formation capability, when it reboots
+- Closes: https://github.com/espressif/esp-zigbee-sdk/issues/212
+- Closes: https://github.com/espressif/esp-zigbee-sdk/issues/209
+- Closes: https://github.com/espressif/esp-zigbee-sdk/issues/193
+
+
 ## 6-Feb-2024
 1.1.1 version release of ESP-ZIGBEE-SDK
 

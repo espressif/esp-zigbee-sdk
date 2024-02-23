@@ -76,6 +76,17 @@ typedef struct esp_zb_zcl_attribute_s {
 } esp_zb_zcl_attribute_t;
 
 /**
+ * @brief The Zigbee zcl custom cluster handlers struct
+ *
+ */
+typedef struct esp_zb_zcl_custom_cluster_handlers_s {
+    uint16_t cluster_id;                                        /*!< Cluster identifier */
+    uint8_t cluster_role;                                       /*!< Cluster role */
+    esp_zb_zcl_cluster_check_value_callback_t check_value_cb;   /*!< The callback for validating the value from ZCL command */
+    esp_zb_zcl_cluster_write_attr_callback_t write_attr_cb;     /*!< The callback for validating the ZCL write attribute */
+} esp_zb_zcl_custom_cluster_handlers_t;
+
+/**
  * @brief The Zigbee zcl cluster command properties struct
  *
  */
@@ -192,6 +203,41 @@ typedef struct esp_zb_zcl_on_off_cmd_s {
     esp_zb_zcl_address_mode_t address_mode;         /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
     uint8_t  on_off_cmd_id;                         /*!< command id for the on-off cluster command */
 } esp_zb_zcl_on_off_cmd_t;
+
+/**
+ * @brief The Zigbee ZCL on-off off with effect command struct
+ *
+ */
+typedef struct esp_zb_zcl_on_off_off_with_effect_cmd_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;   /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode; /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+    uint8_t effect_id;                      /*!< The field specifies the fading effect to use when switching the device off */
+    uint8_t effect_variant;                 /*!< The field is used to indicate which variant of the effect, indicated in the Effect Identifier field, SHOULD be triggered. */
+} esp_zb_zcl_on_off_off_with_effect_cmd_t;
+
+
+/**
+ * @brief The Zigbee ZCL on-off on with recall global scene command struct
+ *
+ */
+typedef struct esp_zb_zcl_on_off_on_with_recall_global_scene_cmd_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;   /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode; /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+} esp_zb_zcl_on_off_on_with_recall_global_scene_cmd_t;
+
+/**
+ * @brief The Zigbee ZCL on-off on with timed off command struct
+ *
+ */
+typedef struct esp_zb_zcl_on_off_on_with_timed_off_cmd_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;   /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode; /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+    uint8_t on_off_control;                 /*!< The field contains information on how the device is to be operated */
+    uint16_t on_time;                       /*!< The field specifies the length of time (in 1/10ths second) that the device is to remain "on", i.e.,
+                                                 with its OnOff attribute equal to 0x01, before automatically turning "off".*/
+    uint16_t off_wait_time;                 /*!< The field specifies the length of time (in 1/10ths second) that the device SHALL remain "off", i.e.,
+                                                 with its OnOff attribute equal to 0x00, and guarded to prevent an on command turning the device back "on" */
+} esp_zb_zcl_on_off_on_with_timed_off_cmd_t;
 
 /* ZCL identify cluster */
 
@@ -1798,6 +1844,37 @@ uint8_t esp_zb_zcl_basic_factory_reset_cmd_req(esp_zb_zcl_basic_fact_reset_cmd_t
  */
 uint8_t esp_zb_zcl_on_off_cmd_req(esp_zb_zcl_on_off_cmd_t *cmd_req);
 
+/**
+ * @brief Send on-off Off With Effect command
+ *
+ * @note The Off With Effect command allows devices to be turned off using enhanced ways of fading
+ * @param[in] cmd_req pointer to the on-off off with effect command @ref esp_zb_zcl_on_off_off_with_effect_cmd_s
+ *
+ * @return The transaction sequence number
+ */
+uint8_t esp_zb_zcl_on_off_off_with_effect_cmd_req(esp_zb_zcl_on_off_off_with_effect_cmd_t *cmd_req);
+
+/**
+ * @brief Send on-off On With Recall Global Scene command
+ *
+ * @note The On With Recall Global Scene command allows the recall of the settings when the device was turned off.
+ * @param[in] cmd_req pointer to the on-off on with recall global scene command @ref esp_zb_zcl_on_off_on_with_recall_global_scene_cmd_s
+ *
+ * @return The transaction sequence number
+ */
+uint8_t esp_zb_zcl_on_off_on_with_recall_global_scene_cmd_req(esp_zb_zcl_on_off_on_with_recall_global_scene_cmd_t *cmd_req);
+
+/**
+ * @brief Send on-off On With Timed Off command
+ *
+ * @note The On With Timed Off command allows devices to be turned on for a specific duration with a guarded off
+         duration so that SHOULD the device be subsequently switched off.
+ * @param[in] cmd_req pointer to the on-off on with timed off command @ref esp_zb_zcl_on_off_on_with_timed_off_cmd_s
+ *
+ * @return The transaction sequence number
+ */
+uint8_t esp_zb_zcl_on_off_on_with_timed_off_cmd_req(esp_zb_zcl_on_off_on_with_timed_off_cmd_t *cmd_req);
+
 /* ZCL identify cluster list command */
 
 /**
@@ -2326,15 +2403,6 @@ uint8_t esp_zb_zcl_metering_get_snapshot_cmd_req(esp_zb_metering_get_snapshot_cm
  */
 uint8_t esp_zb_zcl_metering_get_sampled_data_cmd_req(esp_zb_metering_get_sampled_data_cmd_t *cmd_req);
 
-/**
- * @brief   Send custom cluster command request
- *
- * @param[in]  cmd_req  pointer to the send custom cluster command request, refer to esp_zb_zcl_custom_cluster_cmd_req_t
- *
- * @return The transaction sequence number
- */
-uint8_t esp_zb_zcl_custom_cluster_cmd_req(esp_zb_zcl_custom_cluster_cmd_req_t *cmd_req);
-
 #ifdef CONFIG_ZB_GP_ENABLED
 /**
  * @brief Perform Proxy Commissioning mode enter request
@@ -2399,6 +2467,15 @@ uint8_t esp_zgp_zcl_pairing_configuration_cmd_req(esp_zgp_zcl_pairing_configurat
 #endif /* CONFIG_ZB_GP_ENABLED */
 
 /**
+ * @brief   Send custom cluster command request
+ *
+ * @param[in]  cmd_req  pointer to the send custom cluster command request, refer to esp_zb_zcl_custom_cluster_cmd_req_t
+ *
+ * @return The transaction sequence number
+ */
+uint8_t esp_zb_zcl_custom_cluster_cmd_req(esp_zb_zcl_custom_cluster_cmd_req_t *cmd_req);
+
+/**
  * @brief   Send custom cluster command response
  *
  * @note The custom response should align in the same direction as the custom request when providing a reply.
@@ -2408,6 +2485,18 @@ uint8_t esp_zgp_zcl_pairing_configuration_cmd_req(esp_zgp_zcl_pairing_configurat
  * @return The transaction sequence number
  */
 uint8_t esp_zb_zcl_custom_cluster_cmd_resp(esp_zb_zcl_custom_cluster_cmd_resp_t *cmd_req);
+
+/**
+ * @brief Update Zigbee ZCL custom cluster handlers
+ *
+ * @param[in] obj The object of cluster handlers will be updated in the stack if the cluster ID exists; otherwise, it will be added.
+ *
+ * @return
+ *      - ESP_OK: On success
+ *      - ESP_ERR_NO_MEM: Out of memory
+ *      - ESP_ERR_INVALID_ARG: Invalid argument
+ */
+esp_err_t esp_zb_zcl_custom_cluster_handlers_update(esp_zb_zcl_custom_cluster_handlers_t obj);
 
 /**
  * @brief Start and enable the attribute reporting.
