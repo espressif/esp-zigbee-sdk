@@ -28,6 +28,7 @@ PYTEST_APPS = [
     {"target": "esp32h2", "name": "ota_client"},
     {"target": "esp32h2", "name": "ota_server"},
     {"target": "esp32h2", "name": "light_sleep"},
+    {"target": "esp32h2", "name": "deep_sleep"},
     {"target": "esp32h2", "name": "touchlink_switch"},
     {"target": "esp32h2", "name": "touchlink_light"},
     {"target": "esp32h2", "name": "HA_on_off_light"},
@@ -36,6 +37,7 @@ PYTEST_APPS = [
     {"target": "esp32c6", "name": "customized_client"},
     {"target": "esp32c6", "name": "customized_server"},
     {"target": "esp32c6", "name": "light_sleep"},
+    {"target": "esp32c6", "name": "deep_sleep"},
     {"target": "esp32c6", "name": "touchlink_switch"},
     {"target": "esp32c6", "name": "touchlink_light"},
 ]
