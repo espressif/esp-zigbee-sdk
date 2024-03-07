@@ -16,6 +16,7 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "esp_touchlink_switch.h"
+#include "esp_zigbee_core.h"
 #include "nvs_flash.h"
 #include "ha/esp_zigbee_ha_standard.h"
 
@@ -54,6 +55,7 @@ light_control_device_ctx_t g_device_ctx;  /* light control device ifnfomation */
 
 static void esp_zb_buttons_handler(switch_func_pair_t *button_func_pair)
 {
+    esp_zb_lock_acquire(portMAX_DELAY);
     /* By checking the button function pair to call different cmd send */
     switch (button_func_pair->func) {
     case SWITCH_ONOFF_TOGGLE_CONTROL:
@@ -68,6 +70,7 @@ static void esp_zb_buttons_handler(switch_func_pair_t *button_func_pair)
     default:
         break;
     }
+    esp_zb_lock_release();
 }
 
 static void bind_cb(esp_zb_zdp_status_t zdo_status, void *user_ctx)
@@ -126,7 +129,7 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
 
     switch (sig_type) {
     case ESP_ZB_ZDO_SIGNAL_SKIP_STARTUP:
-        ESP_LOGI(TAG, "Zigbee stack initialized");
+        ESP_LOGI(TAG, "Initialize Zigbee stack");
         esp_zb_bdb_start_top_level_commissioning(ESP_ZB_BDB_MODE_INITIALIZATION);
         break;
     case ESP_ZB_BDB_SIGNAL_DEVICE_FIRST_START:
@@ -189,7 +192,13 @@ static void esp_zb_task(void *pvParameters)
 
     esp_zb_ep_list_t *esp_zb_ep_list = esp_zb_ep_list_create();
     /* Add created endpoint (cluster_list) to endpoint list */
-    esp_zb_ep_list_add_ep(esp_zb_ep_list, cluster_list, HA_ONOFF_SWITCH_ENDPOINT, ESP_ZB_AF_HA_PROFILE_ID, ESP_ZB_HA_ON_OFF_SWITCH_DEVICE_ID);
+    esp_zb_endpoint_config_t endpoint_config = {
+        .endpoint = HA_ONOFF_SWITCH_ENDPOINT,
+        .app_profile_id = ESP_ZB_AF_HA_PROFILE_ID,
+        .app_device_id = ESP_ZB_HA_ON_OFF_SWITCH_DEVICE_ID,
+        .app_device_version = 0
+    };
+    esp_zb_ep_list_add_ep(esp_zb_ep_list, cluster_list, endpoint_config);
     esp_zb_device_register(esp_zb_ep_list);
 
     ESP_ERROR_CHECK(esp_zb_start(false));

@@ -14,6 +14,7 @@
 
 #include "esp_check.h"
 #include "esp_log.h"
+#include "esp_zigbee_core.h"
 #include "nvs_flash.h"
 #include "string.h"
 #include <stdint.h>
@@ -52,6 +53,7 @@ static switch_func_pair_t button_func_pair[] = {{GPIO_INPUT_IO_TOGGLE_SWITCH, SW
 
 static void esp_zb_buttons_handler(switch_func_pair_t *button_func_pair)
 {
+    esp_zb_lock_acquire(portMAX_DELAY);
     switch (button_func_pair->func) {
     case SWITCH_ONOFF_TOGGLE_CONTROL: {
         ESP_EARLY_LOGI(TAG, "Enter commissioning mode");
@@ -67,11 +69,12 @@ static void esp_zb_buttons_handler(switch_func_pair_t *button_func_pair)
     default:
         break;
     }
+    esp_zb_lock_release();
 }
 
 static void bdb_start_top_level_commissioning_cb(uint8_t mode_mask)
 {
-    ESP_ERROR_CHECK(esp_zb_bdb_start_top_level_commissioning(mode_mask));
+    ESP_RETURN_ON_FALSE(esp_zb_bdb_start_top_level_commissioning(mode_mask) == ESP_OK, , TAG, "Failed to start Zigbee bdb commissioning");
 }
 
 void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
@@ -82,7 +85,7 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
     esp_zb_zdo_signal_device_annce_params_t *dev_annce_params = NULL;
     switch (sig_type) {
     case ESP_ZB_ZDO_SIGNAL_SKIP_STARTUP:
-        ESP_LOGI(TAG, "Zigbee stack initialized");
+        ESP_LOGI(TAG, "Initialize Zigbee stack");
         esp_zb_bdb_start_top_level_commissioning(ESP_ZB_BDB_MODE_INITIALIZATION);
         break;
     case ESP_ZB_BDB_SIGNAL_DEVICE_FIRST_START:
@@ -217,8 +220,13 @@ static void esp_zb_task(void *pvParameters)
 
     esp_zb_ep_list_t *ep_list = esp_zb_ep_list_create();
     esp_zb_on_off_light_cfg_t light_cfg = ESP_ZB_DEFAULT_ON_OFF_LIGHT_CONFIG();
-    esp_zb_ep_list_add_ep(ep_list, esp_zb_on_off_light_clusters_create(&light_cfg), HA_LIGHT_ENDPOINT, ESP_ZB_AF_HA_PROFILE_ID,
-                          ESP_ZB_HA_ON_OFF_LIGHT_DEVICE_ID);
+    esp_zb_endpoint_config_t endpoint_config = {
+        .endpoint = HA_LIGHT_ENDPOINT,
+        .app_profile_id = ESP_ZB_AF_HA_PROFILE_ID,
+        .app_device_id = ESP_ZB_HA_ON_OFF_LIGHT_DEVICE_ID,
+        .app_device_version = 0
+    };
+    esp_zb_ep_list_add_ep(ep_list, esp_zb_on_off_light_clusters_create(&light_cfg), endpoint_config);
     esp_zb_device_register(ep_list);
     esp_zb_core_action_handler_register(zb_action_handler);
 

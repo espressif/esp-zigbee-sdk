@@ -71,12 +71,12 @@ I (249) ESP_ZB_DEEP_SLEEP: Enabling timer wakeup, 20s
 I (269) phy: phy_version: 211,0, 5857fe5, Nov  1 2023, 11:31:09
 I (269) phy: libbtbb version: ce629d6, Nov  1 2023, 11:31:19
 I (279) main_task: Returned from app_main()
-I (289) ESP_ZB_DEEP_SLEEP: ZDO signal: ZDO Config Ready (0x17), status: ESP_FAIL
-I (289) ESP_ZB_DEEP_SLEEP: Zigbee stack initialized
-I (8749) ESP_ZB_DEEP_SLEEP: Start network steering
-I (8849) ESP_ZB_DEEP_SLEEP: Joined network successfully (Extended PAN ID: 60:55:f9:ff:fe:f7:2f:3e, PAN ID: 0xe4c4, Channel:13, Short Address: 0x5e1c)
-I (8849) ESP_ZB_DEEP_SLEEP: Start one-shot timer for 5s to enter the deep sleep
-I (13859) ESP_ZB_DEEP_SLEEP: Enter deep sleep
+I (307) ESP_ZB_DEEP_SLEEP: ZDO signal: ZDO Config Ready (0x17), status: ESP_FAIL
+I (307) ESP_ZB_DEEP_SLEEP: Zigbee stack initialized
+I (587) ESP_ZB_DEEP_SLEEP: Device started up in non factory-reset mode
+I (587) ESP_ZB_DEEP_SLEEP: Device rebooted
+I (587) ESP_ZB_DEEP_SLEEP: Start one-shot timer for 5s to enter the deep sleep
+I (5597) ESP_ZB_DEEP_SLEEP: Enter deep sleep
 ```
 
 During the deep sleep, a typical power consumption is shown below:
