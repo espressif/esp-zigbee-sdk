@@ -20,28 +20,27 @@ Espressif platform solutions are as shown below:
     :alt: ESP platform
     :figclass: align-center
 
-- ESP32-H SoCs and modules with 802.15.4 can be used to build **Zigbee devices**.
-- By efficiently combining ESP32-H and our Wi-Fi SoCs, a **Zigbee gateway** can be built to connect the Zigbee network with the Wi-Fi network. We provide hardware devkits, reference designs and production-ready SDK, which supports the latest Zigbee 3.0.
-- We also provide Matter-Zigbee solutions that enable non-Matter devices based on Zigbee and other protocols to connect to the Matter ecosystem. A **Matter-Zigbee Bridge** uses ESP32-H and another Wi-Fi SoC. See `ESP Matter <https://docs.espressif.com/projects/esp-matter/en/main/esp32/>`__ here.
+- 802.15.4 SoCs (ESP32-H2, ESP32-C6, etc) can be used to build **Zigbee devices**.
+- By efficiently combining Espressif 802.15.4 and Wi-Fi SoCs (ESP32, ESP32-C3, ESP32-S3, etc), **Zigbee gateway** can be built to connect the Zigbee network with the Wi-Fi network.
+- We also provide Matter-Zigbee bridge solution that enable non-Matter devices based on Zigbee and other protocols to connect to the Matter ecosystem. See `ESP Matter <https://docs.espressif.com/projects/esp-matter/>`__.
 
 1.1.2 ESP Zigbee SDK
 ~~~~~~~~~~~~~~~~~~~~
 
-Espressif's Zigbee SDK is built on top of the `Zboss stack <https://dsr-zboss.com/>`__. It will be compiled as library called (esp-zboss-lib) and provided to user.
-
--  It provides ZCL data model APIs, varieties of ZDO, ZCL commands to support application layer of the Zigbee stack.
--  It provides simplified APIs for Zigbee nwk layer configuration, BDB commissioning and security related functions. 
--  It provides Standard Home Automation off-the-shelf devices that ready to use.
--  It includes rich production references.
-
-Espressif is aimed to simplify the development process of Zigbee products and enable the users to go to production in the shortest possible time.
+Espressif's Zigbee SDK is built on top of the `ESP-IDF <https://github.com/espressif/esp-idf>`__ and `Zboss stack <https://dsr-zboss.com/>`__.
 
 .. figure:: ../_static/esp_zigbee_stack.png
     :align: center
     :alt: ESP Zigbee Software Components
     :figclass: align-center
 
-|  
+The ZBOSS and Espressif Zigbee SDK is provided as pre-built library:
+
+- `esp-zboss-lib <https://components.espressif.com/components/espressif/esp-zboss-lib>`__: ZBOSS libraries for ESP32 series SoCs
+
+- `esp-zigbee-lib <https://components.espressif.com/components/espressif/esp-zigbee-lib>`__: Espressif Zigbee SDK and APIs libraries
+
+These two library components are hosted by `ESP Registry <https://components.espressif.com/>`__.
 
 1.1.3 Zigbee and ESP RainMaker Integration
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -56,7 +55,18 @@ By combining the above-mentioned Zigbee hardware and software solutions with ESP
 1.2 Supported Features
 ----------------------
 
-The supported features in current ESP Zigbee SDK are listed below.
+The supported features in current ESP Zigbee SDK are listed below:
+
+- Zigbee 3.0
+- Zigbee Pro R22
+- Zigbee Cluster Library (ZCL) v8
+- Home Automation Devices
+- Touchlink
+- Green Power Proxy, Sink, GPD
+- Coordinator / Router / ZED / Sleepy device roles
+- Gateway and Radio Co-Processor (RCP) example
+- Network Co-Processor (NCP) and Host example
+- Sniffer
 
 1.2.1 ZCL Clusters
 ~~~~~~~~~~~~~~~~~~
