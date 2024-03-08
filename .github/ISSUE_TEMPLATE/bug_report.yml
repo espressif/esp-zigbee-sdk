@@ -8,9 +8,9 @@ body:
       label: Answers checklist.
       description: Before submitting a new issue, please follow the checklist and try to find the answer.
       options:
-        - label: I have read the documentation [ESP Zigbee SDK Programming Guide](https://docs.espressif.com/projects/esp-zigbee-sdk) and the issue is not addressed there.
+        - label: I have read the documentation [ESP Zigbee SDK Programming Guide](https://docs.espressif.com/projects/esp-zigbee-sdk) and tried the [debugging tips](https://docs.espressif.com/projects/esp-zigbee-sdk/en/latest/esp32/developing.html#debugging), the issue is not addressed there.
           required: true
-        - label: I have updated my IDF branch (master or release) and ESP Zigbee libs ([esp-zboss-lib](https://components.espressif.com/components/espressif/esp-zboss-lib) and [esp-zigbee-lib](https://components.espressif.com/components/espressif/esp-zigbee-lib)) to the latest version and checked that the issue is present there.
+        - label: I have updated ESP Zigbee libs ([esp-zboss-lib](https://components.espressif.com/components/espressif/esp-zboss-lib) and [esp-zigbee-lib](https://components.espressif.com/components/espressif/esp-zigbee-lib)) to the latest version, with corresponding IDF version, and checked that the issue is present there.
           required: true
         - label: I have searched the issue tracker for a similar issue and not found a similar issue.
           required: true
@@ -78,6 +78,6 @@ body:
     id: more-info
     attributes:
       label: More Information.
-      description: The [Sniffer capture file and trace logs](https://docs.espressif.com/projects/esp-zigbee-sdk/en/latest/esp32/developing.html#debugging), or any other information would help.
+      description: The [Sniffer capture file, logs and ELF file](https://docs.espressif.com/projects/esp-zigbee-sdk/en/latest/esp32/developing.html#debugging), or any other information would help.
     validations:
       required: false

@@ -11,49 +11,35 @@ This section talks about setting up your development environment, fetching the G
 
 2.1.1 Setting up the Repositories
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Follow the `ESP-IDF getting started guide <https://docs.espressif.com/projects/esp-idf/en/latest/esp32/get-started/index.html>`_ to set up the IDF development environment. For beginners, please check `Installation Step by Step <https://docs.espressif.com/projects/esp-idf/en/v5.1.3/esp32h2/get-started/linux-macos-setup.html#installation-step-by-step>`_ for esp-idf.
 
-Follow the `ESP-IDF getting started guide <https://docs.espressif.com/projects/esp-idf/en/latest/esp32/get-started/index.html>`_ to set up the IDF development environment.
-
-Clone the `esp-idf <https://github.com/espressif/esp-idf>`_ and the `esp-zigbee-sdk <https://github.com/espressif/esp-zigbee-sdk>`_ repository.
+Cloning esp-idf:
 
 .. code-block:: bash
 
    git clone --recursive https://github.com/espressif/esp-idf.git
    cd esp-idf
-   git checkout release/v5.1
+   git checkout v5.1.3
    git submodule update --init --recursive
    ./install.sh
    source ./export.sh
+   cd ..
 
+Cloning esp-zigbee-sdk:
 
 .. code-block:: bash
 
    git clone https://github.com/espressif/esp-zigbee-sdk.git
 
-2.1.2 Building Applications on esp-idf (Option)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Build following examples in the esp-idf environment
+2.1.2 Build and Flash the Applications
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-- `Zigbee_example <https://github.com/espressif/esp-idf/blob/master/examples/zigbee>`__
+Various Zigbee examples are provided with the SDK:
 
-2.1.3 Building Applications on esp-zigbee-sdk (Recommended)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-  :project:`Zigbee Examples <examples>`
 
-Build following examples in the esp-zigbee-sdk environment which implemented with provided SDK's API
-
--  :project:`esp_zigbee_HA_sample <examples/esp_zigbee_HA_sample>`
--  :project:`esp_zigbee_customized_client_devices <examples/esp_zigbee_customized_devices/customized_client>`
--  :project:`esp_zigbee_customized_client_server <examples/esp_zigbee_customized_devices/customized_server>`
--  :project:`esp_zigbee_ota_client <examples/esp_zigbee_ota/ota_client>`
--  :project:`esp_zigbee_ota_server <examples/esp_zigbee_ota/ota_server>`
--  :project:`esp_zigbee_gateway <examples/esp_zigbee_gateway>`
--  :project:`esp_zigbee_touchlink <examples/esp_zigbee_touchlink>`
-
-2.1.4 Flashing the Firmware
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Choose IDF target.
+Under an example folder, choose IDF SoC target.
 
 ::
 
@@ -70,7 +56,7 @@ Build and flash the example.
 
 
 2.2 Running example
---------------------
+-------------------
 
 See the examples readme for more details: :project_file:`README <examples/README.md>`
 
@@ -334,7 +320,38 @@ After Zigbee stack is running, by checking different signals that stack provided
 2.4 Debugging
 -------------
 
-2.4.1 Sniffer and Wireshark
+If you encounter any functionality issues with the Zigbee SDK, the following debugging tips may be helpful.
+
+2.4.1 Zigbee API Lock
+~~~~~~~~~~~~~~~~~~~~~
+
+The Zigbee SDK APIs are not thread-safe, so it's mandatory to acquire the lock before calling any Zigbee APIs, except that the call site is in Zigbee callbacks which are from Zigbee task.
+
+An example code block:
+
+.. code-block:: c
+
+   #include "esp_zigbee_core.h"
+
+   void application_task(void *pvParameters)
+   {
+      ......
+      esp_zb_lock_acquire(portMAX_DELAY);
+
+      esp_zb_zcl_on_off_cmd_req(cmd_req);
+
+      esp_zb_lock_release();
+      ......
+   }
+
+The same lock is acquired in `esp_zb_main_loop_iteration()` when the Zigbee task is not idle.
+
+2.4.2 Stack Size
+~~~~~~~~~~~~~~~~
+
+Insufficient stack size often leads to unexpected runtime issues, you may use `uxTaskGetStackHighWaterMark() <https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/system/freertos_idf.html#_CPPv427uxTaskGetStackHighWaterMark12TaskHandle_t>`_ FreeRTOS API to monitor the stack usage of tasks.
+
+2.4.3 Sniffer and Wireshark
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Analyzing the packet flow captured by a sniffer is an effective method for understanding Zigbee protocol and troubleshooting issues.
@@ -373,7 +390,7 @@ Please note that the Wireshark configuration provided in the link above is inten
 
 Now you can check the Zigbee packet flow in Wireshark.
 
-2.4.2 Enable Trace Logging
+2.4.4 Enable Trace Logging
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The trace logging feature outputs additional logs for debugging purpose, it's disabled by default in the SDK.
@@ -417,8 +434,85 @@ Here take the :project:`HA_on_off_light <examples/esp_zigbee_HA_sample/HA_on_off
    zb_storage, data, fat,      , 16K,
    zb_fct,     data, fat,      , 1K,
 
+5. Excessive logging can lead to watchdog timeout for the idle task. Therefore, temporarily disable the idle task watchdog:
+
+.. only:: esp32 or esp32s3
+
+    ::
+
+        `ESP_TASK_WDT_CHECK_IDLE_TASK_CPU0` and `ESP_TASK_WDT_CHECK_IDLE_TASK_CPU1`.
+
+.. only:: esp32c3 or esp32c2 or esp32c6 or esp32h2
+
+    ::
+
+        `ESP_TASK_WDT_CHECK_IDLE_TASK_CPU0`.
+
 Finally, build and run the example. You will now see more debugging logs in the output.
+
+
+2.4.5 Assertion Failures
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+There are certain assertions in the SDK that prevent the stack from running into specific situations. Typically, logs and backtraces from `idf.py monitor` help identify the location of the assertion issue, so you may figure out what's wrong with the implementation.
+
+However, this approach may not be effective when the assertion occurs in the Zigbee library due to incomplete debug information in the library. In such cases, you can assist in debugging by sharing us the logs along with the corresponding ELF file (it's within the project `build` folder after compilation, e.g., build/on_off_light_bulb.elf).
+
+Please capture the entire log using a serial tool like `screen`` or `minicom`. The output will resemble the following:
+
+.. code-block:: c
+
+   ^[[0;32mI (579) ESP_ZB_ON_OFF_LIGHT: Start network steering^[[0m
+   ^[[0;32mI (2959) ESP_ZB_ON_OFF_LIGHT: Network steering was not successful (status: ESP_FAIL)^[[0m
+
+   assert failed: esp_zb_app_signal_handler esp_zb_light.c:70 (false)
+   Core  0 register dump:
+   MEPC    : 0x4080063e  RA      : 0x408074c6  SP      : 0x4084f090  GP      : 0x4080d5a0
+   TP      : 0x4083e428  T0      : 0x37363534  T1      : 0x7271706f  T2      : 0x33323130
+   S0/FP   : 0x00000085  S1      : 0x00000001  A0      : 0x4084f0cc  A1      : 0x4080da59
+   A2      : 0x00000001  A3      : 0x00000029  A4      : 0x00000001  A5      : 0x40817000
+   A6      : 0x00000004  A7      : 0x76757473  S2      : 0x00000009  S3      : 0x4084f1e2
+   S4      : 0x4080da58  S5      : 0x00000000  S6      : 0x00000000  S7      : 0x00000000
+   S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000
+   T3      : 0x6e6d6c6b  T4      : 0x6a696867  T5      : 0x66656463  T6      : 0x62613938
+   MSTATUS : 0x00001881  MTVEC   : 0x40800001  MCAUSE  : 0x00000007  MTVAL   : 0x00000000
+   MHARTID : 0x00000000
+
+   Stack memory:
+   4084f090: 0x40809aa6 0x40809ad2 0x42073910 0x4080bdea 0x4080dd04 0x42073910 0x4080dce8 0x4207382c
+   4084f0b0: 0x4080dd14 0x4084f0c4 0x4080dd18 0x4207381c 0x4080da58 0x00003037 0x4084f520 0x65737361
+   4084f0d0: 0x66207472 0x656c6961 0x65203a64 0x7a5f7073 0x70615f62 0x69735f70 0x6c616e67 0x6e61685f
+   4084f0f0: 0x72656c64 0x70736520 0x5f627a5f 0x6867696c 0x3a632e74 0x28203037 0x736c6166 0x42002965
+   4084f110: 0x00000000 0xffffffff 0x4080f198 0x4084f368 0x00000008 0x4084f158 0x00000003 0x42004ce4
+   4084f130: 0x00000000 0x00000000 0x00000000 0x0000004b 0x4080f759 0x00000000 0x00000339 0x4204ba5e
+   4084f150: 0x420737d0 0x420734b4 0x00000042 0x4204be28 0x40850000 0x4084f1e8 0x4080f759 0x4201f83a
+   4084f170: 0x00000019 0x00000000 0x00000042 0x4201ebb6 0x00000000 0x00000000 0x0000004d 0x000000c0
+   4084f190: 0x00000019 0x00000000 0x00000000 0x42000000 0x4084fd94 0x40850000 0x0000004d 0x000000c0
+   4084f1b0: 0x00000019 0xffffffff 0x00000b8f 0x4200756e 0x00000000 0x00001800 0x40817944 0x40800a9c
+   4084f1d0: 0x00000008 0x4084f208 0x00000003 0x000000c0 0x00001800 0x00000008 0x00000019 0x40800b1c
+   4084f1f0: 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x0000004d 0x000000c0
+   4084f210: 0x00000019 0xffffffff 0x4084fd94 0x4200cc44 0x00000000 0x00000000 0x000000aa 0x408107d8
+   4084f230: 0x00000000 0x00000000 0x00000019 0x4203bc0c 0x00000001 0x00000001 0x00000001 0x4201f05a
+   4084f250: 0x00000000 0x4203bbb2 0x00190000 0x404f4d19 0x00000000 0x00000000 0x00000000 0x00000000
+   4084f270: 0x00000000 0x00000000 0x00000000 0x4203b852 0x00000000 0x00000000 0x4084fd74 0x4200ca7e
+   4084f290: 0x00000000 0x00000000 0x00000000 0x42007178 0x00000008 0x00000000 0x00000000 0x00000000
+   4084f2b0: 0x00000002 0x00000000 0x00000006 0x00000bb8 0x00000000 0x00000000 0x00000000 0x4080995a
+   4084f2d0: 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000
+   4084f2f0: 0x00000000 0xa5a5a5a5 0xa5a5a5a5 0xa5a5a5a5 0xa5a5a5a5 0xa5a5a5a5 0x00000154 0x4084f0e0
+   4084f310: 0x000000f4 0x4080e534 0x4080e534 0x4084f30c 0x4080e52c 0x00000014 0x4084fe34 0x4084fe34
+   4084f330: 0x4084f30c 0x00000000 0x00000005 0x4084e308 0x6267695a 0x6d5f6565 0x006e6961 0x00000000
+   4084f350: 0x00000000 0x4084f300 0x00000005 0x00000001 0x00000000 0x00000000 0x00000009 0x40817bf4
+   4084f370: 0x40817c5c 0x40817cc4 0x00000000 0x00000000 0x00000001 0x00000000 0x00000000 0x00000000
+   4084f390: 0x4205ef9e 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000
+   4084f3b0: 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000
+   4084f3d0: 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000
+   4084f3f0: 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000
+   4084f410: 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000
+   4084f430: 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000
+   4084f450: 0x00000000 0x00000000 0x00000000 0x40000000 0x00000054 0x00000000 0x4084f464 0x4084f30c
+   4084f470: 0x00000001 0x00000000 0x4084f47c 0xffffffff 0x4084f47c 0x4084f47c 0x00000000 0x4084f490
 
 .. note::
 
-   If you encounter any difficulties and require assistance, please don't hesitate to open a `Github issue <https://github.com/espressif/esp-zigbee-sdk/issues>`_ and include the sniffer capture file and trace logs.
+   If you encounter any difficulties and require assistance, please don't hesitate to open a `Github issue <https://github.com/espressif/esp-zigbee-sdk/issues>`_ and include the sniffer capture file, logs and the ELF file.
+   Alternatively，please contact us via `technical-inquiries <https://www.espressif.com/en/contact-us/technical-inquiries>`_.

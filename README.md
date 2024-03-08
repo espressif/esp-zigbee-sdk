@@ -12,7 +12,7 @@ The SDK is built on top of [ESP-IDF](https://github.com/espressif/esp-idf) and [
 
 ![esp_zigbee_stack](docs/_static/esp_zigbee_stack.png)
 
- The ZBOSS and Espressif Zigbee SDK is provided as pre-built library:
+The ZBOSS and Espressif Zigbee SDK is provided as pre-built library:
 - [esp-zboss-lib](https://components.espressif.com/components/espressif/esp-zboss-lib): ZBOSS libraries for ESP32 series SoCs
 - [esp-zigbee-lib](https://components.espressif.com/components/espressif/esp-zigbee-lib): Espressif Zigbee SDK and APIs libraries
 
