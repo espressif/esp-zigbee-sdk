@@ -12,6 +12,7 @@
  * CONDITIONS OF ANY KIND, either express or implied.
  */
 
+#include "esp_check.h"
 #include "string.h"
 #include "nvs_flash.h"
 #include "esp_log.h"
@@ -47,7 +48,7 @@ static void esp_zb_buttons_handler(switch_func_pair_t *button_func_pair)
 
 static void bdb_start_top_level_commissioning_cb(uint8_t mode_mask)
 {
-    ESP_ERROR_CHECK(esp_zb_bdb_start_top_level_commissioning(mode_mask));
+    ESP_RETURN_ON_FALSE(esp_zb_bdb_start_top_level_commissioning(mode_mask) == ESP_OK, , TAG, "Failed to start Zigbee bdb commissioning");
 }
 
 static void bind_cb(esp_zb_zdp_status_t zdo_status, void *user_ctx)
@@ -91,7 +92,7 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
     esp_zb_zdo_signal_device_annce_params_t *dev_annce_params = NULL;
     switch (sig_type) {
     case ESP_ZB_ZDO_SIGNAL_SKIP_STARTUP:
-        ESP_LOGI(TAG, "Zigbee stack initialized");
+        ESP_LOGI(TAG, "Initialize Zigbee stack");
         esp_zb_bdb_start_top_level_commissioning(ESP_ZB_BDB_MODE_INITIALIZATION);
         break;
     case ESP_ZB_BDB_SIGNAL_DEVICE_FIRST_START:

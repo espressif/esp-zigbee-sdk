@@ -139,6 +139,20 @@ def update_component_yml_files():
     os.chdir(os.path.join(DEF_APP_PATH, 'esp_zigbee_sleep', 'light_sleep'))
     os.remove('main/idf_component.yml')
 
+    os.chdir(os.path.join(DEF_APP_PATH, 'esp_zigbee_greenpower', 'esp_zigbee_gpc'))
+    os.remove('main/idf_component.yml')
+    os.system(
+        f'cp {os.path.join(PROJECT_ROOT, "tools", "managed_component_yml", "light_idf_component.yml")} main'
+        f'/idf_component.yml')
+
+    os.chdir(os.path.join(DEF_APP_PATH, 'esp_zigbee_greenpower', 'esp_zigbee_gpd'))
+    os.remove('main/idf_component.yml')
+
+    os.chdir(os.path.join(DEF_APP_PATH, 'esp_zigbee_ncp'))
+    os.remove('main/idf_component.yml')
+    os.system(
+        f'cp {os.path.join(PROJECT_ROOT, "tools", "managed_component_yml", "ncp_idf_component.yml")} main'
+        f'/idf_component.yml')
 
 def main(args: argparse.Namespace) -> None:
     current_dir = os.getcwd()

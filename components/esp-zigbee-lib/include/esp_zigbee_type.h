@@ -158,7 +158,7 @@ typedef struct esp_zb_zcl_reporting_info_s {
     uint8_t cluster_role;           /*!< Cluster rolo server/client */
     uint16_t attr_id;               /*!< Attribute ID for reporting */
     uint8_t flags;                  /*!< Flags to inform status of reporting */
-    uint32_t run_time;              /*!< Time to run next reporting activity */
+    uint64_t run_time;              /*!< Time to run next reporting activity */
     union {
         struct {
             uint16_t min_interval; /*!< Actual minimum reporting interval */
@@ -233,13 +233,24 @@ typedef struct esp_zb_af_simple_desc_1_1_s {
     uint8_t    endpoint;                        /*!< Endpoint */
     uint16_t   app_profile_id;                  /*!< Application profile identifier */
     uint16_t   app_device_id;                   /*!< Application device identifier */
-    uint32_t    app_device_version: 4;          /*!< Application device version */
-    uint32_t    reserved: 4;                    /*!< Reserved */
+    uint32_t   app_device_version: 4;           /*!< Application device version */
+    uint32_t   reserved: 4;                     /*!< Reserved */
     uint8_t    app_input_cluster_count;         /*!< Application input cluster count */
     uint8_t    app_output_cluster_count;        /*!< Application output cluster count */
     uint16_t   app_cluster_list[2];             /*!< Application input and output cluster list */
 } ESP_ZB_PACKED_STRUCT
 esp_zb_af_simple_desc_1_1_t;
+
+/**
+ * @brief Structure of device descriptor on a endpoint
+ */
+typedef struct esp_zb_endpoint_config_s {
+    uint8_t    endpoint;                        /*!< Endpoint */
+    uint16_t   app_profile_id;                  /*!< Application profile identifier */
+    uint16_t   app_device_id;                   /*!< Application device identifier */
+    uint32_t   app_device_version: 4;           /*!< Application device version */
+} ESP_ZB_PACKED_STRUCT
+esp_zb_endpoint_config_t;
 
 /**
  * @brief Type to represent ZCL endpoint definition structure

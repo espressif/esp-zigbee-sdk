@@ -191,7 +191,7 @@ static void esp_ncp_zb_aps_data_confirm_handler(esp_zb_apsde_data_confirm_t conf
 
 static void esp_ncp_zb_bdb_start_top_level_commissioning_cb(uint8_t mode_mask)
 {
-    ESP_ERROR_CHECK(esp_zb_bdb_start_top_level_commissioning(mode_mask));
+    ESP_RETURN_ON_FALSE(esp_zb_bdb_start_top_level_commissioning(mode_mask) == ESP_OK, , TAG, "Failed to start Zigbee bdb commissioning");
 }
 
 static void esp_ncp_zb_bind_cb(esp_zb_zdp_status_t zdo_status, void *user_ctx)
@@ -554,7 +554,7 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
         case ESP_ZB_ZDO_SIGNAL_DEFAULT_START:
             break;
         case ESP_ZB_ZDO_SIGNAL_SKIP_STARTUP:
-            ESP_LOGI(TAG, "Zigbee stack initialized");
+            ESP_LOGI(TAG, "Initialize Zigbee stack");
             esp_zb_bdb_start_top_level_commissioning(ESP_ZB_BDB_MODE_INITIALIZATION);
             break;
         case ESP_ZB_ZDO_SIGNAL_DEVICE_ANNCE:
@@ -1026,7 +1026,13 @@ static esp_err_t esp_ncp_zb_add_endpoint_fn(const uint8_t *input, uint16_t inlen
         }
 
         esp_zb_ep_list_t *esp_zb_ep_list = esp_zb_ep_list_create();
-        esp_zb_ep_list_add_ep(esp_zb_ep_list, esp_zb_cluster_list, ncp_endpoint->endpoint, ncp_endpoint->profileId, ncp_endpoint->deviceId);
+        esp_zb_endpoint_config_t endpoint_config = {
+            .endpoint = ncp_endpoint->endpoint,
+            .app_profile_id = ncp_endpoint->profileId,
+            .app_device_id = ncp_endpoint->deviceId,
+            .app_device_version = 0
+        };
+        esp_zb_ep_list_add_ep(esp_zb_ep_list, esp_zb_cluster_list, endpoint_config);
         esp_zb_device_register(esp_zb_ep_list);
 
         if (inputClusterList) {

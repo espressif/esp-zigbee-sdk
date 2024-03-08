@@ -12,6 +12,7 @@
  * CONDITIONS OF ANY KIND, either express or implied.
  */
 
+#include "esp_check.h"
 #include "string.h"
 #include "nvs_flash.h"
 #include "esp_log.h"
@@ -60,16 +61,20 @@ static void esp_zb_buttons_handler(switch_func_pair_t *button_func_pair)
             cmd_color.transition_time = 0;
             cmd_color.address_mode = ESP_ZB_APS_ADDR_MODE_DST_ADDR_ENDP_NOT_PRESENT;
             cmd_color.zcl_basic_cmd.src_endpoint = HA_COLOR_DIMMABLE_SWITCH_ENDPOINT;
-            ESP_EARLY_LOGI(TAG, "Send command for moving light color to (0x%x, 0x%x)", refer_x, refer_y);
+            esp_zb_lock_acquire(portMAX_DELAY);
             esp_zb_zcl_color_move_to_color_cmd_req(&cmd_color);
+            esp_zb_lock_release();
+            ESP_EARLY_LOGI(TAG, "Send command for moving light color to (0x%x, 0x%x)", refer_x, refer_y);
         } else {
             esp_zb_zcl_move_to_level_cmd_t cmd_level;
             cmd_level.zcl_basic_cmd.src_endpoint = HA_COLOR_DIMMABLE_SWITCH_ENDPOINT;
             cmd_level.address_mode = ESP_ZB_APS_ADDR_MODE_DST_ADDR_ENDP_NOT_PRESENT;
             cmd_level.level = level_value;
             cmd_level.transition_time = 0xffff;
-            ESP_EARLY_LOGI(TAG, "Send command for moving light to %d level", level_value);
+            esp_zb_lock_acquire(portMAX_DELAY);
             esp_zb_zcl_level_move_to_level_with_onoff_cmd_req(&cmd_level);
+            esp_zb_lock_release();
+            ESP_EARLY_LOGI(TAG, "Send command for moving light to %d level", level_value);
             level_value += step;
         }
         press_count++;
@@ -78,7 +83,7 @@ static void esp_zb_buttons_handler(switch_func_pair_t *button_func_pair)
 
 static void bdb_start_top_level_commissioning_cb(uint8_t mode_mask)
 {
-    ESP_ERROR_CHECK(esp_zb_bdb_start_top_level_commissioning(mode_mask));
+    ESP_RETURN_ON_FALSE(esp_zb_bdb_start_top_level_commissioning(mode_mask) == ESP_OK, , TAG, "Failed to start Zigbee bdb commissioning");
 }
 
 static void bind_cb(esp_zb_zdp_status_t zdo_status, void *user_ctx)
@@ -125,7 +130,7 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
     esp_zb_zdo_signal_device_annce_params_t *dev_annce_params = NULL;
     switch (sig_type) {
     case ESP_ZB_ZDO_SIGNAL_SKIP_STARTUP:
-        ESP_LOGI(TAG, "Zigbee stack initialized");
+        ESP_LOGI(TAG, "Initialize Zigbee stack");
         esp_zb_bdb_start_top_level_commissioning(ESP_ZB_BDB_MODE_INITIALIZATION);
         break;
     case ESP_ZB_BDB_SIGNAL_DEVICE_FIRST_START:
