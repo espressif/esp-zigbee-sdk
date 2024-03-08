@@ -1,5 +1,30 @@
 # Espressif Zigbee SDK Release Notes
 
+## 8-Mar-2024
+1.2.0 version release of ESP-ZIGBEE-SDK is based on esp-idf v5.1.3
+
+### Features
+- Updated esp-zboss-lib to v1.2.0
+- Updated esp-zigbee-lib to v1.2.0
+- Supported to report the level value at each step upon receiving the level change command
+- Supported cli to configure green power functionality
+- Supported to print assert location
+- Supported 64-bit timer for stack
+- Supported to configure the multiple pre-configured link key for centralized and distributed network
+- Added more optional attributes support for color control
+
+### Bug Fixes
+- Fixed the group membership response
+- Fixed optional hue attribute for color control
+- Fixed the parameters for esp_zb_ep_list_add_ep()
+- Closes: https://github.com/espressif/esp-zigbee-sdk/issues/83
+- Closes: https://github.com/espressif/esp-zigbee-sdk/issues/251
+- Closes: https://github.com/espressif/esp-zigbee-sdk/issues/256
+
+### Break Changes
+- The `esp_zb_ep_list_add_ep()` function now utilizes an endpoint configuration structure，instead of multi parameters.
+
+
 ## 22-Feb-2024
 1.1.2 version release of ESP-ZIGBEE-SDK
 

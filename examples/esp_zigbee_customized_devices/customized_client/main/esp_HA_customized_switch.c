@@ -15,7 +15,6 @@
 #include "esp_check.h"
 #include "esp_err.h"
 #include "esp_log.h"
-#include "esp_zigbee_core.h"
 #include "nvs_flash.h"
 #include "string.h"
 #include "freertos/FreeRTOS.h"
@@ -48,7 +47,6 @@ light_bulb_device_params_t on_off_light;
 
 static void esp_zb_buttons_handler(switch_func_pair_t *button_func_pair)
 {
-    esp_zb_lock_acquire(portMAX_DELAY);
     switch (button_func_pair->func) {
     case SWITCH_ONOFF_TOGGLE_CONTROL: {
         /* send on-off toggle command to remote device */
@@ -58,13 +56,14 @@ static void esp_zb_buttons_handler(switch_func_pair_t *button_func_pair)
         cmd_req.zcl_basic_cmd.src_endpoint = HA_ONOFF_SWITCH_ENDPOINT;
         cmd_req.address_mode = ESP_ZB_APS_ADDR_MODE_16_ENDP_PRESENT;
         cmd_req.on_off_cmd_id = ESP_ZB_ZCL_CMD_ON_OFF_TOGGLE_ID;
-        ESP_EARLY_LOGI(TAG, "Send 'on_off toggle' command to address(0x%x) endpoint(%d)", on_off_light.short_addr, on_off_light.endpoint);
+        esp_zb_lock_acquire(portMAX_DELAY);
         esp_zb_zcl_on_off_cmd_req(&cmd_req);
+        esp_zb_lock_release();
+        ESP_EARLY_LOGI(TAG, "Send 'on_off toggle' command to address(0x%x) endpoint(%d)", on_off_light.short_addr, on_off_light.endpoint);
     } break;
     default:
         break;
     }
-    esp_zb_lock_release();
 }
 
 static void bdb_start_top_level_commissioning_cb(uint8_t mode_mask)

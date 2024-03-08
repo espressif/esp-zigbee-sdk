@@ -14,7 +14,6 @@
 
 #include "esp_check.h"
 #include "esp_log.h"
-#include "esp_zigbee_core.h"
 #include "nvs_flash.h"
 #include "string.h"
 #include <stdint.h>
@@ -53,23 +52,25 @@ static switch_func_pair_t button_func_pair[] = {{GPIO_INPUT_IO_TOGGLE_SWITCH, SW
 
 static void esp_zb_buttons_handler(switch_func_pair_t *button_func_pair)
 {
-    esp_zb_lock_acquire(portMAX_DELAY);
     switch (button_func_pair->func) {
     case SWITCH_ONOFF_TOGGLE_CONTROL: {
-        ESP_EARLY_LOGI(TAG, "Enter commissioning mode");
+        esp_zb_lock_acquire(portMAX_DELAY);
         esp_zb_zgps_start_commissioning_on_endpoint(HA_LIGHT_ENDPOINT, 0);
+        esp_zb_lock_release();
+        ESP_EARLY_LOGI(TAG, "Enter commissioning mode");
 #if !ZGP_COMBO_PROXY_ENABLED
         esp_zgp_zcl_proxy_commissioning_enter_req_t cmd_req;
         cmd_req.exit_mode = ESP_ZGP_COMMISSIONING_EXIT_MODE_ON_PAIRING_SUCCESS;
         cmd_req.commissioning_window = 180;
-        ESP_EARLY_LOGI(TAG, "Send commissioning mode to ZGP proxy");
+        esp_zb_lock_acquire(portMAX_DELAY);
         esp_zgp_zcl_proxy_commissioning_mode_enter_cmd_req(&cmd_req);
+        esp_zb_lock_release();
+        ESP_EARLY_LOGI(TAG, "Send commissioning mode to ZGP proxy");
 #endif
     } break;
     default:
         break;
     }
-    esp_zb_lock_release();
 }
 
 static void bdb_start_top_level_commissioning_cb(uint8_t mode_mask)

@@ -35,7 +35,6 @@ static const char *TAG = "ESP_ZB_ON_OFF_SWITCH";
 
 static void esp_zb_buttons_handler(switch_func_pair_t *button_func_pair)
 {
-    esp_zb_lock_acquire(portMAX_DELAY);
     if (button_func_pair->func == SWITCH_ONOFF_TOGGLE_CONTROL) {
         /* implemented light switch toggle functionality */
         esp_zb_zcl_on_off_cmd_t cmd_req;
@@ -45,7 +44,6 @@ static void esp_zb_buttons_handler(switch_func_pair_t *button_func_pair)
         ESP_EARLY_LOGI(TAG, "Send 'on_off toggle' command");
         esp_zb_zcl_on_off_cmd_req(&cmd_req);
     }
-    esp_zb_lock_release();
 }
 
 static void bdb_start_top_level_commissioning_cb(uint8_t mode_mask)

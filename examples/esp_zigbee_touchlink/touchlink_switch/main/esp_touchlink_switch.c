@@ -16,7 +16,6 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "esp_touchlink_switch.h"
-#include "esp_zigbee_core.h"
 #include "nvs_flash.h"
 #include "ha/esp_zigbee_ha_standard.h"
 
@@ -55,7 +54,6 @@ light_control_device_ctx_t g_device_ctx;  /* light control device ifnfomation */
 
 static void esp_zb_buttons_handler(switch_func_pair_t *button_func_pair)
 {
-    esp_zb_lock_acquire(portMAX_DELAY);
     /* By checking the button function pair to call different cmd send */
     switch (button_func_pair->func) {
     case SWITCH_ONOFF_TOGGLE_CONTROL:
@@ -64,13 +62,14 @@ static void esp_zb_buttons_handler(switch_func_pair_t *button_func_pair)
         cmd_req.zcl_basic_cmd.src_endpoint = HA_ONOFF_SWITCH_ENDPOINT;
         cmd_req.address_mode = ESP_ZB_APS_ADDR_MODE_DST_ADDR_ENDP_NOT_PRESENT;
         cmd_req.on_off_cmd_id = ESP_ZB_ZCL_CMD_ON_OFF_TOGGLE_ID;
-        ESP_EARLY_LOGI(TAG, "send 'on_off toggle' command");
+        esp_zb_lock_acquire(portMAX_DELAY);
         esp_zb_zcl_on_off_cmd_req(&cmd_req);
+        esp_zb_lock_release();
+        ESP_EARLY_LOGI(TAG, "send 'on_off toggle' command");
         break;
     default:
         break;
     }
-    esp_zb_lock_release();
 }
 
 static void bind_cb(esp_zb_zdp_status_t zdo_status, void *user_ctx)

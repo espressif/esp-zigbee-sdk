@@ -47,7 +47,6 @@ static const char *TAG = "ESP_ZB_COLOR_DIMM_SWITCH";
 
 static void esp_zb_buttons_handler(switch_func_pair_t *button_func_pair)
 {
-    esp_zb_lock_acquire(portMAX_DELAY);
     uint8_t step = 10;
     static uint8_t level_value = 5;
     static uint8_t press_count = 0;
@@ -62,21 +61,24 @@ static void esp_zb_buttons_handler(switch_func_pair_t *button_func_pair)
             cmd_color.transition_time = 0;
             cmd_color.address_mode = ESP_ZB_APS_ADDR_MODE_DST_ADDR_ENDP_NOT_PRESENT;
             cmd_color.zcl_basic_cmd.src_endpoint = HA_COLOR_DIMMABLE_SWITCH_ENDPOINT;
-            ESP_EARLY_LOGI(TAG, "Send command for moving light color to (0x%x, 0x%x)", refer_x, refer_y);
+            esp_zb_lock_acquire(portMAX_DELAY);
             esp_zb_zcl_color_move_to_color_cmd_req(&cmd_color);
+            esp_zb_lock_release();
+            ESP_EARLY_LOGI(TAG, "Send command for moving light color to (0x%x, 0x%x)", refer_x, refer_y);
         } else {
             esp_zb_zcl_move_to_level_cmd_t cmd_level;
             cmd_level.zcl_basic_cmd.src_endpoint = HA_COLOR_DIMMABLE_SWITCH_ENDPOINT;
             cmd_level.address_mode = ESP_ZB_APS_ADDR_MODE_DST_ADDR_ENDP_NOT_PRESENT;
             cmd_level.level = level_value;
             cmd_level.transition_time = 0xffff;
-            ESP_EARLY_LOGI(TAG, "Send command for moving light to %d level", level_value);
+            esp_zb_lock_acquire(portMAX_DELAY);
             esp_zb_zcl_level_move_to_level_with_onoff_cmd_req(&cmd_level);
+            esp_zb_lock_release();
+            ESP_EARLY_LOGI(TAG, "Send command for moving light to %d level", level_value);
             level_value += step;
         }
         press_count++;
     }
-    esp_zb_lock_release();
 }
 
 static void bdb_start_top_level_commissioning_cb(uint8_t mode_mask)

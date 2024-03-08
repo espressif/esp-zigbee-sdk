@@ -119,10 +119,10 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
 #if CONFIG_EXAMPLE_CONNECT_WIFI
         ESP_RETURN_ON_FALSE(example_connect() == ESP_OK, , TAG, "Failed to connect to Wi-Fi");
 #if CONFIG_ESP_COEX_SW_COEXIST_ENABLE
-        ESP_RETURN_ON_FALSE(esp_wifi_set_ps(WIFI_PS_MIN_MODEM) == ESP_OK, , TAG, "Failed to connect to Wi-Fi PS minimum modem");
+        ESP_RETURN_ON_FALSE(esp_wifi_set_ps(WIFI_PS_MIN_MODEM) == ESP_OK, , TAG, "Failed to set Wi-Fi minimum modem power save type");
         esp_coex_wifi_i154_enable();
 #else
-        ESP_RETURN_ON_FALSE(esp_wifi_set_ps(WIFI_PS_NONE) == ESP_OK, , TAG, "Failed to connect to Wi-Fi PS");
+        ESP_RETURN_ON_FALSE(esp_wifi_set_ps(WIFI_PS_NONE) == ESP_OK, , TAG, "Failed to set Wi-Fi no power save type");
 #endif
 #endif
         ESP_LOGI(TAG, "Initialize Zigbee stack");
