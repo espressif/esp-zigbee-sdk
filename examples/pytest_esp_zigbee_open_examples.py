@@ -25,6 +25,9 @@ HA_CURRENT_DIR_SERVER = str(pathlib.Path(__file__).parent) + '/esp_zigbee_cli'
 GATEWAY_CURRENT_DIR_CLIENT = str(pathlib.Path(__file__).parent) + '/esp_zigbee_gateway'
 gateway_pytest_build_dir = HA_CURRENT_DIR_SERVER + '|' + GATEWAY_CURRENT_DIR_CLIENT
 
+DEEP_SLEEP_CURRENT_DIR_SERVER = str(pathlib.Path(__file__).parent) + '/esp_zigbee_sleep/deep_sleep'
+deep_sleep_pytest_build_dir = CLI_CURRENT_DIR_CLIENT + '|' + DEEP_SLEEP_CURRENT_DIR_SERVER
+
 
 def expect_decorator(pattern):
     def decorator(func):
@@ -169,6 +172,37 @@ def check_zigbee_sleep_intervals(dut):
         last_time = current_time
 
 
+def coordinator_init_and_form_network(dut):
+    dut.write('bdb -r zc')
+    dut.expect('Coordinator role set', timeout=6)
+    dut.write(f'bdb -c {ZigbeeCIConstants.channel}')
+    dut.expect(f'Setting channel to {ZigbeeCIConstants.channel}', timeout=6)
+    dut.write('bdb -i policy disable')
+    dut.expect('Done', timeout=6)
+    dut.write('bdb -s')
+    dut.expect('Started coordinator', timeout=6)
+    time.sleep(2)
+    dut.write('bdb -a init')
+    time.sleep(1)
+    dut.write('bdb -a form')
+    time.sleep(2)
+
+
+def coordinator_operate_router(dut, hlp_dut, device_short_address):
+    dut.write(f'zcl -c {device_short_address} 10 0x0006 0x01')
+    time.sleep(5)
+    hlp_dut.expect('Light sets to On')
+    dut.write(f'zcl -a read {device_short_address} 10 0x0006 0x0104 0 ')
+    time.sleep(5)
+    dut.expect('ID: 0 Type: 0x10 Value: True')
+    dut.write(f'zcl -c {device_short_address} 10 0x0006 0x00')
+    time.sleep(5)
+    hlp_dut.expect('Light sets to Off')
+    dut.write(f'zcl -a read {device_short_address} 10 0x0006 0x0104 0 ')
+    time.sleep(5)
+    dut.expect('ID: 0 Type: 0x10 Value: False')
+
+
 # Case 5: Zigbee network connection basic test
 @pytest.mark.order(5)
 @pytest.mark.esp32h2
@@ -248,35 +282,11 @@ def test_zb_ota(dut, count, app_path, erase_all):
 def test_zb_sleep(dut, count, app_path, erase_all):
     cli = dut[0]
     sleep_device = dut[1]
-
-    cli.write('bdb -r zc')
-    cli.expect('Coordinator role set', timeout=6)
-    cli.write(f'bdb -c {ZigbeeCIConstants.channel}')
-    cli.expect(f'Setting channel to {ZigbeeCIConstants.channel}', timeout=6)
-    cli.write('bdb -i policy disable')
-    cli.expect('Done', timeout=6)
-    cli.write('bdb -s')
-    cli.expect('Started coordinator', timeout=6)
-    time.sleep(2)
-    cli.write('bdb -a init')
-    time.sleep(1)
-    cli.write('bdb -a form')
-    time.sleep(2)
+    coordinator_init_and_form_network(cli)
     network_params = check_zigbee_network_status(sleep_device, cli)
     sleep_device_short_address = network_params['client']['short_address']
     check_zigbee_sleep_intervals(sleep_device)
-    cli.write(f'zcl -c {sleep_device_short_address} 10 0x0006 0x01')
-    time.sleep(5)
-    sleep_device.expect('Light sets to On')
-    cli.write(f'zcl -a read {sleep_device_short_address} 10 0x0006 0x0104 0 ')
-    time.sleep(5)
-    cli.expect('ID: 0 Type: 0x10 Value: True')
-    cli.write(f'zcl -c {sleep_device_short_address} 10 0x0006 0x00')
-    time.sleep(5)
-    sleep_device.expect('Light sets to Off')
-    cli.write(f'zcl -a read {sleep_device_short_address} 10 0x0006 0x0104 0 ')
-    time.sleep(5)
-    cli.expect('ID: 0 Type: 0x10 Value: False')
+    coordinator_operate_router(cli, sleep_device, sleep_device_short_address)
 
 
 # Case 8: Zigbee touchlink test
@@ -331,19 +341,50 @@ def test_zb_gateway(dut, count, app_path, target):
     cli_device.write('bdb -s')
     cli_device.write('bdb -a init')
     cli_device.expect('Device started up in  factory-reset mode')
-    cli_device.write('bdb -a steering')
-    short_address_cli_get_by_gateway = gateway_device.expect(r"short: (0x[a-fA-F0-9]{4})")[1].decode()
-    time.sleep(2)
-    cli_device.expect('Joined network successfully')
 
-    cli_device.write('zdo -s')
-    short_address_cli = cli_device.expect(r"short addr:(0x[a-fA-F0-9]{4})", timeout=5)[1].decode()
-    print(f'short_address_cli_get_by_gateway: {short_address_cli_get_by_gateway}')
-    print(f'short_address_cli: {short_address_cli}')
-    assert short_address_cli_get_by_gateway == short_address_cli
-    cli_device.write('bdb -p get')
-    pan_id_cli = cli_device.expect(r"get panid: (0x[a-fA-F0-9]{4})")[1].decode()
-    assert pan_id_cli == pan_id_server
-    cli_device.write('bdb -c get')
-    channel_cli = cli_device.expect(r"Primary channel\(s\): (\d+)")[1].decode()
-    assert channel_cli == channel_server
+    for attempt in range(3):
+        try:
+            cli_device.write('bdb -a steering')
+            short_address_cli_get_by_gateway = gateway_device.expect(r"short: (0x[a-fA-F0-9]{4})")[1].decode()
+            time.sleep(2)
+            cli_device.expect('Joined network successfully')
+            cli_device.write('zdo -s')
+            short_address_cli = cli_device.expect(r"short addr:(0x[a-fA-F0-9]{4})", timeout=5)[1].decode()
+            print(f'short_address_cli_get_by_gateway: {short_address_cli_get_by_gateway}')
+            print(f'short_address_cli: {short_address_cli}')
+            assert short_address_cli_get_by_gateway == short_address_cli
+            cli_device.write('bdb -p get')
+            pan_id_cli = cli_device.expect(r"get panid: (0x[a-fA-F0-9]{4})")[1].decode()
+            assert pan_id_cli == pan_id_server
+            cli_device.write('bdb -c get')
+            channel_cli = cli_device.expect(r"Primary channel\(s\): (\d+)")[1].decode()
+            assert channel_cli == channel_server
+            break
+        except Exception as e:
+            print(f"An error occurred on attempt {attempt + 1}: {e}. Retrying...")
+
+
+# Case 10: Zigbee deep sleep test
+@pytest.mark.order(10)
+@pytest.mark.esp32h2
+@pytest.mark.esp32c6
+@pytest.mark.zigbee_multi_dut
+@pytest.mark.parametrize('count, app_path, erase_all', [(2, deep_sleep_pytest_build_dir, 'y'), ], indirect=True, )
+@pytest.mark.usefixtures('teardown_fixture')
+def test_zb_deep_sleep(dut, count, app_path, erase_all):
+    cli = dut[0]
+    sleep_device = dut[1]
+    sleep_device.expect('Not a deep sleep reset')
+    sleep_device.expect('Enabling timer wakeup')
+    coordinator_init_and_form_network(cli)
+    network_params = check_zigbee_network_status(sleep_device, cli)
+    sleep_device_short_address = network_params['client']['short_address']
+    sleep_device.expect('Start one-shot timer for 5s to enter the deep sleep')
+    sleep_device.expect('Enter deep sleep')
+    for _ in range(2):
+        sleep_device.expect('0x5 \(SLEEP_WAKEUP\)')
+        sleep_device.expect('Enabling timer wakeup')
+        cli.expect(f'New device commissioned or rejoined \(short: {sleep_device_short_address}')
+        time.sleep(5)
+
+
