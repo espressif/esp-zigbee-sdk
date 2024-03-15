@@ -206,11 +206,12 @@ static void find_temperature_sensor(esp_zb_zdo_match_desc_req_param_t *param, es
     esp_zb_zdo_match_cluster(param, user_cb, (void *)&temp_sensor);
 }
 
-static void deferred_driver_init()
+static esp_err_t deferred_driver_init(void)
 {
-    switch_driver_init(button_func_pair, PAIR_SIZE(button_func_pair), esp_app_buttons_handler);
+    ESP_RETURN_ON_FALSE(switch_driver_init(button_func_pair, PAIR_SIZE(button_func_pair), esp_app_buttons_handler), ESP_FAIL, TAG,
+                        "Failed to initialize switch driver");
+    return ESP_OK;
 }
-
 void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
 {
     uint32_t *p_sg_p       = signal_struct->p_app_signal;
@@ -224,8 +225,8 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
         break;
     case ESP_ZB_BDB_SIGNAL_DEVICE_FIRST_START:
     case ESP_ZB_BDB_SIGNAL_DEVICE_REBOOT:
-        deferred_driver_init();
         if (err_status == ESP_OK) {
+            ESP_LOGI(TAG, "Deferred driver initialization %s", deferred_driver_init() ? "failed" : "successful");
             ESP_LOGI(TAG, "Device started up in %s factory-reset mode", esp_zb_bdb_is_factory_new() ? "" : "non");
             if (esp_zb_bdb_is_factory_new()) {
                 ESP_LOGI(TAG, "Start network formation");

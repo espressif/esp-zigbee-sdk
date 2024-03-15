@@ -50,7 +50,7 @@ static void zb_zgp_mode_change_handler(esp_zb_zgp_mode_t new_mode, esp_zb_zgp_mo
 
 static switch_func_pair_t button_func_pair[] = {{GPIO_INPUT_IO_TOGGLE_SWITCH, SWITCH_ONOFF_TOGGLE_CONTROL}};
 
-static void esp_zb_buttons_handler(switch_func_pair_t *button_func_pair)
+static void zb_buttons_handler(switch_func_pair_t *button_func_pair)
 {
     switch (button_func_pair->func) {
     case SWITCH_ONOFF_TOGGLE_CONTROL: {
@@ -73,6 +73,14 @@ static void esp_zb_buttons_handler(switch_func_pair_t *button_func_pair)
     }
 }
 
+static esp_err_t deferred_driver_init(void)
+{
+    light_driver_init(LIGHT_DEFAULT_OFF);
+    ESP_RETURN_ON_FALSE(switch_driver_init(button_func_pair, PAIR_SIZE(button_func_pair), zb_buttons_handler), ESP_FAIL, TAG,
+                        "Failed to initialize switch driver");
+    return ESP_OK;
+}
+
 static void bdb_start_top_level_commissioning_cb(uint8_t mode_mask)
 {
     ESP_RETURN_ON_FALSE(esp_zb_bdb_start_top_level_commissioning(mode_mask) == ESP_OK, , TAG, "Failed to start Zigbee bdb commissioning");
@@ -92,6 +100,7 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
     case ESP_ZB_BDB_SIGNAL_DEVICE_FIRST_START:
     case ESP_ZB_BDB_SIGNAL_DEVICE_REBOOT:
         if (err_status == ESP_OK) {
+            ESP_LOGI(TAG, "Deferred driver initialization %s", deferred_driver_init() ? "failed" : "successful");
             ESP_LOGI(TAG, "Device started up in %s factory-reset mode", esp_zb_bdb_is_factory_new() ? "" : "non");
             if (esp_zb_bdb_is_factory_new()) {
                 ESP_LOGI(TAG, "Start network formation");
@@ -243,8 +252,6 @@ void app_main()
     };
     ESP_ERROR_CHECK(nvs_flash_init());
     ESP_ERROR_CHECK(esp_zb_platform_config(&config));
-    light_driver_init(LIGHT_DEFAULT_OFF);
-    switch_driver_init(button_func_pair, PAIR_SIZE(button_func_pair), esp_zb_buttons_handler);
     xTaskCreate(esp_zb_task, "Zigbee_main", 4096, NULL, 5, NULL);
 }
 

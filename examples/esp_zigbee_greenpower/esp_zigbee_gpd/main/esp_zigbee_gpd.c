@@ -11,6 +11,7 @@
  * software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
  * CONDITIONS OF ANY KIND, either express or implied.
  */
+#include "esp_check.h"
 #include "nvs_flash.h"
 #include <stdint.h>
 #include "freertos/FreeRTOS.h"
@@ -44,15 +45,38 @@ static void device_init()
     esp_zb_zgpd_config_application_info_cmd(1, g_zb_zgpd_cmd);
 }
 
+static void zb_buttons_handler(switch_func_pair_t *button_func_pair)
+{
+    static uint8_t press_start_commission = 1;
+    if (button_func_pair->func == SWITCH_ONOFF_TOGGLE_CONTROL) {
+        if (press_start_commission) {
+            ESP_EARLY_LOGI(TAG, "Start commissioning");
+            esp_zb_zgpd_start_commissioning();
+            press_start_commission = 0;
+        } else {
+            ESP_EARLY_LOGI(TAG, "ZGPD send toggle command");
+            esp_zb_zgpd_send_command(ESP_ZB_GPDF_CMD_TOGGLE);
+        }
+    }
+}
+
+static esp_err_t deferred_driver_init(void)
+{
+    ESP_RETURN_ON_FALSE(switch_driver_init(button_func_pair, PAIR_SIZE(button_func_pair), zb_buttons_handler), ESP_FAIL, TAG,
+                        "Failed to initialize switch driver");
+    return ESP_OK;
+}
+
 static void zb_zgpd_signal_handler(esp_zb_zgpd_signal_t signal, esp_err_t error)
 {
     switch(signal) {
         case ESP_ZB_ZGPD_SIGNAL_DEVICE_STARTED_UP:
-            if(error == ESP_OK) {
+            if (error == ESP_OK) {
+                ESP_LOGI(TAG, "Deferred driver initialization %s", deferred_driver_init() ? "failed" : "successful");
                 ESP_LOGI(TAG, "ZGPD device started successfully");
                 device_init();
                 ESP_LOGI(TAG, " Wait to press the button to start commissioning ...");
-            }else {
+            } else {
                 ESP_LOGI(TAG, "ZGPD Device started failed");
             }
         break;
@@ -66,21 +90,6 @@ static void zb_zgpd_signal_handler(esp_zb_zgpd_signal_t signal, esp_err_t error)
         default:
             ESP_LOGW(TAG, "Unknown signal: 0x%x", signal);
         break;
-    }
-}
-
-static void esp_zb_buttons_handler(switch_func_pair_t *button_func_pair)
-{
-    static uint8_t press_start_commission = 1;
-    if (button_func_pair->func == SWITCH_ONOFF_TOGGLE_CONTROL) {
-        if (press_start_commission) {
-            ESP_EARLY_LOGI(TAG, "Start commissioning");
-            esp_zb_zgpd_start_commissioning();
-            press_start_commission = 0;
-        } else {
-            ESP_EARLY_LOGI(TAG, "ZGPD send toggle command");
-            esp_zb_zgpd_send_command(ESP_ZB_GPDF_CMD_TOGGLE);
-        }
     }
 }
 
@@ -108,6 +117,5 @@ void app_main()
     };
     ESP_ERROR_CHECK(nvs_flash_init());
     ESP_ERROR_CHECK(esp_zb_platform_config(&config));
-    switch_driver_init(button_func_pair, PAIR_SIZE(button_func_pair), esp_zb_buttons_handler);
     xTaskCreate(esp_zb_task, "Zigbee_main", 4096, NULL, 5, NULL);
 }

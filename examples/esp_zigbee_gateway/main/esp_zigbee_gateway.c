@@ -37,6 +37,13 @@
 
 static const char *TAG = "ESP_ZB_GATEWAY";
 
+/* Production configuration app data */
+typedef struct app_production_config_s {
+    uint16_t version;
+    uint16_t manuf_code;
+    char manuf_name[16];
+} app_production_config_t;
+
 /* Note: Please select the correct console output port based on the development board in menuconfig */
 #if CONFIG_ESP_CONSOLE_USB_SERIAL_JTAG
 esp_err_t esp_zb_gateway_console_init(void)
@@ -172,6 +179,18 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
             } else {
                 ESP_LOGW(TAG, "Network(0x%04hx) closed, devices joining not allowed.", esp_zb_get_pan_id());
             }
+        }
+        break;
+    case ESP_ZB_ZDO_SIGNAL_PRODUCTION_CONFIG_READY:
+        ESP_LOGI(TAG, "Production configuration is ready");
+        if (err_status == ESP_OK) {
+            app_production_config_t *prod_cfg = (app_production_config_t *)esp_zb_app_signal_get_params(p_sg_p);
+            if (prod_cfg->version == APP_PROD_CFG_CURRENT_VERSION) {
+                ESP_LOGI(TAG, "Manufacturer_code: 0x%x, manufacturer_name:%s", prod_cfg->manuf_code, prod_cfg->manuf_name);
+                esp_zb_set_node_descriptor_manufacturer_code(prod_cfg->manuf_code);
+            }
+        } else {
+            ESP_LOGW(TAG, "Production configuration is not present");
         }
         break;
     default:
