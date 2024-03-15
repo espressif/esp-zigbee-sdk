@@ -1,5 +1,23 @@
 # Espressif Zigbee SDK Release Notes
 
+## 15-Mar-2024
+1.2.1 version release of ESP-ZIGBEE-SDK is based on esp-idf v5.1.3
+
+### Features
+- Updated esp-zboss-lib to v1.2.1
+- Updated esp-zigbee-lib to v1.2.1
+- Added manufacturer code setting API
+- Supported the large data transmission for zcl commands
+
+### Bug Fixes
+- Fixed mfg tool
+- Fixed multiple link key initialization
+- Fixed touchlink nwk update request handler
+- Closes: https://github.com/espressif/esp-zigbee-sdk/issues/202
+- Closes: https://github.com/espressif/esp-zigbee-sdk/issues/244
+- Closes: https://github.com/espressif/esp-zigbee-sdk/issues/254
+
+
 ## 8-Mar-2024
 1.2.0 version release of ESP-ZIGBEE-SDK is based on esp-idf v5.1.3
 

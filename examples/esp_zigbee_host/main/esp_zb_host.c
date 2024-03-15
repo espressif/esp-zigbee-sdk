@@ -33,7 +33,7 @@ static switch_func_pair_t button_func_pair[] = {
 
 static const char *TAG = "ESP_ZB_ON_OFF_SWITCH";
 
-static void esp_zb_buttons_handler(switch_func_pair_t *button_func_pair)
+static void zb_buttons_handler(switch_func_pair_t *button_func_pair)
 {
     if (button_func_pair->func == SWITCH_ONOFF_TOGGLE_CONTROL) {
         /* implemented light switch toggle functionality */
@@ -44,6 +44,13 @@ static void esp_zb_buttons_handler(switch_func_pair_t *button_func_pair)
         ESP_EARLY_LOGI(TAG, "Send 'on_off toggle' command");
         esp_zb_zcl_on_off_cmd_req(&cmd_req);
     }
+}
+
+static esp_err_t deferred_driver_init(void)
+{
+    ESP_RETURN_ON_FALSE(switch_driver_init(button_func_pair, PAIR_SIZE(button_func_pair), zb_buttons_handler), ESP_FAIL, TAG,
+                        "Failed to initialize switch driver");
+    return ESP_OK;
 }
 
 static void bdb_start_top_level_commissioning_cb(uint8_t mode_mask)
@@ -98,6 +105,7 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
     case ESP_ZB_BDB_SIGNAL_DEVICE_FIRST_START:
     case ESP_ZB_BDB_SIGNAL_DEVICE_REBOOT:
         if (err_status == ESP_OK) {
+            ESP_LOGI(TAG, "Deferred driver initialization %s", deferred_driver_init() ? "failed" : "successful");
             ESP_LOGI(TAG, "Start network formation");
             esp_zb_bdb_start_top_level_commissioning(ESP_ZB_BDB_MODE_NETWORK_FORMATION);
         } else {
@@ -168,6 +176,6 @@ void app_main(void)
     };
     ESP_ERROR_CHECK(nvs_flash_init());
     ESP_ERROR_CHECK(esp_zb_platform_config(&config));
-    switch_driver_init(button_func_pair, PAIR_SIZE(button_func_pair), esp_zb_buttons_handler);
+
     xTaskCreate(esp_zb_task, "Zigbee_main", 4096, NULL, 5, NULL);
 }

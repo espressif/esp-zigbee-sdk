@@ -866,6 +866,15 @@ bool esp_zb_sleep_is_enable(void);
 esp_zb_bdb_commissioning_status_t esp_zb_get_bdb_commissioning_status(void);
 #endif
 
+/**
+ * @brief Set the Zigbee node descriptor manufacturer code.
+ *
+ * @note The function should be called in ESP_ZB_ZDO_SIGNAL_PRODUCTION_CONFIG_READY signal
+
+ * @param[in] manufacturer_code The manufacturer code of Zigbee device
+ */
+void esp_zb_set_node_descriptor_manufacturer_code(uint16_t manufacturer_code);
+
 #ifdef __cplusplus
 }
 #endif

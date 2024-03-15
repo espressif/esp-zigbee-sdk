@@ -12,6 +12,7 @@
  * CONDITIONS OF ANY KIND, either express or implied.
  */
 #include <string.h>
+#include "esp_check.h"
 #include "esp_log.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -52,7 +53,7 @@ typedef struct light_control_device_ctx_t
 
 light_control_device_ctx_t g_device_ctx;  /* light control device ifnfomation */
 
-static void esp_zb_buttons_handler(switch_func_pair_t *button_func_pair)
+static void zb_buttons_handler(switch_func_pair_t *button_func_pair)
 {
     /* By checking the button function pair to call different cmd send */
     switch (button_func_pair->func) {
@@ -70,6 +71,13 @@ static void esp_zb_buttons_handler(switch_func_pair_t *button_func_pair)
     default:
         break;
     }
+}
+
+static esp_err_t deferred_driver_init(void)
+{
+    ESP_RETURN_ON_FALSE(switch_driver_init(button_func_pair, PAIR_SIZE(button_func_pair), zb_buttons_handler), ESP_FAIL, TAG,
+                        "Failed to initialize switch driver");
+    return ESP_OK;
 }
 
 static void bind_cb(esp_zb_zdp_status_t zdo_status, void *user_ctx)
@@ -133,11 +141,16 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
         break;
     case ESP_ZB_BDB_SIGNAL_DEVICE_FIRST_START:
     case ESP_ZB_BDB_SIGNAL_DEVICE_REBOOT:
-        ESP_LOGI(TAG, "Device started up in %s factory-reset mode", esp_zb_bdb_is_factory_new() ? "" : "non");
-        if (esp_zb_bdb_is_factory_new()) {
-            esp_zb_start_touchlink_commissioning();
+        if (err_status == ESP_OK) {
+            ESP_LOGI(TAG, "Deferred driver initialization %s", deferred_driver_init() ? "failed" : "successful");
+            ESP_LOGI(TAG, "Device started up in %s factory-reset mode", esp_zb_bdb_is_factory_new() ? "" : "non");
+            if (esp_zb_bdb_is_factory_new()) {
+                esp_zb_start_touchlink_commissioning();
+            } else {
+                ESP_LOGI(TAG, "Device rebooted");
+            }
         } else {
-            ESP_LOGI(TAG, "Device rebooted");
+            ESP_LOGW(TAG, "Failed to initialize Zigbee stack (status: %s)", esp_err_to_name(err_status));
         }
         break;
     case ESP_ZB_BDB_SIGNAL_TOUCHLINK_NWK_STARTED:
@@ -212,8 +225,6 @@ void app_main(void)
     };
     ESP_ERROR_CHECK(nvs_flash_init());
     ESP_ERROR_CHECK(esp_zb_platform_config(&config));
-    /* Hardware related and device init */
-    switch_driver_init(button_func_pair, PAIR_SIZE(button_func_pair), esp_zb_buttons_handler);
 
     xTaskCreate(esp_zb_task, "Zigbee_main", 4096, NULL, 5, NULL);
 }
