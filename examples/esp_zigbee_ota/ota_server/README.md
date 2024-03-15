@@ -13,7 +13,7 @@ This example code shows how to add OTA server parameter, add OTA server cluster 
 
 ## Configure the project
 
-Before project configuration and build, set the correct chip target using `idf.py --preview set-target TARGET` command.
+Before project configuration and build, set the correct chip target using `idf.py set-target TARGET` command.
 
 ## Erase the NVRAM 
 

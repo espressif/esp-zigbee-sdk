@@ -13,7 +13,7 @@ This example code shows how to configure Zigbee Green Power device and use it as
 
 ## Configure the project
 
-Before project configuration and build, make sure to set the correct chip target using `idf.py --preview set-target TARGET` command.
+Before project configuration and build, make sure to set the correct chip target using `idf.py set-target TARGET` command.
 
 ## Erase the NVRAM 
 
