@@ -60,6 +60,18 @@ examples/esp_zigbee_HA_sample/HA_on_off_switch:
       temporary: true
       reason: the other targets are not tested yet
 
+examples/esp_zigbee_HA_sample/HA_temperature_sensor:
+  enable:
+    - if: IDF_TARGET in ["esp32c6", "esp32h2"]
+      temporary: true
+      reason: the other targets are not tested yet
+
+examples/esp_zigbee_HA_sample/HA_thermostat:
+  enable:
+    - if: IDF_TARGET in ["esp32c6", "esp32h2"]
+      temporary: true
+      reason: the other targets are not tested yet
+
 examples/esp_zigbee_touchlink/touchlink_light:
   enable:
     - if: IDF_TARGET in ["esp32c6", "esp32h2"]

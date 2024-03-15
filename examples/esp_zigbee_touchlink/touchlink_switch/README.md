@@ -17,7 +17,7 @@ This test code shows touchlink initiator how to find and join network.
 
 ## Configure the project
 
-Before project configuration and build, make sure to set the correct chip target using `idf.py --preview set-target TARGET` command.
+Before project configuration and build, make sure to set the correct chip target using `idf.py set-target TARGET` command.
 
 ## Erase the NVRAM 
 
