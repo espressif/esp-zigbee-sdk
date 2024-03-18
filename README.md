@@ -20,7 +20,7 @@ Note：these two library components are hosted by [ESP Registry](https://compone
 
 ## Hardware Components
 
-Reference hardware used in develöopment examples and for testing/verifying functionality are ESP32-C6-DevKitC-1, ESP32-H2-DevKitM-1, and 
+Reference hardware used in develöopment examples and for testing/verifying functionality are ESP32-C6-DevKitC-1, ESP32-H2-DevKitM-1, and Zigbee Gateway boards.
 
 ESP32-C6-DevKitC-1 (ESP32-C6 dev board supporting on-board USB-to-UART bridge):
 * https://docs.espressif.com/projects/espressif-esp-dev-kits/en/latest/esp32c6/esp32-c6-devkitc-1/user_guide.html
