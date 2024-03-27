@@ -18,6 +18,19 @@ The ZBOSS and Espressif Zigbee SDK is provided as pre-built library:
 
 Note：these two library components are hosted by [ESP Registry](https://components.espressif.com/), which can be downloaded automatically by specifying the dependency in `idf_component.yml` file. An example: [idf_component.yml](examples/esp_zigbee_HA_sample/HA_on_off_light/main/idf_component.yml).
 
+## Hardware Components
+
+Some of the reference hardware used in development examples are listed below:
+
+ESP32-H2-DevKitM-1
+* https://docs.espressif.com/projects/espressif-esp-dev-kits/en/latest/esp32h2/esp32-h2-devkitm-1/user_guide.html
+
+ESP32-C6-DevKitM-1
+* https://docs.espressif.com/projects/espressif-esp-dev-kits/en/latest/esp32c6/esp32-c6-devkitm-1/user_guide.html
+
+Espressif Thread Border Router / Zigbee Gateway
+* https://docs.espressif.com/projects/esp-thread-br/en/latest/hardware_platforms.html
+
 ## Get esp-zigbee-sdk
 
 Please clone this repository using the below command:
