@@ -325,7 +325,10 @@ If you encounter any functionality issues with the Zigbee SDK, the following deb
 2.4.1 Zigbee API Lock
 ~~~~~~~~~~~~~~~~~~~~~
 
-The Zigbee SDK APIs are not thread-safe, so it's mandatory to acquire the lock before calling any Zigbee APIs, except that the call site is in Zigbee callbacks which are from Zigbee task.
+The Zigbee SDK APIs are not thread-safe, so it's mandatory to acquire the lock before calling any Zigbee APIs, except for the following cases:
+
+- The call site is in Zigbee callbacks which are from Zigbee task.
+- Calling the schedule alarm APIs, which include `esp_zb_scheduler_alarm()` and `esp_zb_scheduler_alarm_cancel()`.
 
 An example code block:
 
@@ -390,12 +393,12 @@ Please note that the Wireshark configuration provided in the link above is inten
 
 Now you can check the Zigbee packet flow in Wireshark.
 
-2.4.4 Enable Trace Logging
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+2.4.4 Enable Debug Mode and Trace Logging
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The trace logging feature outputs additional logs for debugging purpose, it's disabled by default in the SDK.
+By default, the release version libraries are used for building. Enable `ZB_DEBUG_MODE` option to use debug version libraries instead, which will output more logs for debugging.
 
-Here take the :project:`HA_on_off_light <examples/esp_zigbee_HA_sample/HA_on_off_light>` as an example. To enable trace logging, follow these steps:
+The stack trace logging feature outputs additional logs, here take the :project:`HA_on_off_light <examples/esp_zigbee_HA_sample/HA_on_off_light>` as an example. To enable trace logging, follow these steps:
 
 1. Navigate to the example directory and run the command:
 
@@ -403,7 +406,7 @@ Here take the :project:`HA_on_off_light <examples/esp_zigbee_HA_sample/HA_on_off
 
    idf.py menuconfig
 
-2. Go to **Component config** > **Zigbee** > **Zigbee Enable** > **Zigbee trace log option** > **Zigbee Trace Enable**, enable the ``Zigbee Trace Enable`` option.
+2. Go to **Component config** > **Zigbee** > **Zigbee Enable** > **Zigbee Debug Mode**, enable the ``Zigbee Debug Mode`` option.
 
 3. Call :cpp:func:`esp_zb_set_trace_level_mask` before :cpp:func:`esp_zb_init` to configure the trace level and mask. Please refer to `esp_zigbee_trace.h <https://github.com/espressif/esp-zigbee-sdk/blob/main/components/esp-zigbee-lib/include/esp_zigbee_trace.h>`_ for the masks.
 

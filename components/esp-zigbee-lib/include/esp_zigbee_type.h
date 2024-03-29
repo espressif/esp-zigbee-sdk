@@ -38,6 +38,7 @@ typedef union {
 #define ESP_ZB_ZCL_ADDR_TYPE_SRC_ID_GPD      2U
 #define ESP_ZB_ZCL_ADDR_TYPE_IEEE            3U
 #define ESP_ZB_CCM_KEY_SIZE                  16U
+#define ESP_ZB_ZCL_ATTR_SET_WITH_ATTR_ID(_set, _id) ((_set << 8) | (_id & 0xFF))
 
 /**
  * @brief Type to represent source address of ZCL message
@@ -653,6 +654,19 @@ typedef struct esp_zb_metering_cluster_cfg_s {
     uint8_t metering_device_type;                /*!< This attribute provides a label for identifying the type of metering device (Energy, Gas, Water, Thermal, Heat, Cooling, and mirrored metering devices).
                                                       refer to esp_zb_zcl_metering_device_type_t */
 } esp_zb_metering_cluster_cfg_t;
+
+/**
+ * @brief Zigbee standard mandatory attribute for meter identification cluster
+ *
+ */
+typedef struct esp_zb_meter_identification_cluster_cfg_s {
+    char company_name[17];                      /*!< This attribute provides the name of the meter manufacturer. (1 octet length + 16 octets data) */
+    uint16_t meter_type_id;                     /*!< This attribute provides a label to identify the installation features of the meter. */
+    uint16_t data_quality_id;                   /*!< This attribute provides a label to identify the Meter Simple Metering information certification type. */
+    char pod[17];                               /*!< This attribute provides a unique identification ID of the premise connection point. (1 octet length + 16 octets data) */
+    esp_zb_uint24_t available_power;            /*!< This attribute represents the InstantaneousDemand that can be distributed to the customer without any risk of overload. */
+    esp_zb_uint24_t power_threshold;            /*!< This attribute represents a threshold of InstantaneousDemand distributed to the customer that will lead to an imminent risk of overload. */
+} esp_zb_meter_identification_cluster_cfg_t;
 
 /****************** standard device config *********************/
 /**

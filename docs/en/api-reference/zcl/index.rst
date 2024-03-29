@@ -42,3 +42,6 @@ This section provides the ESP Zigbee SDK's APIs that support different kind of Z
    esp_zigbee_zcl_time
    esp_zigbee_zcl_window_covering
    esp_zigbee_zcl_green_power
+   esp_zigbee_zcl_diagnostics
+   esp_zigbee_zcl_meter_identification
+   esp_zigbee_zcl_price

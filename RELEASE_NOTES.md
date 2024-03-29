@@ -1,5 +1,37 @@
 # Espressif Zigbee SDK Release Notes
 
+## 29-Mar-2024
+1.2.2 version release of ESP-ZIGBEE-SDK is based on esp-idf v5.1.3
+
+### Features
+- Updated esp-zboss-lib to v1.2.2
+- Updated esp-zigbee-lib to v1.2.2
+- Added diagnostics cluster support
+- Added meter_identification cluster support
+- Added price cluster support
+- Added Zigbee network size setting API
+- Added Zigbee I/O buffer size setting API
+- Added Zigbee binding table size setting API
+- Added ZB_DEBUG_MODE option for optimizing the code size of release version library
+- Removed ESP_ZB_TRACE_ENABLE option
+
+### Bug Fixes
+- Fixed profile id for zcl commands
+- Fixed moving value for color control handler
+- Fixed reuse issue with endpoint, cluster, and attribute lists
+- Fixed issue with Zigbee sleep not waking up via GPIO
+- Closes: https://github.com/espressif/esp-zigbee-sdk/issues/99
+- Closes: https://github.com/espressif/esp-zigbee-sdk/issues/269
+- Closes: https://github.com/espressif/esp-zigbee-sdk/issues/282
+- Closes: https://github.com/espressif/esp-zigbee-sdk/issues/284
+- Closes: https://github.com/espressif/esp-zigbee-sdk/issues/285
+
+### Note
+- The default network size is set to 64, please use the `esp_zb_overall_network_size_set()` to configure it.
+- The default I/O buffer size is set to 80, please use the `esp_zb_io_buffer_size_set()` to configure it.
+- The default binging table size is changed to 16, please use the API `esp_zb_aps_src_binding_table_size_set()` and `esp_zb_aps_dst_binding_table_size_set()` to configure it.
+
+
 ## 15-Mar-2024
 1.2.1 version release of ESP-ZIGBEE-SDK is based on esp-idf v5.1.3
 
