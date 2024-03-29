@@ -1,0 +1,12 @@
+menu "ESP Zigbee Light Sleep Example"
+    config GPIO_INPUT_IO_WAKEUP
+        int "GPIO wakeup number"
+        default 9 if IDF_TARGET_ESP32H2
+        default 7 if IDF_TARGET_ESP32C6
+        range 7 14 if IDF_TARGET_ESP32H2
+        range 0 7 if IDF_TARGET_ESP32C6
+
+        help
+            On ESP32-H2 devkits, the BOOT button is connected to GPIO9, so it can be used to wake up the SoC directly.
+            On ESP32-C6 devkits, pull down GPIO7 to wake up the SoC.
+endmenu

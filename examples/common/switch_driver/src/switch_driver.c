@@ -38,8 +38,11 @@ static esp_switch_callback_t func_ptr;
 static uint8_t switch_num;
 static const char *TAG = "ESP_ZB_SWITCH";
 
+static void switch_driver_gpios_intr_enabled(bool enabled);
+
 static void IRAM_ATTR gpio_isr_handler(void *arg)
 {
+    switch_driver_gpios_intr_enabled(false);
     xQueueSendFromISR(gpio_evt_queue, (switch_func_pair_t *)arg, NULL);
 }
 
@@ -123,9 +126,10 @@ static bool switch_driver_gpio_init(switch_func_pair_t *button_func_pair, uint8_
         pin_bit_mask |= (1ULL << (button_func_pair + i)->pin);
     }
     /* interrupt of falling edge */
-    io_conf.intr_type = GPIO_INTR_NEGEDGE;
+    io_conf.intr_type = GPIO_INTR_LOW_LEVEL;
     io_conf.pin_bit_mask = pin_bit_mask;
     io_conf.mode = GPIO_MODE_INPUT;
+    io_conf.pull_down_en = 0;
     io_conf.pull_up_en = 1;
     /* configure GPIO with the given settings */
     gpio_config(&io_conf);
@@ -136,7 +140,7 @@ static bool switch_driver_gpio_init(switch_func_pair_t *button_func_pair, uint8_
         return false;
     }
     /* start gpio task */
-    xTaskCreate(switch_driver_button_detected, "button_detected", 2048, NULL, 10, NULL);
+    xTaskCreate(switch_driver_button_detected, "button_detected", 4096, NULL, 10, NULL);
     /* install gpio isr service */
     gpio_install_isr_service(ESP_INTR_FLAG_DEFAULT);
     for (int i = 0; i < button_num; ++i) {

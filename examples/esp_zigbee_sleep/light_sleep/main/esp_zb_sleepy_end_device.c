@@ -12,16 +12,22 @@
  * CONDITIONS OF ANY KIND, either express or implied.
  */
 #include "esp_check.h"
+#include "hal/gpio_types.h"
 #include "nvs_flash.h"
 #include "esp_log.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "ha/esp_zigbee_ha_standard.h"
 #include "esp_zb_sleepy_end_device.h"
+#include "switch_driver.h"
 #ifdef CONFIG_PM_ENABLE
 #include "esp_pm.h"
 #include "esp_private/esp_clk.h"
+#include "esp_sleep.h"
 #endif
+#include "driver/rtc_io.h"
+#include "driver/gpio.h"
+
 /**
  * @note Make sure set idf.py menuconfig in zigbee component as zigbee end device!
 */
@@ -30,6 +36,48 @@
 #endif
 
 static const char *TAG = "ESP_ZB_SLEEP";
+
+static switch_func_pair_t button_func_pair[] = {
+    {CONFIG_GPIO_INPUT_IO_WAKEUP, SWITCH_ONOFF_TOGGLE_CONTROL}
+};
+
+static void zb_buttons_handler(switch_func_pair_t* button_func_pair)
+{
+    if (button_func_pair->func == SWITCH_ONOFF_TOGGLE_CONTROL) {
+        /* Get the switch ieee address */
+        esp_zb_zdo_ieee_addr_req_param_t ieee_req;
+        ieee_req.addr_of_interest = 0x0;
+        ieee_req.dst_nwk_addr = 0x0;
+        ieee_req.request_type = 0;
+        ieee_req.start_index = 0;
+        esp_zb_lock_acquire(portMAX_DELAY);
+        esp_zb_zdo_ieee_addr_req(&ieee_req, NULL, NULL);
+        esp_zb_lock_release();
+        ESP_EARLY_LOGI(TAG, "Send 'ieee_addr req' command");
+    }
+}
+
+static esp_err_t deferred_driver_init(void)
+{
+    ESP_RETURN_ON_FALSE(switch_driver_init(button_func_pair, PAIR_SIZE(button_func_pair), zb_buttons_handler), ESP_FAIL, TAG,
+                        "Failed to initialize switch driver");
+    /* Configure RTC IO wake up:
+    The configuration mode depends on your hardware design.
+    Since the BOOT button is connected to a pull-up resistor, the wake-up mode is configured as LOW.
+    */
+    ESP_ERROR_CHECK(esp_sleep_enable_ext1_wakeup(
+        1ULL << CONFIG_GPIO_INPUT_IO_WAKEUP, ESP_EXT1_WAKEUP_ANY_LOW));
+
+#if SOC_RTCIO_INPUT_OUTPUT_SUPPORTED
+    rtc_gpio_pulldown_dis(CONFIG_GPIO_INPUT_IO_WAKEUP);
+    rtc_gpio_pullup_en(CONFIG_GPIO_INPUT_IO_WAKEUP);
+#else
+    gpio_pulldown_dis(CONFIG_GPIO_INPUT_IO_WAKEUP);
+    gpio_pullup_en(CONFIG_GPIO_INPUT_IO_WAKEUP);
+#endif
+    return ESP_OK;
+}
+
 /********************* Define functions **************************/
 static void bdb_start_top_level_commissioning_cb(uint8_t mode_mask)
 {
@@ -49,6 +97,7 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
     case ESP_ZB_BDB_SIGNAL_DEVICE_FIRST_START:
     case ESP_ZB_BDB_SIGNAL_DEVICE_REBOOT:
         if (err_status == ESP_OK) {
+            ESP_LOGI(TAG, "Deferred driver initialization %s", deferred_driver_init() ? "failed" : "successful");
             ESP_LOGI(TAG, "Device started up in %s factory-reset mode", esp_zb_bdb_is_factory_new() ? "" : "non");
             if (esp_zb_bdb_is_factory_new()) {
                 ESP_LOGI(TAG, "Start network steering");
@@ -162,7 +211,7 @@ void app_main(void)
     ESP_ERROR_CHECK(nvs_flash_init());
     /* esp zigbee light sleep initialization*/
     ESP_ERROR_CHECK(esp_zb_power_save_init());
-    /* load Zigbee light_bulb platform config to initialization */
+    /* load Zigbee platform config to initialization */
     ESP_ERROR_CHECK(esp_zb_platform_config(&config));
 
     xTaskCreate(esp_zb_task, "Zigbee_main", 4096, NULL, 5, NULL);
