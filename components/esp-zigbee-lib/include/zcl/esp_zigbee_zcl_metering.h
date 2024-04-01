@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2022-2023 Espressif Systems (Shanghai) CO LTDESP_ZB_ZCL_
+ * SPDX-FileCopyrightText: 2022-2023 Espressif Systems (Shanghai) CO LTD
  *
  * SPDX-License-Identifier: Apache-2.0
  */
@@ -15,8 +15,6 @@ extern "C" {
 typedef enum {
     ESP_ZB_ZCL_METERING_SET_CLI_NOTIFICATION_ATTRIBUTE = 0x00, /*!< Notification Attribute Set */
 } esp_zb_zcl_metering_cli_attr_set_t;
-
-#define ESP_ZB_ZCL_ATTR_SET_WITH_ATTR_ID(_set, _id) ((_set << 8) | (_id & 0xFF))
 
 /** @brief Metering cluster client attributes */
 typedef enum {

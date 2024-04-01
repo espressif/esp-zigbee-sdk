@@ -94,6 +94,12 @@ typedef enum esp_zb_core_action_callback_id_s {
     ESP_ZB_CORE_DOOR_LOCK_LOCK_DOOR_RESP_CB_ID          = 0x0011,   /*!< Lock/unlock door response, refer to esp_zb_zcl_door_lock_lock_door_resp_message_t */
     ESP_ZB_CORE_IDENTIFY_EFFECT_CB_ID                   = 0x0012,   /*!< Identify triggers effect request, refer to esp_zb_zcl_identify_effect_message_t */
     ESP_ZB_CORE_BASIC_RESET_TO_FACTORY_RESET_CB_ID      = 0x0013,   /*!< Reset all clusters of endpoint to factory default, refer to esp_zb_zcl_basic_reset_factory_default_message_t  */
+    ESP_ZB_CORE_PRICE_GET_CURRENT_PRICE_CB_ID           = 0x0014,   /*!< Price get current price, refer to esp_zb_zcl_price_get_current_price_message_t */
+    ESP_ZB_CORE_PRICE_GET_SCHEDULED_PRICES_CB_ID        = 0x0015,   /*!< Price get scheduled prices, refer to esp_zb_zcl_price_get_scheduled_prices_message_t */
+    ESP_ZB_CORE_PRICE_GET_TIER_LABELS_CB_ID             = 0x0016,   /*!< Price get tier labels, refer to esp_zb_zcl_price_get_tier_labels_message_t */
+    ESP_ZB_CORE_PRICE_PUBLISH_PRICE_CB_ID               = 0x0017,   /*!< Price publish price, refer to esp_zb_zcl_price_publish_price_message_t */
+    ESP_ZB_CORE_PRICE_PUBLISH_TIER_LABELS_CB_ID         = 0x0018,   /*!< Price publish tier labels, refer to esp_zb_zcl_price_publish_tier_labels_message_t */
+    ESP_ZB_CORE_PRICE_PRICE_ACK_CB_ID                   = 0x0019,   /*!< Price price acknowledgement, refer to esp_zb_zcl_price_ack_message_t */
     ESP_ZB_CORE_CMD_READ_ATTR_RESP_CB_ID                = 0x1000,   /*!< Read attribute response, refer to esp_zb_zcl_cmd_read_attr_resp_message_t */
     ESP_ZB_CORE_CMD_WRITE_ATTR_RESP_CB_ID               = 0x1001,   /*!< Write attribute response, refer to esp_zb_zcl_cmd_write_attr_resp_message_t */
     ESP_ZB_CORE_CMD_REPORT_CONFIG_RESP_CB_ID            = 0x1002,   /*!< Configure report response, refer to esp_zb_zcl_cmd_config_report_resp_message_t */
@@ -322,6 +328,51 @@ void esp_zb_zcl_scenes_table_show(uint8_t endpoint);
  *       - ESP_FAILED: failed to clear scene table
  */
 esp_err_t esp_zb_zcl_scenes_table_clear_by_index(uint16_t index);
+
+/**
+ * @brief Set the maximum number of devices in a Zigbee network
+ *
+ * @note The function will only take effect when called before esp_zb_init(), it determins
+ *       several table size such as the neighbor table and routing table, 64 by default
+ * @param[in] size The overall network size is expected to be set
+ * @return
+ *       - ESP_OK: on success
+ *       - ESP_FAIL: on failure
+ */
+esp_err_t esp_zb_overall_network_size_set(uint16_t size);
+
+/**
+ * @brief Set Zigbee stack I/O buffer size
+ *
+ * @note The function will only take effect when called before esp_zb_init(), 80 by default.
+ * @param[in] size The I/O buffer size is expected to be set
+ * @return
+ *       - ESP_OK: on success
+ *       - ESP_FAIL: on failure
+ */
+esp_err_t esp_zb_io_buffer_size_set(uint16_t size);
+
+/**
+ * @brief Set APS source binding table size
+ *
+ * @note The function will only take effect when called before esp_zb_init(), 16 by default
+ * @param[in] size The source binding table size is expected to be set
+ * @return
+ *       - ESP_OK: on success
+ *       - ESP_FAIL: on failure
+ */
+esp_err_t esp_zb_aps_src_binding_table_size_set(uint16_t size);
+
+/**
+ * @brief Set APS destination binding table size
+ *
+ * @note The function will only take effect when called before esp_zb_init(), 16 by default
+ * @param[in] size The destination binding table size is expected to be set
+ * @return
+ *       - ESP_OK: on success
+ *       - ESP_FAIL: on failure
+ */
+esp_err_t esp_zb_aps_dst_binding_table_size_set(uint16_t size);
 
 /**
  * @brief  Zigbee stack initialization.
@@ -758,6 +809,7 @@ esp_err_t esp_zb_bdb_cancel_formation(void);
 /**
  * @brief Register a Zigbee device.
  *
+ * @note After successful registration, the SDK will retain a copy of the whole data model, the ep_list will be freed.
  * @param[in] ep_list  An endpoint list which wants to register @ref esp_zb_ep_list_s
  *
  * @return
