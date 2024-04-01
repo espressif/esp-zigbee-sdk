@@ -47,35 +47,40 @@ esp_err_t esp_host_frame_input(const void *buffer, uint16_t len)
             break;
         }
 
-        /* Packet Header */
-        esp_host_header_t *host_header = (esp_host_header_t *)output;
-        uint8_t *payload = NULL;
+        uint8_t offerset = 0;
+        while (offerset != outlen) {
+            /* Packet Header */
+            esp_host_header_t *host_header = (esp_host_header_t *)(output + offerset);
+            uint8_t *payload = NULL;
 
-        if (host_header->len + data_head_len > outlen) {
-            ESP_LOGE(TAG, "Invalid packet len %d, expect %d", outlen, host_header->len + data_head_len);
-            ESP_LOG_BUFFER_HEX_LEVEL(TAG, output, outlen, ESP_LOG_ERROR);
-            ret = ESP_ERR_INVALID_SIZE;
-            break;
+            if (host_header->len + data_head_len > outlen) {
+                ESP_LOGE(TAG, "Invalid packet len %d, expect %d", outlen, host_header->len + data_head_len);
+                ESP_LOG_BUFFER_HEX_LEVEL(TAG, output, outlen, ESP_LOG_ERROR);
+                ret = ESP_ERR_INVALID_SIZE;
+                break;
+            }
+
+            /* CheckSum */
+            uint16_t *checksum = (uint16_t *)(output + offerset + data_head_len + host_header->len);
+            uint16_t crc_val = esp_crc16_le(UINT16_MAX, output + offerset, data_head_len + host_header->len);
+            if (crc_val != (*checksum)) {
+                ESP_LOGE(TAG, "Invalid multiple checksum %02x, expect %02x", *checksum, crc_val);
+                ESP_LOG_BUFFER_HEX_LEVEL(TAG, output + offerset, (data_head_len + host_header->len + sizeof(uint16_t)), ESP_LOG_ERROR);
+                ret = ESP_ERR_INVALID_CRC;
+                break;
+            }
+
+            if (host_header->len != 0) {
+                payload = (uint8_t *)output + offerset + data_head_len;
+            }
+
+            ESP_LOG_BUFFER_HEX_LEVEL(TAG, output + offerset, (data_head_len + host_header->len + sizeof(uint16_t)), ESP_LOG_INFO);
+
+            /* Packet Payload */
+            ret = esp_host_zb_input(host_header, payload, host_header->len);
+
+            offerset += (data_head_len + host_header->len + sizeof(uint16_t));
         }
-
-        /* CheckSum */
-        uint16_t *checksum = (uint16_t *)(output + data_head_len + host_header->len);
-        uint16_t crc_val = esp_crc16_le(UINT16_MAX, output, (outlen - sizeof(uint16_t)));
-        if (crc_val != (*checksum)) {
-            ESP_LOGE(TAG, "Invalid checksum %02x, expect %02x", *checksum, crc_val);
-            ESP_LOG_BUFFER_HEX_LEVEL(TAG, output, outlen, ESP_LOG_ERROR);
-            ret = ESP_ERR_INVALID_CRC;
-            break;
-        }
-
-        if (host_header->len != 0) {
-            payload = (uint8_t *)output + data_head_len;
-        }
-
-        ESP_LOG_BUFFER_HEX_LEVEL(TAG, output, outlen, ESP_LOG_INFO);
-
-        /* Packet Payload */
-        ret = esp_host_zb_input(host_header, payload, host_header->len);
     } while(0);
 
     if (output) {
