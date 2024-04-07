@@ -64,7 +64,7 @@ on: turn on radio
 off: turn off radio
 I (52374) : Done
 ```
-Set radio to on
+Set radio to off
 ```bash
 > bdb -d off
 I (116954) : IEEE802154 radio off
@@ -77,7 +77,7 @@ I (142464) : IEEE802154 radio on
 I (142464) : Done
 ```
 
-Set radio state
+get radio state
 ```bash
 > bdb -d get
 I (239694) : Radio is on
