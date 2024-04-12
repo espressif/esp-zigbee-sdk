@@ -100,7 +100,7 @@ I (65371) ESP_ZB_SLEEP: Zigbee can sleep
 
 Please note that due to the default sleep threshold of 20 milliseconds, the device may enter sleep mode frequently and print log `Zigbee can sleep`. If you want to reduce the number of sleep occurrences, you can adjust the sleep threshold using the function `esp_zb_sleep_set_threshold(uint32_t threshold_ms)`. For example, you can set the threshold to a higher value like `esp_zb_sleep_set_threshold(2000); // 2000 milliseconds` after initializing Zigbee with `esp_zb_init(&zb_nwk_cfg);`.
 
-During the deep sleep, a typical power consumption is shown below:
+During the light sleep, a typical power consumption is shown below:
 ![H2-light-sleep-power-consumption](image/ESP32H2-light-sleep-power-consumption.png)
 
 ## Troubleshooting

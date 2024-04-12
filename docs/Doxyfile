@@ -67,6 +67,7 @@ INPUT = \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_green_power.h                 \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_diagnostics.h                 \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_meter_identification.h        \
+    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_flow_meas.h                   \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_price.h                       \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/zdo/esp_zigbee_zdo_command.h                     \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/zdo/esp_zigbee_zdo_common.h                      \

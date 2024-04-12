@@ -61,6 +61,34 @@ esp_zb_zcl_status_t esp_zb_zcl_set_attribute_val(uint8_t endpoint, uint16_t clus
         uint16_t attr_id, void *value_p, bool check);
 
 /**
+ * @brief Get the manufacturer attribute descriptor
+ *
+ * @param endpoint      The endpoint identifier where the attribute is located
+ * @param cluster_id    The cluster identifier where the attribute is located
+ * @param cluster_role  The role of cluster
+ * @param attr_id       The attribute identifier
+ * @param manuf_code    The manufacturer code
+ * @return A pointer to @ref esp_zb_zcl_attr_s for attribute descriptor
+ */
+esp_zb_zcl_attr_t *esp_zb_zcl_get_manufacturer_attribute(uint8_t endpoint, uint16_t cluster_id, uint8_t cluster_role, uint16_t attr_id,
+                                                         uint16_t manuf_code);
+
+/**
+ * @brief Set the manufacturer attribute value
+ *
+ * @param endpoint      The endpoint identifier where the attribute is located
+ * @param cluster_id    The cluster identifier where the attribute is located
+ * @param cluster_role  The role of cluster
+ * @param manuf_code    The manufacturer code
+ * @param attr_id       The attribute identifier
+ * @param value_p       The value of attribute expected to set
+ * @param check         The access method of attribute whether is required to check or not
+ * @return The zcl status refer to esp_zb_zcl_status_t
+ */
+esp_zb_zcl_status_t esp_zb_zcl_set_manufacturer_attribute_val(uint8_t endpoint, uint16_t cluster_id, uint8_t cluster_role, uint16_t manuf_code,
+                                                              uint16_t attr_id, void *value_p, bool check);
+
+/**
  * @brief Add an attribute in basic cluster.
  *
  * @param[in] attr_list A pointer to attribute list @ref esp_zb_attribute_list_s
@@ -258,13 +286,13 @@ esp_err_t esp_zb_ias_zone_cluster_add_attr(esp_zb_attribute_list_t *attr_list, u
 
 /**
  * @brief Set the IAS zone CIE address for IAS zone server
- * 
+ *
  * @param[in] endpoint A 8-bit endpoint ID which the IAS zone cluster attach
- * @param[in] cie_ieee_addr The 8-byte IEEE address will be regarded as the IAS message destination address  
- * @return  
+ * @param[in] cie_ieee_addr The 8-byte IEEE address will be regarded as the IAS message destination address
+ * @return
  *      - ESP_OK on success
  *      - ESP_FAIL The CIE address has been set, invalid argument or IAS zone cluster does not exist
- * 
+ *
  */
 esp_err_t esp_zb_ias_zone_cluster_set_cie_address(uint8_t endpoint, esp_zb_ieee_addr_t cie_ieee_addr);
 /**
@@ -338,6 +366,20 @@ esp_err_t esp_zb_illuminance_meas_cluster_add_attr(esp_zb_attribute_list_t *attr
 esp_err_t esp_zb_pressure_meas_cluster_add_attr(esp_zb_attribute_list_t *attr_list, uint16_t attr_id, void *value_p);
 
 /**
+ * @brief Add an attribute in flow measurement cluster
+ *
+ * @param[in] attr_list A pointer to attribute list @ref esp_zb_attribute_list_s
+ * @param[in] attr_id  An attribute id to be added
+ * @param[in] value_p A pointer to attribute value wants to add
+ *
+ * @return
+ *      - ESP_OK on success
+ *      - ESP_ERR_INVALID_ARG if attribute is existed or unsupported
+ *
+ */
+esp_err_t esp_zb_flow_meas_cluster_add_attr(esp_zb_attribute_list_t *attr_list, uint16_t attr_id, void *value_p);
+
+/**
  * @brief Add an attribute in electrical measurement cluster
  *
  * @param[in] attr_list A pointer to attribute list @ref esp_zb_attribute_list_s
@@ -367,7 +409,7 @@ esp_err_t esp_zb_window_covering_cluster_add_attr(esp_zb_attribute_list_t *attr_
 
 /**
  * @brief Add an attribute in occupancy sensor cluster
- * 
+ *
  * @param[in] attr_list A pointer to attribute list @ref esp_zb_attribute_list_s
  * @param[in] attr_id  An attribute id to be added
  * @param[in] value_p A pointer to attribute value wants to add
@@ -375,7 +417,7 @@ esp_err_t esp_zb_window_covering_cluster_add_attr(esp_zb_attribute_list_t *attr_
  * @return
  *      - ESP_OK on success
  *      - ESP_ERR_INVALID_ARG if attribute is existed or unsupported
- * 
+ *
  */
 esp_err_t esp_zb_occupancy_sensing_cluster_add_attr(esp_zb_attribute_list_t *attr_list, uint16_t attr_id, void *value_p);
 

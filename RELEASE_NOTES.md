@@ -1,5 +1,25 @@
 # Espressif Zigbee SDK Release Notes
 
+## 12-Apr-2024
+1.2.3 version release of ESP-ZIGBEE-SDK is based on esp-idf v5.1.3
+
+### Features
+- Updated esp-zboss-lib to v1.2.3
+- Updated esp-zigbee-lib to v1.2.3
+- Added flow measurement cluster support
+- Added ZCL manufacturer attribute settings
+- Optimized the accuracy for stack timer
+- Optimized device handler and endpoint handler for code size
+- Optimized ZCL hue and saturation movement method
+
+### Bug Fixes
+- Fixed the empty zdo binding table issue
+- Fixed the user callback for writing ZCL attributes
+- Fixed the enumerated member of pressure measurement cluster
+- Closes: https://github.com/espressif/esp-zigbee-sdk/issues/305
+- Closes: https://github.com/espressif/esp-zigbee-sdk/issues/307
+- Closes: https://github.com/espressif/esp-zigbee-sdk/issues/315
+
 ## 29-Mar-2024
 1.2.2 version release of ESP-ZIGBEE-SDK is based on esp-idf v5.1.3
 

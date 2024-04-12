@@ -26,7 +26,6 @@ extern "C" {
 #define ESP_ZB_TRANSCEIVER_ALL_CHANNELS_MASK 0x07FFF800U /*!< channel 11-26 for compatibility with 2.4GHZ*/
 
 #ifdef CONFIG_ZB_ZED
-#define ESP_ZB_SLEEP_MINIMUM_THRESHOLD_MS 20U       /*! Default sleep threshold. Do not sleep when it is less then 1 Beacon Interval to wake up*/
 #define ESP_ZB_SLEEP_MAXIMUM_THRESHOLD_MS 86400000U /*! Maximum sleep threshold*/
 #endif                                              /** CONFIG_ZB_ZED */
 
@@ -436,16 +435,16 @@ void esp_zb_set_rx_on_when_idle(bool rx_on);
 bool esp_zb_bdb_is_factory_new(void);
 
 /**
- * @brief Get the scan duration of beacon
+ * @brief Get the scan duration time
  *
- * @return Scan duration
+ * @return Scan duration is in beacon intervals (15.36 ms)
  */
 uint8_t esp_zb_bdb_get_scan_duration(void);
 
 /**
- * @brief Set the scan duration of beacon
+ * @brief Set the scan duration time
  *
- * @param[in] duration  Scan time is  ((1 << duration) + 1) * 15.36 ms
+ * @param[in] duration  The scan duration time is in beacon intervals, defined as ((1 << duration) + 1) * 15.36 ms
  */
 void esp_zb_bdb_set_scan_duration(uint8_t duration);
 
@@ -874,14 +873,14 @@ bool esp_zb_joining_to_distributed_network_enabled(void);
 #endif
 
 /**
- * @brief Set the sleep threshold on the device. When the scheduler detects that the device can enter sleep mode, it will notify the application with the signal ESP_ZB_COMMON_SIGNAL_CAN_SLEEP.
- * The device cannot enter sleep mode when the sleep interval is less than this threshold.
- * Default sleep threshold is 20 milliseconds, because do not sleep when it is less then 1 Beacon Interval to wake up.
+ * @brief Set the sleep threshold on the device. When the scheduler detects that the device can enter sleep mode,
+ *        it will notify the application with the signal ESP_ZB_COMMON_SIGNAL_CAN_SLEEP.
+ *        The default sleep threshold is 20 milliseconds.
  *
  * @param[in] threshold_ms Sleep threshold in milliseconds
  *
  * @return ESP_OK if new threshold is valid and applied.
- * @return ESP_FAIL if the user attempts to set a threshold greater than ESP_ZB_SLEEP_MAXIMUM_THRESHOLD_MS or less than ESP_ZB_SLEEP_MINIMUM_THRESHOLD_MS.
+ * @return ESP_FAIL if the user attempts to set a threshold greater than ESP_ZB_SLEEP_MAXIMUM_THRESHOLD_MS.
  *
  */
 esp_err_t esp_zb_sleep_set_threshold(uint32_t threshold_ms);

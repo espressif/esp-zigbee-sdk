@@ -150,7 +150,7 @@ union esp_zb_zcl_attr_var_u {
 
 /**
  * @brief Type to represent ZCL attribute reporting info structure
- * 
+ *
  */
 typedef struct esp_zb_zcl_reporting_info_s {
     uint8_t direction;              /*!< Direction: report is send or received */
@@ -429,7 +429,7 @@ typedef struct esp_zb_binary_input_cluster_cfg_s {
 
 /**
  * @brief The IAS zone application callback
- * 
+ *
  */
 typedef void (* esp_zb_ias_zone_app_callback_t)(uint8_t param, uint16_t general_val);
 
@@ -521,6 +521,16 @@ typedef struct esp_zb_pressure_meas_cluster_cfg_s {
     int16_t min_value;                          /*!<  The attribute indicates minimum value of the measured value */
     int16_t max_value;                          /*!<  The attribute indicates maximum value of the measured value */
 } esp_zb_pressure_meas_cluster_cfg_t;
+
+/**
+ * @brief Zigbee standard mandatory attribute for flow measurement cluster
+ *
+ */
+typedef struct esp_zb_flow_meas_cluster_cfg_s {
+    int16_t measured_value;                     /*!<  The attribute indicates the flow from 0x0000 to 0xffff */
+    int16_t min_value;                          /*!<  The attribute indicates minimum value of the measured value */
+    int16_t max_value;                          /*!<  The attribute indicates maximum value of the measured value */
+} esp_zb_flow_meas_cluster_cfg_t;
 
 /**
  * @brief Zigbee standard mandatory attribute for electrical measurement cluster
