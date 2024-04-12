@@ -41,6 +41,14 @@ static switch_func_pair_t button_func_pair[] = {
     {CONFIG_GPIO_INPUT_IO_WAKEUP, SWITCH_ONOFF_TOGGLE_CONTROL}
 };
 
+static void ieee_cb(esp_zb_zdp_status_t zdo_status, esp_zb_ieee_addr_t ieee_addr, void *user_ctx)
+{
+    if (zdo_status == ESP_ZB_ZDP_STATUS_SUCCESS) {
+        ESP_LOGI(TAG, "Response IEEE address: %02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x", ieee_addr[7], ieee_addr[6], ieee_addr[5], ieee_addr[4],
+                 ieee_addr[3], ieee_addr[2], ieee_addr[1], ieee_addr[0]);
+    }
+}
+
 static void zb_buttons_handler(switch_func_pair_t* button_func_pair)
 {
     if (button_func_pair->func == SWITCH_ONOFF_TOGGLE_CONTROL) {
@@ -51,7 +59,7 @@ static void zb_buttons_handler(switch_func_pair_t* button_func_pair)
         ieee_req.request_type = 0;
         ieee_req.start_index = 0;
         esp_zb_lock_acquire(portMAX_DELAY);
-        esp_zb_zdo_ieee_addr_req(&ieee_req, NULL, NULL);
+        esp_zb_zdo_ieee_addr_req(&ieee_req, ieee_cb, NULL);
         esp_zb_lock_release();
         ESP_EARLY_LOGI(TAG, "Send 'ieee_addr req' command");
     }

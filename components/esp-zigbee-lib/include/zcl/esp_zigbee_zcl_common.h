@@ -30,6 +30,7 @@ extern "C" {
 #include "esp_zigbee_zcl_electrical_meas.h"
 #include "esp_zigbee_zcl_illuminance_meas.h"
 #include "esp_zigbee_zcl_pressure_meas.h"
+#include "esp_zigbee_zcl_flow_meas.h"
 #include "esp_zigbee_zcl_occupancy_sensing.h"
 #include "esp_zigbee_zcl_window_covering.h"
 #include "esp_zigbee_zcl_thermostat.h"
@@ -162,6 +163,7 @@ typedef enum {
     ESP_ZB_ZCL_CLUSTER_ID_ILLUMINANCE_MEASUREMENT    = 0x0400U,     /*!< Illuminance measurement */
     ESP_ZB_ZCL_CLUSTER_ID_TEMP_MEASUREMENT           = 0x0402U,     /*!< Temperature measurement */
     ESP_ZB_ZCL_CLUSTER_ID_PRESSURE_MEASUREMENT       = 0x0403U,     /*!< Pressure measurement */
+    ESP_ZB_ZCL_CLUSTER_ID_FLOW_MEASUREMENT           = 0x0404U,     /*!< Flow measurement */
     ESP_ZB_ZCL_CLUSTER_ID_REL_HUMIDITY_MEASUREMENT   = 0x0405U,     /*!< Relative humidity measurement */
     ESP_ZB_ZCL_CLUSTER_ID_OCCUPANCY_SENSING          = 0x0406U,     /*!< Occupancy sensing */
     ESP_ZB_ZCL_CLUSTER_ID_CARBON_DIOXIDE_MEASUREMENT = 0x040dU,     /*!< Carbon dioxide measurement */

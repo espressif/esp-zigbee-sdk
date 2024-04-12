@@ -18,9 +18,10 @@ typedef enum
   ESP_ZB_ZCL_ATTR_PRESSURE_MEASUREMENT_VALUE_ID             = 0x0000,       /*!< MeasuredValue */
   ESP_ZB_ZCL_ATTR_PRESSURE_MEASUREMENT_MIN_VALUE_ID         = 0x0001,       /*!< MinMeasuredValue */
   ESP_ZB_ZCL_ATTR_PRESSURE_MEASUREMENT_MAX_VALUE_ID         = 0x0002,       /*!< MaxMeasuredValue */
+  ESP_ZB_ZCL_ATTR_PRESSURE_MEASUREMENT_TOLERANCE_ID         = 0x0003,       /*!< MeasuredTolerance */
   ESP_ZB_ZCL_ATTR_PRESSURE_MEASUREMENT_SCALED_VALUE_ID      = 0x0010,       /*!< ScaledValue */
   ESP_ZB_ZCL_ATTR_PRESSURE_MEASUREMENT_MIN_SCALED_VALUE_ID  = 0x0011,       /*!< MinScaledValue */
-  ESP_ZB_ZCL_ATTR_PRESSURE_MEASUREMENT_MAX_SACLED_VALUE_ID  = 0x0012,       /*!< MaxScaledValue */
+  ESP_ZB_ZCL_ATTR_PRESSURE_MEASUREMENT_MAX_SCALED_VALUE_ID  = 0x0012,       /*!< MaxScaledValue */
   ESP_ZB_ZCL_ATTR_PRESSURE_MEASUREMENT_SCALED_TOLERANCE_ID  = 0x0013,       /*!< ScaledTolerance */
   ESP_ZB_ZCL_ATTR_PRESSURE_MEASUREMENT_SCALE_ID             = 0x0014,       /*!< Scale */
 }esp_zb_zcl_pressure_measurement_attr_t;

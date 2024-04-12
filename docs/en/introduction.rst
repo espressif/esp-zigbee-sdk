@@ -103,6 +103,7 @@ The supported features in current ESP Zigbee SDK are listed below:
     illuminance_measurement       0x0400   
     temperature_measurement       0x0402
       pressure_measurement        0x0403
+        flow_measurement          0x0404
       humidity_measurement        0x0405
        occupancy_sensing          0x0406
     carbon_dioxide_measurement    0x040d

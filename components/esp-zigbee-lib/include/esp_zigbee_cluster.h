@@ -233,6 +233,16 @@ esp_zb_attribute_list_t *esp_zb_illuminance_meas_cluster_create(esp_zb_illuminan
 esp_zb_attribute_list_t *esp_zb_pressure_meas_cluster_create(esp_zb_pressure_meas_cluster_cfg_t *pressure_cfg);
 
 /**
+ * @brief Create a standard flow measurement cluster attribute list.
+ *
+ * @param[in] flow_meas_cfg Configuration parameters for this cluster defined by @ref esp_zb_flow_meas_cluster_cfg_s
+ *
+ * @return Pointer to attribute list @ref esp_zb_attribute_list_s
+ *
+ */
+esp_zb_attribute_list_t *esp_zb_flow_meas_cluster_create(esp_zb_flow_meas_cluster_cfg_t *flow_meas_cfg);
+
+/**
  * @brief Create a standard electrical measurement cluster attribute list.
  *
  * @param[in] electrical_cfg Configuration parameters for this cluster defined by @ref esp_zb_electrical_meas_cluster_cfg_s
@@ -662,6 +672,20 @@ esp_err_t esp_zb_cluster_list_add_illuminance_meas_cluster(esp_zb_cluster_list_t
  *
  */
 esp_err_t esp_zb_cluster_list_add_pressure_meas_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
+
+/**
+ * @brief Add flow measurement cluster (attribute list) in a cluster list.
+ *
+ * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
+ * @param[in] attr_list  An attribute list which wants to add
+ * @param[in] role_mask  A role of server or client for this cluster (attribute list) refer to esp_zb_zcl_cluster_role_t
+ *
+ * @return
+ *      - ESP_OK on success
+ *      - ESP_ERR_INVALID_ARG if cluster list not initialized
+ *
+ */
+esp_err_t esp_zb_cluster_list_add_flow_meas_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 /**
  * @brief Add electrical measurement cluster (attribute list) in a cluster list.
@@ -1185,6 +1209,20 @@ esp_err_t esp_zb_cluster_list_update_illuminance_meas_cluster(esp_zb_cluster_lis
  *
  */
 esp_err_t esp_zb_cluster_list_update_pressure_meas_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
+
+/**
+ * @brief Update flow measurement cluster (attribute list) in a cluster list.
+ *
+ * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
+ * @param[in] attr_list  An attribute list which wants to update
+ * @param[in] role_mask  A role of server or client for this cluster (attribute list) refer to esp_zb_zcl_cluster_role_t
+ *
+ * @return
+ *      - ESP_OK on success
+ *      - ESP_ERR_INVALID_ARG if cluster list not initialized
+ *
+ */
+esp_err_t esp_zb_cluster_list_update_flow_meas_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 /**
  * @brief Update electrical measurement cluster (attribute list) in a cluster list.
