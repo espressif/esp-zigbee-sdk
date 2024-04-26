@@ -120,6 +120,12 @@ bool esp_zb_cli_agent_ep_handler_report(uint8_t bufid);
  */
 bool esp_zb_cli_agent_ep_handler_ping(uint8_t bufid);
 
+/**
+ * @brief Register the esp zigbee cli command
+ *
+ */
+void zb_cli_register_command(void);
+
 #ifdef __cplusplus
 }
 #endif

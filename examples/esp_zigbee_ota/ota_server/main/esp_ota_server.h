@@ -45,10 +45,10 @@ extern const uint8_t ota_file_end[]   asm("_binary_ota_file_bin_end");          
 
 #define ESP_ZB_DEFAULT_RADIO_CONFIG()                                       \
     {                                                                       \
-        .radio_mode = RADIO_MODE_NATIVE,                                    \
+        .radio_mode = ZB_RADIO_MODE_NATIVE,                                 \
     }
 
 #define ESP_ZB_DEFAULT_HOST_CONFIG()                                        \
     {                                                                       \
-        .host_connection_mode = HOST_CONNECTION_MODE_NONE,                  \
+        .host_connection_mode = ZB_HOST_CONNECTION_MODE_NONE,               \
     }

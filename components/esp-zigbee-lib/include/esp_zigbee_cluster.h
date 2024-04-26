@@ -169,6 +169,19 @@ esp_zb_attribute_list_t *esp_zb_shade_config_cluster_create(esp_zb_shade_config_
 esp_zb_attribute_list_t *esp_zb_binary_input_cluster_create(esp_zb_binary_input_cluster_cfg_t *binary_input_cfg);
 
 /**
+ * @brief  Create a standard commissioning cluster attribute list.
+ *
+ * @note  This only contains the mandatory attribute. The ZCL spec 13.2.1.1 strongly recommended that this cluster only
+ *        be deplayed on a single device endpoint, so we only supports single cluster instance for time being. Creating
+ *        multiple clusters on different endpoints may cause unexpected behaviour.
+ * @param[in] commissioning_cfg  Configuration parameters for this cluster defined by @ref esp_zb_commissioning_cluster_cfg_s
+ *
+ * @return Pointer to attribute list @ref esp_zb_attribute_list_s
+ *
+ */
+esp_zb_attribute_list_t *esp_zb_commissioning_cluster_create(esp_zb_commissioning_cluster_cfg_t *commissioning_cfg);
+
+/**
  * @brief  Create a standard door lock cluster attribute list.
  *
  * @note  This only contains the mandatory attribute.
@@ -587,6 +600,20 @@ esp_err_t esp_zb_cluster_list_add_shade_config_cluster(esp_zb_cluster_list_t *cl
  *
  */
 esp_err_t esp_zb_cluster_list_add_binary_input_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
+
+/**
+ * @brief Add Commissioning cluster (attribute list) in a cluster list.
+ *
+ * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
+ * @param[in] attr_list  An attribute list which wants to add
+ * @param[in] role_mask  A role of server or client for this cluster (attribute list) refer to esp_zb_zcl_cluster_role_t
+ *
+ * @return
+ *      - ESP_OK on success
+ *      - ESP_ERR_INVALID_ARG if cluster list not initialized
+ *
+ */
+esp_err_t esp_zb_cluster_list_add_commissioning_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 /**
  * @brief Add ias zone cluster (attribute list) in a cluster list.
@@ -1125,6 +1152,20 @@ esp_err_t esp_zb_cluster_list_update_shade_config_cluster(esp_zb_cluster_list_t 
  *
  */
 esp_err_t esp_zb_cluster_list_update_binary_input_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
+
+/**
+ * @brief Update Commissioning cluster (attribute list) in a cluster list.
+ *
+ * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
+ * @param[in] attr_list  An attribute list which wants to update
+ * @param[in] role_mask  A role of server or client for this cluster (attribute list) refer to esp_zb_zcl_cluster_role_t
+ *
+ * @return
+ *      - ESP_OK on success
+ *      - ESP_ERR_INVALID_ARG if cluster list not initialized
+ *
+ */
+esp_err_t esp_zb_cluster_list_update_commissioning_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 /**
  * @brief Update ias zone cluster (attribute list) in a cluster list.

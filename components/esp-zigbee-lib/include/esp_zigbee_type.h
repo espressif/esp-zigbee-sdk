@@ -19,6 +19,9 @@ typedef uint8_t esp_zb_64bit_addr_t[8];
 typedef esp_zb_64bit_addr_t esp_zb_ieee_addr_t;
 typedef void (*esp_zb_zcl_cluster_init_t)(void);
 typedef void (*esp_zb_callback_t)(uint8_t param);
+typedef void (*esp_zb_user_callback_t)(void* param);
+typedef uint8_t esp_zb_user_cb_handle_t;
+#define ESP_ZB_USER_CB_HANDLE_INVALID (0x00)
 
 /**
  * @brief The Zigbee address union consist of 16 bit short address and 64 bit long address.
@@ -426,6 +429,27 @@ typedef struct esp_zb_binary_input_cluster_cfg_s {
     bool  out_of_service;                              /*!< Out of Service */
     uint8_t  status_flags;                             /*!< Status flags */
 } esp_zb_binary_input_cluster_cfg_t;
+
+/**
+ * @brief Zigbee default attribute for Commissioning cluster.
+ *
+ */
+typedef struct esp_zb_commissioning_cluster_cfg_s {
+    uint16_t           short_address;               /**< Short Address */
+    esp_zb_ieee_addr_t extended_panid;              /**< Extended Panid */
+    uint16_t           panid;                       /**< Panid */
+    uint32_t           channel_mask;                /**< Channel Mask */
+    uint8_t            protocol_version;            /**< Protocol Version */
+    uint8_t            stack_profile;               /**< Stack Profile */
+    uint8_t            startup_control;             /**< Startup Control */
+    esp_zb_ieee_addr_t trust_center_address;        /**< Trust Center Address */
+    uint8_t            network_key[16];             /**< Network Key */
+    bool               use_insecure_join;           /**< Use Insecure Join */
+    uint8_t            preconfigured_link_key[16];  /**< Preconfigured Link Key */
+    uint8_t            network_key_seq_num;         /**< Network Key Seq Num */
+    uint8_t            network_key_type;            /**< Network Key Type */
+    uint16_t           network_manager_address;     /**< Network Manager Address */
+} esp_zb_commissioning_cluster_cfg_t;
 
 /**
  * @brief The IAS zone application callback

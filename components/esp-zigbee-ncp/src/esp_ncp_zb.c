@@ -695,10 +695,10 @@ static esp_err_t esp_ncp_zb_network_init_fn(const uint8_t *input, uint16_t inlen
     if (!s_init_flag) {
         esp_zb_platform_config_t config = {
             .radio_config = {
-                .radio_mode = RADIO_MODE_NATIVE,
+                .radio_mode = ZB_RADIO_MODE_NATIVE,
             },
             .host_config = {
-                .host_connection_mode = HOST_CONNECTION_MODE_NONE,
+                .host_connection_mode = ZB_HOST_CONNECTION_MODE_NONE,
             }
         };
 
