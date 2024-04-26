@@ -126,6 +126,12 @@ def update_component_yml_files():
         f'cp {os.path.join(PROJECT_ROOT, "tools", "managed_component_yml", "light_idf_component.yml")} main'
         f'/idf_component.yml')
 
+    os.chdir(os.path.join(DEF_APP_PATH, 'esp_zigbee_HA_sample', 'HA_temperature_sensor'))
+    os.remove('main/idf_component.yml')
+
+    os.chdir(os.path.join(DEF_APP_PATH, 'esp_zigbee_HA_sample', 'HA_thermostat'))
+    os.remove('main/idf_component.yml')
+
     os.chdir(os.path.join(DEF_APP_PATH, 'esp_zigbee_touchlink', 'touchlink_light'))
     os.remove('main/idf_component.yml')
     os.system(

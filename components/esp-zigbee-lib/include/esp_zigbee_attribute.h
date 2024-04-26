@@ -243,6 +243,20 @@ esp_err_t esp_zb_time_cluster_add_attr(esp_zb_attribute_list_t *attr_list, uint1
 esp_err_t esp_zb_binary_input_cluster_add_attr(esp_zb_attribute_list_t *attr_list, uint16_t attr_id, void *value_p);
 
 /**
+ * @brief Add an attribute in Commissioning cluster.
+ *
+ * @param[in] attr_list A pointer to attribute list @ref esp_zb_attribute_list_s
+ * @param[in] attr_id  An attribute id to be added
+ * @param[in] value_p A pointer to attribute value wants to add
+ *
+ * @return
+ *      - ESP_OK on success
+ *      - ESP_ERR_INVALID_ARG if attribute is existed or unsupported
+ *
+ */
+esp_err_t esp_zb_commissioning_cluster_add_attr(esp_zb_attribute_list_t *attr_list, uint16_t attr_id, void *value_p);
+
+/**
  * @brief Add an attribute in shade config cluster.
  *
  * @param[in] attr_list A pointer to attribute list @ref esp_zb_attribute_list_s

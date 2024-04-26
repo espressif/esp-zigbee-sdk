@@ -1,5 +1,29 @@
 # Espressif Zigbee SDK Release Notes
 
+## 26-Apr-2024
+1.3.0 version release of ESP-ZIGBEE-SDK is based on esp-idf v5.1.3
+
+### Features
+- Updated esp-zboss-lib to v1.3.0
+- Updated esp-zigbee-lib to v1.3.0
+- Supported ZCL commissioning cluster
+- Supported devive sleep before join network
+- Supported the parameter of pointer type for scheduler_alarm
+- Supported event fd setting in application
+
+### Bug Fixes
+- Fixed the transition id checking for touchlink identify command
+- Fixed the zdo binding user callback
+- Disabled response default command for broadcasted frame
+- Closes: https://github.com/espressif/esp-zigbee-sdk/issues/276
+- Closes: https://github.com/espressif/esp-zigbee-sdk/issues/310
+- Closes: https://github.com/espressif/esp-zigbee-sdk/issues/314
+- Closes: https://github.com/espressif/esp-zigbee-sdk/issues/318
+- Closes: https://github.com/espressif/esp-zigbee-sdk/issues/325
+
+### Break Changes
+- Renamed `esp_zb_radio_mode_t`, `esp_zb_host_connection_mode_t`, `zb_esp_uart_init_mode` and `esp_zb_serial_mode_t`
+
 ## 12-Apr-2024
 1.2.3 version release of ESP-ZIGBEE-SDK is based on esp-idf v5.1.3
 

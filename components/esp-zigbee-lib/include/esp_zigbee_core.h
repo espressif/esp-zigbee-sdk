@@ -99,6 +99,9 @@ typedef enum esp_zb_core_action_callback_id_s {
     ESP_ZB_CORE_PRICE_PUBLISH_PRICE_CB_ID               = 0x0017,   /*!< Price publish price, refer to esp_zb_zcl_price_publish_price_message_t */
     ESP_ZB_CORE_PRICE_PUBLISH_TIER_LABELS_CB_ID         = 0x0018,   /*!< Price publish tier labels, refer to esp_zb_zcl_price_publish_tier_labels_message_t */
     ESP_ZB_CORE_PRICE_PRICE_ACK_CB_ID                   = 0x0019,   /*!< Price price acknowledgement, refer to esp_zb_zcl_price_ack_message_t */
+    ESP_ZB_CORE_COMM_RESTART_DEVICE_CB_ID               = 0x001a,   /*!< Commissioning restart device, refer to esp_zigbee_zcl_commissioning_restart_device_message_t */
+    ESP_ZB_CORE_COMM_OPERATE_STARTUP_PARAMS_CB_ID       = 0x001b,   /*!< Commissioning operate startup parameters, refer to esp_zigbee_zcl_commissioning_operate_startup_parameters_message_t */
+    ESP_ZB_CORE_COMM_COMMAND_RESP_CB_ID                 = 0x001c,   /*!< Commissioning command response, refer to esp_zigbee_zcl_commissioning_command_response_message_t */
     ESP_ZB_CORE_CMD_READ_ATTR_RESP_CB_ID                = 0x1000,   /*!< Read attribute response, refer to esp_zb_zcl_cmd_read_attr_resp_message_t */
     ESP_ZB_CORE_CMD_WRITE_ATTR_RESP_CB_ID               = 0x1001,   /*!< Write attribute response, refer to esp_zb_zcl_cmd_write_attr_resp_message_t */
     ESP_ZB_CORE_CMD_REPORT_CONFIG_RESP_CB_ID            = 0x1002,   /*!< Configure report response, refer to esp_zb_zcl_cmd_config_report_resp_message_t */
@@ -278,7 +281,7 @@ void esp_zb_identify_notify_handler_register(uint8_t endpoint, esp_zb_identify_n
  * @param[in] endpoint The specific endpoint for @p cluster
  * @param[in] cluster The specific cluster for @p command
  * @param[in] command The specific command ID is required to handle for users.
- * @return 
+ * @return
  *      - ESP_OK: on success
  *      - ESP_FAIL: on failure
  */
@@ -767,6 +770,33 @@ void esp_zb_scheduler_alarm(esp_zb_callback_t cb, uint8_t param, uint32_t time);
  * @param[in] param - parameter to pass to the function to cancel
  */
 void esp_zb_scheduler_alarm_cancel(esp_zb_callback_t cb, uint8_t param);
+
+/**
+ * @brief Schedule user alarm - callback to be executed after timeout.
+ *
+ * @note Function will be called via scheduler after timeout expired in millisecond. Timer resolution depends on implementation. Same callback can be scheduled for execution more then once.
+ *
+ * @param[in] cb - function to call via scheduler
+ * @param[in] param - parameter to pass to the function
+ * @param[in] time - timeout, in millisecond
+ *
+ * @return
+ *      - the handle used to cancel the user alarm
+ */
+esp_zb_user_cb_handle_t esp_zb_scheduler_user_alarm(esp_zb_user_callback_t cb, void *param, uint32_t time);
+
+/**
+ * @brief Cancel scheduled user alarm.
+ *
+ * @note This function cancel previously scheduled user alarm.
+ *
+ * @param[in] handle - the handle returned by esp_zb_scheduler_user_alarm
+ *
+ * @return
+ *      - ESP_OK: on success
+ *      - ESP_ERR_NOT_FOUND: not found the user alarm
+ */
+esp_err_t esp_zb_scheduler_user_alarm_cancel(esp_zb_user_cb_handle_t handle);
 
 /**
  * @brief  Set BDB commissioning mode.

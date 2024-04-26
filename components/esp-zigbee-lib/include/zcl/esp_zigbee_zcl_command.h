@@ -271,6 +271,51 @@ typedef struct esp_zb_zcl_identify_query_cmd_s {
     esp_zb_zcl_address_mode_t address_mode;         /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
 } esp_zb_zcl_identify_query_cmd_t;
 
+/* ZCL commisssioning cluster */
+
+/**
+ * @brief The Zigbee ZCL commisssioning restart device command struct
+ *
+ */
+typedef struct esp_zb_zcl_comm_restart_device_cmd_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;                        /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode;                      /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+    esp_zb_zcl_commissioning_restart_device_options_t options;   /*!< Restart device options */
+    uint8_t delay;                                               /*!< Seconds of delay before starting the restart procedure */
+    uint8_t jitter;                                              /*!< Parameter to calculate the additional milliseconds should be added to delay */
+} esp_zb_zcl_comm_restart_device_cmd_t;
+
+/**
+ * @brief The Zigbee ZCL commisssioning save startup parameters command struct
+ *
+ */
+typedef struct esp_zb_zcl_comm_save_startup_params_cmd_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;               /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode;             /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+    uint8_t index;                                      /*!< Index to save the parameter set */
+} esp_zb_zcl_comm_save_startup_params_cmd_t;
+
+/**
+ * @brief The Zigbee ZCL commisssioning restore startup parameters command struct
+ *
+ */
+typedef struct esp_zb_zcl_comm_restore_startup_params_cmd_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;             /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode;           /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+    uint8_t index;                                    /*!< Index of the saved the parameter set to be restored */
+} esp_zb_zcl_comm_restore_startup_params_cmd_t;
+
+/**
+ * @brief The Zigbee ZCL commisssioning reset startup parameters command struct
+ *
+ */
+typedef struct esp_zb_zcl_comm_reset_startup_params_cmd_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;                             /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode;                           /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+    esp_zb_zcl_commissioning_reset_startup_param_options_t options;   /*!< Reset startup parameter options */
+    uint8_t index;                                                    /*!< Index of the saved parameters to be erased */
+} esp_zb_zcl_comm_reset_startup_params_cmd_t;
+
 /* ZCL level cluster */
 
 /**
@@ -1095,7 +1140,7 @@ typedef struct esp_zb_zcl_frame_header_s {
     uint8_t fc;          /*!< A 8-bit Frame control */
     uint16_t manuf_code; /*!< Manufacturer code */
     uint8_t tsn;         /*!< Transaction sequence number */
-    uint8_t rssi;        /*!< Signal strength */
+    int8_t rssi;         /*!< Signal strength */
 } esp_zb_zcl_frame_header_t;
 
 /**
@@ -1528,6 +1573,43 @@ typedef struct esp_zb_zcl_price_publish_tier_labels_message_s {
     uint8_t number_of_labels;                               /*!< The number of TierID/Tier Label sets contained within the command. */
     esp_zb_zcl_price_tier_label_entry_t *tier_labels;       /*!< Tier labels published in the command */
 } esp_zb_zcl_price_publish_tier_labels_message_t;
+
+/**
+ * @brief The Zigbee ZCL commissioning restart device callback message struct
+ */
+typedef struct esp_zigbee_zcl_commissioning_restart_device_message_s {
+    esp_zb_device_cb_common_info_t info;                        /*!< The common information for Zigbee device callback */
+    esp_zb_zcl_commissioning_restart_device_payload_t msg_in;   /*!< Received restart device payload */
+} esp_zigbee_zcl_commissioning_restart_device_message_t;
+
+/**
+ * @brief The Zigbee ZCL commissioning startup parameters operation struct
+ */
+typedef enum {
+    ESP_ZB_ZCL_COMMISSIONING_STARTUP_PARAMETERS_OPERATION_SAVE,       /*!< Indicates to save startup parameter set */
+    ESP_ZB_ZCL_COMMISSIONING_STARTUP_PARAMETERS_OPERATION_RESTORE,    /*!< Indicates to restore startup parameter set */
+    ESP_ZB_ZCL_COMMISSIONING_STARTUP_PARAMETERS_OPERATION_ERASE,      /*!< Indicates to erase startup parameter set */
+    ESP_ZB_ZCL_COMMISSIONING_STARTUP_PARAMETERS_OPERATION_RESET,      /*!< Indicates to reset startup parameter set */
+    ESP_ZB_ZCL_COMMISSIONING_STARTUP_PARAMETERS_OPERATION_RESET_ALL,  /*!< Indicates to reset all startup parameter set */
+} esp_zb_zcl_commissioning_startup_parameters_operation_t;
+
+/**
+ * @brief The Zigbee ZCL commissioning startup parameters operation callback message struct
+ */
+typedef struct esp_zigbee_zcl_commissioning_operate_startup_parameters_message_s {
+    esp_zb_device_cb_common_info_t info;                                 /*!< The common information for Zigbee device callback */
+    esp_zb_zcl_commissioning_startup_parameters_operation_t operation;   /*!< Operation on startup parameter set */
+    uint8_t index;                                                       /*!< Index of the startup parameter set to be operated on */
+    esp_zb_zcl_status_t status;                                          /*!< Result of the operation, will be sent in the response */
+} esp_zigbee_zcl_commissioning_operate_startup_parameters_message_t;
+
+/**
+ * @brief The Zigbee ZCL commissioning startup parameters operation callback message struct
+ */
+typedef struct esp_zigbee_zcl_commissioning_command_response_message_s {
+    esp_zb_device_cb_common_info_t info;                    /*!< The common information for Zigbee device callback */
+    esp_zb_zcl_status_t status;                             /*!< Status of the received response */
+} esp_zigbee_zcl_commissioning_command_response_message_t;
 
 /**
  * @brief The Zigbee zcl door lock callback message struct
@@ -2070,6 +2152,44 @@ uint8_t esp_zb_zcl_identify_trigger_effect_cmd_req(esp_zb_zcl_identify_trigger_e
  * @return The transaction sequence number
  */
 uint8_t esp_zb_zcl_identify_query_cmd_req(esp_zb_zcl_identify_query_cmd_t *cmd_req);
+
+/* ZCL commissioning cluster list command */
+
+/**
+ * @brief   Send commissioning restart device command
+ *
+ * @param[in]  cmd_req  pointer to the commissioning restart device command @ref esp_zb_zcl_comm_restart_device_cmd_s
+ *
+ * @return The transaction sequence number
+ */
+uint8_t esp_zb_zcl_comm_restart_device_cmd_req(esp_zb_zcl_comm_restart_device_cmd_t *cmd_req);
+
+/**
+ * @brief   Send commissioning save startup parameters command
+ *
+ * @param[in]  cmd_req  pointer to the commissioning save startup parameters command @ref esp_zb_zcl_comm_save_startup_params_cmd_s
+ *
+ * @return The transaction sequence number
+ */
+uint8_t esp_zb_zcl_comm_save_startup_params_cmd_req(esp_zb_zcl_comm_save_startup_params_cmd_t *cmd_req);
+
+/**
+ * @brief   Send commissioning restore startup parameters command
+ *
+ * @param[in]  cmd_req  pointer to the commissioning restore startup parameters command @ref esp_zb_zcl_comm_restore_startup_params_cmd_s
+ *
+ * @return The transaction sequence number
+ */
+uint8_t esp_zb_zcl_comm_restore_startup_params_cmd_req(esp_zb_zcl_comm_restore_startup_params_cmd_t *cmd_req);
+
+/**
+ * @brief   Send commissioning reset startup parameters command
+ *
+ * @param[in]  cmd_req  pointer to the commissioning reset startup parameters command @ref esp_zb_zcl_comm_reset_startup_params_cmd_s
+ *
+ * @return The transaction sequence number
+ */
+uint8_t esp_zb_zcl_comm_reset_startup_params_cmd_req(esp_zb_zcl_comm_reset_startup_params_cmd_t *cmd_req);
 
 /* ZCL level control cluster list command */
 

@@ -21,6 +21,7 @@ extern "C" {
 #include "esp_zigbee_zcl_color_control.h"
 #include "esp_zigbee_zcl_time.h"
 #include "esp_zigbee_zcl_binary_input.h"
+#include "esp_zigbee_zcl_commissioning.h"
 #include "esp_zigbee_zcl_ias_zone.h"
 #include "esp_zigbee_zcl_shade_config.h"
 #include "esp_zigbee_zcl_door_lock.h"
