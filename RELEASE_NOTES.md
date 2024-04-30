@@ -1,5 +1,18 @@
 # Espressif Zigbee SDK Release Notes
 
+## 30-Apr-2024
+1.3.1 version release of ESP-ZIGBEE-SDK is based on esp-idf v5.1.3
+
+### Features
+- Updated esp-zboss-lib to v1.3.1
+- Updated esp-zigbee-lib to v1.3.1
+
+### Bug Fixes
+- Fixed the movement transition for color control
+- Fixed the jitter of broadcast endpoint handler
+- Fixed the failure in Zigbee flash read or write operations
+
+
 ## 26-Apr-2024
 1.3.0 version release of ESP-ZIGBEE-SDK is based on esp-idf v5.1.3
 
