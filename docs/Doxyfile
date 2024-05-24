@@ -70,6 +70,7 @@ INPUT = \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_flow_meas.h                   \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_price.h                       \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_commissioning.h               \
+    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_ias_ace.h                     \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/zdo/esp_zigbee_zdo_command.h                     \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/zdo/esp_zigbee_zdo_common.h                      \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/bdb/esp_zigbee_bdb_touchlink.h                   \
@@ -78,6 +79,7 @@ INPUT = \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/zgp/esp_zigbee_zgps.h                            \
     $(PROJECT_PATH)/components/esp-zigbee-ncp/include/esp_zb_ncp.h                                     \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/aps/esp_zigbee_aps.h                             \
+    $(PROJECT_PATH)/components/esp-zigbee-lib/include/nwk/esp_zigbee_nwk.h                             \
 
 
 ## Get warnings for functions that have no documentation for their parameters or return value

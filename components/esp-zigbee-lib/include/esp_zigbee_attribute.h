@@ -309,6 +309,31 @@ esp_err_t esp_zb_ias_zone_cluster_add_attr(esp_zb_attribute_list_t *attr_list, u
  *
  */
 esp_err_t esp_zb_ias_zone_cluster_set_cie_address(uint8_t endpoint, esp_zb_ieee_addr_t cie_ieee_addr);
+
+/**
+ * @brief Get the zone table size of the IAS ACE cluster
+ *
+ * @param[in] endpoint A 8-bit endpoint ID which the IAS ACE cluster attach
+ * @param[out] table_size The zone table size of IAS ACE cluster on the given endpoint.
+ * @return
+ *      - ESP_OK on success
+ *      - ESP_ERR_NOT_FOUND The IAS ACE cluster is not founded on the given endpoint.
+ *
+ */
+esp_err_t esp_zb_ias_ace_get_zone_table_length(uint8_t endpoint, uint8_t *table_size);
+
+/**
+ * @brief Get the zone table of the IAS ACE cluster
+ *
+ * @param[in] endpoint A 8-bit endpoint ID which the IAS ACE cluster attach
+ * @param[out] table_p The address of the zone table of IAS ACE cluster on the given endpoint.
+ * @return
+ *      - ESP_OK on success
+ *      - ESP_ERR_NOT_FOUND The IAS ACE cluster is not founded on the given endpoint.
+ *
+ */
+esp_err_t esp_zb_ias_ace_get_zone_table(uint8_t endpoint, esp_zb_zcl_ias_ace_zone_table_t** table_p);
+
 /**
  * @brief Add an attribute in temperature measurement cluster.
  *
