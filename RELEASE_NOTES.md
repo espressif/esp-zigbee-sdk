@@ -1,5 +1,26 @@
 # Espressif Zigbee SDK Release Notes
 
+## 24-May-2024
+1.3.2 version release of ESP-ZIGBEE-SDK is based on esp-idf v5.1.3
+
+### Features
+- Updated esp-zboss-lib to v1.3.2
+- Updated esp-zigbee-lib to v1.3.2
+- Supported APS data confirmation
+- Supported ZCL IAS ACE cluster
+- Supported ZCL read report config command
+- Added NWK parameters setting APIs
+- Added NWK neighbor table getting APIs
+- Added NWK routing table getting APIs
+- Added Zigbee scheduler queue size setting API
+- Optimized Zigbee device reset mechanism
+
+### Bug Fixes
+- Fixed the crash caused by a full rx radio queue during radio frame handling
+- Fixed the buffer ID not being freed during rapid on/off level control
+- Fixed the issue with the rough transition in color control
+
+
 ## 30-Apr-2024
 1.3.1 version release of ESP-ZIGBEE-SDK is based on esp-idf v5.1.3
 
