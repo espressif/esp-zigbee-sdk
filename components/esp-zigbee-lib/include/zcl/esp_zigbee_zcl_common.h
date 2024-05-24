@@ -23,6 +23,7 @@ extern "C" {
 #include "esp_zigbee_zcl_binary_input.h"
 #include "esp_zigbee_zcl_commissioning.h"
 #include "esp_zigbee_zcl_ias_zone.h"
+#include "esp_zigbee_zcl_ias_ace.h"
 #include "esp_zigbee_zcl_shade_config.h"
 #include "esp_zigbee_zcl_door_lock.h"
 #include "esp_zigbee_zcl_humidity_meas.h"
@@ -170,6 +171,7 @@ typedef enum {
     ESP_ZB_ZCL_CLUSTER_ID_CARBON_DIOXIDE_MEASUREMENT = 0x040dU,     /*!< Carbon dioxide measurement */
     ESP_ZB_ZCL_CLUSTER_ID_PM2_5_MEASUREMENT          = 0x042aU,     /*!< PM2.5 measurement */
     ESP_ZB_ZCL_CLUSTER_ID_IAS_ZONE                   = 0x0500U,     /*!< IAS zone */
+    ESP_ZB_ZCL_CLUSTER_ID_IAS_ACE                    = 0x0501U,     /*!< IAS ACE */
     ESP_ZB_ZCL_CLUSTER_ID_PRICE                      = 0x0700U,     /*!< Price cluster identifier. */
     ESP_ZB_ZCL_CLUSTER_ID_METERING                   = 0x0702U,     /*!< Metering */
     ESP_ZB_ZCL_CLUSTER_ID_METER_IDENTIFICATION       = 0x0b01U,     /*!< Meter Identification cluster identifier */

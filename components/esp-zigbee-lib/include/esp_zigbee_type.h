@@ -42,6 +42,7 @@ typedef union {
 #define ESP_ZB_ZCL_ADDR_TYPE_IEEE            3U
 #define ESP_ZB_CCM_KEY_SIZE                  16U
 #define ESP_ZB_ZCL_ATTR_SET_WITH_ATTR_ID(_set, _id) ((_set << 8) | (_id & 0xFF))
+#define ESP_ZB_ZCL_MAX_STRING_SIZE           0xFF
 
 /**
  * @brief Type to represent source address of ZCL message

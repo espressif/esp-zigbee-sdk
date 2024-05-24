@@ -13,8 +13,22 @@ extern "C" {
 #include "esp_zigbee_type.h"
 
 /**
- * @brief The enumeration for apsde tx option
- * 
+ * @brief Enumeration for APSDE-DATA address mode
+ *
+ */
+typedef enum {
+    ESP_ZB_APS_ADDR_MODE_DST_ADDR_ENDP_NOT_PRESENT   =   0x0,  /*!< DstAddress and DstEndpoint not present,
+                                                                    only for APSDE-DATA request and confirm  */
+    ESP_ZB_APS_ADDR_MODE_16_GROUP_ENDP_NOT_PRESENT   =   0x1,  /*!< 16-bit group address for DstAddress; DstEndpoint not present */
+    ESP_ZB_APS_ADDR_MODE_16_ENDP_PRESENT             =   0x2,  /*!< 16-bit address for DstAddress and DstEndpoint present */
+    ESP_ZB_APS_ADDR_MODE_64_ENDP_PRESENT             =   0x3,  /*!< 64-bit extended address for DstAddress and DstEndpoint present */
+    ESP_ZB_APS_ADDR_MODE_64_PRESENT_ENDP_NOT_PRESENT =   0x4,  /*!< 64-bit extended address for DstAddress, but DstEndpoint NOT present,
+                                                                    only for APSDE indication */
+} esp_zb_aps_address_mode_t;
+
+/**
+ * @brief Enumeration for APSDE-DATA Request TX options
+ *
  */
 typedef enum esp_zb_apsde_tx_opt_e {
     ESP_ZB_APSDE_TX_OPT_SECURITY_ENABLED         = 0x01U, /*!< Security enabled transmission */
@@ -30,7 +44,8 @@ typedef enum esp_zb_apsde_tx_opt_e {
  * 
  */
 typedef struct esp_zb_apsde_data_req_s {
-    uint8_t dst_addr_mode;      /*!< The addressing mode for the destination address used in this primitive and of the APDU to be transferred. */
+    uint8_t dst_addr_mode;      /*!< The addressing mode for the destination address used in this primitive and of the APDU to be transferred,
+                                     refer to esp_zb_aps_address_mode_t */
     uint16_t dst_short_addr;    /*!< The individual device address or group address of the entity to which the ASDU is being transferred*/
     uint8_t dst_endpoint;       /*!< The number of the individual endpoint of the entity to which the ASDU is being transferred or the broadcast endpoint (0xff).*/
     uint16_t profile_id;        /*!< The identifier of the profile for which this frame is intended. */
@@ -51,7 +66,8 @@ typedef struct esp_zb_apsde_data_req_s {
  */
 typedef struct esp_zb_apsde_data_confirm_s {
     uint8_t status;           /*!< The status of data confirm. 0: success, otherwise failed */
-    uint8_t dst_addr_mode;    /*!< The addressing mode for the destination address used in this primitive and of the APDU to be transferred.*/
+    uint8_t dst_addr_mode;    /*!< The addressing mode for the destination address used in this primitive and of the APDU to be transferred,
+                                   refer to esp_zb_aps_address_mode_t */
     esp_zb_addr_u dst_addr;   /*!< The individual device address or group address of the entity to which the ASDU is being transferred.*/
     uint8_t dst_endpoint;     /*!< The number of the individual endpoint of the entity to which the ASDU is being transferred or the broadcast endpoint (0xff).*/
     uint8_t src_endpoint;     /*!< The individual endpoint of the entity from which the ASDU is being transferred.*/
@@ -66,7 +82,8 @@ typedef struct esp_zb_apsde_data_confirm_s {
  */
 typedef struct esp_zb_apsde_data_ind_s {
     uint8_t status;             /*!< The status of the incoming frame processing, 0: on success */
-    uint8_t dst_addr_mode;      /*!< Reserved, the addressing mode for the destination address used in this primitive and of the APDU that has been received.*/
+    uint8_t dst_addr_mode;      /*!< The addressing mode for the destination address used in this primitive and of the APDU that has been received,
+                                     refer to esp_zb_aps_address_mode_t */
     uint16_t dst_short_addr;    /*!< The individual device address or group address to which the ASDU is directed.*/
     uint8_t dst_endpoint;       /*!< The target endpoint on the local entity to which the ASDU is directed.*/
     uint8_t src_addr_mode;      /*!< Reserved, The addressing mode for the source address used in this primitive and of the APDU that has been received.*/
@@ -95,7 +112,7 @@ typedef bool (* esp_zb_apsde_data_indication_callback_t)(esp_zb_apsde_data_ind_t
 /**
  * @brief APSDE data confirm application callback
  *
- * @param[in] ind APSDE-DATA.confirm
+ * @param[in] confirm APSDE-DATA.confirm
  */
 typedef void (* esp_zb_apsde_data_confirm_callback_t)(esp_zb_apsde_data_confirm_t confirm);
 
@@ -124,6 +141,23 @@ esp_err_t esp_zb_aps_data_request(esp_zb_apsde_data_req_t *req);
  * @param[in] cb A function pointer for esp_zb_apsde_data_confirm_callback_t
  */
 void esp_zb_aps_data_confirm_handler_register(esp_zb_apsde_data_confirm_callback_t cb);
+
+/**
+ * @brief Set the APS trust center address
+ *
+ * @param[in] address A 64-bit value is expected to be set to trust center address
+ * @return
+ *      -   ESP_OK: On success
+ *      -   ESP_ERR_INVALID_STATE: Device is already on a network
+ */
+esp_err_t esp_zb_aps_set_trust_center_address(esp_zb_ieee_addr_t address);
+
+/**
+ * @brief Get the APS trust center address
+ *
+ * @param[out] address A 64-bit value will be assigned from the trust center address
+ */
+void esp_zb_aps_get_trust_center_address(esp_zb_ieee_addr_t address);
 
 #ifdef __cplusplus
 }

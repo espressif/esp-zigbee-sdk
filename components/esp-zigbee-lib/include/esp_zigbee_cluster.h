@@ -204,6 +204,17 @@ esp_zb_attribute_list_t *esp_zb_door_lock_cluster_create(esp_zb_door_lock_cluste
 esp_zb_attribute_list_t *esp_zb_ias_zone_cluster_create(esp_zb_ias_zone_cluster_cfg_t *ias_zone_cfg);
 
 /**
+ * @brief  Create a standard IAS ACE cluster attribute list.
+ *
+ * @note  This only contains the mandatory attribute.
+ * @param[in] zone_table_size Maximum number of entries in the zone table.
+ *
+ * @return Pointer to attribute list @ref esp_zb_attribute_list_s
+ *
+ */
+esp_zb_attribute_list_t *esp_zb_ias_ace_cluster_create(uint8_t zone_table_size);
+
+/**
  * @brief  Create a standard temperature measurement cluster attribute list.
  *
  * @note  This only contains the mandatory attribute.
@@ -628,6 +639,20 @@ esp_err_t esp_zb_cluster_list_add_commissioning_cluster(esp_zb_cluster_list_t *c
  *
  */
 esp_err_t esp_zb_cluster_list_add_ias_zone_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
+
+/**
+ * @brief Add IAS ACE cluster (attribute list) in a cluster list.
+ *
+ * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
+ * @param[in] attr_list  An attribute list which wants to add
+ * @param[in] role_mask  A role of server or client for this cluster (attribute list) refer to esp_zb_zcl_cluster_role_t
+ *
+ * @return
+ *      - ESP_OK on success
+ *      - ESP_ERR_INVALID_ARG if cluster list not initialized
+ *
+ */
+esp_err_t esp_zb_cluster_list_add_ias_ace_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 /**
  * @brief Add Door Lock cluster (attribute list) in a cluster list.
@@ -1180,6 +1205,20 @@ esp_err_t esp_zb_cluster_list_update_commissioning_cluster(esp_zb_cluster_list_t
  *
  */
 esp_err_t esp_zb_cluster_list_update_ias_zone_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
+
+/**
+ * @brief Update IAS ACE cluster (attribute list) in a cluster list.
+ *
+ * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
+ * @param[in] attr_list  An attribute list which wants to update
+ * @param[in] role_mask  A role of server or client for this cluster (attribute list) refer to esp_zb_zcl_cluster_role_t
+ *
+ * @return
+ *      - ESP_OK on success
+ *      - ESP_ERR_INVALID_ARG if cluster list not initialized
+ *
+ */
+esp_err_t esp_zb_cluster_list_update_ias_ace_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 /**
  * @brief Update Door Lock cluster (attribute list) in a cluster list.
