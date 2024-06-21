@@ -1,8 +1,5 @@
-5. Application User Guide
-=================================
-
-5.1 ESP NCP Guide
----------------------
+5.1 Zigbee NCP
+--------------
 
 The Espressif Zigbee NCP Serial Protocol (ESP ZNSP) defined in this document is the protocol used by a host application processor to interact with the Zigbee stack running on a Network Co-Processor (NCP). 
 ESP ZNSP messages are sent between the host and the Zigbee application over either a Serial Peripheral Interface (SPI) or a Universal Asynchronous Receiver/Transmitter (UART) interface.
@@ -1630,3 +1627,5 @@ Confirm the aps data
     * Command:  c0 00 00 09 00 09 07 00 00 00 14 00 00 00 00 FA 45 c0
     * Response: c0 10 00 09 00 09 01 00 00 99 00 c0
     * Notify:   c0 20 00 09 00 1a 0b 00 f7 39 f7 fe ff f9 55 60 4b fc 0d 20 00 c0
+
+
