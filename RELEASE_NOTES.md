@@ -1,5 +1,28 @@
 # Espressif Zigbee SDK Release Notes
 
+## 04-Jul-2024
+1.4.0 version release of ESP-ZIGBEE-SDK is based on esp-idf v5.1.3
+
+### Features
+- Updated esp-zboss-lib to v1.4.0
+- Updated esp-zigbee-lib to v1.4.0
+- Supported more flexible ZCL data model APIs
+- Supported sending ZCL commands without client cluster
+- Supported receiving ZCL commands without server cluster for gateway endpoint
+- Supported ZDO energy detection
+- Supported ZDO scanning of closed networks
+- Supported ZCL IAS WD cluster
+- Optimized ZCL window covering and controller device type support
+- Added ZCL window covering cluster message callback
+
+### Bug Fixes
+- Fixed issues with attribute reporting and reading when fragmentation is required
+
+### Note
+- Reusing the ZCL Zigbee data model entries is no longer allowed, all attributes/clusters/endpoints have to be created separately
+- Deprecated `esp_zb_cluster_list_update_xxx_cluster()` APIs
+
+
 ## 24-May-2024
 1.3.2 version release of ESP-ZIGBEE-SDK is based on esp-idf v5.1.3
 

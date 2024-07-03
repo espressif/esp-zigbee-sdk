@@ -71,6 +71,7 @@ INPUT = \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_price.h                       \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_commissioning.h               \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_ias_ace.h                     \
+    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_ias_wd.h                      \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/zdo/esp_zigbee_zdo_command.h                     \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/zdo/esp_zigbee_zdo_common.h                      \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/bdb/esp_zigbee_bdb_touchlink.h                   \
@@ -92,7 +93,9 @@ ENABLE_PREPROCESSING   = YES
 MACRO_EXPANSION        = YES
 EXPAND_ONLY_PREDEF     = YES
 PREDEFINED             = \
-    $(ENV_DOXYGEN_DEFINES)
+    $(ENV_DOXYGEN_DEFINES)  \
+    __attribute__(x)=       \
+    "ESP_ZB_DEPRECATED="    \
 
 ## Do not complain about not having dot
 ##

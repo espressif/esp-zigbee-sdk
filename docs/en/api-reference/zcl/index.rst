@@ -48,3 +48,4 @@ This section provides the ESP Zigbee SDK's APIs that support different kind of Z
    esp_zigbee_zcl_flow_measurement
    esp_zigbee_zcl_commissioning
    esp_zigbee_zcl_ias_ace
+   esp_zigbee_zcl_ias_wd
