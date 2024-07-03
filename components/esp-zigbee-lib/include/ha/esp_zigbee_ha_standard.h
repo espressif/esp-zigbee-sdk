@@ -334,6 +334,57 @@ extern "C" {
             },                                                                                                      \
     }
 
+/**
+ * @brief Zigbee HA standard window covering device default config value.
+ *
+ */
+#define ESP_ZB_DEFAULT_WINDOW_COVERING_CONFIG()                                                     \
+    {                                                                                               \
+        .basic_cfg =                                                                                \
+            {                                                                                       \
+                .zcl_version = ESP_ZB_ZCL_BASIC_ZCL_VERSION_DEFAULT_VALUE,                          \
+                .power_source = ESP_ZB_ZCL_BASIC_POWER_SOURCE_DEFAULT_VALUE,                        \
+            },                                                                                      \
+        .identify_cfg =                                                                             \
+            {                                                                                       \
+                .identify_time = ESP_ZB_ZCL_IDENTIFY_IDENTIFY_TIME_DEFAULT_VALUE,                   \
+            },                                                                                      \
+        .groups_cfg =                                                                               \
+            {                                                                                       \
+                .groups_name_support_id = ESP_ZB_ZCL_GROUPS_NAME_SUPPORT_DEFAULT_VALUE,             \
+            },                                                                                      \
+        .scenes_cfg =                                                                               \
+            {                                                                                       \
+                .scenes_count = ESP_ZB_ZCL_SCENES_SCENE_COUNT_DEFAULT_VALUE,                        \
+                .current_scene = ESP_ZB_ZCL_SCENES_CURRENT_SCENE_DEFAULT_VALUE,                     \
+                .current_group = ESP_ZB_ZCL_SCENES_CURRENT_GROUP_DEFAULT_VALUE,                     \
+                .scene_valid = ESP_ZB_ZCL_SCENES_SCENE_VALID_DEFAULT_VALUE,                         \
+                .name_support = ESP_ZB_ZCL_SCENES_NAME_SUPPORT_DEFAULT_VALUE,                       \
+            },                                                                                      \
+        .window_cfg =                                                                               \
+            {                                                                                       \
+                . covering_type = ESP_ZB_ZCL_WINDOW_COVERING_WINDOW_COVERING_TYPE_DEFAULT_VALUE,    \
+                . covering_status = ESP_ZB_ZCL_WINDOW_COVERING_CONFIG_STATUS_DEFAULT_VALUE,         \
+                . covering_mode = ESP_ZB_ZCL_WINDOW_COVERING_MODE_DEFAULT_VALUE,                    \
+            }                                                                                       \
+    }
+
+/**
+ * @brief Zigbee HA standard window covering controller device default config value.
+ *
+ */
+#define ESP_ZB_DEFAULT_WINDOW_COVERING_CONTROLLER_CONFIG()                                          \
+    {                                                                                               \
+        .basic_cfg =                                                                                \
+            {                                                                                       \
+                .zcl_version = ESP_ZB_ZCL_BASIC_ZCL_VERSION_DEFAULT_VALUE,                          \
+                .power_source = ESP_ZB_ZCL_BASIC_POWER_SOURCE_DEFAULT_VALUE,                        \
+            },                                                                                      \
+        .identify_cfg =                                                                             \
+            {                                                                                       \
+                .identify_time = ESP_ZB_ZCL_IDENTIFY_IDENTIFY_TIME_DEFAULT_VALUE,                   \
+            },                                                                                      \
+    }
 
 /********************************* Declare functions **************************************/
 
@@ -471,6 +522,23 @@ esp_zb_cluster_list_t  *esp_zb_configuration_tool_clusters_create(esp_zb_configu
  */
 esp_zb_cluster_list_t  *esp_zb_thermostat_clusters_create(esp_zb_thermostat_cfg_t *thermostat);
 
+/**
+ * @brief Create a standard HA window covering cluster list
+ *
+ * @note This contains basic, identify, group, scene and window_covering cluster as server side.
+ * @param[in] window Configuration parameters for this cluster lists defined by @ref esp_zb_window_covering_cfg_s
+ * @return Pointer to cluster list  @ref esp_zb_cluster_list_s
+ */
+esp_zb_cluster_list_t  *esp_zb_window_covering_clusters_create(esp_zb_window_covering_cfg_t *window);
+
+/**
+ * @brief Create a standard HA window covering controller cluster list
+ *
+ * @note This contains the basic and identify clusters as server side, and the identify and window_covering clusters as client side.
+ * @param[in] window_controller Configuration parameters for this cluster lists defined by @ref esp_zb_window_covering_controller_cfg_s
+ * @return Pointer to cluster list  @ref esp_zb_cluster_list_s
+ */
+esp_zb_cluster_list_t  *esp_zb_window_covering_controller_cluster_create(esp_zb_window_covering_controller_cfg_t *window_controller);
 /****************************** ZCL HA device standard endpoint list ********************************/
 
 /**
@@ -628,6 +696,26 @@ esp_zb_ep_list_t *esp_zb_configuration_tool_ep_create(uint8_t endpoint_id, esp_z
  *
  */
 esp_zb_ep_list_t *esp_zb_thermostat_ep_create(uint8_t endpoint_id, esp_zb_thermostat_cfg_t *thermostat);
+
+/**
+ * @brief Create a standard single HA window covering endpoint.
+ *
+ * @param[in] endpoint_id The specific endpoint
+ * @param[in] window_covering Configuration parameters for this cluster lists defined by @ref esp_zb_window_covering_cfg_s
+ *
+ * @return Pointer to esp_zb_ep_list_t @ref esp_zb_ep_list_s
+ */
+esp_zb_ep_list_t *esp_zb_window_covering_ep_create(uint8_t endpoint_id, esp_zb_window_covering_cfg_t *window_covering);
+
+/**
+ * @brief Create a standard single HA window covering controller endpoint.
+ *
+ * @param[in] endpoint_id The specific endpoint
+ * @param[in] window_controller Configuration parameters for this cluster lists defined by @ref esp_zb_window_covering_controller_cfg_s
+ *
+ * @return Pointer to esp_zb_ep_list_t @ref esp_zb_ep_list_s
+ */
+esp_zb_ep_list_t *esp_zb_window_covering_controller_ep_create(uint8_t endpoint_id, esp_zb_window_covering_controller_cfg_t *window_controller);
 
 #ifdef __cplusplus
 }

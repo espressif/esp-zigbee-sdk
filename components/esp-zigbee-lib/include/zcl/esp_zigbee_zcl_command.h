@@ -802,6 +802,24 @@ typedef struct esp_zb_zcl_ias_ace_bypass_cmd_s {
 } esp_zb_zcl_ias_ace_bypass_cmd_t;
 
 /**
+ * @brief The Zigbee ZCL IAS_WD Start Warning command struct
+ */
+typedef struct esp_zb_zcl_ias_wd_start_warning_cmd_s {
+    esp_zb_zcl_basic_cmd_t            zcl_basic_cmd;  /*!< Basic command info */
+    esp_zb_zcl_address_mode_t         address_mode;   /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+    esp_zb_zcl_ias_wd_start_warning_t payload;        /*!< Start Warning command payload */
+} esp_zb_zcl_ias_wd_start_warning_cmd_t;
+
+/**
+ * @brief The Zigbee ZCL IAS_WD Squawk command struct
+ */
+typedef struct esp_zb_zcl_ias_wd_squawk_cmd_s {
+    esp_zb_zcl_basic_cmd_t     zcl_basic_cmd;  /*!< Basic command info */
+    esp_zb_zcl_address_mode_t  address_mode;   /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+    esp_zb_zcl_ias_wd_squawk_t payload;        /*!< Squawk command payload */
+} esp_zb_zcl_ias_wd_squawk_cmd_t;
+
+/**
  * @brief The Zigbee ZCL IAS_ACE Emergency command struct
  */
 typedef esp_zb_zcl_common_cmd_t esp_zb_zcl_ias_ace_emergency_cmd_t;
@@ -873,32 +891,29 @@ typedef struct esp_zb_zcl_ias_ace_panel_status_changed_cmd_s {
  * @note value only support uint8_t, uint16_t data types for the Lift/Tilt value/percentage payload. If not, set to NULL
  *
  */
-typedef struct esp_zb_zcl_window_covering_cluster_send_cmd_req_s{
+typedef struct esp_zb_zcl_window_covering_cluster_send_cmd_req_s {
     esp_zb_zcl_basic_cmd_t zcl_basic_cmd;                       /*!< Basic command info */
     esp_zb_zcl_address_mode_t address_mode;                     /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
-    void *value;                                                /*!< Pointer to value */
-    uint16_t cluster_id;                                        /*!< Cluster id */
-    uint8_t cmd_id;                                             /*!< Command id */
-}esp_zb_zcl_window_covering_cluster_send_cmd_req_t;
+    void *value;                                                /*!< Pointer to payload value of window covering command */
+    uint8_t cmd_id;                                             /*!< Command id, refer to esp_zb_zcl_window_covering_cmd_t */
+} esp_zb_zcl_window_covering_cluster_send_cmd_req_t;
 
 /**
  * @brief The Zigbee ZCL electrical profile information response command struct
  */
-typedef struct esp_zb_zcl_electrical_profile_info_cmd_resp_s{
+typedef struct esp_zb_zcl_electrical_profile_info_cmd_resp_s {
     esp_zb_zcl_basic_cmd_t zcl_basic_cmd;                       /*!< Basic command info */
     esp_zb_zcl_address_mode_t address_mode;                     /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
     esp_zb_electrical_measurement_profile_info_t profile_info;  /*!< Electrical profile info response command */
-    uint16_t cluster_id;                                        /*!< Cluster id */
-}esp_zb_zcl_electrical_profile_info_cmd_resp_t;
+} esp_zb_zcl_electrical_profile_info_cmd_resp_t;
 
 /**
  * @brief The Zigbee ZCL electrical profile response command struct
  */
-typedef struct esp_zb_zcl_electrical_measurement_profile_cmd_resp_s{
+typedef struct esp_zb_zcl_electrical_measurement_profile_cmd_resp_s {
     esp_zb_zcl_basic_cmd_t zcl_basic_cmd;                        /*!< Basic command info */
     esp_zb_zcl_address_mode_t address_mode;                      /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
     esp_zb_electrical_measurement_profile_t profile;             /*!< Electrical profile response command */
-    uint16_t cluster_id;                                         /*!< Cluster id */
 } esp_zb_zcl_electrical_measurement_profile_cmd_resp_t;
 
 /**
@@ -1343,6 +1358,24 @@ typedef struct esp_zb_zcl_ias_ace_get_zone_status_message_s {
     const esp_zb_zcl_ias_ace_get_zone_status_t *msg_in;     /*!< Received Get Zone Status command payload */
     esp_zb_zcl_ias_ace_get_zone_status_resp_t *msg_out;     /*!< Response of Get Zone Status command to be sent */
 } esp_zb_zcl_ias_ace_get_zone_status_message_t;
+
+/**
+ * @brief The Zigbee ZCL IAS_WD Start Warning message struct
+ *
+ */
+typedef struct esp_zb_zcl_ias_wd_start_warning_message_s {
+    esp_zb_device_cb_common_info_t info;                /**< The common information for Zigbee device callback */
+    const esp_zb_zcl_ias_wd_start_warning_t *msg_in;    /**< Received Start Warning command, refer to esp_zb_zcl_ias_wd_start_warning_t */
+} esp_zb_zcl_ias_wd_start_warning_message_t;
+
+/**
+ * @brief The Zigbee ZCL IAS_WD Squawk message struct
+ *
+ */
+typedef struct esp_zb_zcl_ias_wd_squawk_message_s {
+    esp_zb_device_cb_common_info_t info;        /**< The common information for Zigbee device callback */
+    const esp_zb_zcl_ias_wd_squawk_t *msg_in;   /**< Received Squawk command, refer to esp_zb_zcl_ias_wd_squawk_t */
+} esp_zb_zcl_ias_wd_squawk_message_t;
 
 /**
  * @brief The Zigbee zcl ota upgrade value device callback message struct
@@ -1906,12 +1939,27 @@ typedef struct esp_zb_zcl_identify_effect_message_s {
 } esp_zb_zcl_identify_effect_message_t;
 
 /**
- * @brief The Zigbee zcl basic cluster reset to factory defualt message
+ * @brief The Zigbee zcl basic cluster reset to factory default message
  *
  */
 typedef struct esp_zb_zcl_basic_reset_factory_default_message_s {
     esp_zb_device_cb_common_info_t info; /*!< The common information for Zigbee device callback */
 } esp_zb_zcl_basic_reset_factory_default_message_t;
+
+/**
+ * @brief ZCL window covering movement message
+ *
+ */
+typedef struct esp_zb_zcl_window_covering_movement_message_s {
+    esp_zb_device_cb_common_info_t info; /*!< The common information for Zigbee device callback */
+    uint16_t command;                    /*!< The movement command, refer to esp_zb_zcl_window_covering_cmd_t */
+    union {
+        uint8_t percentage_lift_value;  /*!< The payload for ESP_ZB_ZCL_CMD_WINDOW_COVERING_GO_TO_LIFT_PERCENTAGE */
+        uint8_t percentage_tilt_value;  /*!< The payload for ESP_ZB_ZCL_CMD_WINDOW_COVERING_GO_TO_TILT_PERCENTAGE */
+        uint16_t lift_value;            /*!< The payload for ESP_ZB_ZCL_CMD_WINDOW_COVERING_GO_TO_LIFT_VALUE */
+        uint16_t tilt_value;            /*!< The payload for ESP_ZB_ZCL_CMD_WINDOW_COVERING_GO_TO_TILT_VALUE */
+    } payload;                          /*!< Command payload */
+} esp_zb_zcl_window_covering_movement_message_t;
 
 /**
  * @brief The Zigbee zcl command basic application information struct
@@ -2964,6 +3012,24 @@ uint8_t esp_zb_zcl_ias_ace_zone_status_changed_cmd_req(esp_zb_zcl_ias_ace_zone_s
  * @return The transaction sequence number
  */
 uint8_t esp_zb_zcl_ias_ace_panel_status_changed_cmd_req(esp_zb_zcl_ias_ace_panel_status_changed_cmd_t *cmd_req);
+
+/**
+ * @brief   Send IAS_WD Start Warning command
+ *
+ * @param[in]  cmd_req  pointer to the Start Warning command  @ref esp_zb_zcl_ias_wd_start_warning_cmd_s
+ *
+ * @return The transaction sequence number
+ */
+uint8_t esp_zb_zcl_ias_wd_start_warning_cmd_req(esp_zb_zcl_ias_wd_start_warning_cmd_t *cmd_req);
+
+/**
+ * @brief   Send IAS_WD Squawk command
+ *
+ * @param[in]  cmd_req  pointer to the Squawk command  @ref esp_zb_zcl_ias_wd_squawk_cmd_s
+ *
+ * @return The transaction sequence number
+ */
+uint8_t esp_zb_zcl_ias_wd_squawk_cmd_req(esp_zb_zcl_ias_wd_squawk_cmd_t *cmd_req);
 
 /**
  * @brief   Send window covering cluster command request

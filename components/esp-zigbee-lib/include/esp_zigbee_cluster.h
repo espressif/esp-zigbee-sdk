@@ -215,6 +215,17 @@ esp_zb_attribute_list_t *esp_zb_ias_zone_cluster_create(esp_zb_ias_zone_cluster_
 esp_zb_attribute_list_t *esp_zb_ias_ace_cluster_create(uint8_t zone_table_size);
 
 /**
+ * @brief  Create a standard IAS WD cluster attribute list.
+ *
+ * @note  This only contains the mandatory attribute.
+ * @param[in] ias_wd_cfg  Configuration parameters for this cluster defined by @ref esp_zb_ias_wd_cluster_cfg_s
+ *
+ * @return Pointer to attribute list @ref esp_zb_attribute_list_s
+ *
+ */
+esp_zb_attribute_list_t *esp_zb_ias_wd_cluster_create(esp_zb_ias_wd_cluster_cfg_t *ias_wd_cfg);
+
+/**
  * @brief  Create a standard temperature measurement cluster attribute list.
  *
  * @note  This only contains the mandatory attribute.
@@ -655,6 +666,20 @@ esp_err_t esp_zb_cluster_list_add_ias_zone_cluster(esp_zb_cluster_list_t *cluste
 esp_err_t esp_zb_cluster_list_add_ias_ace_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 /**
+ * @brief Add IAS_WD cluster (attribute list) in a cluster list.
+ *
+ * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
+ * @param[in] attr_list  An attribute list which wants to add
+ * @param[in] role_mask  A role of server or client for this cluster (attribute list) refer to esp_zb_zcl_cluster_role_t
+ *
+ * @return
+ *      - ESP_OK on success
+ *      - ESP_ERR_INVALID_ARG if cluster list not initialized
+ *
+ */
+esp_err_t esp_zb_cluster_list_add_ias_wd_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
+
+/**
  * @brief Add Door Lock cluster (attribute list) in a cluster list.
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
@@ -1009,9 +1034,41 @@ esp_err_t esp_zb_cluster_list_add_price_cluster(esp_zb_cluster_list_t *cluster_l
  */
 esp_err_t esp_zb_cluster_list_add_custom_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
+/**
+ * @brief Get cluster (attribute list) from a cluster list.
+ *
+ * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
+ * @param[in] cluster_id The cluster id for attribute list refer to esp_zb_zcl_cluster_id
+ * @param[in] role_mask A role of server or client for this cluster (attribute list) refer to esp_zb_zcl_cluster_role_t
+ *
+ * @return
+ *      - pointer to  @ref esp_zb_attribute_list_s, if the cluster is found in the cluster list
+ *      - ``NULL`` if cluster is not found
+ *
+ */
+esp_zb_attribute_list_t *esp_zb_cluster_list_get_cluster(const esp_zb_cluster_list_t *cluster_list, uint16_t cluster_id, uint8_t role_mask);
+
 /**************************************** UPDATE CLUSTER ***********************************/
+
+/**
+ * @brief Update cluster (attribute list) in a cluster list.
+ *
+ * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
+ * @param[in] attr_list  An attribute list which wants to update
+ * @param[in] cluster_id The cluster id for attribute list refer to esp_zb_zcl_cluster_id
+ * @param[in] role_mask  A role of server or client for this cluster (attribute list) refer to esp_zb_zcl_cluster_role_t
+ *
+ * @return
+ *      - ESP_OK on success
+ *      - ESP_ERR_INVALID_ARG if cluster list not initialized
+ *
+ */
+esp_err_t esp_zb_cluster_list_update_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list,
+                                             uint16_t cluster_id, uint8_t role_mask);
+
 /**
  * @brief Update basic cluster (attribute list) in a cluster list.
+ * @deprecated This will be removed from the SDK, please use ``esp_zb_cluster_list_update_cluster()`` instead.
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to update
@@ -1022,10 +1079,12 @@ esp_err_t esp_zb_cluster_list_add_custom_cluster(esp_zb_cluster_list_t *cluster_
  *      - ESP_ERR_INVALID_ARG if cluster list not initialized
  *
  */
+ESP_ZB_DEPRECATED
 esp_err_t esp_zb_cluster_list_update_basic_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 /**
  * @brief Update power configuration cluster (attribute list) in a cluster list.
+ * @deprecated This will be removed from the SDK, please use ``esp_zb_cluster_list_update_cluster()`` instead.
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to update
@@ -1036,10 +1095,12 @@ esp_err_t esp_zb_cluster_list_update_basic_cluster(esp_zb_cluster_list_t *cluste
  *      - ESP_ERR_INVALID_ARG if cluster list not initialized
  *
  */
+ESP_ZB_DEPRECATED
 esp_err_t esp_zb_cluster_list_update_power_config_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 /**
  * @brief Update identify cluster (attribute list) in a cluster list.
+ * @deprecated This will be removed from the SDK, please use ``esp_zb_cluster_list_update_cluster()`` instead.
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to update
@@ -1050,10 +1111,12 @@ esp_err_t esp_zb_cluster_list_update_power_config_cluster(esp_zb_cluster_list_t 
  *      - ESP_ERR_INVALID_ARG if cluster list not initialized
  *
  */
+ESP_ZB_DEPRECATED
 esp_err_t esp_zb_cluster_list_update_identify_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 /**
  * @brief Update groups cluster (attribute list) in a cluster list.
+ * @deprecated This will be removed from the SDK, please use ``esp_zb_cluster_list_update_cluster()`` instead.
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to update
@@ -1064,10 +1127,12 @@ esp_err_t esp_zb_cluster_list_update_identify_cluster(esp_zb_cluster_list_t *clu
  *      - ESP_ERR_INVALID_ARG if cluster list not initialized
  *
  */
+ESP_ZB_DEPRECATED
 esp_err_t esp_zb_cluster_list_update_groups_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 /**
  * @brief Update scenes cluster (attribute list) in a cluster list.
+ * @deprecated This will be removed from the SDK, please use ``esp_zb_cluster_list_update_cluster()`` instead.
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to update
@@ -1078,10 +1143,12 @@ esp_err_t esp_zb_cluster_list_update_groups_cluster(esp_zb_cluster_list_t *clust
  *      - ESP_ERR_INVALID_ARG if cluster list not initialized
  *
  */
+ESP_ZB_DEPRECATED
 esp_err_t esp_zb_cluster_list_update_scenes_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 /**
  * @brief Update on_off cluster (attribute list) in a cluster list.
+ * @deprecated This will be removed from the SDK, please use ``esp_zb_cluster_list_update_cluster()`` instead.
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to update
@@ -1092,10 +1159,12 @@ esp_err_t esp_zb_cluster_list_update_scenes_cluster(esp_zb_cluster_list_t *clust
  *      - ESP_ERR_INVALID_ARG if cluster list not initialized
  *
  */
+ESP_ZB_DEPRECATED
 esp_err_t esp_zb_cluster_list_update_on_off_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 /**
  * @brief Update on_off switch config cluster (attribute list) in a cluster list.
+ * @deprecated This will be removed from the SDK, please use ``esp_zb_cluster_list_update_cluster()`` instead.
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to update
@@ -1106,10 +1175,12 @@ esp_err_t esp_zb_cluster_list_update_on_off_cluster(esp_zb_cluster_list_t *clust
  *      - ESP_ERR_INVALID_ARG if cluster list not initialized
  *
  */
+ESP_ZB_DEPRECATED
 esp_err_t esp_zb_cluster_list_update_on_off_switch_config_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 /**
  * @brief Update level cluster (attribute list) in a cluster list.
+ * @deprecated This will be removed from the SDK, please use ``esp_zb_cluster_list_update_cluster()`` instead.
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to update
@@ -1120,10 +1191,12 @@ esp_err_t esp_zb_cluster_list_update_on_off_switch_config_cluster(esp_zb_cluster
  *      - ESP_ERR_INVALID_ARG if cluster list not initialized
  *
  */
+ESP_ZB_DEPRECATED
 esp_err_t esp_zb_cluster_list_update_level_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 /**
  * @brief Update color control cluster (attribute list) in a cluster list.
+ * @deprecated This will be removed from the SDK, please use ``esp_zb_cluster_list_update_cluster()`` instead.
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to update
@@ -1134,10 +1207,12 @@ esp_err_t esp_zb_cluster_list_update_level_cluster(esp_zb_cluster_list_t *cluste
  *      - ESP_ERR_INVALID_ARG if cluster list not initialized
  *
  */
+ESP_ZB_DEPRECATED
 esp_err_t esp_zb_cluster_list_update_color_control_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 /**
  * @brief Update Time cluster (attribute list) in a cluster list.
+ * @deprecated This will be removed from the SDK, please use ``esp_zb_cluster_list_update_cluster()`` instead.
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to update
@@ -1148,10 +1223,12 @@ esp_err_t esp_zb_cluster_list_update_color_control_cluster(esp_zb_cluster_list_t
  *      - ESP_ERR_INVALID_ARG if cluster list not initialized
  *
  */
+ESP_ZB_DEPRECATED
 esp_err_t esp_zb_cluster_list_update_time_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 /**
  * @brief Update Shade Config cluster (attribute list) in a cluster list.
+ * @deprecated This will be removed from the SDK, please use ``esp_zb_cluster_list_update_cluster()`` instead.
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to update
@@ -1162,10 +1239,12 @@ esp_err_t esp_zb_cluster_list_update_time_cluster(esp_zb_cluster_list_t *cluster
  *      - ESP_ERR_INVALID_ARG if cluster list not initialized
  *
  */
+ESP_ZB_DEPRECATED
 esp_err_t esp_zb_cluster_list_update_shade_config_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 /**
  * @brief Update binary input (basic) cluster (attribute list) in a cluster list.
+ * @deprecated This will be removed from the SDK, please use ``esp_zb_cluster_list_update_cluster()`` instead.
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to add
@@ -1176,10 +1255,12 @@ esp_err_t esp_zb_cluster_list_update_shade_config_cluster(esp_zb_cluster_list_t 
  *      - ESP_ERR_INVALID_ARG if cluster list not initialized
  *
  */
+ESP_ZB_DEPRECATED
 esp_err_t esp_zb_cluster_list_update_binary_input_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 /**
  * @brief Update Commissioning cluster (attribute list) in a cluster list.
+ * @deprecated This will be removed from the SDK, please use ``esp_zb_cluster_list_update_cluster()`` instead.
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to update
@@ -1190,10 +1271,12 @@ esp_err_t esp_zb_cluster_list_update_binary_input_cluster(esp_zb_cluster_list_t 
  *      - ESP_ERR_INVALID_ARG if cluster list not initialized
  *
  */
+ESP_ZB_DEPRECATED
 esp_err_t esp_zb_cluster_list_update_commissioning_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 /**
  * @brief Update ias zone cluster (attribute list) in a cluster list.
+ * @deprecated This will be removed from the SDK, please use ``esp_zb_cluster_list_update_cluster()`` instead.
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to add
@@ -1204,10 +1287,12 @@ esp_err_t esp_zb_cluster_list_update_commissioning_cluster(esp_zb_cluster_list_t
  *      - ESP_ERR_INVALID_ARG if cluster list not initialized
  *
  */
+ESP_ZB_DEPRECATED
 esp_err_t esp_zb_cluster_list_update_ias_zone_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 /**
  * @brief Update IAS ACE cluster (attribute list) in a cluster list.
+ * @deprecated This will be removed from the SDK, please use ``esp_zb_cluster_list_update_cluster()`` instead.
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to update
@@ -1218,10 +1303,12 @@ esp_err_t esp_zb_cluster_list_update_ias_zone_cluster(esp_zb_cluster_list_t *clu
  *      - ESP_ERR_INVALID_ARG if cluster list not initialized
  *
  */
+ESP_ZB_DEPRECATED
 esp_err_t esp_zb_cluster_list_update_ias_ace_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 /**
- * @brief Update Door Lock cluster (attribute list) in a cluster list.
+ * @brief Update IAS_WD cluster (attribute list) in a cluster list.
+ * @deprecated This will be removed from the SDK, please use ``esp_zb_cluster_list_update_cluster()`` instead.
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to update
@@ -1232,10 +1319,28 @@ esp_err_t esp_zb_cluster_list_update_ias_ace_cluster(esp_zb_cluster_list_t *clus
  *      - ESP_ERR_INVALID_ARG if cluster list not initialized
  *
  */
+ESP_ZB_DEPRECATED
+esp_err_t esp_zb_cluster_list_update_ias_wd_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
+
+/**
+ * @brief Update Door Lock cluster (attribute list) in a cluster list.
+ * @deprecated This will be removed from the SDK, please use ``esp_zb_cluster_list_update_cluster()`` instead.
+ *
+ * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
+ * @param[in] attr_list  An attribute list which wants to update
+ * @param[in] role_mask  A role of server or client for this cluster (attribute list) refer to esp_zb_zcl_cluster_role_t
+ *
+ * @return
+ *      - ESP_OK on success
+ *      - ESP_ERR_INVALID_ARG if cluster list not initialized
+ *
+ */
+ESP_ZB_DEPRECATED
 esp_err_t esp_zb_cluster_list_update_door_lock_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 /**
  * @brief Update temperature measurement cluster (attribute list) in a cluster list.
+ * @deprecated This will be removed from the SDK, please use ``esp_zb_cluster_list_update_cluster()`` instead.
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to update
@@ -1246,10 +1351,12 @@ esp_err_t esp_zb_cluster_list_update_door_lock_cluster(esp_zb_cluster_list_t *cl
  *      - ESP_ERR_INVALID_ARG if cluster list not initialized
  *
  */
+ESP_ZB_DEPRECATED
 esp_err_t esp_zb_cluster_list_update_temperature_meas_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 /**
  * @brief Update humidity measurement cluster (attribute list) in a cluster list.
+ * @deprecated This will be removed from the SDK, please use ``esp_zb_cluster_list_update_cluster()`` instead.
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to update
@@ -1260,10 +1367,12 @@ esp_err_t esp_zb_cluster_list_update_temperature_meas_cluster(esp_zb_cluster_lis
  *      - ESP_ERR_INVALID_ARG if cluster list not initialized
  *
  */
+ESP_ZB_DEPRECATED
 esp_err_t esp_zb_cluster_list_update_humidity_meas_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 /**
  * @brief Update illuminance measurement cluster (attribute list) in a cluster list.
+ * @deprecated This will be removed from the SDK, please use ``esp_zb_cluster_list_update_cluster()`` instead.
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to update
@@ -1274,10 +1383,12 @@ esp_err_t esp_zb_cluster_list_update_humidity_meas_cluster(esp_zb_cluster_list_t
  *      - ESP_ERR_INVALID_ARG if cluster list not initialized
  *
  */
+ESP_ZB_DEPRECATED
 esp_err_t esp_zb_cluster_list_update_illuminance_meas_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 /**
  * @brief Update pressure measurement cluster (attribute list) in a cluster list.
+ * @deprecated This will be removed from the SDK, please use ``esp_zb_cluster_list_update_cluster()`` instead.
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to update
@@ -1288,10 +1399,12 @@ esp_err_t esp_zb_cluster_list_update_illuminance_meas_cluster(esp_zb_cluster_lis
  *      - ESP_ERR_INVALID_ARG if cluster list not initialized
  *
  */
+ESP_ZB_DEPRECATED
 esp_err_t esp_zb_cluster_list_update_pressure_meas_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 /**
  * @brief Update flow measurement cluster (attribute list) in a cluster list.
+ * @deprecated This will be removed from the SDK, please use ``esp_zb_cluster_list_update_cluster()`` instead.
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to update
@@ -1302,10 +1415,12 @@ esp_err_t esp_zb_cluster_list_update_pressure_meas_cluster(esp_zb_cluster_list_t
  *      - ESP_ERR_INVALID_ARG if cluster list not initialized
  *
  */
+ESP_ZB_DEPRECATED
 esp_err_t esp_zb_cluster_list_update_flow_meas_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 /**
  * @brief Update electrical measurement cluster (attribute list) in a cluster list.
+ * @deprecated This will be removed from the SDK, please use ``esp_zb_cluster_list_update_cluster()`` instead.
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to update
@@ -1316,10 +1431,12 @@ esp_err_t esp_zb_cluster_list_update_flow_meas_cluster(esp_zb_cluster_list_t *cl
  *      - ESP_ERR_INVALID_ARG if cluster list not initialized
  *
  */
+ESP_ZB_DEPRECATED
 esp_err_t esp_zb_cluster_list_update_electrical_meas_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 /**
  * @brief Update occupancy sensor cluster (attribute list) in a cluster list.
+ * @deprecated This will be removed from the SDK, please use ``esp_zb_cluster_list_update_cluster()`` instead.
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to update
@@ -1330,10 +1447,12 @@ esp_err_t esp_zb_cluster_list_update_electrical_meas_cluster(esp_zb_cluster_list
  *      - ESP_ERR_INVALID_ARG if cluster list not initialized
  *
  */
+ESP_ZB_DEPRECATED
 esp_err_t esp_zb_cluster_list_update_occupancy_sensing_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 /**
  * @brief Update window covering cluster (attribute list) in a cluster list.
+ * @deprecated This will be removed from the SDK, please use ``esp_zb_cluster_list_update_cluster()`` instead.
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to update
@@ -1344,10 +1463,12 @@ esp_err_t esp_zb_cluster_list_update_occupancy_sensing_cluster(esp_zb_cluster_li
  *      - ESP_ERR_INVALID_ARG if cluster list not initialized
  *
  */
+ESP_ZB_DEPRECATED
 esp_err_t esp_zb_cluster_list_update_window_covering_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 /**
  * @brief Update thermostat cluster (attribute list) in a cluster list.
+ * @deprecated This will be removed from the SDK, please use ``esp_zb_cluster_list_update_cluster()`` instead.
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to update
@@ -1358,10 +1479,12 @@ esp_err_t esp_zb_cluster_list_update_window_covering_cluster(esp_zb_cluster_list
  *      - ESP_ERR_INVALID_ARG if cluster list not initialized
  *
  */
+ESP_ZB_DEPRECATED
 esp_err_t esp_zb_cluster_list_update_thermostat_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 /**
  * @brief Update fan control cluster (attribute list) in a cluster list.
+ * @deprecated This will be removed from the SDK, please use ``esp_zb_cluster_list_update_cluster()`` instead.
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to update
@@ -1372,10 +1495,12 @@ esp_err_t esp_zb_cluster_list_update_thermostat_cluster(esp_zb_cluster_list_t *c
  *      - ESP_ERR_INVALID_ARG if cluster list not initialized
  *
  */
+ESP_ZB_DEPRECATED
 esp_err_t esp_zb_cluster_list_update_fan_control_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 /**
  * @brief Update thermostat ui config cluster (attribute list) in a cluster list.
+ * @deprecated This will be removed from the SDK, please use ``esp_zb_cluster_list_update_cluster()`` instead.
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to update
@@ -1386,10 +1511,12 @@ esp_err_t esp_zb_cluster_list_update_fan_control_cluster(esp_zb_cluster_list_t *
  *      - ESP_ERR_INVALID_ARG if cluster list not initialized
  *
  */
+ESP_ZB_DEPRECATED
 esp_err_t esp_zb_cluster_list_update_thermostat_ui_config_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 /**
  * @brief Update analog input cluster (attribute list) in a cluster list.
+ * @deprecated This will be removed from the SDK, please use ``esp_zb_cluster_list_update_cluster()`` instead.
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to update
@@ -1400,10 +1527,12 @@ esp_err_t esp_zb_cluster_list_update_thermostat_ui_config_cluster(esp_zb_cluster
  *      - ESP_ERR_INVALID_ARG if cluster list not initialized
  *
  */
+ESP_ZB_DEPRECATED
 esp_err_t esp_zb_cluster_list_update_analog_input_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 /**
  * @brief Update analog output cluster (attribute list) in a cluster list.
+ * @deprecated This will be removed from the SDK, please use ``esp_zb_cluster_list_update_cluster()`` instead.
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to update
@@ -1414,10 +1543,12 @@ esp_err_t esp_zb_cluster_list_update_analog_input_cluster(esp_zb_cluster_list_t 
  *      - ESP_ERR_INVALID_ARG if cluster list not initialized
  *
  */
+ESP_ZB_DEPRECATED
 esp_err_t esp_zb_cluster_list_update_analog_output_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 /**
  * @brief Update analog value cluster (attribute list) in a cluster list.
+ * @deprecated This will be removed from the SDK, please use ``esp_zb_cluster_list_update_cluster()`` instead.
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to update
@@ -1428,10 +1559,12 @@ esp_err_t esp_zb_cluster_list_update_analog_output_cluster(esp_zb_cluster_list_t
  *      - ESP_ERR_INVALID_ARG if cluster list not initialized
  *
  */
+ESP_ZB_DEPRECATED
 esp_err_t esp_zb_cluster_list_update_analog_value_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 /**
  * @brief Update carbon dioxide measurement cluster (attribute list) in a cluster list.
+ * @deprecated This will be removed from the SDK, please use ``esp_zb_cluster_list_update_cluster()`` instead.
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to update
@@ -1442,10 +1575,12 @@ esp_err_t esp_zb_cluster_list_update_analog_value_cluster(esp_zb_cluster_list_t 
  *      - ESP_ERR_INVALID_ARG if cluster list not initialized
  *
  */
+ESP_ZB_DEPRECATED
 esp_err_t esp_zb_cluster_list_update_carbon_dioxide_measurement_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 /**
  * @brief Update pm2.5 measurement cluster (attribute list) in a cluster list.
+ * @deprecated This will be removed from the SDK, please use ``esp_zb_cluster_list_update_cluster()`` instead.
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to update
@@ -1456,10 +1591,12 @@ esp_err_t esp_zb_cluster_list_update_carbon_dioxide_measurement_cluster(esp_zb_c
  *      - ESP_ERR_INVALID_ARG if cluster list not initialized
  *
  */
+ESP_ZB_DEPRECATED
 esp_err_t esp_zb_cluster_list_update_pm2_5_measurement_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 /**
  * @brief Update multistate value cluster (attribute list) in a cluster list.
+ * @deprecated This will be removed from the SDK, please use ``esp_zb_cluster_list_update_cluster()`` instead.
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to update
@@ -1470,10 +1607,12 @@ esp_err_t esp_zb_cluster_list_update_pm2_5_measurement_cluster(esp_zb_cluster_li
  *      - ESP_ERR_INVALID_ARG if cluster list not initialized
  *
  */
+ESP_ZB_DEPRECATED
 esp_err_t esp_zb_cluster_list_update_multistate_value_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 /**
  * @brief Update metering cluster (attribute list) in a cluster list.
+ * @deprecated This will be removed from the SDK, please use ``esp_zb_cluster_list_update_cluster()`` instead.
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to update
@@ -1484,10 +1623,12 @@ esp_err_t esp_zb_cluster_list_update_multistate_value_cluster(esp_zb_cluster_lis
  *      - ESP_ERR_INVALID_ARG if cluster list not initialized
  *
  */
+ESP_ZB_DEPRECATED
 esp_err_t esp_zb_cluster_list_update_metering_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 /**
  * @brief Update diagnostics cluster (attribute list) in a cluster list.
+ * @deprecated This will be removed from the SDK, please use ``esp_zb_cluster_list_update_cluster()`` instead.
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to update
@@ -1498,10 +1639,12 @@ esp_err_t esp_zb_cluster_list_update_metering_cluster(esp_zb_cluster_list_t *clu
  *      - ESP_ERR_INVALID_ARG if cluster list not initialized
  *
  */
+ESP_ZB_DEPRECATED
 esp_err_t esp_zb_cluster_list_update_diagnostics_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 /**
  * @brief Update meter identification cluster (attribute list) in a cluster list.
+ * @deprecated This will be removed from the SDK, please use ``esp_zb_cluster_list_update_cluster()`` instead.
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to update
@@ -1512,10 +1655,12 @@ esp_err_t esp_zb_cluster_list_update_diagnostics_cluster(esp_zb_cluster_list_t *
  *      - ESP_ERR_INVALID_ARG if cluster list not initialized
  *
  */
+ESP_ZB_DEPRECATED
 esp_err_t esp_zb_cluster_list_update_meter_identification_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 /**
  * @brief Update price cluster (attribute list) in a cluster list.
+ * @deprecated This will be removed from the SDK, please use ``esp_zb_cluster_list_update_cluster()`` instead.
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to update
@@ -1526,10 +1671,12 @@ esp_err_t esp_zb_cluster_list_update_meter_identification_cluster(esp_zb_cluster
  *      - ESP_ERR_INVALID_ARG if cluster list not initialized
  *
  */
+ESP_ZB_DEPRECATED
 esp_err_t esp_zb_cluster_list_update_price_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 /**
  * @brief Update OTA cluster (attribute list) in a cluster list.
+ * @deprecated This will be removed from the SDK, please use ``esp_zb_cluster_list_update_cluster()`` instead.
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to update
@@ -1540,10 +1687,12 @@ esp_err_t esp_zb_cluster_list_update_price_cluster(esp_zb_cluster_list_t *cluste
  *      - ESP_ERR_INVALID_ARG if cluster list not initialized
  *
  */
+ESP_ZB_DEPRECATED
 esp_err_t esp_zb_cluster_list_update_ota_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 /**
  * @brief Update customized cluster (attribute list) in a cluster list.
+ * @deprecated This will be removed from the SDK, please use ``esp_zb_cluster_list_update_cluster()`` instead.
  *
  * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
  * @param[in] attr_list  An attribute list which wants to update
@@ -1554,6 +1703,7 @@ esp_err_t esp_zb_cluster_list_update_ota_cluster(esp_zb_cluster_list_t *cluster_
  *      - ESP_ERR_INVALID_ARG if cluster list not initialized
  *
  */
+ESP_ZB_DEPRECATED
 esp_err_t esp_zb_cluster_list_update_custom_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 #ifdef __cplusplus

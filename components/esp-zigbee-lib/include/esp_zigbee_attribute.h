@@ -335,6 +335,20 @@ esp_err_t esp_zb_ias_ace_get_zone_table_length(uint8_t endpoint, uint8_t *table_
 esp_err_t esp_zb_ias_ace_get_zone_table(uint8_t endpoint, esp_zb_zcl_ias_ace_zone_table_t** table_p);
 
 /**
+ * @brief Add an attribute in IAS_WD cluster.
+ *
+ * @param[in] attr_list A pointer to attribute list @ref esp_zb_attribute_list_s
+ * @param[in] attr_id  An attribute id to be added
+ * @param[in] value_p A pointer to attribute value wants to add
+ *
+ * @return
+ *      - ESP_OK on success
+ *      - ESP_ERR_INVALID_ARG if attribute is existed or unsupported
+ *
+ */
+esp_err_t esp_zb_ias_wd_cluster_add_attr(esp_zb_attribute_list_t *attr_list, uint16_t attr_id, void *value_p);
+
+/**
  * @brief Add an attribute in temperature measurement cluster.
  *
  * @param[in] attr_list A pointer to attribute list @ref esp_zb_attribute_list_s

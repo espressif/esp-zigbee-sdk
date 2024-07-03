@@ -14,6 +14,7 @@ extern "C" {
 #include "stdbool.h"
 
 #define ESP_ZB_PACKED_STRUCT __attribute__ ((packed))
+#define ESP_ZB_DEPRECATED __attribute__((deprecated))
 
 typedef uint8_t esp_zb_64bit_addr_t[8];
 typedef esp_zb_64bit_addr_t esp_zb_ieee_addr_t;
@@ -68,6 +69,8 @@ typedef struct esp_zb_zcl_cmd_cb_s {
 } ESP_ZB_PACKED_STRUCT
 esp_zb_zcl_cmd_cb_t;
 
+/******************* attribute data model *******************/
+
 /**
  * @brief Type to represent ZCL attribute definition structure
  * @note Access define refer to zcl_attr_access
@@ -82,18 +85,43 @@ typedef struct esp_zb_zcl_attr_s {
 esp_zb_zcl_attr_t;
 
 /**
+ * @brief The esp-zigbee data model of list of attribute.
+ *
+ * @note An attribute list groups up a single cluster.
+ */
+typedef struct esp_zb_attribute_list_s {
+    esp_zb_zcl_attr_t   attribute;              /*!< A single attribute */
+    uint16_t     cluster_id;                    /*!< A cluster id assigned to this attribute */
+    struct esp_zb_attribute_list_s *next;       /*!< A pointer to next attribute */
+} esp_zb_attribute_list_t;
+
+/******************* cluster data model *******************/
+
+/**
  * @brief Type to represent ZCL cluster definition structure
  * @note Cluster id refer to zcl_cluster_id and attribute define see @ref esp_zb_zcl_attr_s
  */
 typedef struct esp_zb_zcl_cluster_s {
     uint16_t cluster_id;                        /*!< ZCL 16-bit cluster id. Refer zcl_cluster_id */
     uint16_t attr_count;                        /*!< Attributes number supported by the cluster */
-    esp_zb_zcl_attr_t *attr_desc_list;          /*!< List of cluster attributes esp_zb_zcl_attr_t */
+    ESP_ZB_PACKED_STRUCT union {
+        esp_zb_zcl_attr_t *attr_desc_list;      /*!< Array of cluster attributes esp_zb_zcl_attr_t */
+        esp_zb_attribute_list_t* attr_list;     /*!< List of cluster attributes esp_zb_attribute_list_t */
+    };
     uint8_t role_mask;                          /*!< Cluster role, refer to zcl_cluster_role */
     uint16_t manuf_code;                        /*!< Manufacturer code for cluster and its attributes */
     esp_zb_zcl_cluster_init_t cluster_init;     /*!< cluster init callback function */
 } ESP_ZB_PACKED_STRUCT
 esp_zb_zcl_cluster_t;
+
+/**
+ * @brief The esp-zigbee data model of list of cluster.
+ *
+ */
+typedef struct esp_zb_cluster_list_s {
+    esp_zb_zcl_cluster_t cluster;               /*!< A single cluster */
+    struct esp_zb_cluster_list_s *next;         /*!< A pointer to next cluster */
+} esp_zb_cluster_list_t;
 
 /**
  * @brief Type to represent type signed int_24
@@ -222,16 +250,6 @@ typedef struct esp_zb_af_node_desc_s {
 esp_zb_af_node_desc_t;
 
 /**
-* @brief Struture of network descriptor request of active scan response
-*/
-typedef struct esp_zb_network_descriptor_s{
-    uint16_t short_pan_id;                      /*!< PAN id */
-    bool     permit_joining;                    /*!< Indicates that at least one router / coordinator on the network currently permits joining */
-    esp_zb_ieee_addr_t extended_pan_id;         /*!< Extended PAN id, the MAC address which forms the network */
-}ESP_ZB_PACKED_STRUCT
-esp_zb_network_descriptor_t;
-
-/**
  * @brief Structure of simple descriptor request of ZCL command
  */
 typedef struct esp_zb_af_simple_desc_1_1_s {
@@ -257,10 +275,12 @@ typedef struct esp_zb_endpoint_config_s {
 } ESP_ZB_PACKED_STRUCT
 esp_zb_endpoint_config_t;
 
+/******************* endpoint data model *******************/
+
 /**
  * @brief Type to represent ZCL endpoint definition structure
  * @note  The esp_zb_zcl_reporting_info_t defines see @ref esp_zb_zcl_reporting_info_s
-* @note  The esp_zb_af_simple_desc_1_1_t defines see @ref esp_zb_af_simple_desc_1_1_s
+ * @note  The esp_zb_af_simple_desc_1_1_t defines see @ref esp_zb_af_simple_desc_1_1_s
  */
 typedef struct esp_zb_endpoint_s {
     uint8_t ep_id;                              /*!< Endpoint ID */
@@ -270,7 +290,10 @@ typedef struct esp_zb_endpoint_s {
     uint8_t reserved_size;                      /*!< Unused parameter (reserved for future use) */
     void *reserved_ptr;                         /*!< Unused parameter (reserved for future use) */
     uint8_t cluster_count;                      /*!< Number of supported clusters */
-    esp_zb_zcl_cluster_t *cluster_desc_list;    /*!< Supported clusters list */
+    ESP_ZB_PACKED_STRUCT union {
+        esp_zb_zcl_cluster_t *cluster_desc_list;    /*!< Supported clusters arranged in array */
+        esp_zb_cluster_list_t *cluster_list;        /*!< Supported clusters arranged in list */
+    };
     esp_zb_af_simple_desc_1_1_t *simple_desc;   /*!< Simple descriptor */
 #if defined ZB_ENABLE_ZLL
     uint8_t group_id_count;                     /*!< Number of group id */
@@ -282,29 +305,6 @@ typedef struct esp_zb_endpoint_s {
 } ESP_ZB_PACKED_STRUCT
 esp_zb_endpoint_t;
 
-/******************* attribute list *******************/
-/**
- * @brief The esp-zigbee data model of list of attribute.
- *
- * @note An attribute list groups up a single cluster.
- */
-typedef struct esp_zb_attribute_list_s {
-    esp_zb_zcl_attr_t   attribute;              /*!< A single attribute */
-    uint16_t     cluster_id;                    /*!< A cluster id assigned to this attribute */
-    struct esp_zb_attribute_list_s *next;       /*!< A pointer to next attribute */
-} esp_zb_attribute_list_t;
-
-/******************* cluster list *******************/
-/**
- * @brief The esp-zigbee data model of list of cluster.
- *
- */
-typedef struct esp_zb_cluster_list_s {
-    esp_zb_zcl_cluster_t cluster;               /*!< A single cluster */
-    struct esp_zb_cluster_list_s *next;         /*!< A pointer to next cluster */
-} esp_zb_cluster_list_t;
-
-/******************* endpoint list *******************/
 /**
  * @brief The esp-zigbee data model of list of endpoint.
  *
@@ -481,6 +481,14 @@ typedef struct esp_zb_ias_zone_cluster_cfg_s {
     uint8_t   zone_id;                               /*!< zone id */
     esp_zb_zcl_ias_zone_int_ctx_t zone_ctx;          /*!< zone context*/
 } esp_zb_ias_zone_cluster_cfg_t;
+
+/**
+ * @brief Zigbee default attribute for IAS_WD cluster.
+ *
+ */
+typedef struct esp_zb_ias_wd_cluster_cfg_s {
+    uint16_t max_duration; /**< Max duration */
+} esp_zb_ias_wd_cluster_cfg_t;
 
 /**
  * @brief Zigbee standard mandatory attribute for door lock cluster.
@@ -832,6 +840,28 @@ typedef struct esp_zb_thermostat_cfg_s {
     esp_zb_identify_cluster_cfg_t identify_cfg;     /*!<  Identify cluster configuration, @ref esp_zb_identify_cluster_cfg_s */
     esp_zb_thermostat_cluster_cfg_t thermostat_cfg; /*!<  Thermostat cluster configuration, @ref esp_zb_thermostat_cluster_cfg_s */
 } esp_zb_thermostat_cfg_t;
+
+/**
+ * @brief Zigbee HA window covering clusters.
+ *
+ */
+typedef struct esp_zb_window_covering_cfg_s {
+    esp_zb_basic_cluster_cfg_t basic_cfg;               /*!< Basic cluster configuration, @ref esp_zb_basic_cluster_cfg_s */
+    esp_zb_identify_cluster_cfg_t identify_cfg;         /*!< Identify cluster configuration, @ref esp_zb_identify_cluster_cfg_s */
+    esp_zb_groups_cluster_cfg_t groups_cfg;             /*!< Groups cluster configuration, @ref esp_zb_groups_cluster_cfg_s */
+    esp_zb_scenes_cluster_cfg_t scenes_cfg;             /*!< Scenes cluster configuration, @ref esp_zb_scenes_cluster_cfg_s */
+    esp_zb_window_covering_cluster_cfg_t window_cfg;    /*!< Window covering cluster configuration, @ref esp_zb_window_covering_cluster_cfg_s */
+} esp_zb_window_covering_cfg_t;
+
+/**
+ * @brief Zigbee HA window covering controller clusters.
+ *
+ */
+typedef struct esp_zb_window_covering_controller_cfg_s {
+    esp_zb_basic_cluster_cfg_t basic_cfg;               /*!< Basic cluster configuration, @ref esp_zb_basic_cluster_cfg_s */
+    esp_zb_identify_cluster_cfg_t identify_cfg;         /*!< Identify cluster configuration, @ref esp_zb_identify_cluster_cfg_s */
+} esp_zb_window_covering_controller_cfg_t;
+
 
 #ifdef __cplusplus
 }
