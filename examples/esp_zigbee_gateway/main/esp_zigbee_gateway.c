@@ -21,6 +21,7 @@
 #include "esp_vfs_eventfd.h"
 #include "esp_spiffs.h"
 #include "esp_wifi.h"
+#include "esp_zigbee_type.h"
 #include "nvs_flash.h"
 #include "protocol_examples_common.h"
 #include "esp_rcp_update.h"
@@ -234,6 +235,22 @@ static void esp_zb_task(void *pvParameters)
     ESP_ERROR_CHECK(check_ot_rcp_version());
 #endif
     esp_zb_set_primary_network_channel_set(ESP_ZB_PRIMARY_CHANNEL_MASK);
+    esp_zb_ep_list_t *ep_list = esp_zb_ep_list_create();
+    esp_zb_cluster_list_t *cluster_list = esp_zb_zcl_cluster_list_create();
+    esp_zb_endpoint_config_t endpoint_config = {
+        .endpoint = ESP_ZB_GATEWAY_ENDPOINT,
+        .app_profile_id = ESP_ZB_AF_HA_PROFILE_ID,
+        .app_device_id = ESP_ZB_HA_REMOTE_CONTROL_DEVICE_ID,
+        .app_device_version = 0,
+    };
+
+    esp_zb_attribute_list_t *basic_cluser = esp_zb_basic_cluster_create(NULL);
+    esp_zb_basic_cluster_add_attr(basic_cluser, ESP_ZB_ZCL_ATTR_BASIC_MANUFACTURER_NAME_ID, ESP_MANUFACTURER_NAME);
+    esp_zb_basic_cluster_add_attr(basic_cluser, ESP_ZB_ZCL_ATTR_BASIC_MODEL_IDENTIFIER_ID, ESP_MODEL_IDENTIFIER);
+    esp_zb_cluster_list_add_basic_cluster(cluster_list, basic_cluser, ESP_ZB_ZCL_CLUSTER_SERVER_ROLE);
+    esp_zb_cluster_list_add_identify_cluster(cluster_list, esp_zb_identify_cluster_create(NULL), ESP_ZB_ZCL_CLUSTER_SERVER_ROLE);
+    esp_zb_ep_list_add_gateway_ep(ep_list, cluster_list, endpoint_config);
+    esp_zb_device_register(ep_list);
     ESP_ERROR_CHECK(esp_zb_start(false));
     esp_zb_main_loop_iteration();
     esp_rcp_update_deinit();

@@ -28,8 +28,8 @@
 /* Attribute values in ZCL string format
  * The string should be started with the length of its own.
  */
-#define MANUFACTURER_NAME               "\x0B""ESPRESSIF"
-#define MODEL_IDENTIFIER                "\x09"CONFIG_IDF_TARGET
+#define MANUFACTURER_NAME               "\x09""ESPRESSIF"
+#define MODEL_IDENTIFIER                "\x07"CONFIG_IDF_TARGET
 
 #define ESP_ZB_ZED_CONFIG()                                         \
     {                                                               \

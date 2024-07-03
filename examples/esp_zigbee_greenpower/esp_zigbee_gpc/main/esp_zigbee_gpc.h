@@ -15,6 +15,7 @@
 #include "esp_zigbee_core.h"
 #include "light_driver.h"
 #include "switch_driver.h"
+#include "zcl_utility.h"
 
 /* Zigbee configuration */
 #define MAX_CHILDREN 10                         /*!< The max amount of connected devices */
@@ -28,6 +29,10 @@
 #define ESP_ZGP_GPSB_FUNCTIONALITY 0x9ac3f       /*!< GPS functionality, refer to esp_zgp_gps_functionality_t */
 #define ESP_ZGP_GPBB_FUNCTIONALITY 0x9ac3f       /*!< GPP functionality, refer to esp_zgp_gpp_functionality_t */
 #define ESP_ZGP_ACTIVE_FUNCTIONALITY_ID 0xFFFFFF /*!< Active GP functionality */
+
+/* Basic manufacturer information */
+#define ESP_MANUFACTURER_NAME "\x09""ESPRESSIF"      /* Customized manufacturer name */
+#define ESP_MODEL_IDENTIFIER "\x07"CONFIG_IDF_TARGET /* Customized model identifier */
 
 /* Zigbee coordinator configuration */
 #define ESP_ZB_ZC_CONFIG()                                              \

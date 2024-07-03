@@ -34,6 +34,10 @@
 extern const uint8_t ota_file_start[] asm("_binary_ota_file_bin_start");                    /* ota_file corresponds to filename and bin corresponds to filetype */
 extern const uint8_t ota_file_end[]   asm("_binary_ota_file_bin_end");                      /* ota_file corresponds to filename and bin corresponds to filetype */
 
+/* Basic manufacturer information */
+#define ESP_MANUFACTURER_NAME "\x09""ESPRESSIF"      /* Customized manufacturer name */
+#define ESP_MODEL_IDENTIFIER "\x07"CONFIG_IDF_TARGET /* Customized model identifier */
+
 #define ESP_ZB_ZC_CONFIG()                                                  \
     {                                                                       \
         .esp_zb_role = ESP_ZB_DEVICE_TYPE_COORDINATOR,                      \
