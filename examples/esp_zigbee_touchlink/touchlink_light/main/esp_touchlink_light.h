@@ -24,6 +24,10 @@
 #define ESP_ZB_TOUCHLINK_CHANNEL_MASK (1l << 11)    /* Zigbee touchlink channel mask use in the example */
 #define TOUCHLINK_TARGET_TIMEOUT 60                 /* The timeout for the Touchlink target, measured in seconds */
 
+/* Basic manufacturer information */
+#define ESP_MANUFACTURER_NAME "\x09""ESPRESSIF"      /* Customized manufacturer name */
+#define ESP_MODEL_IDENTIFIER "\x07"CONFIG_IDF_TARGET /* Customized model identifier */
+
 #define ESP_ZB_ZR_CONFIG()                                                              \
     {                                                                                   \
         .esp_zb_role = ESP_ZB_DEVICE_TYPE_ROUTER,                                       \

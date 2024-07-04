@@ -14,12 +14,17 @@
 
 #include "esp_zigbee_core.h"
 #include "light_driver.h"
+#include "zcl_utility.h"
 
 /* Zigbee configuration */
 #define MAX_CHILDREN                      10                                    /* the max amount of connected devices */
 #define INSTALLCODE_POLICY_ENABLE         false                                 /* enable the install code policy for security */
 #define HA_COLOR_DIMMABLE_LIGHT_ENDPOINT  10                                    /* esp light switch device endpoint */
 #define ESP_ZB_PRIMARY_CHANNEL_MASK       ESP_ZB_TRANSCEIVER_ALL_CHANNELS_MASK  /* Zigbee primary channel mask use in the example */
+
+/* Basic manufacturer information */
+#define ESP_MANUFACTURER_NAME "\x09""ESPRESSIF"      /* Customized manufacturer name */
+#define ESP_MODEL_IDENTIFIER "\x07"CONFIG_IDF_TARGET /* Customized model identifier */
 
 #define ESP_ZB_ZR_CONFIG()                                                              \
     {                                                                                   \

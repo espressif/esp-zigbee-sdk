@@ -14,6 +14,7 @@
 
 #include "esp_zigbee_core.h"
 #include "light_driver.h"
+#include "zcl_utility.h"
 
 /* Zigbee configuration */
 #define INSTALLCODE_POLICY_ENABLE       false    /* enable the install code policy for security */
@@ -21,6 +22,10 @@
 #define ED_KEEP_ALIVE                   3000    /* 3000 millisecond */
 #define HA_ESP_LIGHT_ENDPOINT           10    /* esp light bulb device endpoint, used to process light controlling commands */
 #define ESP_ZB_PRIMARY_CHANNEL_MASK     ESP_ZB_TRANSCEIVER_ALL_CHANNELS_MASK  /* Zigbee primary channel mask use in the example */
+
+/* Basic manufacturer information */
+#define ESP_MANUFACTURER_NAME "\x09""ESPRESSIF"      /* Customized manufacturer name */
+#define ESP_MODEL_IDENTIFIER "\x07"CONFIG_IDF_TARGET /* Customized model identifier */
 
 #define ESP_ZB_ZED_CONFIG()                                         \
     {                                                               \

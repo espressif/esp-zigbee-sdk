@@ -236,7 +236,13 @@ static void esp_zb_task(void *pvParameters)
         .app_device_id = ESP_ZB_HA_ON_OFF_LIGHT_DEVICE_ID,
         .app_device_version = 0
     };
+    zcl_basic_manufacturer_info_t info = {
+        .manufacturer_name = ESP_MANUFACTURER_NAME,
+        .model_identifier = ESP_MODEL_IDENTIFIER,
+    };
+
     esp_zb_ep_list_add_ep(ep_list, esp_zb_on_off_light_clusters_create(&light_cfg), endpoint_config);
+    esp_zcl_utility_add_ep_basic_manufacturer_info(ep_list, HA_LIGHT_ENDPOINT, &info);
     esp_zb_device_register(ep_list);
     esp_zb_core_action_handler_register(zb_action_handler);
 

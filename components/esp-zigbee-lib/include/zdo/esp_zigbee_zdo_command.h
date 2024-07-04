@@ -5,10 +5,10 @@
  */
 
 #pragma once
-#include "esp_err.h"
 #ifdef __cplusplus
 extern "C" {
 #endif
+#include "esp_err.h"
 #include "esp_zigbee_type.h"
 #include "esp_zigbee_zdo_common.h"
 
@@ -24,20 +24,6 @@ extern "C" {
 #define ESP_ZB_PERMIT_JOIN_REQ_TIMEOUT              (5 * ESP_ZB_TIME_ONE_SECOND)            /* timeout for permit join */
 #define ESP_ZB_DEVICE_LEAVE_REQ_TIMEOUT             (5 * ESP_ZB_TIME_ONE_SECOND)            /* timeout for device leave */
 #define ESP_ZB_DEVICE_BIND_TABLE_REQ_TIMEOUT        (5 * ESP_ZB_TIME_ONE_SECOND)            /* timeout for device bind table request */
-
-
-/** Active scan network callback
- *
- * @brief A ZDO active scan request callback for user to get scan list status.
- *
- * @note User's callback get response from the device that found in network.
- *
- * @param[in] zdo_status The ZDO response status, refer to `esp_zb_zdp_status`
- * @param[in] count     Number of discovered networks
- * @param[in] nwk_descriptor The pointer to all discvoered networks see refer to esp_zb_network_descriptor_t
- *
- */
-typedef void (*esp_zb_zdo_scan_complete_callback_t)(esp_zb_zdp_status_t zdo_status, uint8_t count, esp_zb_network_descriptor_t *nwk_descriptor);
 
 /** Find device callback
  *
@@ -277,6 +263,54 @@ typedef struct esp_zb_zdo_binding_table_info_s {
     esp_zb_zdo_binding_table_record_t *record;  /*!< The binding table record list */
 } esp_zb_zdo_binding_table_info_t;
 
+/**
+* @brief Struture of network descriptor request of active scan response
+*/
+typedef struct esp_zb_network_descriptor_s{
+    uint16_t short_pan_id;                      /*!< PAN id */
+    bool     permit_joining;                    /*!< Indicates that at least one router / coordinator on the network currently permits joining */
+    esp_zb_ieee_addr_t extended_pan_id;         /*!< Extended PAN id, the MAC address which forms the network */
+    uint8_t logic_channel;                      /*!< The current logical channel occupied by the network. */
+    bool router_capacity;                       /*!< This value is set to true if the device is capable of accepting join requests from router-capable
+                                                     devices and set to FALSE otherwise. */
+    bool end_device_capacity;                   /*!< This value is set to true if the device is capable of accepting join requests from end devices
+                                                     and set to FALSE otherwise.*/
+} esp_zb_network_descriptor_t;
+
+/**
+ * @brief Channel information of Energy Detect
+ *
+ */
+typedef struct esp_zb_energy_detect_channel_info_s {
+    uint8_t channel_number;     /*!< The channel of energy detect */
+    int8_t energy_detected;     /*!< The energy value of channel in dbm */
+} esp_zb_energy_detect_channel_info_t;
+
+/** Active scan network callback
+ *
+ * @brief A ZDO active scan request callback for user to get scan list status.
+ *
+ * @note User's callback get response from the device that found in network.
+ *
+ * @param[in] zdo_status The ZDO response status, refer to esp_zb_zdp_status_t
+ * @param[in] count     Number of discovered networks @p nwk_descriptor
+ * @param[in] nwk_descriptor The pointer to all discovered networks see refer to esp_zb_network_descriptor_t
+ *
+ */
+typedef void (*esp_zb_zdo_scan_complete_callback_t)(esp_zb_zdp_status_t zdo_status, uint8_t count,
+                                                    esp_zb_network_descriptor_t *nwk_descriptor);
+
+/**
+ * @brief ZDO energy detect callback
+ *
+ * @param[in] status  The status of callback, refer to esp_zb_zdp_status_t
+ * @param[in] count   The size of energy detect list
+ * @param[in] ed_list The list of energy detect information, refer to esp_zb_energy_detect_channel_info_t
+ *
+ */
+typedef void (*esp_zb_zdo_energy_detect_callback_t)(esp_zb_zdp_status_t status, uint16_t count,
+                                                    esp_zb_energy_detect_channel_info_t *channel_info);
+
 /** Binding table request callback
  *
  * @brief A ZDO binding table request callback for user to get the binding table record of remote device.
@@ -296,10 +330,19 @@ typedef void (*esp_zb_zdo_binding_table_callback_t)(const esp_zb_zdo_binding_tab
  * Network discovery service for scanning available network
  *
  * @param[in] channel_mask Valid channel mask is from 0x00000800 (only channel 11) to 0x07FFF800 (all channels from 11 to 26)
- * @param[in] scan_duration Time to spend scanning each channel
+ * @param[in] scan_duration Time spent scanning each channel, in units of ((1 << scan_duration) + 1) * a beacon time.
  * @param[in] user_cb   A user callback to get the active scan result please refer to esp_zb_zdo_scan_complete_callback_t
  */
 void esp_zb_zdo_active_scan_request(uint32_t channel_mask, uint8_t scan_duration, esp_zb_zdo_scan_complete_callback_t user_cb);
+
+/**
+ * @brief Energy detect request
+ *
+ * @param[in] channel_mask The channel mask that will trigger the energy detection, with a range from 0x00000800 to 0x07FFF800.
+ * @param[in] duration The detection duration on each channel, in units of ((1 << scan_duration) + 1) * a beacon time.
+ * @param[in] cb A user callback to receive the energy detection result, see esp_zb_zdo_energy_detect_callback_t.
+ */
+void esp_zb_zdo_energy_detect_request(uint32_t channel_mask, uint8_t duration, esp_zb_zdo_energy_detect_callback_t cb);
 
 /**
  * @brief   Send bind device request command

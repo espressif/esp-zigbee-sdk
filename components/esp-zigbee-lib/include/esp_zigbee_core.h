@@ -60,8 +60,25 @@ typedef enum {
 /**
  * @brief Enum of the Zigbee core action callback id
  *
- * @note If one endpoint possesses the same custom cluster identifier in both client and server roles,
- *       any request or response command for the custom cluster will only trigger the ESP_ZB_CORE_CMD_CUSTOM_CLUSTER_REQ_CB_ID callback.
+ * @note
+ *    1. If one endpoint possesses the same custom cluster identifier in both client and server roles,
+ *       any request or response command for the custom cluster will only trigger the
+ *       ``ESP_ZB_CORE_CMD_CUSTOM_CLUSTER_REQ_CB_ID`` callback.
+ *    2. The callback ids without ``CMD`` in their names would provide messages of the following structure:
+ *       @code{c}
+ *       typedef struct xxx_message_s {
+ *           esp_zb_device_cb_common_info_t info;
+ *           ...
+ *       } xxx_message_t;
+ *       @endcode
+ *       While the callback ids with ``CMD`` in their names would provide messages of the following structure:
+ *       @code{c}
+ *       typedef struct xxx_message_s {
+ *           esp_zb_zcl_cmd_info_t info;
+ *           ...
+ *       } xxx_message_t;
+ *       @endcode
+ *
  */
 typedef enum esp_zb_core_action_callback_id_s {
     ESP_ZB_CORE_SET_ATTR_VALUE_CB_ID                    = 0x0000,   /*!< Set attribute value, refer to esp_zb_zcl_set_attr_value_message_t */
@@ -93,6 +110,26 @@ typedef enum esp_zb_core_action_callback_id_s {
     ESP_ZB_CORE_COMM_RESTART_DEVICE_CB_ID               = 0x001a,   /*!< Commissioning restart device, refer to esp_zigbee_zcl_commissioning_restart_device_message_t */
     ESP_ZB_CORE_COMM_OPERATE_STARTUP_PARAMS_CB_ID       = 0x001b,   /*!< Commissioning operate startup parameters, refer to esp_zigbee_zcl_commissioning_operate_startup_parameters_message_t */
     ESP_ZB_CORE_COMM_COMMAND_RESP_CB_ID                 = 0x001c,   /*!< Commissioning command response, refer to esp_zigbee_zcl_commissioning_command_response_message_t */
+    ESP_ZB_CORE_IAS_WD_START_WARNING_CB_ID              = 0x001d,   /*!< IAS WD cluster Start Warning command, refer to esp_zb_zcl_ias_wd_start_warning_message_t */
+    ESP_ZB_CORE_IAS_WD_SQUAWK_CB_ID                     = 0x001e,   /*!< IAS WD cluster Squawk command, refer to esp_zb_zcl_ias_wd_squawk_message_t */
+    ESP_ZB_CORE_IAS_ACE_ARM_CB_ID                       = 0x001f,   /*!< IAS ACE cluster Arm command, refer to esp_zb_zcl_ias_ace_arm_message_t */
+    ESP_ZB_CORE_IAS_ACE_BYPASS_CB_ID                    = 0x0020,   /*!< IAS ACE cluster Bypass command, refer to esp_zb_zcl_ias_ace_bypass_message_t */
+    ESP_ZB_CORE_IAS_ACE_EMERGENCY_CB_ID                 = 0x0021,   /*!< IAS ACE cluster Emergency command, refer to esp_zb_zcl_ias_ace_emergency_message_t */
+    ESP_ZB_CORE_IAS_ACE_FIRE_CB_ID                      = 0x0022,   /*!< IAS ACE cluster Fire command, refer to esp_zb_zcl_ias_ace_fire_message_t */
+    ESP_ZB_CORE_IAS_ACE_PANIC_CB_ID                     = 0x0023,   /*!< IAS ACE cluster Panic command, refer to esp_zb_zcl_ias_ace_panic_message_t */
+    ESP_ZB_CORE_IAS_ACE_GET_PANEL_STATUS_CB_ID          = 0x0024,   /*!< IAS ACE cluster Get Panel Status command, refer to esp_zb_zcl_ias_ace_get_panel_status_message_t */
+    ESP_ZB_CORE_IAS_ACE_GET_BYPASSED_ZONE_LIST_CB_ID    = 0x0025,   /*!< IAS ACE cluster Get Bypass Zone List command, refer to esp_zb_zcl_ias_ace_get_bypassed_zone_list_message_t */
+    ESP_ZB_CORE_IAS_ACE_GET_ZONE_STATUS_CB_ID           = 0x0026,   /*!< IAS ACE cluster Get Zone Status command, refer to esp_zb_zcl_ias_ace_get_zone_status_message_t */
+    ESP_ZB_CORE_IAS_ACE_ARM_RESP_CB_ID                  = 0x0027,   /*!< IAS ACE cluster Arm command response, refer to esp_zb_zcl_ias_ace_arm_response_message_t */
+    ESP_ZB_CORE_IAS_ACE_GET_ZONE_ID_MAP_RESP_CB_ID      = 0x0028,   /*!< IAS ACE cluster Get Zone ID MAP command response, refer to esp_zb_zcl_ias_ace_get_zone_id_map_response_message_t */
+    ESP_ZB_CORE_IAS_ACE_GET_ZONE_INFO_RESP_CB_ID        = 0x0029,   /*!< IAS ACE cluster Get Zone Information command response, refer to esp_zb_zcl_ias_ace_get_zone_info_response_message_t */
+    ESP_ZB_CORE_IAS_ACE_ZONE_STATUS_CHANGED_CB_ID       = 0x002a,   /*!< IAS ACE cluster Zone Status Changed command, refer to esp_zb_zcl_ias_ace_zone_status_changed_message_t */
+    ESP_ZB_CORE_IAS_ACE_PANEL_STATUS_CHANGED_CB_ID      = 0x002b,   /*!< IAS ACE cluster Panel Status Changed command, refer to esp_zb_zcl_ias_ace_panel_status_changed_message_t */
+    ESP_ZB_CORE_IAS_ACE_GET_PANEL_STATUS_RESP_CB_ID     = 0x002c,   /*!< IAS ACE cluster Get Panel Status command response, refer to esp_zb_zcl_ias_ace_get_panel_status_response_message_t */
+    ESP_ZB_CORE_IAS_ACE_SET_BYPASSED_ZONE_LIST_CB_ID    = 0x002d,   /*!< IAS ACE cluster Set Bypassed Zone List command, refer to esp_zb_zcl_ias_ace_set_bypassed_zone_list_message_t */
+    ESP_ZB_CORE_IAS_ACE_BYPASS_RESP_CB_ID               = 0x002e,   /*!< IAS ACE cluster Bypass command response, refer to esp_zb_zcl_ias_ace_bypass_response_message_t */
+    ESP_ZB_CORE_IAS_ACE_GET_ZONE_STATUS_RESP_CB_ID      = 0x002f,   /*!< IAS ACE cluster Get Zone Status command response, refer to esp_zb_zcl_ias_ace_get_zone_status_response_message_t */
+    ESP_ZB_CORE_WINDOW_COVERING_MOVEMENT_CB_ID          = 0x0030,   /*!< Window covering movement command, refer to esp_zb_zcl_window_covering_movement_message_t */
     ESP_ZB_CORE_CMD_READ_ATTR_RESP_CB_ID                = 0x1000,   /*!< Read attribute response, refer to esp_zb_zcl_cmd_read_attr_resp_message_t */
     ESP_ZB_CORE_CMD_WRITE_ATTR_RESP_CB_ID               = 0x1001,   /*!< Write attribute response, refer to esp_zb_zcl_cmd_write_attr_resp_message_t */
     ESP_ZB_CORE_CMD_REPORT_CONFIG_RESP_CB_ID            = 0x1002,   /*!< Configure report response, refer to esp_zb_zcl_cmd_config_report_resp_message_t */
@@ -113,23 +150,6 @@ typedef enum esp_zb_core_action_callback_id_s {
     ESP_ZB_CORE_CMD_PRIVILEGE_COMMAND_RESP_CB_ID        = 0x1051,   /*!< Custom Cluster response, refer to esp_zb_zcl_privilege_command_message_t */
     ESP_ZB_CORE_CMD_TOUCHLINK_GET_GROUP_ID_RESP_CB_ID   = 0x1060,   /*!< Touchlink commissioning cluster get group id response, refer to esp_zb_touchlink_get_group_identifiers_resp_message_t */
     ESP_ZB_CORE_CMD_TOUCHLINK_GET_ENDPOINT_LIST_RESP_CB_ID = 0x1061,   /*!< Touchlink commissioning cluster get endpoint list response, refer to esp_zb_zcl_touchlink_get_endpoint_list_resp_message_t */
-    ESP_ZB_CORE_CMD_IAS_ACE_ARM_CB_ID                      = 0x0168,   /*!< IAS ACE cluster Arm command, refer to esp_zb_zcl_ias_ace_arm_message_t */
-    ESP_ZB_CORE_CMD_IAS_ACE_BYPASS_CB_ID                   = 0x0169,   /*!< IAS ACE cluster Bypass command, refer to esp_zb_zcl_ias_ace_bypass_message_t */
-    ESP_ZB_CORE_CMD_IAS_ACE_EMERGENCY_CB_ID                = 0x016A,   /*!< IAS ACE cluster Emergency command, refer to esp_zb_zcl_ias_ace_emergency_message_t */
-    ESP_ZB_CORE_CMD_IAS_ACE_FIRE_CB_ID                     = 0x016B,   /*!< IAS ACE cluster Fire command, refer to esp_zb_zcl_ias_ace_fire_message_t */
-    ESP_ZB_CORE_CMD_IAS_ACE_PANIC_CB_ID                    = 0x016C,   /*!< IAS ACE cluster Panic command, refer to esp_zb_zcl_ias_ace_panic_message_t */
-    ESP_ZB_CORE_CMD_IAS_ACE_GET_PANEL_STATUS_CB_ID         = 0x016D,   /*!< IAS ACE cluster Get Panel Status command, refer to esp_zb_zcl_ias_ace_get_panel_status_message_t */
-    ESP_ZB_CORE_CMD_IAS_ACE_GET_BYPASSED_ZONE_LIST_CB_ID   = 0x016E,   /*!< IAS ACE cluster Get Bypass Zone List command, refer to esp_zb_zcl_ias_ace_get_bypassed_zone_list_message_t */
-    ESP_ZB_CORE_CMD_IAS_ACE_GET_ZONE_STATUS_CB_ID          = 0x016F,   /*!< IAS ACE cluster Get Zone Status command, refer to esp_zb_zcl_ias_ace_get_zone_status_message_t */
-    ESP_ZB_CORE_CMD_IAS_ACE_ARM_RESP_CB_ID                 = 0x0170,   /*!< IAS ACE cluster Arm command response, refer to esp_zb_zcl_ias_ace_arm_response_message_t */
-    ESP_ZB_CORE_CMD_IAS_ACE_GET_ZONE_ID_MAP_RESP_CB_ID     = 0x0171,   /*!< IAS ACE cluster Get Zone ID MAP command response, refer to esp_zb_zcl_ias_ace_get_zone_id_map_response_message_t */
-    ESP_ZB_CORE_CMD_IAS_ACE_GET_ZONE_INFO_RESP_CB_ID       = 0x0172,   /*!< IAS ACE cluster Get Zone Information command response, refer to esp_zb_zcl_ias_ace_get_zone_info_response_message_t */
-    ESP_ZB_CORE_CMD_IAS_ACE_ZONE_STATUS_CHANGED_CB_ID      = 0x0173,   /*!< IAS ACE cluster Zone Status Changed command, refer to esp_zb_zcl_ias_ace_zone_status_changed_message_t */
-    ESP_ZB_CORE_CMD_IAS_ACE_PANEL_STATUS_CHANGED_CB_ID     = 0x0174,   /*!< IAS ACE cluster Panel Status Changed command, refer to esp_zb_zcl_ias_ace_panel_status_changed_message_t */
-    ESP_ZB_CORE_CMD_IAS_ACE_GET_PANEL_STATUS_RESP_CB_ID    = 0x0175,   /*!< IAS ACE cluster Get Panel Status command response, refer to esp_zb_zcl_ias_ace_get_panel_status_response_message_t */
-    ESP_ZB_CORE_CMD_IAS_ACE_SET_BYPASSED_ZONE_LIST_CB_ID   = 0x0176,   /*!< IAS ACE cluster Set Bypassed Zone List command, refer to esp_zb_zcl_ias_ace_set_bypassed_zone_list_message_t */
-    ESP_ZB_CORE_CMD_IAS_ACE_BYPASS_RESP_CB_ID              = 0x0177,   /*!< IAS ACE cluster Bypass command response, refer to esp_zb_zcl_ias_ace_bypass_response_message_t */
-    ESP_ZB_CORE_CMD_IAS_ACE_GET_ZONE_STATUS_RESP_CB_ID     = 0x0178,   /*!< IAS ACE cluster Get Zone Status command response, refer to esp_zb_zcl_ias_ace_get_zone_status_response_message_t */
     ESP_ZB_CORE_CMD_GREEN_POWER_RECV_CB_ID                 = 0x1F00,   /*!< Green power cluster command receiving, refer to esp_zb_zcl_cmd_green_power_recv_message_t */
     ESP_ZB_CORE_REPORT_ATTR_CB_ID                          = 0x2000,   /*!< Attribute Report, refer to esp_zb_zcl_report_attr_message_t */
 } esp_zb_core_action_callback_id_t;
@@ -775,8 +795,15 @@ esp_err_t esp_zb_bdb_cancel_formation(void);
 /**
  * @brief Register a Zigbee device.
  *
- * @note After successful registration, the SDK will retain a copy of the whole data model, the ep_list will be freed.
- * @param[in] ep_list  An endpoint list which wants to register @ref esp_zb_ep_list_s
+ * @note
+ *      1. After successful registration, the SDK will retain a copy of the whole data model,
+ *         the \p ep_list will be freed.
+ *      2. For any lists (e.g. ``esp_zb_cluster_list_t`` and ``esp_zb_attribute_list_t``) added to the data
+ *         modal should only be created and modified by the API.
+ *      3. Please DO NOT reuse ANY of lists in the data mode. If you have two identical stuff (e.g. two endpoints
+ *         with identical clusters), please create/add them twice.
+ *
+ * @param[in] ep_list  An endpoint list which wants to register, see @ref esp_zb_ep_list_s
  *
  * @return
  *      - ESP_OK on success

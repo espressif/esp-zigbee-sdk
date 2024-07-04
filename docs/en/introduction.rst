@@ -110,6 +110,8 @@ The supported features in current ESP Zigbee SDK are listed below:
     carbon_dioxide_measurement    0x040d
        PM2.5_measurement          0x042a
            ias_zone               0x0500
+           ias_ace                0x0501
+           ias_wd                 0x0502
             price                 0x0700
            metering               0x0702
      meter_identification         0x0b01

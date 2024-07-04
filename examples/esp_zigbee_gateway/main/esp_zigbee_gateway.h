@@ -19,12 +19,17 @@
 #define MAX_CHILDREN                    10          /* the max amount of connected devices */
 #define INSTALLCODE_POLICY_ENABLE       false       /* enable the install code policy for security */
 #define ESP_ZB_PRIMARY_CHANNEL_MASK     (1l << 13)  /* Zigbee primary channel mask use in the example */
+#define ESP_ZB_GATEWAY_ENDPOINT         1           /* Gateway endpoint identifier */
 #define APP_PROD_CFG_CURRENT_VERSION    0x0001      /* Production configuration version */
 #define RCP_VERSION_MAX_SIZE            80
 #define HOST_RESET_PIN_TO_RCP_RESET     CONFIG_PIN_TO_RCP_RESET
 #define HOST_BOOT_PIN_TO_RCP_BOOT       CONFIG_PIN_TO_RCP_BOOT
 #define HOST_RX_PIN_TO_RCP_TX           CONFIG_PIN_TO_RCP_TX
 #define HOST_TX_PIN_TO_RCP_RX           CONFIG_PIN_TO_RCP_RX
+
+/* Basic manufacturer information */
+#define ESP_MANUFACTURER_NAME "\x09""ESPRESSIF"      /* Customized manufacturer name */
+#define ESP_MODEL_IDENTIFIER "\x07"CONFIG_IDF_TARGET /* Customized model identifier */
 
 #define ESP_ZB_ZC_CONFIG()                                                              \
     {                                                                                   \

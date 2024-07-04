@@ -25,6 +25,10 @@
 #define ESP_ZB_TOUCHLINK_CHANNEL        (11)  /* Zigbee touchlink channel use in the example */
 #define ESP_ZB_TOUCHLINK_CHANNEL_MASK   (1 << ESP_ZB_TOUCHLINK_CHANNEL)  /* Zigbee touchlink channel mask use in the example */
 
+/* Basic manufacturer information */
+#define ESP_MANUFACTURER_NAME "\x09""ESPRESSIF"      /* Customized manufacturer name */
+#define ESP_MODEL_IDENTIFIER "\x07"CONFIG_IDF_TARGET /* Customized model identifier */
+
 #define ESP_ZB_ZED_CONFIG()                                         \
     {                                                               \
         .esp_zb_role = ESP_ZB_DEVICE_TYPE_ED,                       \
