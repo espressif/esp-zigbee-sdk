@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2021-2022 Espressif Systems (Shanghai) CO LTD
+ * SPDX-FileCopyrightText: 2021-2024 Espressif Systems (Shanghai) CO LTD
  *
  * SPDX-License-Identifier: CC0-1.0
  *
@@ -19,11 +19,57 @@
 
 static const char *TAG = "ESP_OTA_SERVER";
 
+static uint32_t s_ota_image_offset = 0;
+
+static switch_func_pair_t button_func_pair[] = {{GPIO_INPUT_IO_TOGGLE_SWITCH, SWITCH_ON_CONTROL}};
+
 static esp_err_t zb_ota_next_data_handler(esp_zb_ota_zcl_information_t message, uint16_t index, uint8_t size, uint8_t **data);
 
 static void bdb_start_top_level_commissioning_cb(uint8_t mode_mask)
 {
     ESP_RETURN_ON_FALSE(esp_zb_bdb_start_top_level_commissioning(mode_mask) == ESP_OK, , TAG, "Failed to start Zigbee commissioning");
+}
+
+/**
+ * @brief Send OTA image notify request
+ * @param[in] notify_on
+ *      - true: Adds the OTA image file to the OTA image table and broadcasts it to the network
+ *      - false: Only adds the OTA image file to the OTA image table
+ */
+static esp_err_t zb_ota_upgrade_srv_send_notify_image(bool notify_on)
+{
+    esp_zb_ota_upgrade_server_notify_req_t req = {
+        .endpoint = ESP_OTA_SERVER_ENDPOINT,
+        .index = OTA_UPGRADE_INDEX,
+        .notify_on = notify_on,
+        .ota_upgrade_time = OTA_UPGRADE_TIME,
+        .ota_file_header =
+            {
+                .manufacturer_code = OTA_UPGRADE_MANUFACTURER,
+                .image_type = OTA_UPGRADE_IMAGE_TYPE,
+                .file_version = OTA_UPGRADE_FILE_VERSION,
+                .image_size = ota_file_end - ota_file_start,
+            },
+        .next_data_cb = zb_ota_next_data_handler,
+    };
+    return esp_zb_ota_upgrade_server_notify_req(&req);
+}
+
+static void zb_buttons_handler(switch_func_pair_t *button_func_pair)
+{
+    esp_zb_lock_acquire(portMAX_DELAY);
+    if (esp_zb_bdb_dev_joined()) {
+        zb_ota_upgrade_srv_send_notify_image(true);
+        ESP_LOGI(TAG, "Send OTA Server notify image request");
+    }
+    esp_zb_lock_release();
+}
+
+static esp_err_t deferred_driver_init(void)
+{
+    ESP_RETURN_ON_FALSE(switch_driver_init(button_func_pair, PAIR_SIZE(button_func_pair), zb_buttons_handler), ESP_FAIL, TAG,
+                        "Failed to initialize switch driver");
+    return ESP_OK;
 }
 
 void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
@@ -40,6 +86,7 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
     case ESP_ZB_BDB_SIGNAL_DEVICE_FIRST_START:
     case ESP_ZB_BDB_SIGNAL_DEVICE_REBOOT:
         if (err_status == ESP_OK) {
+            ESP_LOGI(TAG, "Deferred driver initialization %s", deferred_driver_init() ? "failed" : "successful");
             ESP_LOGI(TAG, "Device started up in %s factory-reset mode", esp_zb_bdb_is_factory_new() ? "" : "non");
             if (esp_zb_bdb_is_factory_new()) {
                 ESP_LOGI(TAG, "Start network formation");
@@ -75,22 +122,11 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
     case ESP_ZB_ZDO_SIGNAL_DEVICE_ANNCE: {
         dev_annce_params = (esp_zb_zdo_signal_device_annce_params_t *)esp_zb_app_signal_get_params(p_sg_p);
         ESP_LOGI(TAG, "New device commissioned or rejoined (short: 0x%04hx)", dev_annce_params->device_short_addr);
-        esp_zb_ota_upgrade_server_notify_req_t req = {
-            .endpoint = ESP_OTA_SERVER_ENDPOINT,
-            .index = OTA_UPGRADE_INDEX,
-            .notify_on = true,
-            .ota_upgrade_time = OTA_UPGRADE_TIME,
-            .ota_file_header =
-                {
-                    .manufacturer_code = OTA_UPGRADE_MANUFACTURER,
-                    .image_type = OTA_UPGRADE_IMAGE_TYPE,
-                    .file_version = OTA_UPGRADE_FILE_VERSION,
-                    .image_size = ota_file_end - ota_file_start,
-                },
-            .next_data_cb = zb_ota_next_data_handler,
-        };
-        esp_zb_ota_upgrade_server_notify_req(&req);
-        ESP_LOGI(TAG, "OTA Server notify");
+        /* Broadcast Image Notify Request when the OTA server is not in OTA process */
+        if (s_ota_image_offset == 0) {
+            zb_ota_upgrade_srv_send_notify_image(true);
+            ESP_LOGI(TAG, "Notify OTA upgrade");
+        }
         break;
     }
     case ESP_ZB_NWK_SIGNAL_PERMIT_JOIN_STATUS:
@@ -109,7 +145,6 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
     }
 }
 
-static uint32_t s_ota_image_offset = 0;
 static esp_err_t zb_ota_next_data_handler(esp_zb_ota_zcl_information_t message, uint16_t index, uint8_t size, uint8_t **data)
 {
     switch (index) {
@@ -121,6 +156,9 @@ static esp_err_t zb_ota_next_data_handler(esp_zb_ota_zcl_information_t message, 
         ESP_LOGW(TAG, "Failed to locate the OTA image using the index (%d)", index);
         return ESP_FAIL;
         break;
+    }
+    if (s_ota_image_offset >= (ota_file_end - ota_file_start)) {
+        s_ota_image_offset = 0;
     }
     ESP_LOGI(TAG, "-- OTA Server transmits data from 0x%x to 0x%x: progress [%ld/%d]", message.dst_short_addr, message.src_addr.u.short_addr,
              s_ota_image_offset, (ota_file_end - ota_file_start));
@@ -154,6 +192,7 @@ static esp_err_t zb_ota_upgrade_server_query_image_handler(esp_zb_zcl_ota_upgrad
     }
     ESP_RETURN_ON_FALSE((message.image_type == OTA_UPGRADE_IMAGE_TYPE && message.manufacturer_code == OTA_UPGRADE_MANUFACTURER), ESP_ERR_NOT_FOUND,
                         TAG, "OTA query image mismatch");
+    s_ota_image_offset = 0;
     return ret;
 }
 
@@ -174,39 +213,46 @@ static esp_err_t zb_action_handler(esp_zb_core_action_callback_id_t callback_id,
     return ret;
 }
 
+static esp_err_t zb_register_ota_upgrade_server_device(void)
+{
+    esp_zb_attribute_list_t *basic_cluster = esp_zb_basic_cluster_create(NULL);
+    esp_zb_attribute_list_t *ota_cluster = esp_zb_zcl_attr_list_create(ESP_ZB_ZCL_CLUSTER_ID_OTA_UPGRADE);
+    esp_zb_cluster_list_t *cluster_list = esp_zb_zcl_cluster_list_create();
+    esp_zb_ep_list_t *ep_list = esp_zb_ep_list_create();
+    esp_zb_zcl_ota_upgrade_server_variable_t variable = {
+        .query_jitter = OTA_UPGRADE_QUERY_JITTER,
+        .current_time = OTA_UPGRADE_CURRENT_TIME,
+        .file_count = OTA_UPGRADE_IMAGE_COUNT,
+    };
+    esp_zb_endpoint_config_t endpoint_config = {
+        .endpoint = ESP_OTA_SERVER_ENDPOINT,
+        .app_profile_id = ESP_ZB_AF_HA_PROFILE_ID,
+        .app_device_id = ESP_ZB_HA_TEST_DEVICE_ID,
+        .app_device_version = 0,
+    };
+
+    /* Added attributes */
+    ESP_ERROR_CHECK(esp_zb_basic_cluster_add_attr(basic_cluster, ESP_ZB_ZCL_ATTR_BASIC_MANUFACTURER_NAME_ID, ESP_MANUFACTURER_NAME));
+    ESP_ERROR_CHECK(esp_zb_basic_cluster_add_attr(basic_cluster, ESP_ZB_ZCL_ATTR_BASIC_MODEL_IDENTIFIER_ID, ESP_MODEL_IDENTIFIER));
+    ESP_ERROR_CHECK(esp_zb_ota_cluster_add_attr(ota_cluster, ESP_ZB_ZCL_ATTR_OTA_UPGRADE_SERVER_DATA_ID, (void *)&variable));
+    /* Added clusters */
+    ESP_ERROR_CHECK(esp_zb_cluster_list_add_basic_cluster(cluster_list, basic_cluster, ESP_ZB_ZCL_CLUSTER_SERVER_ROLE));
+    ESP_ERROR_CHECK(esp_zb_cluster_list_add_ota_cluster(cluster_list, ota_cluster, ESP_ZB_ZCL_CLUSTER_SERVER_ROLE));
+    /* Added endpoints */
+    ESP_ERROR_CHECK(esp_zb_ep_list_add_ep(ep_list, cluster_list, endpoint_config));
+    /* Register device */
+    return esp_zb_device_register(ep_list);
+}
+
 static void esp_zb_task(void *pvParameters)
 {
     /* initialize Zigbee stack */
     esp_zb_cfg_t zb_nwk_cfg = ESP_ZB_ZC_CONFIG();
     esp_zb_init(&zb_nwk_cfg);
 
-    esp_zb_attribute_list_t *esp_zb_basic_cluster = esp_zb_basic_cluster_create(NULL);
-    esp_zb_basic_cluster_add_attr(esp_zb_basic_cluster, ESP_ZB_ZCL_ATTR_BASIC_MANUFACTURER_NAME_ID, ESP_MANUFACTURER_NAME);
-    esp_zb_basic_cluster_add_attr(esp_zb_basic_cluster, ESP_ZB_ZCL_ATTR_BASIC_MODEL_IDENTIFIER_ID, ESP_MODEL_IDENTIFIER);
-    /* create ota upgrade cluster with server parameters */
-    esp_zb_attribute_list_t *esp_zb_ota_cluster = esp_zb_zcl_attr_list_create(ESP_ZB_ZCL_CLUSTER_ID_OTA_UPGRADE);
-    esp_zb_zcl_ota_upgrade_server_variable_t variable = {
-        .query_jitter = OTA_UPGRADE_QUERY_JITTER, /* query jitter indicates whether the client receiving Image Notify Command */
-        .current_time = OTA_UPGRADE_CURRENT_TIME, /* current time of ota server */
-        .file_count = OTA_UPGRADE_IMAGE_COUNT,    /* The number of ota images */
-    };
-    esp_zb_ota_cluster_add_attr(esp_zb_ota_cluster, ESP_ZB_ZCL_ATTR_OTA_UPGRADE_SERVER_DATA_ID, (void *)&variable);
-    /* create cluster lists with ota cluster */
-    esp_zb_cluster_list_t *esp_zb_cluster_list = esp_zb_zcl_cluster_list_create();
-    esp_zb_cluster_list_add_basic_cluster(esp_zb_cluster_list, esp_zb_basic_cluster, ESP_ZB_ZCL_CLUSTER_SERVER_ROLE);
-    esp_zb_cluster_list_add_ota_cluster(esp_zb_cluster_list, esp_zb_ota_cluster, ESP_ZB_ZCL_CLUSTER_SERVER_ROLE);
-    esp_zb_ep_list_t *esp_zb_ep_list = esp_zb_ep_list_create();
-    /* add created endpoint (cluster_list) to endpoint list */
-    esp_zb_endpoint_config_t endpoint_config = {
-        .endpoint = ESP_OTA_SERVER_ENDPOINT,
-        .app_profile_id = ESP_ZB_AF_HA_PROFILE_ID,
-        .app_device_id = ESP_ZB_HA_TEST_DEVICE_ID,
-        .app_device_version = 0
-    };
-    esp_zb_ep_list_add_ep(esp_zb_ep_list, esp_zb_cluster_list, endpoint_config);
-    esp_zb_device_register(esp_zb_ep_list);
     esp_zb_set_primary_network_channel_set(ESP_ZB_PRIMARY_CHANNEL_MASK);
     esp_zb_core_action_handler_register(zb_action_handler);
+    ESP_ERROR_CHECK(zb_register_ota_upgrade_server_device());
     ESP_ERROR_CHECK(esp_zb_start(false));
     esp_zb_main_loop_iteration();
 }

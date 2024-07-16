@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2021-2022 Espressif Systems (Shanghai) CO LTD
+ * SPDX-FileCopyrightText: 2021-2024 Espressif Systems (Shanghai) CO LTD
  *
  * SPDX-License-Identifier: CC0-1.0
  *
@@ -13,6 +13,7 @@
  */
 
 #include "esp_zigbee_core.h"
+#include "switch_driver.h"
 
 /* Zigbee configuration */
 #define INSTALLCODE_POLICY_ENABLE           false                                   /* Enable the install code policy for security */
