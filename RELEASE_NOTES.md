@@ -1,5 +1,19 @@
 # Espressif Zigbee SDK Release Notes
 
+## 19-Jul-2024
+1.4.1 version release of ESP-ZIGBEE-SDK is based on esp-idf v5.1.4
+
+### Features
+- Updated esp-zboss-lib to v1.4.1
+- Updated esp-zigbee-lib to v1.4.1
+- Supported NWK route record getting APIs
+- Supported ZCL OTA image query request and response APIs
+- Optimized APS maximum valid payload size for non-fragmented frames
+
+### Bug Fixes
+- Fixed touchlink assert when the touchlink initiator scans mismatched targets and is required to leave
+
+
 ## 04-Jul-2024
 1.4.0 version release of ESP-ZIGBEE-SDK is based on esp-idf v5.1.3
 
