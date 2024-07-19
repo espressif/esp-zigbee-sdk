@@ -19,7 +19,7 @@ sleep_pytest_build_dir = CLI_CURRENT_DIR_CLIENT + '|' + SLEEP_CURRENT_DIR_SERVER
 
 SWITCH_CURRENT_DIR_SERVER = str(pathlib.Path(__file__).parent) + '/esp_zigbee_touchlink/touchlink_switch'
 LIGHT_CURRENT_DIR_CLIENT = str(pathlib.Path(__file__).parent) + '/esp_zigbee_touchlink/touchlink_light'
-touchlink_pytest_build_dir = SWITCH_CURRENT_DIR_SERVER + '|' + LIGHT_CURRENT_DIR_CLIENT
+touchlink_pytest_build_dir = LIGHT_CURRENT_DIR_CLIENT + '|' + SWITCH_CURRENT_DIR_SERVER
 
 HA_CURRENT_DIR_SERVER = str(pathlib.Path(__file__).parent) + '/esp_zigbee_cli'
 GATEWAY_CURRENT_DIR_CLIENT = str(pathlib.Path(__file__).parent) + '/esp_zigbee_gateway'
@@ -297,11 +297,11 @@ def test_zb_sleep(dut, count, app_path, erase_all):
 @pytest.mark.parametrize('count, app_path, erase_all', [(2, touchlink_pytest_build_dir, 'y'), ], indirect=True, )
 @pytest.mark.usefixtures('teardown_fixture')
 def test_zb_touch_link(dut, count, app_path, erase_all):
-    switch = dut[0]
-    light = dut[1]
-    switch.expect('Scanning as a Touchlink initiator...')
-    time.sleep(5)
+    light = dut[0]
+    switch = dut[1]
     light.expect('Touchlink target is ready, awaiting commissioning')
+    time.sleep(5)
+    switch.expect('Scanning as a Touchlink initiator...')
     extended_pan_id_light, pan_id_light, channel_light, short_address_light = get_formed_network_parameters(light)
     extended_pan_id_switch, pan_id_switch, channel_switch, short_address_switch = get_formed_network_parameters(switch)
     assert extended_pan_id_light == extended_pan_id_switch

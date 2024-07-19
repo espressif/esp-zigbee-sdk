@@ -13,6 +13,7 @@
  */
 #include <string.h>
 #include "esp_check.h"
+#include "esp_err.h"
 #include "esp_log.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -47,18 +48,17 @@ typedef struct light_bulb_info_s
 
 typedef struct light_control_device_ctx_t
 {
-    light_bulb_info_t on_off_light;;  /* persistent, remote device struct for recording and managing node info */
-    esp_zb_ieee_addr_t pending_dev_addr;  /* addr of device which is pending for discovery */
+    light_bulb_info_t on_off_light;      /* persistent, remote device struct for recording and managing node info */
+    esp_zb_ieee_addr_t pending_dev_addr; /* addr of device which is pending for discovery */
 } light_control_device_ctx_t;
 
 light_control_device_ctx_t g_device_ctx;  /* light control device ifnfomation */
 
 static void zb_buttons_handler(switch_func_pair_t *button_func_pair)
 {
-    /* By checking the button function pair to call different cmd send */
-    switch (button_func_pair->func) {
-    case SWITCH_ONOFF_TOGGLE_CONTROL:
+    if (esp_zb_bdb_dev_joined()) {
         /* Send on-off toggle command to remote device */
+        assert(button_func_pair->func == SWITCH_ONOFF_TOGGLE_CONTROL);
         esp_zb_zcl_on_off_cmd_t cmd_req;
         cmd_req.zcl_basic_cmd.src_endpoint = HA_ONOFF_SWITCH_ENDPOINT;
         cmd_req.address_mode = ESP_ZB_APS_ADDR_MODE_DST_ADDR_ENDP_NOT_PRESENT;
@@ -67,9 +67,12 @@ static void zb_buttons_handler(switch_func_pair_t *button_func_pair)
         esp_zb_zcl_on_off_cmd_req(&cmd_req);
         esp_zb_lock_release();
         ESP_EARLY_LOGI(TAG, "send 'on_off toggle' command");
-        break;
-    default:
-        break;
+    } else {
+        /* Control Touchlink initiator commissioning */
+        esp_zb_lock_acquire(portMAX_DELAY);
+        esp_zb_bdb_start_top_level_commissioning(ESP_ZB_BDB_TOUCHLINK_COMMISSIONING);
+        esp_zb_lock_release();
+        ESP_LOGI(TAG, "Scanning as a Touchlink initiator...");
     }
 }
 
@@ -121,18 +124,12 @@ void find_light_bulb(uint16_t short_addr)
     memset(g_device_ctx.pending_dev_addr, 0, sizeof(esp_zb_ieee_addr_t));
 }
 
-/********************* Define functions **************************/
-static void esp_zb_start_touchlink_commissioning(void)
-{
-    esp_zb_bdb_start_top_level_commissioning(ESP_ZB_BDB_TOUCHLINK_COMMISSIONING);
-    ESP_LOGI(TAG, "Scanning as a Touchlink initiator...");
-}
-
 void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
 {
     uint32_t *p_sg_p     = signal_struct->p_app_signal;
     esp_err_t err_status = signal_struct->esp_err_status;
     esp_zb_app_signal_type_t sig_type = *p_sg_p;
+    esp_zb_bdb_signal_touchlink_nwk_params_t *sig_params = NULL;
 
     switch (sig_type) {
     case ESP_ZB_ZDO_SIGNAL_SKIP_STARTUP:
@@ -145,7 +142,8 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
             ESP_LOGI(TAG, "Deferred driver initialization %s", deferred_driver_init() ? "failed" : "successful");
             ESP_LOGI(TAG, "Device started up in %s factory-reset mode", esp_zb_bdb_is_factory_new() ? "" : "non");
             if (esp_zb_bdb_is_factory_new()) {
-                esp_zb_start_touchlink_commissioning();
+                esp_zb_bdb_start_top_level_commissioning(ESP_ZB_BDB_TOUCHLINK_COMMISSIONING);
+                ESP_LOGI(TAG, "Scanning as a Touchlink initiator...");
             } else {
                 ESP_LOGI(TAG, "Device rebooted");
             }
@@ -155,7 +153,7 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
         break;
     case ESP_ZB_BDB_SIGNAL_TOUCHLINK_NWK_STARTED:
     case ESP_ZB_BDB_SIGNAL_TOUCHLINK_NWK_JOINED_ROUTER:
-        esp_zb_bdb_signal_touchlink_nwk_params_t *sig_params = (esp_zb_bdb_signal_touchlink_nwk_params_t *)esp_zb_app_signal_get_params(p_sg_p);
+        sig_params = (esp_zb_bdb_signal_touchlink_nwk_params_t *)esp_zb_app_signal_get_params(p_sg_p);
         memcpy(g_device_ctx.pending_dev_addr, sig_params->device_ieee_addr, sizeof(esp_zb_ieee_addr_t));
         ESP_LOGI(TAG, "Touchlink initiator receives the response for %s network",
                  sig_type == ESP_ZB_BDB_SIGNAL_TOUCHLINK_NWK_STARTED ? "started" : "router joining");
@@ -177,8 +175,8 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
                 find_light_bulb(esp_zb_address_short_by_ieee(g_device_ctx.pending_dev_addr));
             }
         } else {
-            /* Repeat touchlink until any bulb will be found */
-            esp_zb_start_touchlink_commissioning();
+            ESP_LOGW(TAG, "No Touchlink target devices found");
+            ESP_LOGW(TAG, "Press the button to start Touchlink commissioning again");
         }
         break;
     default:
@@ -187,37 +185,44 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
     }
 }
 
+static esp_err_t zb_register_touchlink_switch_device(void)
+{
+    esp_zb_on_off_switch_cfg_t switch_cfg = ESP_ZB_DEFAULT_ON_OFF_SWITCH_CONFIG();
+    esp_zb_cluster_list_t *cluster_list = NULL;
+    esp_zb_attribute_list_t *basic_cluster = NULL;
+    esp_zb_attribute_list_t *touchlink_cluster = NULL;
+    esp_zb_ep_list_t *ep_list = NULL;
+    esp_zb_endpoint_config_t endpoint_config = {
+        .endpoint = HA_ONOFF_SWITCH_ENDPOINT,
+        .app_profile_id = ESP_ZB_AF_HA_PROFILE_ID,
+        .app_device_id = ESP_ZB_HA_ON_OFF_SWITCH_DEVICE_ID,
+        .app_device_version = 0,
+    };
+
+    /* ZCL data model */
+    ep_list = esp_zb_ep_list_create();
+    cluster_list = esp_zb_on_off_switch_clusters_create(&switch_cfg);
+    touchlink_cluster = esp_zb_touchlink_commissioning_cluster_create();
+    /* Add attributes */
+    basic_cluster = esp_zb_cluster_list_get_cluster(cluster_list, ESP_ZB_ZCL_CLUSTER_ID_BASIC, ESP_ZB_ZCL_CLUSTER_SERVER_ROLE);
+    ESP_ERROR_CHECK(esp_zb_basic_cluster_add_attr(basic_cluster, ESP_ZB_ZCL_ATTR_BASIC_MANUFACTURER_NAME_ID, ESP_MANUFACTURER_NAME));
+    ESP_ERROR_CHECK(esp_zb_basic_cluster_add_attr(basic_cluster, ESP_ZB_ZCL_ATTR_BASIC_MODEL_IDENTIFIER_ID, ESP_MODEL_IDENTIFIER));
+    /* Add cluster */
+    ESP_ERROR_CHECK(esp_zb_cluster_list_add_touchlink_commissioning_cluster(cluster_list, touchlink_cluster, ESP_ZB_ZCL_CLUSTER_CLIENT_ROLE));
+    /* Add endpoint */
+    ESP_ERROR_CHECK(esp_zb_ep_list_add_ep(ep_list, cluster_list, endpoint_config));
+    return esp_zb_device_register(ep_list);
+}
+
 static void esp_zb_task(void *pvParameters)
 {
+    /* Initialize Zigbee stack with Zigbee end device config */
     esp_zb_cfg_t zb_nwk_cfg = ESP_ZB_ZED_CONFIG();
     esp_zb_init(&zb_nwk_cfg);
     esp_zb_set_channel_mask(ESP_ZB_TOUCHLINK_CHANNEL_MASK);
     esp_zb_zdo_touchlink_set_nwk_channel(ESP_ZB_TOUCHLINK_CHANNEL);
     esp_zb_set_rx_on_when_idle(true);
-
-    esp_zb_attribute_list_t *touchlink_cluster = esp_zb_touchlink_commissioning_cluster_create();
-    esp_zb_on_off_switch_cfg_t switch_cfg = ESP_ZB_DEFAULT_ON_OFF_SWITCH_CONFIG();
-    /* Create a standard HA on-off switch cluster list */
-    esp_zb_cluster_list_t *cluster_list = esp_zb_on_off_switch_clusters_create(&switch_cfg);
-    esp_zb_attribute_list_t *basic_cluster =
-        esp_zb_cluster_list_get_cluster(cluster_list, ESP_ZB_ZCL_CLUSTER_ID_BASIC, ESP_ZB_ZCL_CLUSTER_SERVER_ROLE);
-    ESP_ERROR_CHECK(esp_zb_basic_cluster_add_attr(basic_cluster, ESP_ZB_ZCL_ATTR_BASIC_MANUFACTURER_NAME_ID, ESP_MANUFACTURER_NAME));
-    ESP_ERROR_CHECK(esp_zb_basic_cluster_add_attr(basic_cluster, ESP_ZB_ZCL_ATTR_BASIC_MODEL_IDENTIFIER_ID, ESP_MODEL_IDENTIFIER));
-
-    /* Add touchlink commissioning cluster */
-    esp_zb_cluster_list_add_touchlink_commissioning_cluster(cluster_list, touchlink_cluster, ESP_ZB_ZCL_CLUSTER_CLIENT_ROLE);
-
-    esp_zb_ep_list_t *esp_zb_ep_list = esp_zb_ep_list_create();
-    /* Add created endpoint (cluster_list) to endpoint list */
-    esp_zb_endpoint_config_t endpoint_config = {
-        .endpoint = HA_ONOFF_SWITCH_ENDPOINT,
-        .app_profile_id = ESP_ZB_AF_HA_PROFILE_ID,
-        .app_device_id = ESP_ZB_HA_ON_OFF_SWITCH_DEVICE_ID,
-        .app_device_version = 0
-    };
-    esp_zb_ep_list_add_ep(esp_zb_ep_list, cluster_list, endpoint_config);
-    esp_zb_device_register(esp_zb_ep_list);
-
+    ESP_ERROR_CHECK(zb_register_touchlink_switch_device());
     ESP_ERROR_CHECK(esp_zb_start(false));
     esp_zb_main_loop_iteration();
 }

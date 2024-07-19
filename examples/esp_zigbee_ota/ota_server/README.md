@@ -45,56 +45,52 @@ I (1570) ESP_OTA_SERVER: Network steering started
 I (15950) ESP_OTA_SERVER: ZDO signal: NWK Device Associated (0x12), status: ESP_OK
 I (16450) ESP_OTA_SERVER: ZDO signal: ZDO Device Update (0x30), status: ESP_OK
 I (16490) ESP_OTA_SERVER: New device commissioned or rejoined (short: 0x7042)
-I (16490) ESP_OTA_SERVER: OTA Server notify
+I (16490) ESP_OTA_SERVER: Notify OTA upgrade
 I (16590) ESP_OTA_SERVER: OTA upgrade server query image
 I (16590) ESP_OTA_SERVER: OTA client address: 0x7042
 I (16590) ESP_OTA_SERVER: OTA version: 0x1010101, image type: 0x1011, manfacturer code: 1001,
 I (16600) ESP_OTA_SERVER: OTA table index: 0x0
 I (16690) ESP_OTA_SERVER: ZDO signal: ZDO Device Authorized (0x2f), status: ESP_OK
 I (16750) ESP_OTA_SERVER: ZDO signal: NWK Permit Join (0x36), status: ESP_OK
-I (16850) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [8/159616]
+I (16850) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [8/552328]
 I (16850) ESP_OTA_SERVER: OTA client address: 0x7042
 I (16850) ESP_OTA_SERVER: OTA version: 0x1010110, image type: 0x1011, server status: 0
-I (17100) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [72/159616]
-I (17320) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [136/159616]
-I (17560) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [200/159616]
-I (17780) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [264/159616]
-I (18010) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [328/159616]
-I (18240) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [392/159616]
-I (18470) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [456/159616]
-I (18700) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [520/159616]
-I (18930) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [584/159616]
-I (19160) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [648/159616]
-I (19390) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [712/159616]
-I (19620) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [776/159616]
-I (19850) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [840/159616]
-I (20100) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [904/159616]
-I (20330) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [968/159616]
-I (20560) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [1032/159616]
-I (20790) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [1096/159616]
-I (21020) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [1160/159616]
-I (21250) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [1224/159616]
+I (17100) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [72/552328]
+I (17320) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [136/552328]
+I (17560) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [200/552328]
+I (17780) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [264/552328]
+I (18010) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [328/552328]
+I (18240) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [392/552328]
+I (18470) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [456/552328]
+I (18700) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [520/552328]
+I (18930) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [584/552328]
+I (19160) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [648/552328]
+I (19390) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [712/552328]
+I (19620) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [776/552328]
+I (19850) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [840/552328]
+I (20100) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [904/552328]
+I (20330) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [968/552328]
+I (20560) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [1032/552328]
+I (20790) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [1096/552328]
+I (21020) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [1160/552328]
+I (21250) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [1224/552328]
 ...
-I (595990) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [158664/159616]
-I (596220) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [158728/159616]
-I (596450) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [158792/159616]
-I (596680) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [158856/159616]
-I (596910) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [158920/159616]
-I (597150) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [158984/159616]
-I (597380) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [159048/159616]
-I (597610) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [159112/159616]
-I (597840) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [159176/159616]
-I (598070) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [159240/159616]
-I (598300) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [159304/159616]
-I (598530) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [159368/159616]
-I (598810) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [159432/159616]
-I (599030) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [159496/159616]
-I (599260) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [159560/159616]
-I (599540) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [159616/159616]
-I (599610) ESP_OTA_SERVER: OTA client address: 0x7042
-I (599610) ESP_OTA_SERVER: OTA version: 0x1010110, image type: 0x1011, server status: 2
-I (599610) ESP_OTA_SERVER: OTA upgrade time: 0x1234a
+I (2005554) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [552392/552928]
+I (2005784) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [552456/552928]
+I (2006014) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [552520/552928]
+I (2006244) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [552584/552928]
+I (2006474) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [552648/552928]
+I (2006704) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [552712/552928]
+I (2006934) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [552776/552928]
+I (2007164) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [552840/552928]
+I (2007394) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [552904/552928]
+I (2007624) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x7042: progress [552928/552928]
+I (2007664) ESP_OTA_SERVER: OTA client address: 0x7042
+I (2007664) ESP_OTA_SERVER: OTA version: 0x1010110, image type: 0x1011, server status: 2
+I (2007674) ESP_OTA_SERVER: OTA upgrade time: 0x1234a
 ```
+
+Note: The example also supports the user pressing the `boot` button to broadcast the `IMAGE_NOTIFY` command to the network.
 
 ## OTA Upgrade Functions
 

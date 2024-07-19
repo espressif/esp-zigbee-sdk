@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2021-2022 Espressif Systems (Shanghai) CO LTD
+ * SPDX-FileCopyrightText: 2021-2024 Espressif Systems (Shanghai) CO LTD
  *
  * SPDX-License-Identifier: CC0-1.0
  *
@@ -13,6 +13,7 @@
  */
 
 #include "esp_zigbee_core.h"
+#include "switch_driver.h"
 
 /* Zigbee configuration */
 #define MAX_CHILDREN                  10                                                    /* The max amount of connected devices */
@@ -26,9 +27,9 @@
 #define OTA_UPGRADE_TIME              OTA_UPGRADE_CURRENT_TIME + OTA_UPGRADE_OFFSET_TIME    /* Upgrade time indicates the time that the client shall upgrade to running new image, offset time value is of 5 seconds */
 #define OTA_UPGRADE_QUERY_JITTER      0x64                                                  /* Query jitter indicates whether the client receiving Image Notify Command */
 #define OTA_UPGRADE_CURRENT_TIME      0x12345                                               /* Test current time of ota server, currently zcl time cluster is not supported */
-#define OTA_UPGRADE_IMAGE_COUNT       1                                                     /* The number of OTA image for OTA server */
+#define OTA_UPGRADE_IMAGE_COUNT       1                                                     /* The number of OTA images on OTA server */
 #define OTA_UPGRADE_OFFSET_TIME       5                                                     /* Offset time value in seconds, use as upgrade delay.*/
-#define ESP_ZB_PRIMARY_CHANNEL_MASK     (1l << 13)                                          /* Zigbee primary channel mask use in the example */
+#define ESP_ZB_PRIMARY_CHANNEL_MASK   (1l << 13)                                            /* Zigbee primary channel mask use in the example */
 
 /* ota_file.bin */
 extern const uint8_t ota_file_start[] asm("_binary_ota_file_bin_start");                    /* ota_file corresponds to filename and bin corresponds to filetype */

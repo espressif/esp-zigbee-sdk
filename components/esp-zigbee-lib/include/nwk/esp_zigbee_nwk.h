@@ -24,6 +24,8 @@ typedef enum {
 #define ESP_ZB_NWK_INFO_ITERATOR_INIT 0         /*!< Initializer for esp_zb_neighbor_info_iterator_t. */
 #define ESP_ZB_NWK_INFO_ITERATOR_EOT  0xFFFF    /*!< Indicate the iterator reach the End of Table. */
 
+#define ESP_ZB_NWK_MAX_SOURCE_ROUTE 5
+
 /**
  * @brief Iterator used to iterate through the tables of network informations.
  *
@@ -90,6 +92,18 @@ typedef struct esp_zb_nwk_route_info_s {
     } flags;                /*!< Flags in the routing table entry */
     uint8_t expiry;         /*!< Expiration time. */
 } esp_zb_nwk_route_info_t;
+
+/**
+ * @brief Information of network route record table entry
+ *
+ */
+typedef struct esp_zb_nwk_route_record_info_s {
+    uint16_t dest_address;                      /*!< Destination network address of this route record. */
+    uint8_t expiry;                             /*!< Expiration time. */
+    uint8_t relay_count;                        /*!< The count of relay nodes from concentrator to the destination. */
+    uint16_t path[ESP_ZB_NWK_MAX_SOURCE_ROUTE]; /*!< The set of network addresses that represent the route
+                                                 *   in order from the concentrator to the destination.*/
+} esp_zb_nwk_route_record_info_t;
 
 /**
  * @brief Set the network update id
@@ -258,6 +272,7 @@ esp_zb_nwk_device_type_t esp_zb_get_network_device_role(void);
  *
  * @return - ESP_OK on success
  *         - ESP_ERR_NOT_FOUND on finish iteration
+ *         - ESP_ERR_INVALID_ARG if arguements are invalid
  *
  */
 esp_err_t esp_zb_nwk_get_next_neighbor(esp_zb_nwk_info_iterator_t *iterator, esp_zb_nwk_neighbor_info_t *nbr_info);
@@ -270,9 +285,23 @@ esp_err_t esp_zb_nwk_get_next_neighbor(esp_zb_nwk_info_iterator_t *iterator, esp
  *
  * @return - ESP_OK on success
  *         - ESP_ERR_NOT_FOUND on finish iteration
+ *         - ESP_ERR_INVALID_ARG if arguements are invalid
  *
  */
 esp_err_t esp_zb_nwk_get_next_route(esp_zb_nwk_info_iterator_t *iterator, esp_zb_nwk_route_info_t *route_info);
+
+/**
+ * @brief  Iterate through the route record table (a.k.a source route table) and get the information in the entry
+ *
+ * @param[in] iterator iterator used to iterate through routing table, refer to esp_zb_nwk_info_iterator_t
+ * @param[out] route_record_info next route record entry information, @ref esp_zb_nwk_route_record_info_s
+ *
+ * @return - ESP_OK on success
+ *         - ESP_ERR_NOT_FOUND on finish iteration
+ *         - ESP_ERR_INVALID_ARG if arguements are invalid
+ *
+ */
+esp_err_t esp_zb_nwk_get_next_route_record(esp_zb_nwk_info_iterator_t *iterator, esp_zb_nwk_route_record_info_t *route_record_info);
 
 #ifdef __cplusplus
 }
