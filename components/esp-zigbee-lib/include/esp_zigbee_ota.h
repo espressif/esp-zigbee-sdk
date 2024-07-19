@@ -55,9 +55,9 @@ typedef esp_err_t (*esp_zb_ota_next_data_callback_t)(esp_zb_ota_zcl_information_
  *
  */
 typedef struct esp_zb_zcl_ota_upgrade_client_variable_s {
-    uint16_t timer_query;  /*!< The field indicates the time of querying OTA imagge for OTA upgrade client */
+    uint16_t timer_query;  /*!< The field indicates the time of querying OTA image for OTA upgrade client */
     uint16_t hw_version;   /*!< The hardware version */
-    uint8_t max_data_size; /*!< The maxinum size of OTA data */
+    uint8_t max_data_size; /*!< The maximum size of OTA data */
 } esp_zb_zcl_ota_upgrade_client_variable_t;
 
 /**
@@ -94,6 +94,37 @@ typedef struct esp_zb_ota_upgrade_server_notify_req_s {
  *      - ESP_ERR_INVALID_ARG: The input arguments are incorrect or invalid.
  */
 esp_err_t esp_zb_ota_upgrade_server_notify_req(esp_zb_ota_upgrade_server_notify_req_t *req);
+
+/**
+ * @brief Send the OTA upgrade client query image request
+ * 
+ * @param[in] server_addr The short address of the OTA upgrade server that the client expect to query 
+ * @param[in] server_ep   The endpoint identifier of the OTA upgrade server with OTA image
+ * @return
+ *      - ESP_OK: On success
+ *      - ESP_FAIL: On failed
+ */
+esp_err_t esp_zb_ota_upgrade_client_query_image_req(uint16_t server_ep, uint8_t server_addr);
+
+/**
+ * @brief Set the interval of query for OTA upgrade client 
+ * 
+ * @param[in] endpoint The endpoint identifier of OTA upgrade client resides
+ * @param[in] interval The interval in minute
+ * @return
+ *      - ESP_OK: On success
+ *      - ESP_FAIL: On failed
+ */
+esp_err_t esp_zb_ota_upgrade_client_query_interval_set(uint8_t endpoint, uint16_t interval);
+
+/**
+ * @brief Stop the image query of OTA upgrade client
+ *
+ * @return
+ *      - ESP_OK: On success
+ *      - ESP_FAIL: On failed
+ */
+esp_err_t esp_zb_ota_upgrade_client_query_image_stop(void);
 
 #ifdef __cplusplus
 }

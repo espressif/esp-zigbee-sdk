@@ -1390,6 +1390,21 @@ typedef struct esp_zb_zcl_ota_upgrade_value_message_s {
 } esp_zb_zcl_ota_upgrade_value_message_t;
 
 /**
+ * @brief The Zigbee zcl ota upgrade client query image response message struct
+ *
+ */
+typedef struct esp_zb_zcl_ota_upgrade_query_image_resp_message_s {
+    esp_zb_device_cb_common_info_t info;    /*!< The common information for Zigbee device callback */
+    esp_zb_zcl_addr_t server_addr;          /*!< Server address */
+    uint8_t server_endpoint;                /*!< Server endpoint */
+    uint8_t query_status;                   /*!< Status, see esp_zb_zcl_status_t */
+    uint16_t manufacturer_code;             /*!< Manufacturer code */
+    uint16_t image_type;                    /*!< Image type */
+    uint32_t file_version;                  /*!< File version */
+    uint32_t image_size;                    /*!< Image size */
+} esp_zb_zcl_ota_upgrade_query_image_resp_message_t;
+
+/**
  * @brief The Zigbee zcl ota upgrade server status message struct
  *
  */
