@@ -536,7 +536,7 @@ static esp_err_t esp_ncp_zb_action_handler(esp_zb_core_action_callback_id_t call
 static void esp_ncp_zb_task(void *pvParameters)
 {
     esp_zb_core_action_handler_register(esp_ncp_zb_action_handler);
-    esp_zb_main_loop_iteration();
+    esp_zb_stack_main_loop();
     vTaskDelete(NULL);
 }
 

@@ -224,7 +224,7 @@ static void esp_zb_task(void *pvParameters)
     esp_zb_set_rx_on_when_idle(true);
     ESP_ERROR_CHECK(zb_register_touchlink_switch_device());
     ESP_ERROR_CHECK(esp_zb_start(false));
-    esp_zb_main_loop_iteration();
+    esp_zb_stack_main_loop();
 }
 
 void app_main(void)

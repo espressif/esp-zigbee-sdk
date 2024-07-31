@@ -253,7 +253,7 @@ static void esp_zb_task(void *pvParameters)
     esp_zb_ep_list_add_gateway_ep(ep_list, cluster_list, endpoint_config);
     esp_zb_device_register(ep_list);
     ESP_ERROR_CHECK(esp_zb_start(false));
-    esp_zb_main_loop_iteration();
+    esp_zb_stack_main_loop();
     esp_rcp_update_deinit();
     vTaskDelete(NULL);
 }

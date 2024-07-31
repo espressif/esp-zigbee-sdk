@@ -247,7 +247,7 @@ void *esp_zb_app_signal_get_params(uint32_t *signal_p)
     return app_signal_msg ? (void *)app_signal_msg->msg : (void *)app_signal_msg;
 }
 
-void esp_zb_main_loop_iteration(void)
+void esp_zb_stack_main_loop(void)
 {
     esp_host_zb_ctx_t host_ctx;
     while (1) {
@@ -269,6 +269,11 @@ void esp_zb_main_loop_iteration(void)
             host_ctx.data = NULL;
         }
     }
+}
+
+void esp_zb_main_loop_iteration(void)
+{
+    esp_zb_stack_main_loop();
 }
 
 esp_err_t esp_zb_device_register(esp_zb_ep_list_t *ep_list)
