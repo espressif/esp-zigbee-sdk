@@ -1,0 +1,15 @@
+[sections:esp_zb_cli_cmd_desc]
+entries:
+    .esp_zb_cli_cmd_desc+
+
+[scheme:esp_zb_cli_cmd_desc_default]
+entries:
+    esp_zb_cli_cmd_desc -> flash_rodata
+
+# Collect all the command descriptors declared in ".esp_zb_cli_cmd_desc.<cmd_name>" sections,
+# so that we could automatically register them with unified logic.
+[mapping:esp_zb_cli_cmd_desc]
+archive: *
+entries:
+    * (esp_zb_cli_cmd_desc_default);
+        esp_zb_cli_cmd_desc -> flash_rodata KEEP() SORT(name) SURROUND(esp_zb_cli_cmd_array)
