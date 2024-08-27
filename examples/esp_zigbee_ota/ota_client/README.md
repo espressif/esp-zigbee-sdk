@@ -31,93 +31,92 @@ Build the project, flash it to the board, and start the monitor tool to view the
 As you run the example, you will see the following log:
 
 ```
-I (420) main_task: Calling app_main()
-W (420) ESP_OTA_CLIENT: ESP Zigbee OTA example 1.0 is running
-I (450) phy: phy_version: 210,0, 11c334c, Sep  4 2023, 17:01:13
-I (450) phy: libbtbb version: b821802, Sep  4 2023, 17:01:29
-I (460) main_task: Returned from app_main()
-I (530) ESP_OTA_CLIENT: ZDO signal: ZDO Config Ready (0x17), status: ESP_FAIL
-I (17500) ESP_OTA_CLIENT: -- OTA upgrade start
-I (17600) ESP_OTA_CLIENT: Joined network successfully (Extended PAN ID: 60:55:f9:ff:fe:f7:2e:16, PAN ID: 0x397c, Channel:13)
-I (17740) ESP_OTA_CLIENT: -- OTA Client receives data: progress [8/552328]
-I (17980) ESP_OTA_CLIENT: -- OTA Client receives data: progress [72/552328]
-I (18200) ESP_OTA_CLIENT: -- OTA Client receives data: progress [136/552328]
-I (18440) ESP_OTA_CLIENT: -- OTA Client receives data: progress [200/552328]
-I (18660) ESP_OTA_CLIENT: -- OTA Client receives data: progress [264/552328]
-I (18890) ESP_OTA_CLIENT: -- OTA Client receives data: progress [328/552328]
-I (19120) ESP_OTA_CLIENT: -- OTA Client receives data: progress [392/552328]
-I (19350) ESP_OTA_CLIENT: -- OTA Client receives data: progress [456/552328]
-I (19580) ESP_OTA_CLIENT: -- OTA Client receives data: progress [520/552328]
-I (19810) ESP_OTA_CLIENT: -- OTA Client receives data: progress [584/552328]
-I (20040) ESP_OTA_CLIENT: -- OTA Client receives data: progress [648/552328]
-I (20270) ESP_OTA_CLIENT: -- OTA Client receives data: progress [712/552328]
-I (20500) ESP_OTA_CLIENT: -- OTA Client receives data: progress [776/552328]
+I (453) app_start: Starting scheduler on CPU0
+I (458) main_task: Started on CPU0                                    
+I (462) main_task: Calling app_main()
+W (466) ESP_OTA_CLIENT: ESP Zigbee OTA example 2.0 is running
+I (492) phy: phy_version: 230,2, 9aae6ea, Jan 15 2024, 11:17:12
+I (494) phy: libbtbb version: 944f18e, Jan 15 2024, 11:17:25
+I (498) main_task: Returned from app_main()
+I (552) ESP_OTA_CLIENT: ZDO signal: ZDO Config Ready (0x17), status: ESP_FAIL                                                                
+I (553) ESP_OTA_CLIENT: Initialize Zigbee stack
+I (558) gpio: GPIO[9]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:4                                                 
+I (558) ESP_OTA_CLIENT: Deferred driver initialization successful
+I (571) ESP_OTA_CLIENT: Device started up in  factory-reset mode
+I (577) ESP_OTA_CLIENT: Start network steering
+I (3472) ESP_OTA_CLIENT: Joined network successfully (Extended PAN ID: 74:4d:bd:ff:fe:63:78:8a, PAN ID: 0xa1ea, Channel:13, Short Address: 0xfc9a)
+I (3878) ESP_OTA_CLIENT: Queried OTA image from address: 0x0000, endpoint: 5                                                                 
+I (3879) ESP_OTA_CLIENT: Image version: 0x1010110, manufacturer code: 0x1001, image size: 618536                                             
+I (3885) ESP_OTA_CLIENT: Approving OTA image upgrade
+I (3891) ESP_OTA_CLIENT: -- OTA upgrade start
+I (4447) ESP_OTA_CLIENT: -- OTA Client receives data: progress [167/618480]                                                                  
+I (4692) ESP_OTA_CLIENT: -- OTA Client receives data: progress [390/618480]                                                                  
+I (4937) ESP_OTA_CLIENT: -- OTA Client receives data: progress [613/618480]                                                                  
+I (5182) ESP_OTA_CLIENT: -- OTA Client receives data: progress [836/618480]                                                                  
+I (5431) ESP_OTA_CLIENT: -- OTA Client receives data: progress [1059/618480]                                                                 
+I (5676) ESP_OTA_CLIENT: -- OTA Client receives data: progress [1282/618480]                                                                 
+I (5921) ESP_OTA_CLIENT: -- OTA Client receives data: progress [1505/618480]                                                                 
+I (6166) ESP_OTA_CLIENT: -- OTA Client receives data: progress [1728/618480]                                                                 
+I (6411) ESP_OTA_CLIENT: -- OTA Client receives data: progress [1951/618480]                                                                 
+I (6657) ESP_OTA_CLIENT: -- OTA Client receives data: progress [2174/618480]                                                                 
+I (6902) ESP_OTA_CLIENT: -- OTA Client receives data: progress [2397/618480]                                                                 
+I (7147) ESP_OTA_CLIENT: -- OTA Client receives data: progress [2620/618480]                                                                 
+I (7392) ESP_OTA_CLIENT: -- OTA Client receives data: progress [2843/618480]                                                                 
+I (7640) ESP_OTA_CLIENT: -- OTA Client receives data: progress [3066/618480]                                                                 
+I (7886) ESP_OTA_CLIENT: -- OTA Client receives data: progress [3289/618480]
+I (8131) ESP_OTA_CLIENT: -- OTA Client receives data: progress [3512/618480]
 ...
-I (2006958) ESP_OTA_CLIENT: -- OTA Client receives data: progress [552584/552928]                                                            
-I (2007188) ESP_OTA_CLIENT: -- OTA Client receives data: progress [552648/552928]                                                            
-I (2007418) ESP_OTA_CLIENT: -- OTA Client receives data: progress [552712/552928]                                                            
-I (2007648) ESP_OTA_CLIENT: -- OTA Client receives data: progress [552776/552928]                                                            
-I (2007878) ESP_OTA_CLIENT: -- OTA Client receives data: progress [552840/552928]                                                            
-I (2008108) ESP_OTA_CLIENT: -- OTA Client receives data: progress [552904/552928]                                                            
-I (2008338) ESP_OTA_CLIENT: -- OTA Client receives data: progress [552928/552928]                                                            
-I (2008338) ESP_OTA_CLIENT: -- OTA upgrade check status: ESP_OK
-I (2008388) ESP_OTA_CLIENT: -- OTA upgrade apply               
-I (2013398) ESP_OTA_CLIENT: -- OTA Finish                   
-I (2013398) ESP_OTA_CLIENT: -- OTA Information: version: 0x1010110, manufacturer code: 0x1001, image type: 0x1011, total size: 552928 bytes, cost time: 2002578 ms,
-I (2013398) esp_image: segment 0: paddr=00110020 vaddr=42070020 size=10fb8h ( 69560) map                                                     
-I (2013488) esp_image: segment 1: paddr=00120fe0 vaddr=40800000 size=07038h ( 28728)                                                         
-I (2013518) esp_image: segment 2: paddr=00128020 vaddr=42000020 size=6866ch (427628) map                                                     
-I (2013998) esp_image: segment 3: paddr=00190694 vaddr=40807038 size=06928h ( 26920)                                                         
-I (2014028) esp_image: segment 0: paddr=00110020 vaddr=42070020 size=10fb8h ( 69560) map                                                     
-I (2014108) esp_image: segment 1: paddr=00120fe0 vaddr=40800000 size=07038h ( 28728)                                                         
-I (2014138) esp_image: segment 2: paddr=00128020 vaddr=42000020 size=6866ch (427628) map                                                     
-I (2014618) esp_image: segment 3: paddr=00190694 vaddr=40807038 size=06928h ( 26920)   
-W (2014688) ESP_OTA_CLIENT: Prepare to restart system
+I (684235) ESP_OTA_CLIENT: -- OTA Client receives data: progress [615201/618480]
+I (684484) ESP_OTA_CLIENT: -- OTA Client receives data: progress [615424/618480]
+I (684729) ESP_OTA_CLIENT: -- OTA Client receives data: progress [615647/618480]
+I (684974) ESP_OTA_CLIENT: -- OTA Client receives data: progress [615870/618480]
+I (685220) ESP_OTA_CLIENT: -- OTA Client receives data: progress [616093/618480]
+I (685465) ESP_OTA_CLIENT: -- OTA Client receives data: progress [616316/618480]
+I (685715) ESP_OTA_CLIENT: -- OTA Client receives data: progress [616539/618480]
+I (685966) ESP_OTA_CLIENT: -- OTA Client receives data: progress [616762/618480]
+I (686217) ESP_OTA_CLIENT: -- OTA Client receives data: progress [616985/618480]
+I (686462) ESP_OTA_CLIENT: -- OTA Client receives data: progress [617208/618480]
+I (686707) ESP_OTA_CLIENT: -- OTA Client receives data: progress [617431/618480]
+I (686952) ESP_OTA_CLIENT: -- OTA Client receives data: progress [617654/618480]
+I (687198) ESP_OTA_CLIENT: -- OTA Client receives data: progress [617877/618480]
+I (687445) ESP_OTA_CLIENT: -- OTA Client receives data: progress [618100/618480]
+I (687690) ESP_OTA_CLIENT: -- OTA Client receives data: progress [618323/618480]
+I (687932) ESP_OTA_CLIENT: -- OTA Client receives data: progress [618480/618480]
+I (687933) ESP_OTA_CLIENT: -- OTA upgrade check status: ESP_OK
+I (687973) ESP_OTA_CLIENT: -- OTA upgrade apply
+I (692974) ESP_OTA_CLIENT: -- OTA Finish
+I (692974) ESP_OTA_CLIENT: -- OTA Information: version: 0x1010110, manufacturer code: 0x1001, image type: 0x1011, total size: 618480 bytes, cost time: 689078 ms,
+I (692983) esp_image: segment 0: paddr=00110020 vaddr=42078020 size=10d18h ( 68888) map
+I (693070) esp_image: segment 1: paddr=00120d40 vaddr=40800000 size=072d8h ( 29400) 
+I (693104) esp_image: segment 2: paddr=00128020 vaddr=42000020 size=77fe0h (491488) map
+I (693658) esp_image: segment 3: paddr=001a0008 vaddr=408072d8 size=06fc0h ( 28608) 
+I (693692) esp_image: segment 0: paddr=00110020 vaddr=42078020 size=10d18h ( 68888) map
+I (693771) esp_image: segment 1: paddr=00120d40 vaddr=40800000 size=072d8h ( 29400) 
+I (693806) esp_image: segment 2: paddr=00128020 vaddr=42000020 size=77fe0h (491488) map
+I (694360) esp_image: segment 3: paddr=001a0008 vaddr=408072d8 size=06fc0h ( 28608) 
+W (694417) ESP_OTA_CLIENT: Prepare to restart system
 ESP-ROM:esp32h2-20221101                                              
-Build:Nov  1 2022                                                                                                                            
+Build:Nov  1 2022                                                     
 rst:0xc (SW_CPU),boot:0xc (SPI_FAST_FLASH_BOOT)
-Saved PC:0x400031b6
+Saved PC:0x400031b6                                                   
 0x400031b6: software_reset_cpu in ROM
 
 ...
-I (388) boot: Loaded app from partition at offset 0x110000
-I (389) boot: Disabling RNG early entropy source...
-I (400) cpu_start: Unicore app                                        
-I (401) cpu_start: Pro cpu up.                                        
-W (410) clk: esp_perip_clk_init() has not been implemented yet
-I (417) cpu_start: Pro cpu start user code
-I (417) cpu_start: cpu freq: 96000000 Hz
-I (417) cpu_start: Application information:
-I (420) cpu_start: Project name:     esp_ota_client
-I (425) cpu_start: App version:      6e967b2-dirty
-I (431) cpu_start: Compile time:     Jul 11 2024 14:22:26
-I (437) cpu_start: ELF file SHA256:  54626c3368d1c5e7...
-Warning: checksum mismatch between flashed and built applications. Checksum of built application is bc0b636f48447b6879fea08e501d6bc2e97430c1bd8cfdd60eea62a52de6d9de
-I (443) cpu_start: ESP-IDF:          v5.1.3
-I (447) cpu_start: Min chip rev:     v0.0
-I (452) cpu_start: Max chip rev:     v0.99 
-I (457) cpu_start: Chip rev:         v0.1
-I (462) heap_init: Initializing. RAM available for dynamic allocation:
-I (469) heap_init: At 408120E0 len 0003B2A0 (236 KiB): D/IRAM
-I (475) heap_init: At 4084D380 len 00002B60 (10 KiB): STACK/DIRAM
-I (483) spi_flash: detected chip: generic
-I (487) spi_flash: flash io: dio                                      
-W (491) spi_flash: Detected size(4096k) larger than the size in the binary image header(2048k). Using the size in the binary image header.   
-I (504) sleep: Configure to isolate all GPIO pins in sleep state
-I (511) sleep: Enable automatic switching of GPIO sleep configuration
-I (518) app_start: Starting scheduler on CPU0
-I (523) main_task: Started on CPU0                                    
-I (523) main_task: Calling app_main()
-W (523) ESP_OTA_CLIENT: ESP Zigbee OTA example 2.0 is running
-I (553) phy: phy_version: 230,2, 9aae6ea, Jan 15 2024, 11:17:12
-I (553) phy: libbtbb version: 944f18e, Jan 15 2024, 11:17:25
-I (563) main_task: Returned from app_main()
-I (573) ESP_OTA_CLIENT: ZDO signal: ZDO Config Ready (0x17), status: ESP_FAIL                                                                
-I (573) ESP_OTA_CLIENT: Initialize Zigbee stack
-I (2953) gpio: GPIO[9]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:4                                                
-I (2953) ESP_OTA_CLIENT: Deferred driver initialization successful
-I (2963) ESP_OTA_CLIENT: Device started up in non factory-reset mode
-I (2963) ESP_OTA_CLIENT: Device rebooted
+I (552) main_task: Started on CPU0                                    
+I (556) main_task: Calling app_main()
+W (560) ESP_OTA_CLIENT: ESP Zigbee OTA example 2.0 is running
+I (585) phy: phy_version: 230,2, 9aae6ea, Jan 15 2024, 11:17:12
+I (587) phy: libbtbb version: 944f18e, Jan 15 2024, 11:17:25
+I (598) main_task: Returned from app_main()
+I (600) ESP_OTA_CLIENT: ZDO signal: ZDO Config Ready (0x17), status: ESP_FAIL
+I (601) ESP_OTA_CLIENT: Initialize Zigbee stack
+I (2969) gpio: GPIO[9]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:4 
+I (2969) ESP_OTA_CLIENT: Deferred driver initialization successful
+I (2975) ESP_OTA_CLIENT: Device started up in non factory-reset mode
+I (2982) ESP_OTA_CLIENT: Device rebooted
+I (3090) ESP_OTA_CLIENT: Queried OTA image from address: 0x0000, endpoint: 5
+I (3091) ESP_OTA_CLIENT: Image version: 0x1010110, manufacturer code: 0x1001, image size: 618536
+I (3097) ESP_OTA_CLIENT: Rejecting OTA image upgrade, status: ESP_ERR_INVALID_VERSION
 ```
 
 Note: The example also supports the user pressing the `boot` button to send the `QUERY_NEXT_IMAGE` command to query the image from the coordinator.
@@ -128,6 +127,14 @@ Note: The example also supports the user pressing the `boot` button to send the 
  * Following diagram explains the OTA upgrade process in detail:
  ![Zigbee_ota](../../../docs/_static/zigbee-ota-upgrade-process.png)
  * Server gets the upgrade bin file (ota_file.bin) and transmit it through OTA process. After upgrade finish, the client will restart. Upgrade bin file will be loaded from client side and a log "OTA example 2.0 is running" can be seen on the log indicates OTA file upgraded successfully.
+
+## OTA Upgrade Rate Optimization
+
+Here are some ways to optimize the OTA upgrade rate:
+- Adjust the `OTA_UPGRADE_MAX_DATA_SIZE` to improve frame exchange; a value of 223 is recommended.
+- Increase `FREERTOS_HZ` in menuconfig to enhance the system's response rate. The default value is 100.
+- Enable `IEEE802154_TIMING_OPTIMIZATION` in menuconfig to optimize IEEE802154 timing.
+- Reduce unrelated logs during the OTA upgrade process.
 
 ## Troubleshooting
 

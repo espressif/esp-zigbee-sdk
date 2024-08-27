@@ -59,6 +59,7 @@ static void zb_buttons_handler(switch_func_pair_t *button_func_pair)
 {
     esp_zb_lock_acquire(portMAX_DELAY);
     if (esp_zb_bdb_dev_joined()) {
+        s_ota_image_offset = 0;
         zb_ota_upgrade_srv_send_notify_image(true);
         ESP_LOGI(TAG, "Send OTA Server notify image request");
     }
@@ -158,11 +159,12 @@ static esp_err_t zb_ota_next_data_handler(esp_zb_ota_zcl_information_t message, 
         return ESP_FAIL;
         break;
     }
+    ESP_LOGI(TAG, "-- OTA Server transmits data from 0x%x to 0x%x: progress [%ld/%d]", message.dst_short_addr, message.src_addr.u.short_addr,
+             s_ota_image_offset, (ota_file_end - ota_file_start));
+
     if (s_ota_image_offset >= (ota_file_end - ota_file_start)) {
         s_ota_image_offset = 0;
     }
-    ESP_LOGI(TAG, "-- OTA Server transmits data from 0x%x to 0x%x: progress [%ld/%d]", message.dst_short_addr, message.src_addr.u.short_addr,
-             s_ota_image_offset, (ota_file_end - ota_file_start));
     return (*data) ? ESP_OK : ESP_FAIL;
 }
 

@@ -182,7 +182,7 @@ static esp_err_t zb_ota_upgrade_query_image_resp_handler(esp_zb_zcl_ota_upgrade_
     if (ret == ESP_OK) {
         ESP_LOGI(TAG, "Approving OTA image upgrade");
     } else {
-        ESP_LOGI(TAG, "Rejecting OTA image upgrade, status: %d", ret);
+        ESP_LOGI(TAG, "Rejecting OTA image upgrade, status: %s", esp_err_to_name(ret));
     }
     return ret;
 }
