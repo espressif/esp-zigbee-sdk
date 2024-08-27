@@ -137,7 +137,7 @@ static esp_err_t zb_action_handler(esp_zb_core_action_callback_id_t callback_id,
 static esp_err_t zb_register_touchlink_light_device(void)
 {
     esp_zb_ep_list_t *ep_list = NULL;
-    esp_zb_attribute_list_t *touchlink_cluster = esp_zb_touchlink_commissioning_cluster_create();
+    esp_zb_attribute_list_t *touchlink_cluster = NULL;
     esp_zb_on_off_light_cfg_t light_cfg = ESP_ZB_DEFAULT_ON_OFF_LIGHT_CONFIG();
     esp_zb_cluster_list_t *cluster_list = NULL;
     esp_zb_attribute_list_t *basic_cluster = NULL;
@@ -150,7 +150,7 @@ static esp_err_t zb_register_touchlink_light_device(void)
     /* ZCL data model */
     ep_list = esp_zb_ep_list_create();
     cluster_list = esp_zb_on_off_light_clusters_create(&light_cfg);
-    touchlink_cluster = esp_zb_touchlink_commissioning_cluster_create();
+    touchlink_cluster = esp_zb_touchlink_commissioning_cluster_create(NULL);
     /* Add attributes */
     basic_cluster = esp_zb_cluster_list_get_cluster(cluster_list, ESP_ZB_ZCL_CLUSTER_ID_BASIC, ESP_ZB_ZCL_CLUSTER_SERVER_ROLE);
     ESP_ERROR_CHECK(esp_zb_basic_cluster_add_attr(basic_cluster, ESP_ZB_ZCL_ATTR_BASIC_MANUFACTURER_NAME_ID, ESP_MANUFACTURER_NAME));

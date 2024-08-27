@@ -202,7 +202,7 @@ static esp_err_t zb_register_touchlink_switch_device(void)
     /* ZCL data model */
     ep_list = esp_zb_ep_list_create();
     cluster_list = esp_zb_on_off_switch_clusters_create(&switch_cfg);
-    touchlink_cluster = esp_zb_touchlink_commissioning_cluster_create();
+    touchlink_cluster = esp_zb_touchlink_commissioning_cluster_create(NULL);
     /* Add attributes */
     basic_cluster = esp_zb_cluster_list_get_cluster(cluster_list, ESP_ZB_ZCL_CLUSTER_ID_BASIC, ESP_ZB_ZCL_CLUSTER_SERVER_ROLE);
     ESP_ERROR_CHECK(esp_zb_basic_cluster_add_attr(basic_cluster, ESP_ZB_ZCL_ATTR_BASIC_MANUFACTURER_NAME_ID, ESP_MANUFACTURER_NAME));
