@@ -286,9 +286,9 @@ extern "C" {
             },                                                                                      \
         .temp_meas_cfg =                                                                            \
             {                                                                                       \
-                .measured_value = ESP_ZB_ZCL_ATTR_TEMP_MEASUREMENT_VALUE_UNKNOWN,                   \
-                .min_value = ESP_ZB_ZCL_ATTR_TEMP_MEASUREMENT_MIN_VALUE_INVALID,                    \
-                .max_value = ESP_ZB_ZCL_ATTR_TEMP_MEASUREMENT_MAX_VALUE_INVALID,                    \
+                .measured_value = ESP_ZB_ZCL_TEMP_MEASUREMENT_MEASURED_VALUE_DEFAULT,               \
+                .min_value = ESP_ZB_ZCL_TEMP_MEASUREMENT_MIN_MEASURED_VALUE_DEFAULT,                \
+                .max_value = ESP_ZB_ZCL_TEMP_MEASUREMENT_MAX_MEASURED_VALUE_DEFAULT,                \
             },                                                                                      \
     }
 
@@ -538,7 +538,17 @@ esp_zb_cluster_list_t  *esp_zb_window_covering_clusters_create(esp_zb_window_cov
  * @param[in] window_controller Configuration parameters for this cluster lists defined by @ref esp_zb_window_covering_controller_cfg_s
  * @return Pointer to cluster list  @ref esp_zb_cluster_list_s
  */
-esp_zb_cluster_list_t  *esp_zb_window_covering_controller_cluster_create(esp_zb_window_covering_controller_cfg_t *window_controller);
+esp_zb_cluster_list_t  *esp_zb_window_covering_controller_clusters_create(esp_zb_window_covering_controller_cfg_t *window_controller);
+
+/**
+ * @brief Create a standard HA light sensor cluster list
+ *
+ * @note This contains the basic, identify and illuminance clusters as server side.
+ * @param[in] light_sensor Configuration parameters for this cluster lists defined by @ref esp_zb_light_sensor_cfg_s
+ * @return Pointer to cluster list  @ref esp_zb_cluster_list_s
+ */
+esp_zb_cluster_list_t  *esp_zb_light_sensor_clusters_create(esp_zb_light_sensor_cfg_t *light_sensor);
+
 /****************************** ZCL HA device standard endpoint list ********************************/
 
 /**
@@ -716,6 +726,16 @@ esp_zb_ep_list_t *esp_zb_window_covering_ep_create(uint8_t endpoint_id, esp_zb_w
  * @return Pointer to esp_zb_ep_list_t @ref esp_zb_ep_list_s
  */
 esp_zb_ep_list_t *esp_zb_window_covering_controller_ep_create(uint8_t endpoint_id, esp_zb_window_covering_controller_cfg_t *window_controller);
+
+/**
+ * @brief Create a standard single HA light sensor endpoint.
+ *
+ * @param[in] endpoint_id The specific endpoint identifier
+ * @param[in] light_sensor Configuration parameters for this cluster list defined by @ref esp_zb_light_sensor_cfg_s
+ *
+ * @return Pointer to esp_zb_ep_list_t @ref esp_zb_ep_list_s
+ */
+esp_zb_ep_list_t *esp_zb_light_sensor_ep_create(uint8_t endpoint_id, esp_zb_light_sensor_cfg_t *light_sensor);
 
 #ifdef __cplusplus
 }

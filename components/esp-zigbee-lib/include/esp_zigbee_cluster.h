@@ -111,7 +111,7 @@ esp_zb_attribute_list_t *esp_zb_on_off_cluster_create(esp_zb_on_off_cluster_cfg_
  * @return Pointer to attribute list @ref esp_zb_attribute_list_s
  *
  */
-esp_zb_attribute_list_t *esp_zb_on_off_switch_cfg_cluster_create(esp_zb_on_off_switch_cluster_cfg_t *on_off_switch_cfg);
+esp_zb_attribute_list_t *esp_zb_on_off_switch_config_cluster_create(esp_zb_on_off_switch_cluster_cfg_t *on_off_switch_cfg);
 
 /**
  * @brief  Create a standard level cluster attribute list.
@@ -207,12 +207,12 @@ esp_zb_attribute_list_t *esp_zb_ias_zone_cluster_create(esp_zb_ias_zone_cluster_
  * @brief  Create a standard IAS ACE cluster attribute list.
  *
  * @note  This only contains the mandatory attribute.
- * @param[in] zone_table_size Maximum number of entries in the zone table.
+ * @param[in] ias_ace_cfg Configuration parameters for this cluster defined by @ref esp_zb_ias_ace_cluster_cfg_s
  *
  * @return Pointer to attribute list @ref esp_zb_attribute_list_s
  *
  */
-esp_zb_attribute_list_t *esp_zb_ias_ace_cluster_create(uint8_t zone_table_size);
+esp_zb_attribute_list_t *esp_zb_ias_ace_cluster_create(esp_zb_ias_ace_cluster_cfg_t *ias_ace_cfg);
 
 /**
  * @brief  Create a standard IAS WD cluster attribute list.
@@ -323,10 +323,12 @@ esp_zb_attribute_list_t *esp_zb_ota_cluster_create(esp_zb_ota_cluster_cfg_t *ota
  *
  * @note  This only contains the `ZB_ZCL_ATTR_GLOBAL_CLUSTER_REVISION_ID` and touchlink commissioning cluster has no attributes.
  *
+ * @param[in] tl_cfg  Configuration parameters for this cluster defined by @ref esp_zb_touchlink_commissioning_cfg_s
+ *
  * @return pointer to attribute list @ref esp_zb_attribute_list_s
  *
  */
-esp_zb_attribute_list_t *esp_zb_touchlink_commissioning_cluster_create(void);
+esp_zb_attribute_list_t *esp_zb_touchlink_commissioning_cluster_create(esp_zb_touchlink_commissioning_cfg_t *tl_cfg);
 
 /**
  * @brief  Create a standard thermostat cluster attribute list
@@ -389,6 +391,39 @@ esp_zb_attribute_list_t *esp_zb_analog_output_cluster_create(esp_zb_analog_outpu
 esp_zb_attribute_list_t *esp_zb_analog_value_cluster_create(esp_zb_analog_value_cluster_cfg_t *analog_value_cfg);
 
 /**
+ * @brief  Create a standard electrical conductivity measurement cluster attribute list.
+ *
+ * @note  This only contains the mandatory attribute.
+ * @param[in] ec_measurement_cfg  Configuration parameters for this cluster defined by @ref esp_zb_ec_measurement_cluster_cfg_s
+ *
+ * @return Pointer to attribute list @ref esp_zb_attribute_list_s
+ *
+ */
+esp_zb_attribute_list_t *esp_zb_ec_measurement_cluster_create(esp_zb_ec_measurement_cluster_cfg_t *ec_measurement_cfg);
+
+/**
+ * @brief  Create a standard pH measurement cluster attribute list.
+ *
+ * @note  This only contains the mandatory attribute.
+ * @param[in] ph_measurement_cfg  Configuration parameters for this cluster defined by @ref esp_zb_ph_measurement_cluster_cfg_s
+ *
+ * @return Pointer to attribute list @ref esp_zb_attribute_list_s
+ *
+ */
+esp_zb_attribute_list_t *esp_zb_ph_measurement_cluster_create(esp_zb_ph_measurement_cluster_cfg_t *ph_measurement_cfg);
+
+/**
+ * @brief  Create a standard wind speed measurement cluster attribute list.
+ *
+ * @note  This only contains the mandatory attribute.
+ * @param[in] wind_speed_measurement_cfg  Configuration parameters for this cluster defined by @ref esp_zb_wind_speed_measurement_cluster_cfg_s
+ *
+ * @return Pointer to attribute list @ref esp_zb_attribute_list_s
+ *
+ */
+esp_zb_attribute_list_t *esp_zb_wind_speed_measurement_cluster_create(esp_zb_wind_speed_measurement_cluster_cfg_t *wind_speed_measurement_cfg);
+
+/**
  * @brief  Create a standard carbon dioxide measurement attribute list
  *
  * @param[in] carbon_dioxide_measurement_cfg  Configuration parameters for this cluster defined by @ref esp_zb_carbon_dioxide_measurement_cluster_cfg_s
@@ -431,10 +466,12 @@ esp_zb_attribute_list_t *esp_zb_metering_cluster_create(esp_zb_metering_cluster_
 /**
  * @brief  Create a standard diagnostics attribute list
  *
+ * @param[in] diag_cfg  Configuration parameters for this cluster defined by @ref esp_zb_diagnostics_cluster_cfg_s
+ *
  * @return pointer to attribute list @ref esp_zb_attribute_list_s
  *
  */
-esp_zb_attribute_list_t *esp_zb_diagnostics_cluster_create(void);
+esp_zb_attribute_list_t *esp_zb_diagnostics_cluster_create(esp_zb_diagnostics_cluster_cfg_t *diag_cfg);
 
 /**
  * @brief  Create a standard metering attribute list
@@ -449,10 +486,12 @@ esp_zb_attribute_list_t *esp_zb_meter_identification_cluster_create(esp_zb_meter
 /**
  * @brief  Create a standard metering attribute list
  *
+ * @param[in] price_cfg Configuration parameters for this cluster defined by @ref esp_zb_price_cluster_cfg_s
+ *
  * @return pointer to attribute list @ref esp_zb_attribute_list_s
  *
  */
-esp_zb_attribute_list_t *esp_zb_price_cluster_create(void);
+esp_zb_attribute_list_t *esp_zb_price_cluster_create(esp_zb_price_cluster_cfg_t *price_cfg);
 
 /**************************************** ADD CLUSTER ***********************************/
 /**
@@ -919,6 +958,48 @@ esp_err_t esp_zb_cluster_list_add_analog_output_cluster(esp_zb_cluster_list_t *c
  *
  */
 esp_err_t esp_zb_cluster_list_add_analog_value_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
+
+/**
+ * @brief Add electrical conductivity measurement cluster (attribute list) in a cluster list.
+ *
+ * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
+ * @param[in] attr_list  An attribute list which wants to add
+ * @param[in] role_mask  A role of server or client for this cluster (attribute list) refer to esp_zb_zcl_cluster_role_t
+ *
+ * @return
+ *      - ESP_OK on success
+ *      - ESP_ERR_INVALID_ARG if cluster list not initialized
+ *
+ */
+esp_err_t esp_zb_cluster_list_add_ec_measurement_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
+
+/**
+ * @brief Add pH measurement cluster (attribute list) in a cluster list.
+ *
+ * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
+ * @param[in] attr_list  An attribute list which wants to add
+ * @param[in] role_mask  A role of server or client for this cluster (attribute list) refer to esp_zb_zcl_cluster_role_t
+ *
+ * @return
+ *      - ESP_OK on success
+ *      - ESP_ERR_INVALID_ARG if cluster list not initialized
+ *
+ */
+esp_err_t esp_zb_cluster_list_add_ph_measurement_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
+
+/**
+ * @brief Add wind speed measurement cluster (attribute list) in a cluster list.
+ *
+ * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
+ * @param[in] attr_list  An attribute list which wants to add
+ * @param[in] role_mask  A role of server or client for this cluster (attribute list) refer to esp_zb_zcl_cluster_role_t
+ *
+ * @return
+ *      - ESP_OK on success
+ *      - ESP_ERR_INVALID_ARG if cluster list not initialized
+ *
+ */
+esp_err_t esp_zb_cluster_list_add_wind_speed_measurement_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 /**
  * @brief Add carbon dioxide measurement cluster (attribute list) in a cluster list.

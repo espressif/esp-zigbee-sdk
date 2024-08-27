@@ -637,7 +637,7 @@ void esp_zb_zcl_reset_nvram_to_factory_default(void);
  * loaded after esp_zb_start() call.
  *
  * @note Zigbee stack is not looped in this routine. Instead, it schedules callback and returns.  Caller
- * must run  esp_zb_main_loop_iteration() after this routine.
+ * must run  esp_zb_stack_main_loop() after this routine.
  *
  * @note Application should later call Zigbee commissioning initiation - for instance,
  * esp_zb_bdb_start_top_level_commissioning().
@@ -646,6 +646,14 @@ void esp_zb_zcl_reset_nvram_to_factory_default(void);
  *
  */
 esp_err_t esp_zb_start(bool autostart);
+
+/**
+ * @brief Get the stack is started or not.
+ *
+ * @return true if the stack has been started, false otherwise.
+ *
+ */
+bool esp_zb_is_started(void);
 
 /**
  * @brief  Acquire Zigbee lock.
@@ -666,11 +674,27 @@ void esp_zb_lock_release(void);
 /**
  * @brief  Zigbee main loop iteration.
  *
- * @note Must be called after esp_zb_int() and esp_zb_start()
+ * @deprecated Please use esp_zb_stack_main_loop() instead
+ * @note Must be called after esp_zb_init() and esp_zb_start()
    inside the application's main cycle.
  *
  */
+ESP_ZB_DEPRECATED
 void esp_zb_main_loop_iteration(void);
+
+/**
+ * @brief Zigbee stack main loop iteration once.
+ *
+ * @note Must be called after esp_zb_init() and esp_zb_start().
+ */
+void esp_zb_stack_main_loop_iteration(void);
+
+/**
+ * @brief  Zigbee stack main loop.
+ *
+ * @note Must be called after esp_zb_init() and esp_zb_start(), it’s an infinite main loop.
+ */
+void esp_zb_stack_main_loop(void);
 
 /**
  * @brief  Zigbee CLI example main loop iteration.

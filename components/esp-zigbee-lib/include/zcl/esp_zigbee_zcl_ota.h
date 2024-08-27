@@ -120,6 +120,13 @@ typedef enum {
   ESP_ZB_ZCL_OTA_UPGRADE_SERVER_END       = 0x02,   /*!< End OTA */
 } esp_zb_ota_upgrade_server_status_t;
 
+/** @brief OTA File header - fc fields bitmasks */
+typedef enum esp_zb_zcl_ota_upgrade_file_header_fc_e {
+  ESP_ZB_ZCL_OTA_UPGRADE_FILE_HEADER_FC_CREDENTIAL_VER      = 1 << 0, /*!< Indicate that the Security Credential Version field will be included. */
+  ESP_ZB_ZCL_OTA_UPGRADE_FILE_HEADER_FC_DEVICE_SPECIFIC     = 1 << 1, /*!< Indicate that the Device Specific field will be included. */
+  ESP_ZB_ZCL_OTA_UPGRADE_FILE_HEADER_FC_HW_VER              = 1 << 2, /*!< Indicate that the Hardware Versions Present field will be included. */
+} esp_zb_zcl_ota_upgrade_file_header_fc_t;
+
 #ifdef __cplusplus
 }
 #endif

@@ -155,6 +155,30 @@ void esp_zb_set_rx_on_when_idle(bool rx_on);
 bool esp_zb_get_rx_on_when_idle(void);
 
 /**
+ * @brief Set the maximum number of children allowed.
+ *
+ * The function only takes effect on ZC/ZR.
+ *
+ * @param[in] max_children Maximum number of children.
+ *
+ * @return
+ *      - ESP_OK: On success
+ *      - ESP_ERR_NOT_SUPPORTED: for ZED.
+ *
+ */
+esp_err_t esp_zb_nwk_set_max_children(uint8_t max_children);
+
+/**
+ * @brief Get the maximum number of children allowed.
+ *
+ * @return
+ *      - Maximum number of children, for ZC/ZR
+ *      - 0, for ZED
+ *
+ */
+uint8_t esp_zb_nwk_get_max_children(void);
+
+/**
  * @brief   Set the Zigbee device long address.
  *
  * @note  Set this function AFTER @ref esp_zb_init called, if user wants to set specific address
