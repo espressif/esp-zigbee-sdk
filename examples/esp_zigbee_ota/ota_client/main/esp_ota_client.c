@@ -182,7 +182,7 @@ static esp_err_t zb_ota_upgrade_query_image_resp_handler(esp_zb_zcl_ota_upgrade_
     if (ret == ESP_OK) {
         ESP_LOGI(TAG, "Approving OTA image upgrade");
     } else {
-        ESP_LOGI(TAG, "Rejecting OTA image upgrade, status: %d", ret);
+        ESP_LOGI(TAG, "Rejecting OTA image upgrade, status: %s", esp_err_to_name(ret));
     }
     return ret;
 }
@@ -258,7 +258,7 @@ static void esp_zb_task(void *pvParameters)
     esp_zb_set_primary_network_channel_set(ESP_ZB_PRIMARY_CHANNEL_MASK);
     ESP_ERROR_CHECK(zb_register_ota_upgrade_client_device());
     ESP_ERROR_CHECK(esp_zb_start(false));
-    esp_zb_main_loop_iteration();
+    esp_zb_stack_main_loop();
 }
 
 void app_main(void)

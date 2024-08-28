@@ -559,6 +559,48 @@ esp_err_t esp_zb_analog_output_cluster_add_attr(esp_zb_attribute_list_t *attr_li
 esp_err_t esp_zb_analog_value_cluster_add_attr(esp_zb_attribute_list_t *attr_list, uint16_t attr_id, void *value_p);
 
 /**
+ * @brief Add an attribute in electrical conductivity measurement cluster.
+ *
+ * @param[in] attr_list A pointer to attribute list @ref esp_zb_attribute_list_s
+ * @param[in] attr_id  An attribute id to be added
+ * @param[in] value_p A pointer to attribute value wants to add
+ *
+ * @return
+ *      - ESP_OK on success
+ *      - ESP_ERR_INVALID_ARG if attribute is existed or unsupported
+ *
+ */
+esp_err_t esp_zb_ec_measurement_cluster_add_attr(esp_zb_attribute_list_t *attr_list, uint16_t attr_id, void *value_p);
+
+/**
+ * @brief Add an attribute in pH measurement cluster.
+ *
+ * @param[in] attr_list A pointer to attribute list @ref esp_zb_attribute_list_s
+ * @param[in] attr_id  An attribute id to be added
+ * @param[in] value_p A pointer to attribute value wants to add
+ *
+ * @return
+ *      - ESP_OK on success
+ *      - ESP_ERR_INVALID_ARG if attribute is existed or unsupported
+ *
+ */
+esp_err_t esp_zb_ph_measurement_cluster_add_attr(esp_zb_attribute_list_t *attr_list, uint16_t attr_id, void *value_p);
+
+/**
+ * @brief Add an attribute in wind speed measurement cluster.
+ *
+ * @param[in] attr_list A pointer to attribute list @ref esp_zb_attribute_list_s
+ * @param[in] attr_id  An attribute id to be added
+ * @param[in] value_p A pointer to attribute value wants to add
+ *
+ * @return
+ *      - ESP_OK on success
+ *      - ESP_ERR_INVALID_ARG if attribute is existed or unsupported
+ *
+ */
+esp_err_t esp_zb_wind_speed_measurement_cluster_add_attr(esp_zb_attribute_list_t *attr_list, uint16_t attr_id, void *value_p);
+
+/**
  * @brief Add an attribute in carbon dioxide measurement cluster.
  *
  * @param[in] attr_list A pointer to attribute list @ref esp_zb_attribute_list_s

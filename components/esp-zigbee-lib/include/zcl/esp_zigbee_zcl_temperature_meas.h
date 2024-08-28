@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2022-2023 Espressif Systems (Shanghai) CO LTD
+ * SPDX-FileCopyrightText: 2022-2024 Espressif Systems (Shanghai) CO LTD
  *
  * SPDX-License-Identifier: Apache-2.0
  */
@@ -20,20 +20,45 @@ typedef enum {
     ESP_ZB_ZCL_ATTR_TEMP_MEASUREMENT_TOLERANCE_ID     = 0x0003,  /*!< Tolerance */
 } esp_zb_zcl_temp_measurement_attr_t;
 
-/** @brief Default value for Value attribute */
-#define ESP_ZB_ZCL_TEMP_MEASUREMENT_VALUE_DEFAULT_VALUE ((int16_t)0x8000)
+/** @brief Minimum value for MinMeasuredValue attribute */
+#define ESP_ZB_ZCL_TEMP_MEASUREMENT_MIN_MEASURED_VALUE_MINIMUM ((int16_t)0x954d)
 
-/** @brief Default value for MinValue attribute */
-#define ESP_ZB_ZCL_TEMP_MEASUREMENT_MIN_VALUE_DEFAULT_VALUE ((int16_t)0x8000)
+/** @brief Maximum value for MinMeasuredValue attribute */
+#define ESP_ZB_ZCL_TEMP_MEASUREMENT_MIN_MEASURED_VALUE_MAXIMUM ((int16_t)0x7ffe)
 
-/** @brief Default value for MaxValue attribute */
-#define ESP_ZB_ZCL_TEMP_MEASUREMENT_MAX_VALUE_DEFAULT_VALUE ((int16_t)0x8000)
+/** @brief Minimum value for MaxMeasuredValue attribute */
+#define ESP_ZB_ZCL_TEMP_MEASUREMENT_MAX_MEASURED_VALUE_MINIMUM ((int16_t)0x954e)
 
-#define ESP_ZB_ZCL_ATTR_TEMP_MEASUREMENT_VALUE_UNKNOWN ESP_ZB_ZCL_TEMP_MEASUREMENT_VALUE_DEFAULT_VALUE
+/** @brief Maximum value for MaxMeasuredValue attribute */
+#define ESP_ZB_ZCL_TEMP_MEASUREMENT_MAX_MEASURED_VALUE_MAXIMUM ((int16_t)0x7fff)
 
-#define ESP_ZB_ZCL_ATTR_TEMP_MEASUREMENT_MIN_VALUE_INVALID ESP_ZB_ZCL_TEMP_MEASUREMENT_MIN_VALUE_DEFAULT_VALUE
+/** @brief Minimum value for Tolerance attribute */
+#define ESP_ZB_ZCL_TEMP_MEASUREMENT_TOLERANCE_MINIMUM ((uint16_t)0x0000)
 
-#define ESP_ZB_ZCL_ATTR_TEMP_MEASUREMENT_MAX_VALUE_INVALID ESP_ZB_ZCL_TEMP_MEASUREMENT_MAX_VALUE_DEFAULT_VALUE
+/** @brief Maximum value for Tolerance attribute */
+#define ESP_ZB_ZCL_TEMP_MEASUREMENT_TOLERANCE_MAXIMUM ((uint16_t)0x0800)
+
+/** @brief Unknown value for MeasuredValue attribute */
+#define ESP_ZB_ZCL_TEMP_MEASUREMENT_MEASURED_VALUE_UNKNOWN ESP_ZB_ZCL_VALUE_S16_NONE
+
+/** @brief Unknown value for MinMeasuredValue attribute */
+#define ESP_ZB_ZCL_TEMP_MEASUREMENT_MIN_MEASURED_VALUE_UNKNOWN ESP_ZB_ZCL_VALUE_S16_NONE
+
+/** @brief Unknown value for MaxMeasuredValue attribute */
+#define ESP_ZB_ZCL_TEMP_MEASUREMENT_MAX_MEASURED_VALUE_UNKNOWN ESP_ZB_ZCL_VALUE_S16_NONE
+
+/** @brief Default value for MeasuredValue attribute */
+#define ESP_ZB_ZCL_TEMP_MEASUREMENT_MEASURED_VALUE_DEFAULT ESP_ZB_ZCL_VALUE_S16_NONE
+
+/** @brief Default value for MinMeasuredValue attribute */
+#define ESP_ZB_ZCL_TEMP_MEASUREMENT_MIN_MEASURED_VALUE_DEFAULT ESP_ZB_ZCL_VALUE_S16_NONE
+
+/** @brief Default value for MaxMeasuredValue attribute */
+#define ESP_ZB_ZCL_TEMP_MEASUREMENT_MAX_MEASURED_VALUE_DEFAULT ESP_ZB_ZCL_VALUE_S16_NONE
+
+void esp_zb_zcl_temp_measurement_init_server(void);
+#define ESP_ZB_ZCL_CLUSTER_ID_TEMP_MEASUREMENT_SERVER_ROLE_INIT esp_zb_zcl_temp_measurement_init_server
+#define ESP_ZB_ZCL_CLUSTER_ID_TEMP_MEASUREMENT_CLIENT_ROLE_INIT NULL
 
 #ifdef __cplusplus
 }

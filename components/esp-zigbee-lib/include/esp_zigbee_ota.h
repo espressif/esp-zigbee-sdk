@@ -29,6 +29,19 @@ typedef struct esp_zb_ota_zcl_information_s {
 } esp_zb_ota_zcl_information_t;
 
 /**
+ * @brief The ZCL ota upgrade header optional structure
+ *
+ */
+typedef struct esp_zb_ota_file_optional_s {
+    uint8_t security_credential_version;        /*!< Indicate security credential version type such as SE1.0 or SE2.0 that the client
+                                                     is required to have, before it SHALL install the image. */
+    esp_zb_ieee_addr_t upgrade_file_destination;/*!< Indicates that this OTA file contains security credential/certificate data or
+                                                     other type of information that is specific to a particular device.*/
+    uint16_t minimum_hardware_version;          /*!< Represent the earliest hardware platform version this image SHOULD be used on. */
+    uint16_t maximum_hardware_version;          /*!< Represent the latest hardware platform version this image SHOULD be used on. */
+} esp_zb_ota_file_optional_t;
+
+/**
  * @brief The Zigbee ZCL OTA file header struct.
  *
  */
@@ -37,6 +50,8 @@ typedef struct esp_zb_ota_file_header_s {
     uint16_t image_type;                       /*!< Image type value to distinguish the products */
     uint32_t file_version;                     /*!< File version represents the release and build number of the image’s application and stack */
     uint32_t image_size;                       /*!< Total image size in bytes transferred from the server to the client */
+    uint16_t field_control;                    /*!< Indicate whether additional optional information */
+    esp_zb_ota_file_optional_t optional;       /*!< The optional header controlled by the filed contorl, @see esp_zb_ota_file_optional_t */
 } esp_zb_ota_file_header_t;
 
 /**

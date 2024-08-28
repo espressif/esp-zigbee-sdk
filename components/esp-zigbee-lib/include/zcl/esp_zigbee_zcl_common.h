@@ -49,6 +49,9 @@ extern "C" {
 #include "esp_zigbee_zcl_diagnostics.h"
 #include "esp_zigbee_zcl_meter_identification.h"
 #include "esp_zigbee_zcl_price.h"
+#include "esp_zigbee_zcl_ec_measurement.h"
+#include "esp_zigbee_zcl_ph_measurement.h"
+#include "esp_zigbee_zcl_wind_speed_measurement.h"
 #ifdef ZB_ENABLE_ZGP
 #include "esp_zigbee_zcl_green_power.h"
 #endif
@@ -97,6 +100,7 @@ typedef enum {
     ESP_ZB_HA_COLOR_DIMMABLE_LIGHT_DEVICE_ID          = 0x0102,  /*!< Color Dimmable Light Device */
     ESP_ZB_HA_DIMMER_SWITCH_DEVICE_ID                 = 0x0104,  /*!< Dimmer Switch Device */
     ESP_ZB_HA_COLOR_DIMMER_SWITCH_DEVICE_ID           = 0x0105,  /*!< Color Dimmer Switch Device */
+    ESP_ZB_HA_LIGHT_SENSOR_DEVICE_ID                  = 0x0106,  /*!< Light Sensor Device */
     ESP_ZB_HA_SHADE_DEVICE_ID                         = 0x0200,  /*!< Shade */
     ESP_ZB_HA_SHADE_CONTROLLER_DEVICE_ID              = 0x0201,  /*!< Shade controller */
     ESP_ZB_HA_WINDOW_COVERING_DEVICE_ID               = 0x0202,  /*!< Window Covering client*/
@@ -169,6 +173,9 @@ typedef enum {
     ESP_ZB_ZCL_CLUSTER_ID_FLOW_MEASUREMENT           = 0x0404U,     /*!< Flow measurement */
     ESP_ZB_ZCL_CLUSTER_ID_REL_HUMIDITY_MEASUREMENT   = 0x0405U,     /*!< Relative humidity measurement */
     ESP_ZB_ZCL_CLUSTER_ID_OCCUPANCY_SENSING          = 0x0406U,     /*!< Occupancy sensing */
+    ESP_ZB_ZCL_CLUSTER_ID_PH_MEASUREMENT             = 0x0409U,     /*!< pH measurement */
+    ESP_ZB_ZCL_CLUSTER_ID_EC_MEASUREMENT             = 0x040aU,     /*!< Electrical conductivity measurement */
+    ESP_ZB_ZCL_CLUSTER_ID_WIND_SPEED_MEASUREMENT     = 0x040bU,     /*!< Wind speed measurement */
     ESP_ZB_ZCL_CLUSTER_ID_CARBON_DIOXIDE_MEASUREMENT = 0x040dU,     /*!< Carbon dioxide measurement */
     ESP_ZB_ZCL_CLUSTER_ID_PM2_5_MEASUREMENT          = 0x042aU,     /*!< PM2.5 measurement */
     ESP_ZB_ZCL_CLUSTER_ID_IAS_ZONE                   = 0x0500U,     /*!< IAS zone */
