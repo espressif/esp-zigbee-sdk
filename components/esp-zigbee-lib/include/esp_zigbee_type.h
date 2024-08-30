@@ -131,10 +131,10 @@ typedef struct esp_zb_attribute_list_s {
 typedef struct esp_zb_zcl_cluster_s {
     uint16_t cluster_id;                        /*!< ZCL 16-bit cluster id. Refer zcl_cluster_id */
     uint16_t attr_count;                        /*!< Attributes number supported by the cluster */
-    ESP_ZB_PACKED_STRUCT union {
+    union {
         esp_zb_zcl_attr_t *attr_desc_list;      /*!< Array of cluster attributes esp_zb_zcl_attr_t */
         esp_zb_attribute_list_t* attr_list;     /*!< List of cluster attributes esp_zb_attribute_list_t */
-    };
+    } ESP_ZB_PACKED_STRUCT;
     uint8_t role_mask;                          /*!< Cluster role, refer to zcl_cluster_role */
     uint16_t manuf_code;                        /*!< Manufacturer code for cluster and its attributes */
     esp_zb_zcl_cluster_init_t cluster_init;     /*!< cluster init callback function */
@@ -317,10 +317,10 @@ typedef struct esp_zb_endpoint_s {
     uint8_t reserved_size;                      /*!< Unused parameter (reserved for future use) */
     void *reserved_ptr;                         /*!< Unused parameter (reserved for future use) */
     uint8_t cluster_count;                      /*!< Number of supported clusters */
-    ESP_ZB_PACKED_STRUCT union {
+    union {
         esp_zb_zcl_cluster_t *cluster_desc_list;    /*!< Supported clusters arranged in array */
         esp_zb_cluster_list_t *cluster_list;        /*!< Supported clusters arranged in list */
-    };
+    } ESP_ZB_PACKED_STRUCT;
     esp_zb_af_simple_desc_1_1_t *simple_desc;   /*!< Simple descriptor */
 #if defined ZB_ENABLE_ZLL
     uint8_t group_id_count;                     /*!< Number of group id */
