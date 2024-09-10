@@ -1,0 +1,11 @@
+## IDF Component Manager Manifest File
+dependencies:
+  cmake_utilities: "0.*"
+  espressif/esp-zboss-lib: "~1.5.0"
+  espressif/esp-zigbee-lib: "~1.5.0"
+  espressif/esp-zigbee-console:
+    version: "1.*"
+    override_path: "../../../components/esp-zigbee-console"
+  ## Required IDF version
+  idf:
+    version: ">=5.0.0"

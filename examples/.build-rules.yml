@@ -1,5 +1,11 @@
 # Documentation: .gitlab/ci/README.md#manifest-file-to-control-the-buildtest-apps
 
+examples/esp_zigbee_all_device_types_app:
+  enable:
+    - if: IDF_TARGET in ["esp32c6", "esp32h2"]
+      temporary: true
+      reason: the other targets are not tested yet
+
 examples/esp_zigbee_cli:
   enable:
     - if: IDF_TARGET in ["esp32", "esp32s2", "esp32c3", "esp32s3", "esp32c6", "esp32h2"]
