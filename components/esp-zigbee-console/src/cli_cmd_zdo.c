@@ -83,6 +83,64 @@ static void cli_zdo_ieee_addr_cb(esp_zb_zdp_status_t zdo_status, esp_zb_ieee_add
     free(req);
 }
 
+static void cli_output_neigbor_table(const esp_zb_zdo_mgmt_lqi_rsp_t *table_info)
+{
+    static const char *titles[] = {"Index", "ExtPanID", "NwkAddr", "MacAddr", "Type", "Rel", "Depth", "LQI"};
+    static const uint8_t widths[] = {5, 20, 8, 20, 5, 3, 5, 5};
+    static const char *dev_type_name[] = {
+        [ESP_ZB_DEVICE_TYPE_COORDINATOR] = "ZC",
+        [ESP_ZB_DEVICE_TYPE_ROUTER]      = "ZR",
+        [ESP_ZB_DEVICE_TYPE_ED]          = "ZED",
+        [ESP_ZB_DEVICE_TYPE_NONE]        = "UNK",
+    };
+    static const char rel_name[] = {
+        [ESP_ZB_NWK_RELATIONSHIP_PARENT]                = 'P', /* Parent */
+        [ESP_ZB_NWK_RELATIONSHIP_CHILD]                 = 'C', /* Child */
+        [ESP_ZB_NWK_RELATIONSHIP_SIBLING]               = 'S', /* Sibling */
+        [ESP_ZB_NWK_RELATIONSHIP_NONE_OF_THE_ABOVE]     = 'O', /* Others */
+        [ESP_ZB_NWK_RELATIONSHIP_PREVIOUS_CHILD]        = 'c', /* Previous Child */
+        [ESP_ZB_NWK_RELATIONSHIP_UNAUTHENTICATED_CHILD] = 'u', /* Unauthenticated Child */
+    };
+
+    uint8_t start_idx = table_info->start_index;
+    cli_output_table_header(ARRAY_SIZE(widths), titles, widths);
+    for (int i = 0; i < table_info->neighbor_table_list_count; i++) {
+        esp_zb_zdo_neighbor_table_list_record_t *record = &table_info->neighbor_table_list[i];
+
+        cli_output("| %3d | 0x%016" PRIx64 " | 0x%04hx | 0x%016" PRIx64 " |",
+                    start_idx + i, *(uint64_t *)record->extended_pan_id, record->network_addr, *(uint64_t *)record->extended_addr);
+        cli_output(" %-s%s | %c |", dev_type_name[record->device_type],
+                   record->permit_join ? "*" : (record->device_type <= ESP_ZB_DEVICE_TYPE_ROUTER ? " " : ""),
+                   rel_name[record->relationship]);
+        cli_output(" %3d | %3d |", record->depth, record->lqi);
+        cli_output("\n");
+    }
+}
+
+static void cli_zdo_neigbor_table_cb(const esp_zb_zdo_mgmt_lqi_rsp_t *table_info, void *user_ctx)
+{
+    static const char *request_name = "neighbors";
+    bool done = true;
+    esp_zb_zdo_mgmt_lqi_req_param_t *req = user_ctx;
+    esp_zb_zdp_status_t zdo_status = table_info->status;
+    cli_output_request_status(request_name, req->dst_addr, zdo_status);
+    if (zdo_status == ESP_ZB_ZDP_STATUS_SUCCESS) {
+        cli_output_neigbor_table(table_info);
+
+        if (table_info->start_index + table_info->neighbor_table_list_count < table_info->neighbor_table_entries) {
+            /* There are unreported neighbor table entries, request for them. */
+            req->start_index = table_info->start_index + table_info->neighbor_table_list_count;
+            esp_zb_zdo_mgmt_lqi_req(req, cli_zdo_neigbor_table_cb, req);
+            done = false;
+        }
+    }
+
+    if (done) {
+        esp_zb_console_notify_result(ESP_OK);
+        free(req);
+    }
+}
+
 static void cli_output_binding_table(const esp_zb_zdo_binding_table_info_t *table_info)
 {
     static const char *titles[] = {"Index", "Src_Addr", "Src_EP", "Cluster", "Dst_Addr", "Dst_EP"};
@@ -183,7 +241,10 @@ static esp_err_t cli_zdo_request(esp_zb_cli_cmd_t *self, int argc, char **argv)
         ia_req->start_index = 0;
         esp_zb_zdo_ieee_addr_req(ia_req, cli_zdo_ieee_addr_cb, ia_req);
     } else if (!strcmp(argtable.request->sval[0], "neighbors")) {
-        ret = ESP_ERR_NOT_SUPPORTED;
+        esp_zb_zdo_mgmt_lqi_req_param_t *ml_req = malloc(sizeof(esp_zb_zdo_mgmt_lqi_req_param_t));
+        ml_req->dst_addr = argtable.address->addr[0].u.short_addr;
+        ml_req->start_index = 0;
+        esp_zb_zdo_mgmt_lqi_req(ml_req, cli_zdo_neigbor_table_cb, ml_req);
     } else if (!strcmp(argtable.request->sval[0], "routes")) {
         ret = ESP_ERR_NOT_SUPPORTED;
     } else if (!strcmp(argtable.request->sval[0], "bindings")) {
