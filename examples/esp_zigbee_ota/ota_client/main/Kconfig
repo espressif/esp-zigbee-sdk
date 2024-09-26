@@ -1,0 +1,20 @@
+menu "Example OTA Configuration"
+
+    choice ZB_OTA
+        prompt "Configure the OTA mode"
+        default ZB_NORMAL_OTA
+        help
+            Select which mode does the device OTA, support Normal/Delta.
+
+        config ZB_NORMAL_OTA
+            bool 'Normal OTA Updates'
+            help
+                Select this to enable the OTA with normal binaries.
+
+        config ZB_DELTA_OTA
+            bool 'Delta OTA Updates'
+            help
+                Select this to enable the OTA with compressed delta binaries.
+    endchoice
+
+endmenu

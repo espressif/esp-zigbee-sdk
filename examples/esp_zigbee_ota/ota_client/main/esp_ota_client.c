@@ -15,6 +15,9 @@
 #include "esp_check.h"
 #include "esp_log.h"
 #include "esp_ota_ops.h"
+#if CONFIG_ZB_DELTA_OTA
+#include "esp_delta_ota_ops.h"
+#endif
 #include "esp_timer.h"
 #include "esp_zigbee_cluster.h"
 #include "nvs_flash.h"
@@ -132,7 +135,11 @@ static esp_err_t zb_ota_upgrade_status_handler(esp_zb_zcl_ota_upgrade_value_mess
             start_time = esp_timer_get_time();
             s_ota_partition = esp_ota_get_next_update_partition(NULL);
             assert(s_ota_partition);
+#if CONFIG_ZB_DELTA_OTA
+            ret = esp_delta_ota_begin(s_ota_partition, 0, &s_ota_handle);
+#else
             ret = esp_ota_begin(s_ota_partition, 0, &s_ota_handle);
+#endif
             ESP_RETURN_ON_ERROR(ret, TAG, "Failed to begin OTA partition, status: %s", esp_err_to_name(ret));
             break;
         case ESP_ZB_ZCL_OTA_UPGRADE_STATUS_RECEIVE:
@@ -140,7 +147,11 @@ static esp_err_t zb_ota_upgrade_status_handler(esp_zb_zcl_ota_upgrade_value_mess
             offset += message.payload_size;
             ESP_LOGI(TAG, "-- OTA Client receives data: progress [%ld/%ld]", offset, total_size);
             if (message.payload_size && message.payload) {
+#if CONFIG_ZB_DELTA_OTA
+                ret = esp_delta_ota_write(s_ota_handle, message.payload, message.payload_size);
+#else
                 ret = esp_ota_write(s_ota_handle, (const void *)message.payload, message.payload_size);
+#endif
                 ESP_RETURN_ON_ERROR(ret, TAG, "Failed to write OTA data to partition, status: %s", esp_err_to_name(ret));
             }
             break;
@@ -156,7 +167,11 @@ static esp_err_t zb_ota_upgrade_status_handler(esp_zb_zcl_ota_upgrade_value_mess
             ESP_LOGI(TAG, "-- OTA Information: version: 0x%lx, manufacturer code: 0x%x, image type: 0x%x, total size: %ld bytes, cost time: %lld ms,",
                      message.ota_header.file_version, message.ota_header.manufacturer_code, message.ota_header.image_type,
                      message.ota_header.image_size, (esp_timer_get_time() - start_time) / 1000);
+#if CONFIG_ZB_DELTA_OTA
+            ret = esp_delta_ota_end(s_ota_handle);
+#else
             ret = esp_ota_end(s_ota_handle);
+#endif
             ESP_RETURN_ON_ERROR(ret, TAG, "Failed to end OTA partition, status: %s", esp_err_to_name(ret));
             ret = esp_ota_set_boot_partition(s_ota_partition);
             ESP_RETURN_ON_ERROR(ret, TAG, "Failed to set OTA boot partition, status: %s", esp_err_to_name(ret));

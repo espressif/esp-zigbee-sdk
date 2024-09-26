@@ -128,6 +128,38 @@ Note: The example also supports the user pressing the `boot` button to send the 
  ![Zigbee_ota](../../../docs/_static/zigbee-ota-upgrade-process.png)
  * Server gets the upgrade bin file (ota_file.bin) and transmit it through OTA process. After upgrade finish, the client will restart. Upgrade bin file will be loaded from client side and a log "OTA example 2.0 is running" can be seen on the log indicates OTA file upgraded successfully.
 
+## Delta OTA Upgrade Functions
+
+Compressed Delta OTA Updates aims at enabling Over-the-Air firmware update with compressed delta binaries. Instead of the complete binary to be hosted on the OTA update server, a patch file is hosted which is the difference between the base firmware and the new firmware in compressed form.
+
+### Advantages
+
+* Patch file have smaller size than the complete firmware file. This reduces the time and network usage to download the file from server.
+* No additional storage partition is required for the "patch".
+* Only firmware level changes are required. No bootloader related changes required.
+
+### How to use the function
+
+This example uses `esp_delta_ota` component which available though the [IDF component manager](https://components.espressif.com/component/espressif/esp_delta_ota). Please refer to its documentation for more details.
+
+* Enable `ZB_DELTA_OTA` in menuconfig.
+* Install required packages:
+
+```
+pip install -r managed_components/espressif__esp_delta_ota/examples/https_delta_ota/tools/requirements.txt
+```
+
+* Generate the upgrade file:
+    * An old firmware as the base firmware which will flash into the device.
+    * A new firmware to which we want to upgrade to.
+    * Use the [python tool](./managed_components/espressif__esp_delta_ota/examples/https_delta_ota/tools/esp_delta_ota_patch_gen.py) create the patch file.
+
+        ```
+        python esp_delta_ota_patch_gen.py --chip <target> --base_binary <base_binary> --new_binary <new_binary> --patch_file_name <patch_file_name>
+        ```
+
+> **_NOTE:_** Make sure that the firmware present in the device is used as `base_binary` while creating the patch file. For this purpose, user should keep backup of the firmware running in the device as it is required for creating the patch file.
+
 ## OTA Upgrade Rate Optimization
 
 Here are some ways to optimize the OTA upgrade rate:
