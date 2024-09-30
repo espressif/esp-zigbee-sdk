@@ -440,7 +440,7 @@ static esp_err_t cli_zdo_nwk_leave(esp_zb_cli_cmd_t *self, int argc, char **argv
 
     EXIT_ON_FALSE(argtable.address->addr->addr_type == ESP_ZB_ZCL_ADDR_TYPE_SHORT, ESP_ERR_INVALID_ARG);
 
-    esp_zb_zdo_mgmt_leave_req_param_t *req = malloc(sizeof(esp_zb_zdo_mgmt_leave_req_param_t));
+    esp_zb_zdo_mgmt_leave_req_param_t *req = calloc(1, sizeof(esp_zb_zdo_mgmt_leave_req_param_t));
     if (argtable.rejoin->count > 0) {
         req->rejoin = 1;
     }
