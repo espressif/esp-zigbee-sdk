@@ -12,16 +12,28 @@
 
 static const char *TAG = "ESP_ZB_CONSOLE_APP";
 
+static void log_nwk_info(const char *status_string)
+{
+    esp_zb_ieee_addr_t extended_pan_id;
+    esp_zb_get_extended_pan_id(extended_pan_id);
+    ESP_LOGI(TAG, "%s (Extended PAN ID: %02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x, PAN ID: 0x%04hx, "
+                  "Channel:%d, Short Address: 0x%04hx)", status_string,
+                  extended_pan_id[7], extended_pan_id[6], extended_pan_id[5], extended_pan_id[4],
+                  extended_pan_id[3], extended_pan_id[2], extended_pan_id[1], extended_pan_id[0],
+                  esp_zb_get_pan_id(), esp_zb_get_current_channel(), esp_zb_get_short_address());
+}
+
 void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
 {
     uint32_t *p_sg_p     = signal_struct->p_app_signal;
     esp_err_t err_status = signal_struct->esp_err_status;
     esp_zb_app_signal_type_t sig_type = *p_sg_p;
     esp_zb_zdo_signal_device_annce_params_t *dev_annce_params = NULL;
+    esp_zb_zdo_signal_leave_indication_params_t *leave_ind_params = NULL;
     const char *err_name = esp_err_to_name(err_status);
     switch (sig_type) {
     case ESP_ZB_ZDO_SIGNAL_SKIP_STARTUP:
-        ESP_LOGI(TAG, "Zigbee stack initialized");
+        ESP_LOGI(TAG, "Initialize Zigbee stack");
         break;
     case ESP_ZB_BDB_SIGNAL_DEVICE_FIRST_START:
     case ESP_ZB_BDB_SIGNAL_DEVICE_REBOOT:
@@ -33,23 +45,28 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
         break;
     case ESP_ZB_BDB_SIGNAL_FORMATION:
         if (err_status == ESP_OK) {
-            esp_zb_ieee_addr_t extended_pan_id;
-            esp_zb_get_extended_pan_id(extended_pan_id);
-            ESP_LOGI(TAG, "Formed network successfully (Extended PAN ID: 0x%016" PRIx64 ", PAN ID: 0x%04hx, Channel:%d, Short Address: 0x%04hx)",
-                     *(uint64_t *)extended_pan_id, esp_zb_get_pan_id(), esp_zb_get_current_channel(), esp_zb_get_short_address());
+            log_nwk_info("Formed network successfully");
         } else {
-            ESP_LOGI(TAG, "Restart network formation (status: %s)", err_name);
+            ESP_LOGI(TAG, "Failed to form network (status: %s)", err_name);
         }
         break;
     case ESP_ZB_BDB_SIGNAL_STEERING:
         if (err_status == ESP_OK) {
-            esp_zb_ieee_addr_t extended_pan_id;
-            esp_zb_get_extended_pan_id(extended_pan_id);
-            ESP_LOGI(TAG, "Joined network successfully (Extended PAN ID: 0x%016" PRIx64 ", PAN ID: 0x%04hx, Channel:%d, Short Address: 0x%04hx)",
-                     *(uint64_t *)extended_pan_id, esp_zb_get_pan_id(), esp_zb_get_current_channel(), esp_zb_get_short_address());
+            log_nwk_info("Joined network successfully");
         } else {
-            ESP_LOGI(TAG, "Restart network steering (status: %s)", err_name);
+            ESP_LOGI(TAG, "Failed to join network (status: %s)", err_name);
         }
+        break;
+    case ESP_ZB_ZDO_SIGNAL_LEAVE:
+        if (err_status == ESP_OK) {
+            ESP_LOGI(TAG, "Left network successfully");
+        } else {
+            ESP_LOGE(TAG, "Failed to leave network (status: %s)", err_name);
+        }
+        break;
+    case ESP_ZB_ZDO_SIGNAL_LEAVE_INDICATION:
+        leave_ind_params = (esp_zb_zdo_signal_leave_indication_params_t *)esp_zb_app_signal_get_params(p_sg_p);
+        ESP_LOGI(TAG, "Zigbee Node (0x%04hx) is leaving network", leave_ind_params->short_addr);
         break;
     case ESP_ZB_ZDO_SIGNAL_DEVICE_ANNCE:
         dev_annce_params = (esp_zb_zdo_signal_device_annce_params_t *)esp_zb_app_signal_get_params(p_sg_p);
@@ -62,6 +79,34 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
             } else {
                 ESP_LOGW(TAG, "Network(0x%04hx) closed, devices joining not allowed.", esp_zb_get_pan_id());
             }
+        }
+        break;
+    case ESP_ZB_BDB_SIGNAL_TOUCHLINK_TARGET:
+        ESP_LOGI(TAG, "Touchlink target is ready, waiting for commissioning");
+        break;
+    case ESP_ZB_BDB_SIGNAL_TOUCHLINK_NWK:
+        if (err_status == ESP_OK) {
+            log_nwk_info("Touchlink commissioning successfully");
+        } else {
+            ESP_LOGW(TAG, "Touchlink commissioning failed (status: %s)", err_name);
+        }
+        break;
+    case ESP_ZB_BDB_SIGNAL_TOUCHLINK_TARGET_FINISHED:
+        ESP_LOGI(TAG, "Touchlink target finished (status: %s)", err_name);
+        break;
+    case ESP_ZB_BDB_SIGNAL_TOUCHLINK_NWK_STARTED:
+    case ESP_ZB_BDB_SIGNAL_TOUCHLINK_NWK_JOINED_ROUTER:
+        ESP_LOGI(TAG, "Touchlink initiator receives the response for %s network",
+                 sig_type == ESP_ZB_BDB_SIGNAL_TOUCHLINK_NWK_STARTED ? "started" : "router joining");
+        esp_zb_bdb_signal_touchlink_nwk_params_t *sig_params = (esp_zb_bdb_signal_touchlink_nwk_params_t *)esp_zb_app_signal_get_params(p_sg_p);
+        ESP_LOGI(TAG, "Response is from profile: 0x%04hx, endpoint: %d, address: 0x%16" PRIx64,
+                      sig_params->profile_id, sig_params->endpoint, *(uint64_t*)sig_params->device_ieee_addr);
+        break;
+    case ESP_ZB_BDB_SIGNAL_TOUCHLINK:
+        if (err_status == ESP_OK) {
+            log_nwk_info("Touchlink commissioning successfully");
+        } else {
+            ESP_LOGW(TAG, "No Touchlink target devices found");
         }
         break;
     default:
