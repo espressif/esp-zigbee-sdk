@@ -143,7 +143,7 @@ static esp_err_t zcl_add_attribute(esp_zb_attribute_list_t *attr_list, attribute
     EXIT_ON_FALSE(attr_list, ESP_ERR_INVALID_ARG);
     EXIT_ON_FALSE(attr_cfg->attr_value_p, ESP_ERR_INVALID_ARG, cli_output_line("Invalid attribute value"));
 
-    EXIT_ON_ERROR(force ? esp_zb_cluster_add_attr(attr_list, attr_list->cluster_id, attr_cfg->attr_id,
+    EXIT_ON_ERROR(force ? esp_zb_cluster_add_attr(attr_list, attr_list->next->cluster_id, attr_cfg->attr_id,
                                                   attr_cfg->attr_type, attr_cfg->attr_access, attr_cfg->attr_value_p)
                         : esp_zb_cluster_add_std_attr(attr_list, attr_cfg->attr_id, attr_cfg->attr_value_p),
                   cli_output_line("Fail to add attribute"));
