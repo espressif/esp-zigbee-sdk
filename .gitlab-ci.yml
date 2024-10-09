@@ -23,7 +23,7 @@ before_script:
 
 .setup_idf: &setup_idf
   - cd $CI_PROJECT_DIR
-  - git clone --depth=1 -b $CI_COMMIT_REF_NAME ${IDF_GIT_REPO_URL} || git clone --depth=1 -b v5.1.3 ${IDF_GIT_REPO_URL}
+  - git clone --depth=1 -b $CI_COMMIT_REF_NAME ${IDF_GIT_REPO_URL} || git clone --depth=1 -b v5.1.4 ${IDF_GIT_REPO_URL}
   - cd esp-idf
   - ./install.sh
   - . ./export.sh
