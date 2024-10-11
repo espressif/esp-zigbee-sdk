@@ -22,10 +22,4 @@ CONFIG_ZB_ZCZR=y
 CONFIG_ZB_CLI_ENABLE=y
 # CONFIG_ZB_ZED is not set
 # end of Zboss
-
-#
-# IEEE802154
-#
-CONFIG_IEEE802154_RECEIVE_DONE_HANDLER=y
-# end of IEEE802154
 # end of Component config

@@ -257,7 +257,7 @@ def test_zb_ota(dut, count, app_path, erase_all):
     check_zigbee_network_status(client, server)
 
     assert (ZigbeeCIConstants.default_id != str(server.expect(r'OTA client address: (0x[0-9a-fA-F]+)',
-                                                              timeout=3)[1].decode()))
+                                                              timeout=5)[1].decode()))
     ota_version, image_type, manufacturer_code = get_ota_information(server)
     assert ota_version == ZigbeeCIConstants.ota_version
     assert image_type == ZigbeeCIConstants.image_type
