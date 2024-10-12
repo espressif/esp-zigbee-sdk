@@ -1623,23 +1623,23 @@ static esp_err_t esp_ncp_zb_aps_data_request_fn(const uint8_t *input, uint16_t i
     if (input) {
         esp_zb_aps_data_t *aps_data = (esp_zb_aps_data_t *)input;
         esp_zb_apsde_data_req_t data_req = {
-            .dst_addr_mode  = aps_data->dst_addr_mode,
-            .dst_short_addr = aps_data->basic_cmd.dst_addr_u.addr_short,
-            .dst_endpoint   = aps_data->basic_cmd.dst_endpoint,
-            .src_endpoint   = aps_data->basic_cmd.src_endpoint,
-            .profile_id     = aps_data->profile_id,
-            .cluster_id     = aps_data->cluster_id,
-            .tx_options     = aps_data->tx_options,
-            .use_alias      = aps_data->use_alias,
-            .alias_src_addr = aps_data->alias_src_addr.addr_short,
-            .alias_seq_num  = aps_data->alias_seq_num,
-            .radius         = aps_data->radius,
-            .asdu_length    = aps_data->asdu_length,
-            .asdu           = aps_data->asdu_length ? (uint8_t *)(input + sizeof(esp_zb_aps_data_t)) : NULL,
+            .dst_addr_mode       = aps_data->dst_addr_mode,
+            .dst_addr.addr_short = aps_data->basic_cmd.dst_addr_u.addr_short,
+            .dst_endpoint        = aps_data->basic_cmd.dst_endpoint,
+            .src_endpoint        = aps_data->basic_cmd.src_endpoint,
+            .profile_id          = aps_data->profile_id,
+            .cluster_id          = aps_data->cluster_id,
+            .tx_options          = aps_data->tx_options,
+            .use_alias           = aps_data->use_alias,
+            .alias_src_addr      = aps_data->alias_src_addr.addr_short,
+            .alias_seq_num       = aps_data->alias_seq_num,
+            .radius              = aps_data->radius,
+            .asdu_length         = aps_data->asdu_length,
+            .asdu                = aps_data->asdu_length ? (uint8_t *)(input + sizeof(esp_zb_aps_data_t)) : NULL,
         };
 
         ESP_LOGI(TAG, "dst_addr_mode %0x, dst_short_addr %02x, dst_endpoint %0x, src_endpoint %0x, profile_id %02x, cluster_id %02x, tx_options %02x, use_alias %02x, radius %0x",
-                        data_req.dst_addr_mode, data_req.dst_short_addr, data_req.dst_endpoint, data_req.src_endpoint, data_req.profile_id, data_req.cluster_id,
+                        data_req.dst_addr_mode, data_req.dst_addr.addr_short, data_req.dst_endpoint, data_req.src_endpoint, data_req.profile_id, data_req.cluster_id,
                         data_req.tx_options, data_req.use_alias, data_req.radius);
 
         if (data_req.asdu && data_req.asdu_length) {

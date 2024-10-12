@@ -41,12 +41,12 @@ typedef enum esp_zb_apsde_tx_opt_e {
 
 /**
  * @brief APSDE-DATA.request Parameters
- * 
+ *
  */
 typedef struct esp_zb_apsde_data_req_s {
     uint8_t dst_addr_mode;      /*!< The addressing mode for the destination address used in this primitive and of the APDU to be transferred,
                                      refer to esp_zb_aps_address_mode_t */
-    uint16_t dst_short_addr;    /*!< The individual device address or group address of the entity to which the ASDU is being transferred*/
+    esp_zb_addr_u dst_addr;     /*!< The individual device address or group address of the entity to which the ASDU is being transferred*/
     uint8_t dst_endpoint;       /*!< The number of the individual endpoint of the entity to which the ASDU is being transferred or the broadcast endpoint (0xff).*/
     uint16_t profile_id;        /*!< The identifier of the profile for which this frame is intended. */
     uint16_t cluster_id;        /*!< The identifier of the object for which this frame is intended. */

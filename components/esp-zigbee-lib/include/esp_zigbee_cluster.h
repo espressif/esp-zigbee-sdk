@@ -484,7 +484,7 @@ esp_zb_attribute_list_t *esp_zb_diagnostics_cluster_create(esp_zb_diagnostics_cl
 esp_zb_attribute_list_t *esp_zb_meter_identification_cluster_create(esp_zb_meter_identification_cluster_cfg_t *meter_identification_cfg);
 
 /**
- * @brief  Create a standard metering attribute list
+ * @brief  Create a standard price attribute list
  *
  * @param[in] price_cfg Configuration parameters for this cluster defined by @ref esp_zb_price_cluster_cfg_s
  *
@@ -492,6 +492,16 @@ esp_zb_attribute_list_t *esp_zb_meter_identification_cluster_create(esp_zb_meter
  *
  */
 esp_zb_attribute_list_t *esp_zb_price_cluster_create(esp_zb_price_cluster_cfg_t *price_cfg);
+
+/**
+ * @brief  Create a standard demand response and load control attribute list
+ *
+ * @param[in] drlc_cfg Configuration parameters for this cluster defined by @ref esp_zb_drlc_cluster_cfg_s
+ *
+ * @return pointer to attribute list @ref esp_zb_attribute_list_s
+ *
+ */
+esp_zb_attribute_list_t *esp_zb_drlc_cluster_create(esp_zb_drlc_cluster_cfg_t *drlc_cfg);
 
 /**************************************** ADD CLUSTER ***********************************/
 /**
@@ -1098,6 +1108,20 @@ esp_err_t esp_zb_cluster_list_add_meter_identification_cluster(esp_zb_cluster_li
  *
  */
 esp_err_t esp_zb_cluster_list_add_price_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
+
+/**
+ * @brief Add demand response and load control cluster (attribute list) in a cluster list.
+ *
+ * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
+ * @param[in] attr_list  An attribute list which wants to add
+ * @param[in] role_mask  A role of server or client for this cluster (attribute list) refer to esp_zb_zcl_cluster_role_t
+ *
+ * @return
+ *      - ESP_OK on success
+ *      - ESP_ERR_INVALID_ARG if cluster list not initialized
+ *
+ */
+esp_err_t esp_zb_cluster_list_add_drlc_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 /**
  * @brief Add customized cluster (attribute list) in a cluster list.

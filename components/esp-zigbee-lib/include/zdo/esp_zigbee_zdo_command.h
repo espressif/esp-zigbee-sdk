@@ -16,14 +16,16 @@ extern "C" {
 #define ESP_ZB_MATCH_DESC_REQ_TIMEOUT              (5 * ESP_ZB_TIME_ONE_SECOND)            /* timeout for finding */
 #define ESP_ZB_MATCH_DESC_REQ_ROLE                 ESP_ZB_NWK_BROADCAST_RX_ON_WHEN_IDLE    /* find non-sleep Zigbee device, 0xFFFD */
 
-#define ESP_ZB_IEEE_ADDR_REQ_TIMEOUT                (5 * ESP_ZB_TIME_ONE_SECOND)            /* timeout for ieee address */
-#define ESP_ZB_NODE_DESC_REQ_TIMEOUT                (5 * ESP_ZB_TIME_ONE_SECOND)            /* timeout for node descriptor */
-#define ESP_ZB_BIND_DEVICE_REQ_TIMEOUT              (5 * ESP_ZB_TIME_ONE_SECOND)            /* timeout for binding */
-#define ESP_ZB_ACTIVE_EP_REQ_TIMEOUT                (5 * ESP_ZB_TIME_ONE_SECOND)            /* timeout for active endpoint */
-#define ESP_ZB_SIMPLE_DESC_REQ_TIMEOUT              (5 * ESP_ZB_TIME_ONE_SECOND)            /* timeout for simple descriptor */
-#define ESP_ZB_PERMIT_JOIN_REQ_TIMEOUT              (5 * ESP_ZB_TIME_ONE_SECOND)            /* timeout for permit join */
-#define ESP_ZB_DEVICE_LEAVE_REQ_TIMEOUT             (5 * ESP_ZB_TIME_ONE_SECOND)            /* timeout for device leave */
+#define ESP_ZB_IEEE_ADDR_REQ_TIMEOUT                (5 * ESP_ZB_TIME_ONE_SECOND)            /* timeout for ieee address request */
+#define ESP_ZB_NWK_ADDR_REQ_TIMEOUT                 (5 * ESP_ZB_TIME_ONE_SECOND)            /* timeout for nwk address request */
+#define ESP_ZB_NODE_DESC_REQ_TIMEOUT                (5 * ESP_ZB_TIME_ONE_SECOND)            /* timeout for node descriptor request */
+#define ESP_ZB_BIND_DEVICE_REQ_TIMEOUT              (5 * ESP_ZB_TIME_ONE_SECOND)            /* timeout for binding request */
+#define ESP_ZB_ACTIVE_EP_REQ_TIMEOUT                (5 * ESP_ZB_TIME_ONE_SECOND)            /* timeout for active endpoint request */
+#define ESP_ZB_SIMPLE_DESC_REQ_TIMEOUT              (5 * ESP_ZB_TIME_ONE_SECOND)            /* timeout for simple descriptor request */
+#define ESP_ZB_PERMIT_JOIN_REQ_TIMEOUT              (5 * ESP_ZB_TIME_ONE_SECOND)            /* timeout for permit join request */
+#define ESP_ZB_DEVICE_LEAVE_REQ_TIMEOUT             (5 * ESP_ZB_TIME_ONE_SECOND)            /* timeout for device leave request */
 #define ESP_ZB_DEVICE_BIND_TABLE_REQ_TIMEOUT        (5 * ESP_ZB_TIME_ONE_SECOND)            /* timeout for device bind table request */
+#define ESP_ZB_DEVICE_MGMT_LQI_REQ_TIMEOUT          (5 * ESP_ZB_TIME_ONE_SECOND)            /* timeout for zdo mgmt lqi request */
 
 /** Find device callback
  *
@@ -51,6 +53,19 @@ typedef void (*esp_zb_zdo_match_desc_callback_t)(esp_zb_zdp_status_t zdo_status,
  *
  */
 typedef void (*esp_zb_zdo_ieee_addr_callback_t)(esp_zb_zdp_status_t zdo_status, esp_zb_ieee_addr_t ieee_addr, void *user_ctx);
+
+/** Network address request callback
+ *
+ * @brief A ZDO network address request callback for user to get response info.
+ *
+ * @note User's callback gets response from the remote device that local node wants to get network address.
+ *
+ * @param[in] zdo_status The ZDO response status, refer to `esp_zb_zdp_status`
+ * @param[in] nwk_addr  A network address of the device response, 0xFFFF - invalid ieee address
+ * @param[in] user_ctx  User information context, set in `esp_zb_zdo_ieee_addr_req()`
+ *
+ */
+typedef void (*esp_zb_zdo_nwk_addr_callback_t)(esp_zb_zdp_status_t zdo_status, uint16_t nwk_addr, void *user_ctx);
 
 /** Node descriptor callback
  *
@@ -154,7 +169,7 @@ typedef struct esp_zb_zdo_bind_req_param_s {
 } esp_zb_zdo_bind_req_param_t;
 
 /**
- * @brief The Zigbee ZDO match descrpitor command struct
+ * @brief The Zigbee ZDO match descriptor command struct
  */
 typedef struct esp_zb_zdo_match_desc_req_param_s {
     uint16_t dst_nwk_addr;              /*!< NWK address that request sent to */
@@ -167,7 +182,7 @@ typedef struct esp_zb_zdo_match_desc_req_param_s {
 } esp_zb_zdo_match_desc_req_param_t;
 
 /**
- * @brief The Zigbee ZDO ieee request command struct
+ * @brief The Zigbee ZDO ieee_addr request command struct
  *
  */
 typedef struct esp_zb_zdo_ieee_addr_req_param_s {
@@ -177,6 +192,18 @@ typedef struct esp_zb_zdo_ieee_addr_req_param_s {
     uint8_t    start_index;                             /*!< If the Request type for this command is Extended response, the StartIndex provides the
                                                          * starting index for the requested elements of the associated devices list */
 } esp_zb_zdo_ieee_addr_req_param_t;
+
+/**
+ * @brief The Zigbee ZDO nwk_addr request command struct
+ *
+ */
+typedef struct esp_zb_zdo_nwk_addr_req_param_s {
+    uint16_t   dst_nwk_addr;                            /*!< NWK address that request sent to */
+    esp_zb_ieee_addr_t ieee_addr_of_interest;           /*!< IEEE address to be matched by the remote device */
+    uint8_t    request_type;                            /*!< Request type for this command: 0x00  Single device response 0x01 Extended response  */
+    uint8_t    start_index;                             /*!< If the Request type for this command is Extended response, the StartIndex provides the
+                                                         * starting index for the requested elements of the associated devices list */
+} esp_zb_zdo_nwk_addr_req_param_t;
 
 /**
  * @brief The Zigbee ZDO node descriptor command struct
@@ -286,6 +313,52 @@ typedef struct esp_zb_energy_detect_channel_info_s {
     int8_t energy_detected;     /*!< The energy value of channel in dbm */
 } esp_zb_energy_detect_channel_info_t;
 
+/**
+ * @brief Structure of Zigbee ZDO Mgmt_Lqi_req command
+ *
+ */
+typedef struct esp_zb_zdo_mgmt_lqi_req_param_s {
+    uint8_t start_index;                /*!< Starting Index for the requested elements of the Neighbor Table */
+    uint16_t dst_addr;                  /*!< The destination network short address of request */
+} esp_zb_zdo_mgmt_lqi_req_param_t;
+
+/**
+ * @brief Structure of neighbor table list record for Zigbee ZDO Mgmt_Lqi_rsp
+ *
+ */
+typedef struct esp_zb_zdo_neighbor_table_list_record_s {
+  esp_zb_ext_pan_id_t extended_pan_id;  /*!< 64-bit extended pan id of the neighboring device */
+  esp_zb_ieee_addr_t  extended_addr;    /*!< 64-bit IEEE address that is unique to every device */
+  uint16_t network_addr;                /*!< The 16-bit network address of the neighboring device */
+  uint8_t device_type:2;                /*!< The type of the neighbor device @see esp_zb_nwk_device_type_t */
+  uint8_t rx_when_idle:2;               /*!< Indicates if neighbor's receiver is enabled during idle portions of the CAP
+                                             0x00 = Receiver is off
+                                             0x01 = Receiver is on
+                                             0x02 = Unknown */
+  uint8_t relationship:3;               /*!< The relationship between the neighbor and the current device,
+                                            @see esp_zb_nwk_relationship_t */
+  uint8_t reserved:1;                   /*!< This reserved bit shall be set to 0 */
+  uint8_t permit_join;                  /*!< An indication of whether the neighbor device is accepting join requests */
+  uint8_t depth;                        /*!< The tree depth of the neighbor device. A value of 0x00 indicates that the
+                                             device is the ZigBee coordinator for the network */
+  uint8_t lqi;                          /*!< The estimated link quality for RF transmissions from this device */
+} esp_zb_zdo_neighbor_table_list_record_t;
+
+/**
+ * @brief Structure of Zigbee ZDO Mgmt_Lqi_rsp
+ *
+ */
+typedef struct esp_zb_zdo_mgmt_lqi_rsp_s {
+    uint8_t status;                                               /*!< The status of the Mgmt_Lqi_req command */
+    uint8_t neighbor_table_entries;                               /*!< Total number of Neighbor Table entries within the Remote Device. */
+    uint8_t start_index;                                          /*!< Starting index within the Neighbor Table to begin reporting for the
+                                                                       NeighborTableList.*/
+    uint8_t neighbor_table_list_count;                            /*!< Number of Neighbor Table entries included within NeighborTableList. */
+    esp_zb_zdo_neighbor_table_list_record_t *neighbor_table_list; /*!< A list of descriptors, beginning with the StartIndex element and
+                                                                       continuing for neighbor_table_list_count, of the elements in the
+                                                                       Remote Device's Neighbor Table */
+} esp_zb_zdo_mgmt_lqi_rsp_t;
+
 /** Active scan network callback
  *
  * @brief A ZDO active scan request callback for user to get scan list status.
@@ -320,6 +393,15 @@ typedef void (*esp_zb_zdo_energy_detect_callback_t)(esp_zb_zdp_status_t status, 
  *
  */
 typedef void (*esp_zb_zdo_binding_table_callback_t)(const esp_zb_zdo_binding_table_info_t *table_info, void *user_ctx);
+
+/** Management LQI Response Callback
+ *
+ * @brief A ZDO Mgmt_Lqi_rsp callback for user to get the mgmt lqi record of remote device.
+ *
+ * @param[in] rsp The response structure of ZDO mgmt lqi, refer to esp_zb_zdo_mgmt_lqi_rsp_t
+ * @param[in] user_ctx User information context, set in esp_zb_zdo_mgmt_lqi_req()
+ */
+typedef void (*esp_zb_zdo_mgmt_lqi_rsp_callback_t)(const esp_zb_zdo_mgmt_lqi_rsp_t *rsp, void *user_ctx);
 
 /********************* Declare functions **************************/
 /* ZDO command list, more ZDO command will be supported later like node_desc, power_desc */
@@ -397,8 +479,9 @@ void esp_zb_zdo_find_color_dimmable_light(esp_zb_zdo_match_desc_req_param_t *cmd
  */
 esp_err_t esp_zb_zdo_match_cluster(esp_zb_zdo_match_desc_req_param_t *param, esp_zb_zdo_match_desc_callback_t user_cb,
                                      void *user_ctx);
+
 /**
- * @brief   Send ieee request command
+ * @brief   Send ieee_addr request command
  *
  * @param[in] cmd_req  Pointer to the ieee address request command @ref esp_zb_zdo_ieee_addr_req_param_s
  * @param[in] user_cb  A user callback that will be called if received ieee address response refer to esp_zb_zdo_ieee_addr_callback_t
@@ -406,6 +489,16 @@ esp_err_t esp_zb_zdo_match_cluster(esp_zb_zdo_match_desc_req_param_t *param, esp
  *
  */
 void esp_zb_zdo_ieee_addr_req(esp_zb_zdo_ieee_addr_req_param_t *cmd_req, esp_zb_zdo_ieee_addr_callback_t user_cb, void *user_ctx);
+
+/**
+ * @brief   Send nwk_addr request command
+ *
+ * @param[in] cmd_req  Pointer to the nwk address request command @ref esp_zb_zdo_nwk_addr_req_param_s
+ * @param[in] user_cb  A user callback that will be called if received nwk address response refer to esp_zb_zdo_nwk_addr_callback_t
+ * @param[in] user_ctx A void pointer that contains the user defines additional information when callback trigger
+ *
+ */
+void esp_zb_zdo_nwk_addr_req(esp_zb_zdo_nwk_addr_req_param_t *cmd_req, esp_zb_zdo_nwk_addr_callback_t user_cb, void *user_ctx);
 
 /**
  * @brief   Send node descriptor request command
@@ -472,6 +565,15 @@ void esp_zb_zdo_binding_table_req(esp_zb_zdo_mgmt_bind_param_t *cmd_req, esp_zb_
  *
  */
 void esp_zb_zdo_device_announcement_req(void);
+
+/**
+ * @brief Send ZDO management lqi request command
+ *
+ * @param[in] cmd_req A pointer indicates the fields of the Mgmt_Lqi_req command, @ref esp_zb_zdo_mgmt_lqi_req_param_s
+ * @param[in] user_cb A user callback that will be called if received Mgmt_Lqi_req response refer to esp_zb_zdo_mgmt_lqi_rsp_callback_t
+ * @param[in] user_ctx A void pointer that contains the user defines additional information when user_cb is triggered
+ */
+void esp_zb_zdo_mgmt_lqi_req(esp_zb_zdo_mgmt_lqi_req_param_t *cmd_req, esp_zb_zdo_mgmt_lqi_rsp_callback_t user_cb, void* user_ctx);
 
 /**
  * @brief Stringify the Zigbee Device Object signal

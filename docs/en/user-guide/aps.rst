@@ -85,7 +85,7 @@ cluster identifier (0xFFC0), the APS frame will be forwarded up to 2 hops and al
     esp_zb_apsde_data_req_t req;
     uint8_t value[] = "hello espressif";
     req.dst_addr_mode = ESP_ZB_APS_ADDR_MODE_16_ENDP_PRESENT;
-    req.dst_short_addr = 0x1234;
+    req.dst_addr.addr_short = 0x1234;
     req.dst_endpoint = 10;
     req.profile_id = ESP_ZB_AF_HA_PROFILE_ID;
     req.cluster_id = 0xFFC0;

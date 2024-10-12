@@ -1,5 +1,31 @@
 # Espressif Zigbee SDK Release Notes
 
+## 12-Oct-2024
+1.5.1 version release of ESP-ZIGBEE-SDK is based on esp-idf v5.1.4
+
+### Features
+- Added support for ZDO mgmt LQI request and response API
+- Added support for ZDO network address request and response API
+- Added support for Touchlink to set the extended PAN ID during commissioning
+- Added support for ZCL demand response and load control cluster
+- Added support for ZCL thermostat weekly schedule
+- Added support to send APS request by long address
+- Added API to enable/disable network security
+- Added API to retrieve the detailed version of the SDK at runtime
+- Added the esp32c5 support based on the esp-idf master
+
+### Bug Fixes
+- Fixed the compilation warning originating from `ESP_ZB_PACKED_STRUCT union` in `esp_zigbee_type.h`
+- Fixed the bug where an invalid attribute was added to the attribute list even when an error occurred
+- Fixed the issue where excess link status records were delayed and sent in the next period when the device had more than 26 neighbors
+- Fixed the crashing issue that occurred when the target device rebooted after touchlink commissioning had completed but no devices had joined
+
+### Changes
+- Updated esp-zboss-lib to v1.5.1
+- Updated esp-zigbee-lib to v1.5.1
+- Change the member of `esp_zb_apsde_data_req_t` from `uint16_t dst_short_addr;` to `esp_zb_addr_u dst_addr;`
+
+
 ## 27-Aug-2024
 1.5.0 version release of ESP-ZIGBEE-SDK is based on esp-idf v5.1.4
 
