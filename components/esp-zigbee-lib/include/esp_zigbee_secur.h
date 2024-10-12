@@ -111,7 +111,7 @@ esp_err_t esp_zb_secur_ic_remove_req(esp_zb_ieee_addr_t address);
 esp_err_t esp_zb_secur_ic_remove_all_req(void);
 
 /**
- * @brief Set the Trust Center standard distrbuted key
+ * @brief Set the Trust Center standard distributed key
  *
  * @param key A pointer to standard distributed key of Trust Center that will be set to
  */
@@ -132,6 +132,24 @@ void esp_zb_secur_TC_standard_preconfigure_key_set(uint8_t *key);
  * @param[in] enable Enable or Disable
  */
 void esp_zb_secur_link_key_exchange_required_set(bool enable);
+
+/**
+ * @brief Enable/Disable the network layer security
+ *
+ * @param[in] enabled A boolean indicating whether network layer security will be enabled
+ * @return
+ *      - ESP_OK: On success
+ *      - ESP_ERR_INVALID_STATE: Invalid setting when the device is in network state
+ *      - Otherwise: On failure
+ */
+esp_err_t esp_zb_secur_network_security_enable(bool enabled);
+
+/**
+ * @brief Get the network security enabled state
+ *
+ * @return  Whether the network layer security is enabled or not
+ */
+bool esp_zb_secur_network_security_is_enabled(void);
 
 /**
  * @brief Get the primary security network key

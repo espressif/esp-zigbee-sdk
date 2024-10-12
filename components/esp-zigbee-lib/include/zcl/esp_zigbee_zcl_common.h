@@ -52,6 +52,8 @@ extern "C" {
 #include "esp_zigbee_zcl_ec_measurement.h"
 #include "esp_zigbee_zcl_ph_measurement.h"
 #include "esp_zigbee_zcl_wind_speed_measurement.h"
+#include "esp_zigbee_zcl_drlc.h"
+
 #ifdef ZB_ENABLE_ZGP
 #include "esp_zigbee_zcl_green_power.h"
 #endif
@@ -182,6 +184,7 @@ typedef enum {
     ESP_ZB_ZCL_CLUSTER_ID_IAS_ACE                    = 0x0501U,     /*!< IAS ACE */
     ESP_ZB_ZCL_CLUSTER_ID_IAS_WD                     = 0x0502U,     /*!< IAS WD */
     ESP_ZB_ZCL_CLUSTER_ID_PRICE                      = 0x0700U,     /*!< Price cluster identifier. */
+    ESP_ZB_ZCL_CLUSTER_ID_DRLC                       = 0x0701U,     /*!< Demand Response and Load Control cluster identifier */
     ESP_ZB_ZCL_CLUSTER_ID_METERING                   = 0x0702U,     /*!< Metering */
     ESP_ZB_ZCL_CLUSTER_ID_METER_IDENTIFICATION       = 0x0b01U,     /*!< Meter Identification cluster identifier */
     ESP_ZB_ZCL_CLUSTER_ID_ELECTRICAL_MEASUREMENT     = 0x0b04U,     /*!< Electrical measurement */

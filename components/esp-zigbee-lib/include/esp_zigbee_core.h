@@ -11,6 +11,7 @@ extern "C" {
 #include "esp_err.h"
 #include "zb_vendor.h"
 #include "zb_config_platform.h"
+#include "esp_zigbee_version.h"
 #include "esp_zigbee_trace.h"
 #include "esp_zigbee_type.h"
 #include "esp_zigbee_attribute.h"
@@ -131,6 +132,12 @@ typedef enum esp_zb_core_action_callback_id_s {
     ESP_ZB_CORE_IAS_ACE_GET_ZONE_STATUS_RESP_CB_ID      = 0x002f,   /*!< IAS ACE cluster Get Zone Status command response, refer to esp_zb_zcl_ias_ace_get_zone_status_response_message_t */
     ESP_ZB_CORE_WINDOW_COVERING_MOVEMENT_CB_ID          = 0x0030,   /*!< Window covering movement command, refer to esp_zb_zcl_window_covering_movement_message_t */
     ESP_ZB_CORE_OTA_UPGRADE_QUERY_IMAGE_RESP_CB_ID      = 0x0031,   /*!< OTA upgrade query image response message, refer to esp_zb_zcl_ota_upgrade_query_image_resp_message_t */
+    ESP_ZB_CORE_THERMOSTAT_WEEKLY_SCHEDULE_SET_CB_ID    = 0x0032,   /*!< Thermostat weekly schedule stable set, refer to esp_zb_zcl_thermostat_weekly_schedule_set_message_t */
+    ESP_ZB_CORE_DRLC_LOAD_CONTORL_EVENT_CB_ID           = 0x0040,   /*!< Demand response and load control cluster LoadControlEvent message, refer to esp_zb_zcl_drlc_load_control_event_message_t */
+    ESP_ZB_CORE_DRLC_CANCEL_LOAD_CONTROL_EVENT_CB_ID    = 0x0041,   /*!< Demand response and load control cluster CancelLoadControlEvent message, refer to esp_zb_zcl_drlc_cancel_load_control_event_message_t */
+    ESP_ZB_CORE_DRLC_CANCEL_ALL_LOAD_CONTROL_EVENTS_CB_ID = 0x0042, /*!< Demand response and load control cluster CancelAllLoadControlEvents message, refer to esp_zb_zcl_drlc_cancel_all_load_control_events_message_t */
+    ESP_ZB_CORE_DRLC_REPORT_EVENT_STATUS_CB_ID          = 0x0043,   /*!< Demand response and load control cluster ReportEventStatus message, refer to esp_zb_zcl_drlc_report_event_status_message_t */
+    ESP_ZB_CORE_DRLC_GET_SCHEDULED_EVENTS_CB_ID         = 0x0044,   /*!< Demand response and load control cluster GetScheduledEvents message, refer to esp_zb_zcl_drlc_get_scheduled_events_message_t */
     ESP_ZB_CORE_CMD_READ_ATTR_RESP_CB_ID                = 0x1000,   /*!< Read attribute response, refer to esp_zb_zcl_cmd_read_attr_resp_message_t */
     ESP_ZB_CORE_CMD_WRITE_ATTR_RESP_CB_ID               = 0x1001,   /*!< Write attribute response, refer to esp_zb_zcl_cmd_write_attr_resp_message_t */
     ESP_ZB_CORE_CMD_REPORT_CONFIG_RESP_CB_ID            = 0x1002,   /*!< Configure report response, refer to esp_zb_zcl_cmd_config_report_resp_message_t */
@@ -151,6 +158,7 @@ typedef enum esp_zb_core_action_callback_id_s {
     ESP_ZB_CORE_CMD_PRIVILEGE_COMMAND_RESP_CB_ID        = 0x1051,   /*!< Custom Cluster response, refer to esp_zb_zcl_privilege_command_message_t */
     ESP_ZB_CORE_CMD_TOUCHLINK_GET_GROUP_ID_RESP_CB_ID   = 0x1060,   /*!< Touchlink commissioning cluster get group id response, refer to esp_zb_touchlink_get_group_identifiers_resp_message_t */
     ESP_ZB_CORE_CMD_TOUCHLINK_GET_ENDPOINT_LIST_RESP_CB_ID = 0x1061,   /*!< Touchlink commissioning cluster get endpoint list response, refer to esp_zb_zcl_touchlink_get_endpoint_list_resp_message_t */
+    ESP_ZB_CORE_CMD_THERMOSTAT_GET_WEEKLY_SCHEDULE_RESP_CB_ID = 0x1070, /*!< Thermostat cluster get weekly schedule response, refer to esp_zb_zcl_thermostat_get_weekly_schedule_resp_message_t */
     ESP_ZB_CORE_CMD_GREEN_POWER_RECV_CB_ID                 = 0x1F00,   /*!< Green power cluster command receiving, refer to esp_zb_zcl_cmd_green_power_recv_message_t */
     ESP_ZB_CORE_REPORT_ATTR_CB_ID                          = 0x2000,   /*!< Attribute Report, refer to esp_zb_zcl_report_attr_message_t */
 } esp_zb_core_action_callback_id_t;
@@ -944,6 +952,13 @@ esp_zb_bdb_commissioning_status_t esp_zb_get_bdb_commissioning_status(void);
  * @param[in] manufacturer_code The manufacturer code of Zigbee device
  */
 void esp_zb_set_node_descriptor_manufacturer_code(uint16_t manufacturer_code);
+
+/**
+ * @brief Get the version string of the SDK.
+ *
+ * @return The version string of the SDK.
+ */
+const char *esp_zb_get_version_string(void);
 
 #ifdef __cplusplus
 }

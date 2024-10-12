@@ -1049,6 +1049,51 @@ typedef struct esp_zb_zcl_price_get_tier_labels_cmd_s {
 } esp_zb_zcl_price_get_tier_labels_cmd_t;
 
 /**
+ * @brief The Zigbee ZCL DRLC LoadControlEvent command struct
+ */
+typedef struct esp_zb_zcl_drlc_load_control_event_req_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;                   /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode;                 /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+    esp_zb_zcl_drlc_load_control_event_payload_t payload;   /*!< The payload of LoadControlEvent, @see esp_zb_zcl_drlc_load_control_event_payload_t */
+} esp_zb_zcl_drlc_load_control_event_req_t;
+
+/**
+ * @brief The Zigbee ZCL DRLC CancelLoadControlEvent command struct
+ */
+typedef struct esp_zb_zcl_drlc_cancel_load_control_event_req_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;                       /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode;                     /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+    esp_zb_zcl_drlc_cancel_load_control_event_payload_t payload;/*!< The payload of CancelLoadControlEvent, @see esp_zb_zcl_drlc_cancel_load_control_event_payload_t */
+} esp_zb_zcl_drlc_cancel_load_control_event_req_t;
+
+/**
+ * @brief The Zigbee ZCL DRLC CancelAllLoadControlEvents command struct
+ */
+typedef struct esp_zb_zcl_drlc_cancel_all_load_control_events_req_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;                               /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode;                             /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+    esp_zb_zcl_drlc_cancel_all_load_control_events_payload_t  payload;  /*!< The payload of CancelAllLoadControlEvents, @see esp_zb_zcl_drlc_cancel_all_load_control_events_payload_t */
+} esp_zb_zcl_drlc_cancel_all_load_control_events_req_t;
+
+/**
+ * @brief The Zigbee ZCL DRLC ReportEventStatus command struct
+ */
+typedef struct esp_zb_zcl_drlc_report_event_status_req_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;                   /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode;                 /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+    esp_zb_zcl_drlc_report_event_status_payload_t payload;  /*!< The payload of ReportEventStatus, @see esp_zb_zcl_drlc_report_event_status_payload_t */
+} esp_zb_zcl_drlc_report_event_status_req_t;
+
+/**
+ * @brief The Zigbee ZCL DRLC GetScheduledEvents command struct
+ */
+typedef struct esp_zb_zcl_drlc_get_scheduled_events_req_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;                   /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode;                 /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+    esp_zb_zcl_drlc_get_scheduled_events_payload_t payload; /*!< The payload of GetScheduledEvents, @see esp_zb_zcl_drlc_get_scheduled_events_payload_t */
+} esp_zb_zcl_drlc_get_scheduled_events_req_t;
+
+/**
  * @brief The Zigbee ZCL custom cluster command struct
  *
  * @note For string data type, the first byte should be the length of string.
@@ -1431,12 +1476,27 @@ typedef struct esp_zb_zcl_ota_upgrade_server_query_image_message_s {
 } esp_zb_zcl_ota_upgrade_server_query_image_message_t;
 
 /**
+ * @brief Structure for Thermostat Weekly Schedule Set message
+ *
+ */
+typedef struct esp_zb_zcl_thermostat_weekly_schedule_set_message_s {
+    esp_zb_device_cb_common_info_t info;                        /*!< The common information for Zigbee device callback */
+    uint32_t trans_status;                                      /*!< The status of the schedule transition, refer to esp_err_t */
+    uint8_t day_of_week;                                        /*!< This field is a bitmap represents the day of the week at which all
+                                                                     the transitions within the payload of the command SHOULD be associated to,
+                                                                     refer to esp_zb_zcl_thermostat_day_of_week_t */
+    uint8_t mode_for_req;                                       /*!< This field is a bitmap  determines how the application SHALL decode the Set
+                                                                     Point Fields of each transition. @see esp_zb_zcl_thermostat_weekly_schedule_mode_for_seq_t  */
+    esp_zb_zcl_thermostat_weekly_schedule_transition_t trans;   /*!< Transition field, refer to esp_zb_zcl_thermostat_weekly_schedule_transition_t */
+} esp_zb_zcl_thermostat_weekly_schedule_set_message_t;
+
+/**
  * @brief The Zigbee zcl thermostat value callback message struct
  *
  */
 typedef struct esp_zb_zcl_thermostat_value_message_s {
     esp_zb_device_cb_common_info_t info; /*!< The common information for Zigbee device callback */
-    uint8_t mode;                        /*!< Mode for Sequence */
+    uint8_t mode;                        /*!< Mode for Sequence, Heat(0x00), Cool(0x01) and Both(0x02) */
     uint16_t heat_setpoint;              /*!< Heat Set Point */
     uint16_t cool_setpoint;              /*!< Cool Set Point */
 } esp_zb_zcl_thermostat_value_message_t;
@@ -1888,6 +1948,49 @@ typedef struct esp_zb_zcl_price_publish_tier_labels_message_s {
 } esp_zb_zcl_price_publish_tier_labels_message_t;
 
 /**
+ * @brief Structure for DRLC LoadControlEvent request callback message
+ */
+typedef struct esp_zb_zcl_drlc_load_control_event_message_s {
+    esp_zb_device_cb_common_info_t info;                    /*!< The common information for Zigbee device callback */
+    esp_zb_zcl_drlc_load_control_event_payload_t payload;   /*!< The payload of LoadControlEvent request, @see esp_zb_zcl_drlc_load_control_event_payload_t */
+    esp_zb_zcl_drlc_report_event_status_payload_t *response;/*!< An output pointer allows the user to pass it as a parameter in response to this request */
+} esp_zb_zcl_drlc_load_control_event_message_t;
+
+/**
+ * @brief Structure for DRLC CancelLoadControlEvent request callback message
+ */
+typedef struct esp_zb_zcl_drlc_cancel_load_control_event_message_s {
+    esp_zb_device_cb_common_info_t info;                            /*!< The common information for Zigbee device callback */
+    esp_zb_zcl_drlc_cancel_load_control_event_payload_t payload;    /*!< The payload of CancelLoadControlEvent request, @see esp_zb_zcl_drlc_cancel_load_control_event_payload_t */
+    esp_zb_zcl_drlc_report_event_status_payload_t *response;        /*!< An output pointer allows the user to pass it as a parameter in response to this request */
+} esp_zb_zcl_drlc_cancel_load_control_event_message_t;
+
+/**
+ * @brief Structure for DRLC CancelAllLoadControlEvents request callback message
+ */
+typedef struct esp_zb_zcl_drlc_cancel_all_load_control_events_message_s {
+    esp_zb_device_cb_common_info_t info;                                /*!< The common information for Zigbee device callback */
+    esp_zb_zcl_drlc_cancel_all_load_control_events_payload_t payload;   /*!< The payload of CancelAllLoadControlEvents */
+} esp_zb_zcl_drlc_cancel_all_load_control_events_message_t;
+
+/**
+ * @brief Structure for DRLC ReportEventStatus request callback message
+ */
+typedef struct esp_zb_zcl_drlc_report_event_status_message_s {
+    esp_zb_device_cb_common_info_t info;                    /*!< The common information for Zigbee device callback */
+    esp_zb_zcl_drlc_report_event_status_payload_t payload;  /*!< the payload of ReportEventStatus, @see esp_zb_zcl_drlc_report_event_status_payload_t */
+} esp_zb_zcl_drlc_report_event_status_message_t;
+
+/**
+ * @brief Structure for DRLC GetScheduledEvents request callback message
+ */
+typedef struct esp_zb_zcl_drlc_get_scheduled_events_message_s {
+    esp_zb_device_cb_common_info_t info;                      /*!< The common information for Zigbee device callback */
+    esp_zb_zcl_drlc_get_scheduled_events_payload_t payload;   /*!< The payload of GetScheduledEvents, @see esp_zb_zcl_drlc_get_scheduled_events_payload_t */
+    esp_zb_zcl_drlc_load_control_event_payload_t *response;   /*!< An output pointer allows the user to pass it as a parameter in response to this request */
+} esp_zb_zcl_drlc_get_scheduled_events_message_t;
+
+/**
  * @brief The Zigbee ZCL commissioning restart device callback message struct
  */
 typedef struct esp_zigbee_zcl_commissioning_restart_device_message_s {
@@ -1934,7 +2037,7 @@ typedef struct esp_zb_zcl_door_lock_lock_door_message_s {
 } esp_zb_zcl_door_lock_lock_door_message_t;
 
 /**
- * @brief The Zigbee zcl door lock repsonse callback message struct
+ * @brief The Zigbee zcl door lock response callback message struct
  *
  */
 typedef struct esp_zb_zcl_door_lock_lock_door_resp_message_s {
@@ -2270,7 +2373,7 @@ typedef struct esp_zb_touchlink_get_endpoint_list_record_s {
     uint8_t endpoint;    /*!< The identifier of the endpoint on the device specified by the network address field */
     uint16_t profile_id; /*!< The identifier of the profile supported on the endpoint */
     uint16_t device_id;  /*!< The identifier of the device description supported on the endpoint */
-    uint8_t version;     /*!< Specifies the version of the device description supported by the sub-device on the endpoin */
+    uint8_t version;     /*!< Specifies the version of the device description supported by the sub-device on the endpoint */
     struct esp_zb_touchlink_get_endpoint_list_record_s *next; /*!< Next variable */
 } esp_zb_touchlink_get_endpoint_list_record_t;
 
@@ -2279,13 +2382,29 @@ typedef struct esp_zb_touchlink_get_endpoint_list_record_s {
  *
  */
 typedef struct esp_zb_zcl_touchlink_get_endpoint_list_resp_message_s {
-    esp_zb_zcl_cmd_info_t info; /*!< The basic information of touclink get endpoint list response that refers to esp_zb_zcl_cmd_info_t */
+    esp_zb_zcl_cmd_info_t info; /*!< The basic information of touchlink get endpoint list response that refers to esp_zb_zcl_cmd_info_t */
     uint8_t total;           /*!< The total number of endpoints supported by the device */
     uint8_t start_idx;       /*!< The internal starting index from which the following list of endpoints are taken */
     uint8_t count;           /*!< The number of entries in the endpoint information record list field */
     esp_zb_touchlink_get_endpoint_list_record_t *endpoint_record_list;  /*!< Endpoint record list , {{Network address, Endpoint identifier, Profile identifier, Device identifier, Version},
                                                                         ... , {Network address, Endpoint identifier, Profile identifier, Device identifier, Version}} */
 } esp_zb_zcl_touchlink_get_endpoint_list_resp_message_t;
+
+/**
+ * @brief Structure for Thermostat Get Weekly Schedule command response
+ *
+ */
+typedef struct esp_zb_zcl_thermostat_get_weekly_schedule_resp_message_s {
+    esp_zb_zcl_cmd_info_t info;                                 /*!< The basic information of response from the peer device */
+    uint8_t num_of_trans;                                       /*!< The field indicates how many individual transitions are included for
+                                                                     this sequence of response */
+    uint8_t day_of_week;                                        /*!< This field is a bitmap represents the day of the week at which all
+                                                                     the transitions within the payload of the command SHOULD be associated to,
+                                                                     refer to esp_zb_zcl_thermostat_day_of_week_t */
+    uint8_t mode_for_req;                                       /*!< This field is a bitmap  determines how the application SHALL decode the Set
+                                                                     Point Fields of each transition. @see esp_zb_zcl_thermostat_weekly_schedule_mode_for_seq_t  */
+    esp_zb_zcl_thermostat_weekly_schedule_transition_t *trans;  /*!< Transition field, refer to esp_zb_zcl_thermostat_weekly_schedule_transition_t */
+} esp_zb_zcl_thermostat_get_weekly_schedule_resp_message_t;
 
 /**
  * @brief The Zigbee ZCL touchlink commissioning endpoint information struct
@@ -3180,6 +3299,51 @@ uint8_t esp_zb_zcl_price_get_scheduled_prices_cmd_req(esp_zb_zcl_price_get_sched
  * @return The transaction sequence number
  */
 uint8_t esp_zb_zcl_price_get_tier_labels_cmd_req(esp_zb_zcl_price_get_tier_labels_cmd_t *cmd_req);
+
+/**
+ * @brief   Send DRLC LoadControlEvent command request
+ *
+ * @param[in]  cmd_req  pointer to the LoadControlEvent command @ref esp_zb_zcl_drlc_load_control_event_req_s
+ *
+ * @return The transaction sequence number
+ */
+uint8_t esp_zb_zcl_drlc_load_control_event_req(esp_zb_zcl_drlc_load_control_event_req_t *cmd_req);
+
+/**
+ * @brief   Send DRLC CancelLoadControlEvent command request
+ *
+ * @param[in]  cmd_req  pointer to the CancelLoadControlEvent command @ref esp_zb_zcl_drlc_cancel_load_control_event_req_s
+ *
+ * @return The transaction sequence number
+ */
+uint8_t esp_zb_zcl_drlc_cancel_load_control_event_req(esp_zb_zcl_drlc_cancel_load_control_event_req_t *cmd_req);
+
+/**
+ * @brief   Send DRLC CancelAllLoadControlEvent command request
+ *
+ * @param[in]  cmd_req  pointer to the CancelAllLoadControlEvent command @ref esp_zb_zcl_drlc_cancel_all_load_control_events_req_s
+ *
+ * @return The transaction sequence number
+ */
+uint8_t esp_zb_zcl_drlc_cancel_all_load_control_events_req(esp_zb_zcl_drlc_cancel_all_load_control_events_req_t *cmd_req);
+
+/**
+ * @brief   Send DRLC ReportEventStatus command request
+ *
+ * @param[in]  cmd_req  pointer to the ReportEventStatus command @ref esp_zb_zcl_drlc_report_event_status_req_s
+ *
+ * @return The transaction sequence number
+ */
+uint8_t esp_zb_zcl_drlc_report_event_status_req(esp_zb_zcl_drlc_report_event_status_req_t *cmd_req);
+
+/**
+ * @brief   Send DRLC GetScheduledEvents command request
+ *
+ * @param[in]  cmd_req  pointer to the GetScheduledEvents command @ref esp_zb_zcl_drlc_get_scheduled_events_req_s
+ *
+ * @return The transaction sequence number
+ */
+uint8_t esp_zb_zcl_drlc_get_scheduled_events_req(esp_zb_zcl_drlc_get_scheduled_events_req_t *cmd_req);
 
 #ifdef CONFIG_ZB_GP_ENABLED
 /**

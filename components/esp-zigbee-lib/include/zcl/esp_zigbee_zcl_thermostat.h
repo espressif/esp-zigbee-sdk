@@ -9,6 +9,7 @@
 extern "C" {
 #endif
 
+#include "esp_err.h"
 #include "esp_zigbee_type.h"
 
 /** @brief Thermostat cluster attribute identifiers */
@@ -157,6 +158,18 @@ typedef enum {
     ESP_ZB_ZCL_THERMOSTAT_WEEKLY_SCHEDULE_MODE_FOR_SEQ_COOL = 0x02, /*!< Cool value */
     ESP_ZB_ZCL_THERMOSTAT_WEEKLY_SCHEDULE_MODE_FOR_SEQ_BOTH = 0x03, /*!< Both (Heat and Cool) value */
 } esp_zb_zcl_thermostat_weekly_schedule_mode_for_seq_t;
+
+/** @brief Value for Day of Week */
+typedef enum {
+    ESP_ZB_ZCL_THERMOSTAT_DAY_OF_WEEK_SUNDAY    = (1 << 0), /*!< SUNDAY */
+    ESP_ZB_ZCL_THERMOSTAT_DAY_OF_WEEK_MONDAY    = (1 << 1), /*!< MONDAY */
+    ESP_ZB_ZCL_THERMOSTAT_DAY_OF_WEEK_TUESDAY   = (1 << 2), /*!< TUESDAY */
+    ESP_ZB_ZCL_THERMOSTAT_DAY_OF_WEEK_WEDNESDAY = (1 << 3), /*!< WEDNESDAY */
+    ESP_ZB_ZCL_THERMOSTAT_DAY_OF_WEEK_THURSDAY  = (1 << 4), /*!< THURSDAY */
+    ESP_ZB_ZCL_THERMOSTAT_DAY_OF_WEEK_FRIDAY    = (1 << 5), /*!< FRIDAY */
+    ESP_ZB_ZCL_THERMOSTAT_DAY_OF_WEEK_SATURDAY  = (1 << 6), /*!< SATURDAY */
+    ESP_ZB_ZCL_THERMOSTAT_DAY_OF_WEEK_VACATION  = (1 << 7), /*!< VACATION */
+} esp_zb_zcl_thermostat_day_of_week_t;
 
 /* Default value for Start Of Week attribute */
 #define ESP_ZB_ZCL_THERMOSTAT_START_OF_WEEK_DEFAULT_VALUE 0x00
@@ -487,6 +500,56 @@ typedef enum {
 
 /** @brief Fan 3rd Stage State On bit of Thermostat Running State attribute  */
 #define ESP_ZB_ZCL_THERMOSTAT_RUNNNING_STATE_FAN_3RD_STAGE_STATE_ON_BIT (1 << 6)
+
+/**
+ * @brief Structure for Thermostat Weekly Schedule Transition field
+ *
+ */
+typedef struct esp_zb_zcl_thermostat_weekly_schedule_transition_s {
+    uint16_t transition_time;           /*!< This field represents the start time of the schedule transition during the associated day. */
+    uint16_t heat_setpoint;             /*!< This field represents the heat setpoint to be applied at this associated transition start time. */
+    uint16_t cool_setpoint;             /*!< this field represents the cool setpoint to be applied at this associated transition start time.*/
+} esp_zb_zcl_thermostat_weekly_schedule_transition_t;
+
+/**
+ * @brief Structure for the record in Thermostat Weekly Schedule Table
+ */
+typedef struct esp_zb_zcl_thermostat_weekly_schedule_record_s {
+    uint8_t  day_of_week;      /*!< Day of week, refer to esp_zb_zcl_thermostat_day_of_week_t */
+    uint8_t  mode_for_seq;     /*!< Mode for Sequence, refer to esp_zb_zcl_thermostat_weekly_schedule_mode_for_seq_t */
+    uint16_t transition_time;  /*!< Transition time in minutes after midnight */
+    uint16_t heat_setpoint;    /*!< Heat Set Point */
+    uint16_t cool_setpoint;    /*!< Cool Set Point */
+} esp_zb_zcl_thermostat_weekly_schedule_record_t;
+
+/**
+ * @brief Start thermostat weekly schedule
+ *
+ * @return
+ *      - ESP_OK: On success, otherwise, failure.
+ */
+esp_err_t esp_zb_zcl_thermostat_weekly_schedule_start(void);
+
+/**
+ * @brief Stop thermostat weekly schedule
+ *
+ * @return
+ *      - ESP_OK: On success, otherwise, failure.
+ */
+esp_err_t esp_zb_zcl_thermostat_weekly_schedule_stop(void);
+
+/**
+ * @brief Get the next scheduled record from the thermostat weekly schedule table
+ *
+ * @param[in] iterator An iterator used to iterate through the thermostat weekly schedule table
+ * @param[out] record The next record in the thermostat weekly schedule table, refer to esp_zb_zcl_thermostat_weekly_schedule_record_t
+ * @return
+ *      - ESP_OK: On success
+ *      - ESP_ERR_INVALID_ARG: Invalid arguments
+ *      - ESP_ERR_NOT_FOUND: End of the table reached
+ *      - Otherwise: Failure
+ */
+esp_err_t esp_zb_zcl_thermostat_weekly_schedule_get_next_record(uint16_t *iterator, esp_zb_zcl_thermostat_weekly_schedule_record_t *record);
 
 #ifdef __cplusplus
 }

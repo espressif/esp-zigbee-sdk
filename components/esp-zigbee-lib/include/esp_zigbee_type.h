@@ -18,6 +18,7 @@ extern "C" {
 
 typedef uint8_t esp_zb_64bit_addr_t[8];
 typedef esp_zb_64bit_addr_t esp_zb_ieee_addr_t;
+typedef esp_zb_64bit_addr_t esp_zb_ext_pan_id_t;
 typedef void (*esp_zb_zcl_cluster_init_t)(void);
 typedef void (*esp_zb_callback_t)(uint8_t param);
 typedef void (*esp_zb_user_callback_t)(void* param);
@@ -131,10 +132,10 @@ typedef struct esp_zb_attribute_list_s {
 typedef struct esp_zb_zcl_cluster_s {
     uint16_t cluster_id;                        /*!< ZCL 16-bit cluster id. Refer zcl_cluster_id */
     uint16_t attr_count;                        /*!< Attributes number supported by the cluster */
-    ESP_ZB_PACKED_STRUCT union {
+    union {
         esp_zb_zcl_attr_t *attr_desc_list;      /*!< Array of cluster attributes esp_zb_zcl_attr_t */
         esp_zb_attribute_list_t* attr_list;     /*!< List of cluster attributes esp_zb_attribute_list_t */
-    };
+    } ESP_ZB_PACKED_STRUCT;                     /*!< Attribute data model */
     uint8_t role_mask;                          /*!< Cluster role, refer to zcl_cluster_role */
     uint16_t manuf_code;                        /*!< Manufacturer code for cluster and its attributes */
     esp_zb_zcl_cluster_init_t cluster_init;     /*!< cluster init callback function */
@@ -317,10 +318,10 @@ typedef struct esp_zb_endpoint_s {
     uint8_t reserved_size;                      /*!< Unused parameter (reserved for future use) */
     void *reserved_ptr;                         /*!< Unused parameter (reserved for future use) */
     uint8_t cluster_count;                      /*!< Number of supported clusters */
-    ESP_ZB_PACKED_STRUCT union {
+    union {
         esp_zb_zcl_cluster_t *cluster_desc_list;    /*!< Supported clusters arranged in array */
         esp_zb_cluster_list_t *cluster_list;        /*!< Supported clusters arranged in list */
-    };
+    } ESP_ZB_PACKED_STRUCT;                         /*!< Cluster data model */
     esp_zb_af_simple_desc_1_1_t *simple_desc;   /*!< Simple descriptor */
 #if defined ZB_ENABLE_ZLL
     uint8_t group_id_count;                     /*!< Number of group id */
@@ -791,6 +792,16 @@ typedef struct esp_zb_meter_identification_cluster_cfg_s {
 typedef struct esp_zb_price_cluster_cfg_s {
     /* no member */
 } esp_zb_price_cluster_cfg_t;
+
+/**
+ * @brief Zigbee standard mandatory attribute for demand response and load control cluster
+ */
+typedef struct esp_zb_drlc_cluster_cfg_s {
+    uint8_t utility_enrollment_group;       /*!< This attribute provides a method for utilities to assign devices to groups. */
+    uint8_t start_randomization_minutes;    /*!< This attribute represents the maximum number of minutes to be used when randomizing the start of an event. */
+    uint8_t duration_randomization_minutes; /*!< This attribute represents the maximum number of minutes to be used when randomizing the duration of an event. */
+    uint16_t device_class_value;            /*!< This attribute identifies which bits the device will match in the Device Class fields. */
+} esp_zb_drlc_cluster_cfg_t;
 
 /**
  * @brief Zigbee standard mandatory attribute for toucklink commissioning cluster
