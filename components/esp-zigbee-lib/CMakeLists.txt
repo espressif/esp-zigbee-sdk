@@ -1,7 +1,18 @@
 cmake_minimum_required(VERSION 3.16)
 
-idf_component_register(
-    INCLUDE_DIRS include
+if (CONFIG_ZB_ENABLED)
+    set(src_dirs "")
+    set(include_dirs include)
+endif()
+
+if(CONFIG_ZB_RADIO_SPINEL_UART)
+    list(APPEND src_dirs src/radio_spinel)
+    list(APPEND include_dirs include/radio_spinel)
+endif()
+
+idf_component_register(SRC_DIRS "${src_dirs}"
+                       INCLUDE_DIRS "${include_dirs}"
+                       REQUIRES driver vfs ieee802154 openthread espressif__esp-zboss-lib
 )
 
 if(CONFIG_ZB_ENABLED)

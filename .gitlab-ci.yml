@@ -41,7 +41,7 @@ before_script:
 .update_zigbee_lib_script: &update_zigbee_lib_script
   - *setup_idf
   - *setup_esp_zboss_lib
-  - cp -r ${ESP_ZIGBEE_SDK_PATH}/components/esp-zigbee-lib ${IDF_PATH}/components/esp-zigbee-lib
+  - cp -r ${ESP_ZIGBEE_SDK_PATH}/components/esp-zigbee-lib ${IDF_PATH}/components/espressif__esp-zigbee-lib
   - cd ${ESP_ZIGBEE_SDK_PATH}
   - echo $(git branch --show-current)
   - echo $(git log -1 --oneline)
