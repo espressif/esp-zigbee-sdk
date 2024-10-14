@@ -1,52 +1,16 @@
-# SPDX-FileCopyrightText: 2022 Espressif Systems (Shanghai) CO LTD
+# SPDX-FileCopyrightText: 2022-2024 Espressif Systems (Shanghai) CO LTD
 
 # SPDX-License-Identifier: CC0-1.0
 
 import pathlib
 import pytest
+from constants import MatchPattern
 import time
-import pexpect
-from typing import Tuple
-from pytest_embedded import Dut
+from examples.constants import ZigbeeCIConstants
+from examples.zigbee_common import CliDevice, Common
 
-CURRENT_DIR_CLI = str(pathlib.Path(__file__).parent) + '/esp_zigbee_cli'
-CURRENT_DIR_COLOR_DIMM_LIGHT = str(pathlib.Path(__file__).parent) + '/esp_zigbee_HA_sample/HA_color_dimmable_light'
-pytest_build_dir = CURRENT_DIR_CLI + '|' + CURRENT_DIR_COLOR_DIMM_LIGHT
-
-
-# pre-requisite to config Zigbee network
-def config_zigbee_network(cli: Dut, light: Dut) -> Tuple[bool, str]:
-    # set channel to default 13
-    channel_number = 13
-    time.sleep(3)
-    cli.expect('Command history disabled', timeout=5)
-    cli.write('bdb -r zc')
-    channel_set = 'bdb -c ' + str(channel_number)
-    cli.write(channel_set)
-    time.sleep(1)
-    cli.write('bdb -c get')
-    time.sleep(1)
-    cli.expect(r'channel\(s\): ' + str(channel_number), timeout=3)
-    cli.write('bdb -s')
-    cli.write('bdb -i policy disable')
-    time.sleep(1)
-    cli.write('bdb -a init')
-    time.sleep(1)
-    cli.write('bdb -a form')
-    time.sleep(2)
-    cli.expect('ESP_ZB_CLI: Formed network successfully', timeout=6)
-    cli.write('bdb -e get')
-    # get the cli expanid (same as ieee address)
-    cli_node_expanid = cli.expect(r'extpanid: 0x([a-z0-9]+:?)', timeout=2)[1].decode()
-    # get the light node network address
-    light_nwk_addr = cli.expect(r'New device commissioned or rejoined \(short: 0x([a-z0-9]+)', timeout=30)[1].decode()
-    light.expect('ESP_ZB_COLOR_DIMM_LIGHT: Joined network successfully', timeout=20)
-    light_node_got_expanid = light.expect(r'PAN ID: (([a-z0-9]{2}:?){8})', timeout=3)[1].decode()
-    light_node_got_expanid = light_node_got_expanid.replace(":", "")
-    # make sure the light node join the network that cli formed (same expanid)
-    if light_node_got_expanid == cli_node_expanid:
-        return True, str(light_nwk_addr)
-    return False, ''
+CLI_CURRENT_DIR_CLIENT = str(pathlib.Path(__file__).parent) + '/esp_zigbee_all_device_types_app'
+cli_build_dir = CLI_CURRENT_DIR_CLIENT + '|' + CLI_CURRENT_DIR_CLIENT
 
 
 # Case 1: Zigbee network connection
@@ -54,68 +18,76 @@ def config_zigbee_network(cli: Dut, light: Dut) -> Tuple[bool, str]:
 @pytest.mark.esp32h2
 @pytest.mark.esp32c6
 @pytest.mark.zigbee_multi_dut
-@pytest.mark.parametrize(
-    'count, app_path, erase_all', [
-        (2, pytest_build_dir, 'y'),
-    ],
-    indirect=True,
-)
+@pytest.mark.parametrize('count, app_path, erase_all', [(2, cli_build_dir, 'y'), ], indirect=True, )
 @pytest.mark.usefixtures('teardown_fixture')
-def test_zb_cli_zc_connection(dut: Tuple[Dut, Dut]) -> None:
-    light = dut[1]
-    cli = dut[0]
-    result = config_zigbee_network(cli, light)
-    light_nwk_addr = str(result[1])
-    assert bool(result[0])
-    cli.write('zdo -i ' + light_nwk_addr)
-    light_node_ieee_address = cli.expect(r'([a-z0-9]{16})', timeout=5)[1].decode()
-    cli.write('zdo -n ' + str(light_node_ieee_address))
-    got_nwk_address = cli.expect(r'nwk_addr:([a-z0-9]{4})', timeout=5)[1].decode()
-    # make sure the light network address align with its own ieee address
-    assert (light_nwk_addr == str(got_nwk_address))
+def test_zb_cli_zb_connection(dut, count, app_path, erase_all) -> None:
+    switch_device = CliDevice(dut[0])
+    light_device = CliDevice(dut[1])
+
+    Common.cli_create_and_verify_network_connection(switch_device, light_device, 'on_off_switch',
+                                                    'on_off_light', 'c')
+
+    # ieee address and short address identify
+    switch_device.zdo_request_and_check('ieee_addr', light_device.short_address)
+    light_device_ieee_addr = switch_device.get_cli_comm_return_value(MatchPattern.ieee_addr)[0]
+    assert light_device_ieee_addr == light_device.ieee_address
+
+    switch_device.zdo_request_and_check('nwk_addr', light_device.ieee_address)
+    short_address_return = switch_device.get_cli_comm_return_value(MatchPattern.nwk_address)[0]
+    assert short_address_return == light_device.short_address
 
 
-# #Case 2: Zigbee network finding-binding
+# Case 2: Zigbee network finding-binding
 @pytest.mark.order(2)
 @pytest.mark.esp32h2
 @pytest.mark.esp32c6
 @pytest.mark.zigbee_multi_dut
-@pytest.mark.parametrize(
-    'count, app_path, erase_all', [
-        (2, pytest_build_dir, 'y'),
-    ],
-    indirect=True,
-)
+@pytest.mark.parametrize('count, app_path, erase_all', [(2, cli_build_dir, 'y'), ], indirect=True, )
 @pytest.mark.usefixtures('teardown_fixture')
-def test_zb_cli_zc_finding_binding(dut: Tuple[Dut, Dut]) -> None:
-    light = dut[1]
-    cli = dut[0]
-    result = config_zigbee_network(cli, light)
-    light_nwk_addr = str(result[1])
-    assert bool(result[0])
-    # get active ep
-    cli.write('zdo -a 0x' + light_nwk_addr)
-    assert (light_nwk_addr == str(cli.expect(r'src_addr=([a-z0-9]{4})', timeout=3)[1].decode()))
-    light_endpoint = cli.expect(r'ep=([0-9]+)', timeout=3)[1].decode()
-    # simple descriptor request
-    cli.write('zdo -c 0x' + light_nwk_addr + ' ' + str(light_endpoint))
-    cli.expect('in clusters|out clusters', timeout=3)
-    # find on_off (cluster id =0x0006) level control (cluster id =0x0008) color control (cluster id =0x0300)
-    cli.write(
-        'zdo -m ' + light_nwk_addr + ' ' + light_nwk_addr + ' ' + '0x0104 ' + '3 ' + '0x0006 ' + '0x0008 ' + '0x0300 ' + '0')
-    assert (light_nwk_addr == str(cli.expect(r'src_addr=([a-z0-9]{4})', timeout=3)[1].decode()))
-    assert (light_endpoint == str(cli.expect(r'ep=([0-9]*)', timeout=3)[1].decode()))
-    # get ieee_address of the light
-    cli.write('zdo -i ' + light_nwk_addr)
-    light_node_ieee_address = str(cli.expect(r'([a-z0-9]{16})', timeout=5)[1].decode())
-    # bind (bind identify cluster 0x0003 remote(client) to local(server))
-    cli.write('zdo -e')
-    cli_node_ieee_address = str(cli.expect(r'([a-z0-9]{16})', timeout=2)[1].decode())
-    cli.write('zdo -a 0x0000')
-    cli_endpoint = str(cli.expect(r'ep=([0-9]+)', timeout=2)[1].decode())
-    cli.write(
-        'zdo -b on ' + light_node_ieee_address + ' ' + light_endpoint + ' ' + cli_node_ieee_address + ' ' + cli_endpoint + ' 0x0003 ' + light_nwk_addr)
-    cli.expect('Done', timeout=3)
+def test_zb_cli_zc_finding_binding(dut, count, app_path, erase_all) -> None:
+    # config coordinator and light
+    switch_device = CliDevice(dut[0])
+    light_device = CliDevice(dut[1])
+
+    Common.cli_create_and_verify_network_connection(switch_device, light_device, 'on_off_switch',
+                                                    'on_off_light', 'c')
+
+    # zdo request ieee_addr
+    switch_device.zdo_request_and_check('ieee_addr', light_device.short_address)
+    light_device_ieee_addr = switch_device.get_cli_comm_return_value(MatchPattern.ieee_addr)[0]
+    assert light_device_ieee_addr == light_device.ieee_address
+
+    # zdo request node_desc
+    switch_device.zdo_request_and_check('node_desc', light_device.short_address)
+
+    # zdo request active_ep
+    switch_device.zdo_request_and_check('active_ep', light_device.short_address)
+    light_device_endpoint = switch_device.get_cli_comm_return_value(MatchPattern.active_ep)[0]
+    assert light_device_endpoint == str(light_device.endpoint)
+
+    # zdo request simple_desc
+    switch_device.zdo_request_and_check('simple_desc', light_device.short_address, light_device.endpoint)
+    switch_device.check_response(MatchPattern.on_off_light_in_clusters)
+
+    # zdo bind
+    cluster_id = ZigbeeCIConstants.on_off_cluster_id
+    switch_device.zdo_bind_and_check(cluster_id, switch_device.endpoint, light_device.endpoint,
+                                     switch_device.short_address, light_device.ieee_address)
+    switch_device.zdo_request_and_check('bindings', switch_device.short_address)
+    switch_device.check_response(fr'\|\s*0\s*\|\s*{switch_device.ieee_address}\s*\|\s*'
+                                 fr'{switch_device.endpoint}\s*\|\s*{ZigbeeCIConstants.on_off_cluster_id:#06x}\s*\|\s*{light_device.ieee_address}\s*\|\s*{light_device.endpoint}\s*\|')
+
+    # bind check
+    switch_device.zcl_send_raw_and_check(switch_device.endpoint, cluster_id, '0x01')
+    light_device.check_hex_response('01')
+    switch_device.zcl_send_gen_and_check('read', switch_device.endpoint, cluster_id, attr=0)
+    switch_device.check_hex_response('01')
+
+    # zdo bind remove
+    switch_device.zdo_bind_and_check(cluster_id, switch_device.endpoint, light_device.endpoint,
+                                     switch_device.short_address, light_device.ieee_address, remove=True)
+    switch_device.zdo_request_and_check('bindings', switch_device.short_address)
+    switch_device.check_response(MatchPattern.empty_binding_table)
 
 
 # #Case 3: Zigbee network ZCL command
@@ -123,139 +95,47 @@ def test_zb_cli_zc_finding_binding(dut: Tuple[Dut, Dut]) -> None:
 @pytest.mark.esp32h2
 @pytest.mark.esp32c6
 @pytest.mark.zigbee_multi_dut
-@pytest.mark.parametrize(
-    'count, app_path, erase_all', [
-        (2, pytest_build_dir, 'y'),
-    ],
-    indirect=True,
-)
+@pytest.mark.parametrize('count, app_path, erase_all', [(2, cli_build_dir, 'y'), ], indirect=True, )
 @pytest.mark.usefixtures('teardown_fixture')
-def test_zb_cli_zc_ZCL_command(dut: Tuple[Dut, Dut]) -> None:
-    light = dut[1]
-    cli = dut[0]
-    result = config_zigbee_network(cli, light)
-    light_nwk_addr = str(result[1])
-    assert bool(result[0])
-    cli.write('zdo -a 0x' + light_nwk_addr)
-    assert (light_nwk_addr == str(cli.expect(r'src_addr=([a-z0-9]{4})', timeout=3)[1].decode()))
-    light_endpoint = cli.expect(r'ep=([0-9]+)', timeout=3)[1].decode()
+def test_zb_cli_zcl_command(dut, count, app_path, erase_all) -> None:
+    switch_device = CliDevice(dut[0])
+    light_device = CliDevice(dut[1])
 
-    #################### ZCL command (on-off 0x0006 cluster) ####################
-    light_on = 1
-    light_off = 0
+    Common.cli_create_and_verify_network_connection(switch_device, light_device, 'color_dimmable_switch',
+                                                    'color_dimmable_light', 'c')
+
+    # zcl command on off 0x0006 cluster
     # On command
-    cli.write('zcl -c ' + light_nwk_addr + ' ' + light_endpoint + ' 0x0006 01')
-    cli.expect('Done', timeout=3)
-    time.sleep(2)
-    # read on_off attribute
-    cli.write('zcl -a read ' + light_nwk_addr + ' ' + light_endpoint + ' 0x0006 0x0104 0')
-    time.sleep(2)
-    assert str(bool(light_on)) == cli.expect(r'Value: (\w+)', timeout=3)[1].decode()
+    Common.cli_light_switch_and_check_rsp(switch_device, light_device, '0x01', expect_rsp='01', send_read=True)
     # Off command
-    time.sleep(2)
-    cli.write('zcl -c ' + light_nwk_addr + ' ' + light_endpoint + ' 0x0006 00')
-    cli.expect('Done', timeout=3)
-    time.sleep(2)
-    # read on_off attribute
-    cli.write('zcl -a read ' + light_nwk_addr + ' ' + light_endpoint + ' 0x0006 0x0104 0')
-    time.sleep(2)
-    assert str(bool(light_off)) == cli.expect(r'Value: (\w+)', timeout=3)[1].decode()
+    Common.cli_light_switch_and_check_rsp(switch_device, light_device, '0x00', expect_rsp='00', send_read=True)
     # toggle command
-    time.sleep(2)
-    cli.write('zcl -c ' + light_nwk_addr + ' ' + light_endpoint + ' 0x0006 02')
-    cli.expect('Done', timeout=3)
-    time.sleep(2)
-    # read on_off attribute
-    cli.write('zcl -a read ' + light_nwk_addr + ' ' + light_endpoint + ' 0x0006 0x0104 0')
-    assert str(bool(light_on)) == cli.expect(r'Value: (\w+)', timeout=3)[1].decode()
+    Common.cli_light_switch_and_check_rsp(switch_device, light_device, '0x02', expect_rsp='01', send_read=True)
 
-    ################### ZCL command (level-control 0x0008 cluster) ####################
-    light_lvl = 5
+    # zcl command level-control 0x0008 cluster
     # Move to level(with On/Off) command
-    time.sleep(2)
-    str_length = str(len(light.expect(pexpect.TIMEOUT, timeout=0.1)))
-    light.expect(r'[\s\S]{%s}' % str(str_length), timeout=10)
-    cli.write('zcl -c ' + light_nwk_addr + ' ' + light_endpoint + ' 0x0008 04 profile 0x0104 payload 05ffff')
-    assert str(light_lvl) == light.expect(r'Light level changes to ([0-9])', timeout=3)[1].decode()
-    cli.expect('Done', timeout=3)
-    # read level_control attribute
-    cli.write('zcl -a read ' + light_nwk_addr + ' ' + light_endpoint + ' 0x0008 0x0104 0')
-    assert str(light_lvl) == cli.expect(r'Value: (\d+)', timeout=3)[1].decode()
-    cli.expect('Done', timeout=3)
+    Common.cli_level_switch_and_check_rsp(switch_device, light_device, '0x04', expect_rsp='05', payload='0x05ffff',
+                                          send_read=True)
     # Move (with On/Off) command
-    time.sleep(2)
-    cli.write('zcl -c ' + light_nwk_addr + ' ' + light_endpoint + ' 0x0008 05 profile 0x0104 payload 0105')
-    time.sleep(2)
-    cli.expect('Done', timeout=3)
-    # read level_control attribute
-    cli.write('zcl -a read ' + light_nwk_addr + ' ' + light_endpoint + ' 0x0008 0x0104 0')
-    time.sleep(2)
-    cli.expect('Done', timeout=3)
+    Common.cli_level_switch_and_check_rsp(switch_device, light_device, '0x05', expect_rsp='00', payload='0x0105',
+                                          send_read=True)
     # Step (with On/Off) command
-    time.sleep(2)
-    cli.write('zcl -c ' + light_nwk_addr + ' ' + light_endpoint + ' 0x0008 06 profile 0x0104 payload 0005ffff')
-    cli.expect('Done', timeout=3)
-    # read level_control attribute
-    cli.write('zcl -a read ' + light_nwk_addr + ' ' + light_endpoint + ' 0x0008 0x0104 0')
-    cli.expect('Done', timeout=3)
-    # Stop command
-    time.sleep(2)
-    cli.write('zcl -c ' + light_nwk_addr + ' ' + light_endpoint + ' 0x0008 07')
-    cli.expect('Done', timeout=3)
-    # read level_control attribute
-    cli.write('zcl -a read ' + light_nwk_addr + ' ' + light_endpoint + ' 0x0008 0x0104 0')
-    cli.expect('Done', timeout=3)
+    Common.cli_level_switch_and_check_rsp(switch_device, light_device, '0x06', expect_rsp='05', payload='0x00053200',
+                                          send_read=True)
+    # Step (with On/Off) command and Stop command
+    Common.cli_level_switch_and_check_rsp(switch_device, light_device, '0x06', expect_rsp='08', payload='0x00051e00',
+                                          send_read=True, check_stop_move=True)
 
-    #################### ZCL command (color-control 0x0300 cluster) ####################
-    light_color_x = 12440
-    light_color_y = 12857
+    # zcl command color-control 0x0300 cluster
     # Move to color command
-    time.sleep(2)
-    cli.write('zcl -c ' + light_nwk_addr + ' ' + light_endpoint + ' 0x0300 07 profile 0x0104 payload 983039320000')
-    light.expect(r'Light color x changes to 0x', timeout=3)
-    light.expect(r'Light color y changes to 0x', timeout=3)
-    time.sleep(0.5)
-    assert hex(light_color_x) == light.expect(r'Light color x changes to (0x\w+)', timeout=3)[1].decode()
-    assert hex(light_color_y) == light.expect(r'Light color y changes to (0x\w+)', timeout=3)[1].decode()
-    cli.expect('Done', timeout=3)
-    # read color_control_x attribute
-    cli.write('zcl -a read ' + light_nwk_addr + ' ' + light_endpoint + ' 0x0300 0x0104 3')
-    assert str(light_color_x) == cli.expect(r'Value: (\d+)', timeout=3)[1].decode()
-    cli.expect('Done', timeout=3)
-    # read color_control_y attribute
-    cli.write('zcl -a read ' + light_nwk_addr + ' ' + light_endpoint + ' 0x0300 0x0104 4')
-    assert str(light_color_y) == cli.expect(r'Value: (\d+)', timeout=3)[1].decode()
-    cli.expect('Done', timeout=3)
-    # Move color command
-    time.sleep(2)
-    cli.write('zcl -c ' + light_nwk_addr + ' ' + light_endpoint + ' 0x0300 08 profile 0x0104 payload 01000100')
-    cli.expect('Done', timeout=3)
-    # read color_control_x attribute
-    cli.write('zcl -a read ' + light_nwk_addr + ' ' + light_endpoint + ' 0x0300 0x0104 3')
-    cli.expect('Done', timeout=3)
-    # read color_control_y attribute
-    cli.write('zcl -a read ' + light_nwk_addr + ' ' + light_endpoint + ' 0x0300 0x0104 4')
-    cli.expect('Done', timeout=3)
-    # Step color command
-    time.sleep(2)
-    cli.write('zcl -c ' + light_nwk_addr + ' ' + light_endpoint + ' 0x0300 09 profile 0x0104 payload 010001000100')
-    cli.expect('Done', timeout=3)
-    # read color_control_x attribute
-    cli.write('zcl -a read ' + light_nwk_addr + ' ' + light_endpoint + ' 0x0300 0x0104 3')
-    cli.expect('Done', timeout=3)
-    # read color_control_y attribute
-    cli.write('zcl -a read ' + light_nwk_addr + ' ' + light_endpoint + ' 0x0300 0x0104 4')
-    cli.expect('Done', timeout=3)
-    # Stop move step command
-    time.sleep(2)
-    cli.write('zcl -c ' + light_nwk_addr + ' ' + light_endpoint + ' 0x0300 47')
-    cli.expect('Done', timeout=3)
-    # read color_control_x attribute
-    cli.write('zcl -a read ' + light_nwk_addr + ' ' + light_endpoint + ' 0x0300 0x0104 3')
-    cli.expect('Done', timeout=3)
-    # read color_control_y attribute
-    cli.write('zcl -a read ' + light_nwk_addr + ' ' + light_endpoint + ' 0x0300 0x0104 4')
-    cli.expect('Done', timeout=3)
+    Common.cli_color_switch_and_check_rsp(switch_device, light_device, '0x07', expect_x_value='15 30',
+                                          expect_y_value='20 32', payload='0x153020320000')
+    # Move color command and check stop move
+    Common.cli_color_switch_and_check_rsp(switch_device, light_device, '0x08', expect_x_value='17 30',
+                                          expect_y_value='22 32', payload='0x01000100')
+    # Step color command x + 3, y + 3 in 5s
+    Common.cli_color_switch_and_check_rsp(switch_device, light_device, '0x09', expect_x_value='1a 30',
+                                          expect_y_value='25 32', payload='0x030003003200')
 
 
 # #Case 4: Zigbee network leaving
@@ -263,20 +143,15 @@ def test_zb_cli_zc_ZCL_command(dut: Tuple[Dut, Dut]) -> None:
 @pytest.mark.esp32h2
 @pytest.mark.esp32c6
 @pytest.mark.zigbee_multi_dut
-@pytest.mark.parametrize(
-    'count, app_path, erase_all', [
-        (2, pytest_build_dir, 'y'),
-    ],
-    indirect=True,
-)
+@pytest.mark.parametrize('count, app_path, erase_all', [(2, cli_build_dir, 'y'), ], indirect=True, )
 @pytest.mark.usefixtures('teardown_fixture')
-def test_zb_cli_zc_check_leaving(dut: Tuple[Dut, Dut]) -> None:
-    light = dut[1]
-    cli = dut[0]
-    result = config_zigbee_network(cli, light)
-    light_nwk_addr = str(result[1])
-    assert bool(result[0])
-    cli.write('zdo -l 0x' + light_nwk_addr)
-    assert (light_nwk_addr == str(cli.expect(r'leaving network: 0x([a-z0-9]{4})', timeout=3)[1].decode()))
-    cli.write('zdo -l 0x0000')
-    cli.expect('leave network, status', timeout=3)
+def test_zb_cli_zc_check_leaving(dut, count, app_path, erase_all) -> None:
+    switch_device = CliDevice(dut[0])
+    light_device = CliDevice(dut[1])
+
+    Common.cli_create_and_verify_network_connection(switch_device, light_device, 'on_off_switch', 'on_off_light',
+                                                    'c')
+    time.sleep(2)
+    switch_device.zdo_nwk_leave_and_check(light_device.short_address)
+    switch_device.check_response(fr'Zigbee Node \({light_device.short_address}\) is leaving network')
+    light_device.check_response(MatchPattern.left_network, timeout=2)

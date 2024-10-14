@@ -146,7 +146,7 @@ def teardown_fixture(serial_ports, dut):
     yield
     # after test, close dut monitor, and do erase flash process
     for device in dut:
-        device.serial.stop_redirect_thread()
+        device.serial.close()
     proc = None
     for serial_port in serial_ports:
         print(f'erase flash on serial_port: {serial_port}')

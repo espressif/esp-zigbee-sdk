@@ -21,7 +21,7 @@ DEF_APP_PATH = PROJECT_ROOT / 'examples'
 APPS_BUILD_PER_JOB = 30
 
 PYTEST_APPS = [
-    {"target": "esp32h2", "name": "esp_zigbee_cli"},
+    {"target": "esp32h2", "name": "esp_zigbee_all_device_types_app"},
     {"target": "esp32h2", "name": "HA_color_dimmable_light"},
     {"target": "esp32h2", "name": "customized_client"},
     {"target": "esp32h2", "name": "customized_server"},
@@ -32,7 +32,7 @@ PYTEST_APPS = [
     {"target": "esp32h2", "name": "touchlink_switch"},
     {"target": "esp32h2", "name": "touchlink_light"},
     {"target": "esp32h2", "name": "HA_on_off_light"},
-    {"target": "esp32c6", "name": "esp_zigbee_cli"},
+    {"target": "esp32c6", "name": "esp_zigbee_all_device_types_app"},
     {"target": "esp32c6", "name": "HA_color_dimmable_light"},
     {"target": "esp32c6", "name": "customized_client"},
     {"target": "esp32c6", "name": "customized_server"},
@@ -42,7 +42,8 @@ PYTEST_APPS = [
     {"target": "esp32c6", "name": "touchlink_light"},
 ]
 
-GATEWAY_APPS = [{"target": "esp32h2", "name": "esp_zigbee_cli"}, ]
+GATEWAY_APPS = [{"target": "esp32h2", "name": "esp_zigbee_all_device_types_app"},]
+
 HOST_APPS = [{"target": "esp32", "name": "esp_zigbee_host"},
              {"target": "esp32s2", "name": "esp_zigbee_host"},
              {"target": "esp32c3", "name": "esp_zigbee_host"},
@@ -117,9 +118,6 @@ def update_component_yml_files():
     os.remove('main/idf_component.yml')
 
     os.chdir(os.path.join(DEF_APP_PATH, 'esp_zigbee_HA_sample', 'HA_on_off_switch'))
-    os.remove('main/idf_component.yml')
-
-    os.chdir(os.path.join(DEF_APP_PATH, 'esp_zigbee_cli'))
     os.remove('main/idf_component.yml')
 
     os.chdir(os.path.join(DEF_APP_PATH, 'esp_zigbee_HA_sample', 'HA_on_off_light'))
