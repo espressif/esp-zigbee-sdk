@@ -171,7 +171,7 @@ def update_component_yml_files():
 def main(args: argparse.Namespace) -> None:
     current_dir = os.getcwd()
     # update_sdkconfig_files()
-    update_component_yml_files()
+    # update_component_yml_files()
     os.chdir(current_dir)
     apps = get_cmake_apps(args.paths, args.target, args.config)
 
