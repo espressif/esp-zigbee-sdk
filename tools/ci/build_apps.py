@@ -44,12 +44,6 @@ PYTEST_APPS = [
 
 GATEWAY_APPS = [{"target": "esp32h2", "name": "esp_zigbee_all_device_types_app"},]
 
-HOST_APPS = [{"target": "esp32", "name": "esp_zigbee_host"},
-             {"target": "esp32s2", "name": "esp_zigbee_host"},
-             {"target": "esp32c3", "name": "esp_zigbee_host"},
-             {"target": "esp32s3", "name": "esp_zigbee_host"},
-             {"target": "esp32h2", "name": "esp_zigbee_host"},
-             {"target": "esp32c6", "name": "esp_zigbee_host"}, ]
 
 IGNORE_WARNINGS = [
     r"warning: 'init_spiffs' defined but not used",
@@ -93,14 +87,11 @@ def main(args: argparse.Namespace) -> None:
     assert not (args.no_pytest and args.pytest)
     if args.no_pytest:
         apps_for_build = [app for app in apps if not (_is_pytest_app(app, PYTEST_APPS)
-                                                      or _is_pytest_app(app, GATEWAY_APPS)
-                                                      or _is_pytest_app(app, HOST_APPS))]
+                                                      or _is_pytest_app(app, GATEWAY_APPS))]
     elif args.pytest:
         apps_for_build = [app for app in apps if _is_pytest_app(app, PYTEST_APPS)]
     elif args.rcp_gateway:
         apps_for_build = [app for app in apps if _is_pytest_app(app, GATEWAY_APPS)]
-    elif args.host:
-        apps_for_build = [app for app in apps if _is_pytest_app(app, HOST_APPS)]
     else:
         apps_for_build = apps[:]
 
@@ -177,11 +168,6 @@ if __name__ == '__main__':
         '--rcp_gateway',
         action="store_true",
         help='Only build rcp_gateway pytest apps, defined in GATEWAY_APPS',
-    )
-    parser.add_argument(
-        '--host',
-        action="store_true",
-        help='Only build host apps, defined in HOST_APPS',
     )
 
     arguments = parser.parse_args()
