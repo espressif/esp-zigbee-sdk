@@ -624,7 +624,7 @@ Supported commands:
   ```
 - `report`: Report attribute.
   ```bash
-  esp> zcl report -d 0xdc59 --dst-ep 2 -e 1 -c 6 -a 0
+  esp> zcl send_gen report -d 0xdc59 --dst-ep 2 -e 1 -c 6 -a 0
   ```
 - `config_rp`: Configure reporting.
   ```bash
@@ -677,38 +677,68 @@ Supported information types:
 - `node_desc`: Get the node descriptor of a device node.
   ```bash
   esp> zdo request node_desc -d 0x3ed5
-  node_desc request to [addr:0x3ed5] success: 0
+  node_desc request to [addr:0x3ed5] status: 0
   I (1335839) : 0x40815b34   01 40 8e 34 12 6c 4d 06  00 2c 4d 06 00           |.@.4.lM..,M..|
   ```
 - `active_ep`: Get the list of endpoints on a device node with simple descriptors.
   ```bash
   esp> zdo request active_ep -d 0x3ed5
-  active_ep request to [addr:0x3ed5] success: 0
+  active_ep request to [addr:0x3ed5] status: 0
   active ep: [1, 242]
   ```
 - `simple_desc`: Get the simple descriptor of a Zigbee device node on a specified endpoint. \
   `-e <u8:EID>` is required to specify the endpoint.
   ```bash
   esp> zdo request simple_desc -e 1 -d 0x3ed5
-  simple_desc request to [addr:0x3ed5] success: 0
+  simple_desc request to [addr:0x3ed5] status: 0
   ep:1 profile:0x0104 dev:0x100 dev_ver:0x0
   in: [0x0000, 0x0003, 0x0004, 0x0005, 0x0006]
   out: []
   ```
-- `ieee_addr`: Get the 64-bit IEEE address of a device node based on its know short address.
+- `nwk_addr`: Get the short address of a device node based on its known 64-bit IEEE address.
+  ```bash
+  esp> zdo request nwk_addr -d 0x744dbdfffe602d57
+  nwk_addr request to [addr:0x2d57] status: 0
+  nwk address: 0x4599
+  ```
+- `ieee_addr`: Get the 64-bit IEEE address of a device node based on its known short address.
   ```bash
   esp> zdo request ieee_addr -d 0x3ed5
-  ieee_addr request to [addr:0x3ed5] success: 0
+  ieee_addr request to [addr:0x3ed5] status: 0
   ieee address: 0x744dbdfffe602d57
+  ```
+- `neighbors`: Get the Neighbor Table of a device node.
+
+  Neighbor info explanation:
+    - If the device type ends with asterisk, then the device is permitting joining.
+      Otherwise, the device is not permitting joining.
+    - "Rel" stands for relationship, which supports:
+        - "P" stands for parent
+        - "C" stands for child
+        - "S" stands for sibling
+        - "O" stands for others
+        - "c" stands for previous child
+        - "u" stands for unauthenticated child
+  ```bash
+  esp> zdo request neighbors -d 0x4599
+  neighbors request to [addr:0x4599] status: 0
+  |Index| ExtPanID           |NwkAddr | MacAddr            |Type |Rel|Depth| LQI |
+  +-----+--------------------+--------+--------------------+-----+---+-----+-----+
+  |   0 | 0x4831b7fffec02bbc | 0x07ca | 0x4831b7fffec02bbc | ZR* | S |   0 | 255 |
+  esp> zdo request neighbors -d 0x07ca
+  neighbors request to [addr:0x07ca] status: 0
+  |Index| ExtPanID           |NwkAddr | MacAddr            |Type |Rel|Depth| LQI |
+  +-----+--------------------+--------+--------------------+-----+---+-----+-----+
+  |   0 | 0x4831b7fffec02bbc | 0x4599 | 0x744dbdfffe602d57 | ZR  | S |   1 | 255 |
   ```
 - `bindings`: Get the Binding Table of a device node.
   ```bash
   esp> zdo bind -c 6 -S 1 -D 1 -s 0x3ed5 -d 0x744dbdfffe602d57
-  bind request to [addr:0x3ed5] success: 0
+  bind request to [addr:0x3ed5] status: 0
   esp> zdo bind -c 6 -S 1 -D 1 -s 0x3ed5 -d 0x4831b7fffec02bbc
-  bind request to [addr:0x3ed5] success: 0
+  bind request to [addr:0x3ed5] status: 0
   esp> zdo request bindings -d 0x3ed5
-  bindings request to [addr:0x3ed5] success: 0
+  bindings request to [addr:0x3ed5] status: 0
   |Index| Src_Addr           |Src_E|Cluster | Dst_Addr           |Dst_E|
   +-----+--------------------+-----+--------+--------------------+-----+
   |   0 | 0x744dbdfffe602d57 |   1 | 0x0006 | 0x744dbdfffe602d57 |   1 |
@@ -726,7 +756,7 @@ If there were matched devices, the information would be printed as `matched devi
 
 ```bash
 esp> zdo match -i 0 -i 3 -i 4 -i 5 -i 6 -p 0xFFFF -d 0xFFFF
-match request to [addr:0xffff] success: 0
+match request to [addr:0xffff] status: 0
 matched device: 0x3ed5:1
 ```
 
@@ -752,17 +782,17 @@ Assume that we have a pair of device with the following setup:
 Request the remote device bind `on_off cluster(0x06)` on endpoint 1 with that on endpoint 2 at local device:
 ```bash
 esp> zdo bind -c 6 -S 1 -D 2 -s 0x3ed5 -d 0x4831b7fffec02bbc
-bind request to [addr:0x3ed5] success: 0
+bind request to [addr:0x3ed5] status: 0
 ```
 Request the remote device bind `on_off cluster(0x06)` on endpoint 1 with that on endpoint 2:
 ```bash
 esp> zdo bind -c 6 -S 1 -D 2 -s 0x3ed5 -d 0x744dbdfffe602d57
-bind request to [addr:0x3ed5] success: 0
+bind request to [addr:0x3ed5] status: 0
 ```
 After the two binding requests, check the binding table on remote device:
 ```bash
 esp> zdo request bindings -d 0x3ed5
-bindings request to [addr:0x3ed5] success: 0
+bindings request to [addr:0x3ed5] status: 0
 |Index| Src_Addr           |Src_E|Cluster | Dst_Addr           |Dst_E|
 +-----+--------------------+-----+--------+--------------------+-----+
 |   0 | 0x744dbdfffe602d57 |   1 | 0x0006 | 0x4831b7fffec02bbc |   2 |

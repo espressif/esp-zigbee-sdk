@@ -157,6 +157,11 @@ pytest_esp32h2_i154_zigbee_multi_dut:
   image: ${CI_DOCKER_REGISTRY}/target-test-env-v5.1:1
   needs:
     - build_pytest_examples
+  artifacts:
+    paths:
+      - "pytest_embedded_log/"
+    when: always
+    expire_in: 4 days
   script:
     - pip install -r tools/ci/requirements-pytest.txt
     - find examples/ -name "pytest_*.py" | xargs pytest --target esp32h2 -m zigbee_multi_dut
@@ -167,6 +172,11 @@ pytest_esp32c6_i154_zigbee_multi_dut:
   image: ${CI_DOCKER_REGISTRY}/target-test-env-v5.1:1
   needs:
     - build_pytest_examples
+  artifacts:
+    paths:
+      - "pytest_embedded_log/"
+    when: always
+    expire_in: 4 days
   script:
     - pip install -r tools/ci/requirements-pytest.txt
     - find examples/ -name "pytest_*.py" | xargs pytest --target esp32c6 -m zigbee_multi_dut
@@ -177,6 +187,11 @@ pytest_esp32s3_i154_zigbee_multi_dut:
   image: ${CI_DOCKER_REGISTRY}/target-test-env-v5.1:1
   needs:
     - build_pytest_gateway
+  artifacts:
+    paths:
+      - "pytest_embedded_log/"
+    when: always
+    expire_in: 4 days
   script:
     - pip install -r tools/ci/requirements-pytest.txt
     - find examples/ -name "pytest_*.py" | xargs pytest --target esp32s3 -m zigbee_multi_dut

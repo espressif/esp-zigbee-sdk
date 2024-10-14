@@ -707,15 +707,15 @@ static esp_err_t cli_bdb_start(esp_zb_cli_cmd_t *self, int argc, char **argv)
                 bdb_comm_mode = bdb_comm_mode | ESP_ZB_BDB_FINDING_N_BINDING;
             } else if (!strcmp(argtable.mode->sval[i], "initiator")) {
                 uint32_t channel_mask = esp_zb_get_primary_network_channel_set();
-                bdb_comm_mode = bdb_comm_mode | ESP_ZB_BDB_TOUCHLINK_COMMISSIONING;
-                if (channel_mask != 0) {
+                if (channel_mask != ESP_ZB_TRANSCEIVER_ALL_CHANNELS_MASK) {
                     esp_zb_zdo_touchlink_set_nwk_channel(__builtin_ctz(channel_mask));
                 } else {
-                    cli_output("Invalid primary channel: 0x%08" PRIx32 "\n", channel_mask);
+                    esp_zb_zdo_touchlink_set_nwk_channel(0);
                 }
+                bdb_comm_mode = bdb_comm_mode | ESP_ZB_BDB_TOUCHLINK_COMMISSIONING;
             } else if (!strcmp(argtable.mode->sval[i], "target")) {
-                bdb_comm_mode = ESP_ZB_BDB_TOUCHLINK_TARGET;
                 esp_zb_set_channel_mask(esp_zb_get_primary_network_channel_set());
+                bdb_comm_mode = ESP_ZB_BDB_TOUCHLINK_TARGET;
             } else {
                 cli_output("Skip %s bdb commissioning mode: %s\n", "unknown", argtable.mode->sval[i]);
             }

@@ -79,7 +79,6 @@ def get_cmake_apps(
         build_dir='build_@t_@w',
         config_rules_str=config_rules_str,
         check_warnings=True,
-        preserve=True,
         manifest_files=MAINFEST_FILES,
     )
     return apps

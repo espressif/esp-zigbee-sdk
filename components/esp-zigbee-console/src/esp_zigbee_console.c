@@ -34,10 +34,15 @@ static esp_err_t esp_zb_console_init_ctx(void)
 static esp_err_t esp_zb_console_core_action_handler(esp_zb_core_action_callback_id_t callback_id, const void *message)
 {
     esp_err_t ret = ESP_ERR_NOT_SUPPORTED;
+    const esp_zb_zcl_status_t *status = message;
+
+    ESP_LOGI(TAG, "Receive Zigbee action(0x%x) callback", callback_id);
+    ESP_GOTO_ON_FALSE(message, ESP_FAIL, exit, TAG, "Empty message");
+    ESP_GOTO_ON_FALSE(!(*status), ESP_ERR_INVALID_ARG, exit, TAG, "Message: error status(%d)", *status);
+
     ret = cli_zcl_core_action_handler(callback_id, message);
-    if (ret != ESP_OK) {
-        ESP_LOGW(TAG, "Receive Zigbee action(0x%x) callback", callback_id);
-    }
+
+exit:
     return ret;
 }
 

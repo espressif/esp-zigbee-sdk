@@ -17,75 +17,120 @@
 
 #define TAG "cli_cmd_zcl"
 
+#define cli_output_callback_info(name, info) \
+    ESP_LOGI(TAG, "%s: endpoint(%d) cluster(0x%04x)", (name), (info)->dst_endpoint, (info)->cluster);
+
+static void cli_output_attribute(esp_zb_zcl_attribute_t *attr)
+{
+    uint16_t attr_size = attr->data.size;
+    ESP_LOGI(TAG, "- attribute(0x%04x), type(0x%x)", attr->id, attr->data.type);
+    ESP_LOG_BUFFER_HEXDUMP(TAG, attr->data.value, attr_size, ESP_LOG_INFO);
+}
+
+static esp_err_t zcl_set_attr_value_handler(esp_zb_zcl_set_attr_value_message_t *message)
+{
+    cli_output_callback_info("Set attribute value", &message->info);
+
+    cli_output_attribute(&message->attribute);
+
+    return ESP_OK;
+}
+
 static esp_err_t zcl_read_attr_resp_handler(const esp_zb_zcl_cmd_read_attr_resp_message_t *message)
 {
-    ESP_RETURN_ON_FALSE(message, ESP_FAIL, TAG, "Empty message");
-    ESP_RETURN_ON_FALSE(message->info.status == ESP_ZB_ZCL_STATUS_SUCCESS, ESP_ERR_INVALID_ARG, TAG, "Read message: error status(%d)", message->info.status);
-
-    ESP_LOGI(TAG, "Read response: endpoint(%d), cluster(0x%02x)", message->info.dst_endpoint, message->info.cluster);
+    cli_output_callback_info("Read attribute response", &message->info);
 
     for (esp_zb_zcl_read_attr_resp_variable_t *variables = message->variables; variables != NULL; variables = variables->next) {
-        ESP_LOGI(TAG, "attribute(0x%02x), type(0x%x), data size(%d)", variables->attribute.id, variables->attribute.data.type, variables->attribute.data.size);
-        ESP_LOG_BUFFER_HEXDUMP("", variables->attribute.data.value, variables->attribute.data.size, ESP_LOG_INFO);
+        if (variables->status == ESP_ZB_ZCL_STATUS_SUCCESS) {
+            cli_output_attribute(&variables->attribute);
+        } else {
+            ESP_LOGI(TAG, "- attribute(0x%04x), status(0x%x)", variables->attribute.id, variables->status);
+        }
     }
+
+    return ESP_OK;
+}
+
+static esp_err_t zcl_report_attr_handler(esp_zb_zcl_report_attr_message_t *message)
+{
+    cli_output_callback_info("Report attribute", message);
+
+    cli_output_attribute(&message->attribute);
+
     return ESP_OK;
 }
 
 static esp_err_t zcl_write_attr_resp_handler(const esp_zb_zcl_cmd_write_attr_resp_message_t *message)
 {
-    ESP_RETURN_ON_FALSE(message, ESP_FAIL, TAG, "Empty message");
-    ESP_RETURN_ON_FALSE(message->info.status == ESP_ZB_ZCL_STATUS_SUCCESS, ESP_ERR_INVALID_ARG, TAG, "Write message: error status(%d)", message->info.status);
-
-    ESP_LOGI(TAG, "Write response: endpoint(%d), cluster(0x%02x)", message->info.dst_endpoint, message->info.cluster);
+    cli_output_callback_info("Write attribute response", &message->info);
 
     for (esp_zb_zcl_write_attr_resp_variable_t *variables = message->variables; variables != NULL; variables = variables->next) {
-        ESP_LOGI(TAG, "attribute(0x%02x), status(0x%x)",variables->attribute_id, variables->status);
+        ESP_LOGI(TAG, "- attribute(0x%04x), status(0x%x)", variables->attribute_id, variables->status);
     }
+
     return ESP_OK;
 }
 
 static esp_err_t zcl_report_cfg_resp_handler(const esp_zb_zcl_cmd_config_report_resp_message_t *message)
 {
-    ESP_RETURN_ON_FALSE(message, ESP_FAIL, TAG, "Empty message");
-    ESP_RETURN_ON_FALSE(message->info.status == ESP_ZB_ZCL_STATUS_SUCCESS, ESP_ERR_INVALID_ARG, TAG, "Config report message: error status(%d)", message->info.status);
-
-    ESP_LOGI(TAG, "Config report response: endpoint(%d), cluster(0x%02x)", message->info.dst_endpoint, message->info.cluster);
+    cli_output_callback_info("Config report response", &message->info);
 
     for (esp_zb_zcl_config_report_resp_variable_t *variables = message->variables; variables != NULL; variables = variables->next) {
-        ESP_LOGI(TAG, "attribute(0x%02x), status(0x%x), direction(%d)", variables->attribute_id, variables->status, variables->direction);
+        ESP_LOGI(TAG, "- attribute(0x%04x), status(0x%x)", variables->attribute_id, variables->status);
     }
+
     return ESP_OK;
 }
 
 static esp_err_t zcl_read_report_cfg_resp_handler(const esp_zb_zcl_cmd_read_report_config_resp_message_t *message)
 {
-    ESP_RETURN_ON_FALSE(message, ESP_FAIL, TAG, "Empty message");
-    ESP_RETURN_ON_FALSE(message->info.status == ESP_ZB_ZCL_STATUS_SUCCESS, ESP_ERR_INVALID_ARG, TAG, "Read report configure message: error status(%d)", message->info.status);
+    cli_output_callback_info("Read report configure response", &message->info);
 
-    ESP_LOGI(TAG, "Read report configure response: endpoint(%d), cluster(0x%02x), attribute(0x%02x)", message->info.dst_endpoint, message->info.cluster, message->attribute_id);
+    ESP_LOGI(TAG, "- attribute(0x%04x), status(0x%x)", message->attribute_id, message->info.status);
+    if (message->info.status == ESP_ZB_ZCL_STATUS_SUCCESS) {
+        if (message->report_direction == ESP_ZB_ZCL_REPORT_DIRECTION_SEND) {
+            /* TODO: support printing varible length of delta */
+            ESP_LOGI(TAG, "  min(%d), max(%d), delta(%d)", message->client.min_interval, message->client.max_interval, message->client.delta[0]);
+        } else {
+            ESP_LOGI(TAG, "  timeout(%d)", message->server.timeout);
+        }
+    }
 
     return ESP_OK;
 }
 
 static esp_err_t zcl_disc_attr_resp_handler(const esp_zb_zcl_cmd_discover_attributes_resp_message_t *message)
 {
-    ESP_RETURN_ON_FALSE(message, ESP_FAIL, TAG, "Empty message");
-    ESP_RETURN_ON_FALSE(message->info.status == ESP_ZB_ZCL_STATUS_SUCCESS, ESP_ERR_INVALID_ARG, TAG, "Discover message: error status(%d)", message->info.status);
-
-    ESP_LOGI(TAG, "Discover attribute response: endpoint(%d), cluster(0x%02x)", message->info.dst_endpoint, message->info.cluster);
+    cli_output_callback_info("Discover attribute response", &message->info);
 
     for (esp_zb_zcl_disc_attr_variable_t *variables = message->variables; variables != NULL; variables = variables->next) {
-        ESP_LOGI(TAG, "attribute(0x%02x), data type(0x%0x)", variables->attr_id, variables->data_type);
+        ESP_LOGI(TAG, "- attribute(0x%04x), type(0x%02x)", variables->attr_id, variables->data_type);
     }
+
+    return ESP_OK;
+}
+
+static esp_err_t zcl_default_resp_handler(esp_zb_zcl_cmd_default_resp_message_t *message)
+{
+    cli_output_callback_info("Default response", &message->info);
+
+    ESP_LOGI(TAG, "- command(0x%02x), status(%d)", message->resp_to_cmd, message->status_code);
+
     return ESP_OK;
 }
 
 esp_err_t cli_zcl_core_action_handler(esp_zb_core_action_callback_id_t callback_id, const void *message)
 {
-    esp_err_t ret = ESP_ERR_NOT_SUPPORTED;
+    esp_err_t ret = ESP_OK;
     switch (callback_id) {
+        case ESP_ZB_CORE_SET_ATTR_VALUE_CB_ID:
+            ret = zcl_set_attr_value_handler((esp_zb_zcl_set_attr_value_message_t *)message);
+            break;
         case ESP_ZB_CORE_CMD_READ_ATTR_RESP_CB_ID:
             ret = zcl_read_attr_resp_handler((esp_zb_zcl_cmd_read_attr_resp_message_t *)message);
+            break;
+        case ESP_ZB_CORE_REPORT_ATTR_CB_ID:
+            ret = zcl_report_attr_handler((esp_zb_zcl_report_attr_message_t *)message);
             break;
         case ESP_ZB_CORE_CMD_WRITE_ATTR_RESP_CB_ID:
             ret = zcl_write_attr_resp_handler((esp_zb_zcl_cmd_write_attr_resp_message_t *)message);
@@ -99,6 +144,8 @@ esp_err_t cli_zcl_core_action_handler(esp_zb_core_action_callback_id_t callback_
         case ESP_ZB_CORE_CMD_DISC_ATTR_RESP_CB_ID:
             ret = zcl_disc_attr_resp_handler((esp_zb_zcl_cmd_discover_attributes_resp_message_t *)message);
             break;
+        case ESP_ZB_CORE_CMD_DEFAULT_RESP_CB_ID:
+            ret = zcl_default_resp_handler((esp_zb_zcl_cmd_default_resp_message_t *)message);
         default:
             break;
     }
@@ -143,7 +190,7 @@ static esp_err_t zcl_add_attribute(esp_zb_attribute_list_t *attr_list, attribute
     EXIT_ON_FALSE(attr_list, ESP_ERR_INVALID_ARG);
     EXIT_ON_FALSE(attr_cfg->attr_value_p, ESP_ERR_INVALID_ARG, cli_output_line("Invalid attribute value"));
 
-    EXIT_ON_ERROR(force ? esp_zb_cluster_add_attr(attr_list, attr_list->cluster_id, attr_cfg->attr_id,
+    EXIT_ON_ERROR(force ? esp_zb_cluster_add_attr(attr_list, attr_list->next->cluster_id, attr_cfg->attr_id,
                                                   attr_cfg->attr_type, attr_cfg->attr_access, attr_cfg->attr_value_p)
                         : esp_zb_cluster_add_std_attr(attr_list, attr_cfg->attr_id, attr_cfg->attr_value_p),
                   cli_output_line("Fail to add attribute"));
@@ -902,7 +949,7 @@ static esp_err_t cli_zcl_send_raw(esp_zb_cli_cmd_t *self, int argc, char **argv)
     if (argtable.payload->count > 0) {
         req_params.data.value = argtable.payload->hval[0];
         req_params.data.size = argtable.payload->hsize[0];
-        req_params.data.type = ESP_ZB_ZCL_ATTR_TYPE_INVALID;
+        req_params.data.type = ESP_ZB_ZCL_ATTR_TYPE_SET; /* A workarround to send arbitrary data */
     }
 
     /* DO NOT need a check, this option is mandatory */
