@@ -86,16 +86,17 @@ static esp_err_t zcl_read_report_cfg_resp_handler(const esp_zb_zcl_cmd_read_repo
 {
     cli_output_callback_info("Read report configure response", &message->info);
 
-    ESP_LOGI(TAG, "- attribute(0x%04x), status(0x%x)", message->attribute_id, message->info.status);
-    if (message->info.status == ESP_ZB_ZCL_STATUS_SUCCESS) {
-        if (message->report_direction == ESP_ZB_ZCL_REPORT_DIRECTION_SEND) {
-            /* TODO: support printing varible length of delta */
-            ESP_LOGI(TAG, "  min(%d), max(%d), delta(%d)", message->client.min_interval, message->client.max_interval, message->client.delta[0]);
-        } else {
-            ESP_LOGI(TAG, "  timeout(%d)", message->server.timeout);
+    for (esp_zb_zcl_read_report_config_resp_variable_t *variables = message->variables; variables != NULL; variables = variables->next) {
+        ESP_LOGI(TAG, "- attribute(0x%04x), status(0x%x)", variables->attribute_id, variables->status);
+        if (variables->status == ESP_ZB_ZCL_STATUS_SUCCESS) {
+            if (variables->report_direction == ESP_ZB_ZCL_REPORT_DIRECTION_SEND) {
+                /* TODO: support printing varible length of delta */
+                ESP_LOGI(TAG, "  min(%d), max(%d), delta(%d)", variables->client.min_interval, variables->client.max_interval, variables->client.delta[0]);
+            } else {
+                ESP_LOGI(TAG, "  timeout(%d)", variables->server.timeout);
+            }
         }
     }
-
     return ESP_OK;
 }
 
