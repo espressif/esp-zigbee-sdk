@@ -58,7 +58,7 @@ static void esp_app_buttons_handler(switch_func_pair_t *button_func_pair)
 {
     if (button_func_pair->func == SWITCH_ONOFF_TOGGLE_CONTROL) {
         /* Send "read attributes" command to the bound sensor */
-        esp_zb_zcl_read_attr_cmd_t read_req;
+        esp_zb_zcl_read_attr_cmd_t read_req = {0};
         read_req.address_mode = ESP_ZB_APS_ADDR_MODE_DST_ADDR_ENDP_NOT_PRESENT;
         read_req.zcl_basic_cmd.src_endpoint = HA_THERMOSTAT_ENDPOINT;
         read_req.clusterID = ESP_ZB_ZCL_CLUSTER_ID_TEMP_MEASUREMENT;
@@ -73,7 +73,7 @@ static void esp_app_buttons_handler(switch_func_pair_t *button_func_pair)
         read_req.attr_field = attributes;
 
         /* Send "configure report attribute" command to the bound sensor */
-        esp_zb_zcl_config_report_cmd_t report_cmd;
+        esp_zb_zcl_config_report_cmd_t report_cmd = {0};
         report_cmd.address_mode = ESP_ZB_APS_ADDR_MODE_DST_ADDR_ENDP_NOT_PRESENT;
         report_cmd.zcl_basic_cmd.src_endpoint = HA_THERMOSTAT_ENDPOINT;
         report_cmd.clusterID = ESP_ZB_ZCL_CLUSTER_ID_TEMP_MEASUREMENT;
@@ -121,7 +121,7 @@ static void bind_cb(esp_zb_zdp_status_t zdo_status, void *user_ctx)
                      temp_sensor.short_addr, temp_sensor.endpoint);
 
             /* Read peer Manufacture Name & Model Identifier */
-            esp_zb_zcl_read_attr_cmd_t read_req;
+            esp_zb_zcl_read_attr_cmd_t read_req = {0};
             read_req.address_mode = ESP_ZB_APS_ADDR_MODE_16_ENDP_PRESENT;
             read_req.zcl_basic_cmd.src_endpoint = HA_THERMOSTAT_ENDPOINT;
             read_req.zcl_basic_cmd.dst_endpoint = temp_sensor.endpoint;

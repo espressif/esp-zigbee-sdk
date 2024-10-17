@@ -84,7 +84,7 @@ static void bind_cb(esp_zb_zdp_status_t zdo_status, void *user_ctx)
         ESP_LOGI(TAG, "Bind response from address(0x%x), endpoint(%d) with status(%d)", ((zdo_info_user_ctx_t *)user_ctx)->short_addr,
                  ((zdo_info_user_ctx_t *)user_ctx)->endpoint, zdo_status);
         /* configure report attribute command */
-        esp_zb_zcl_config_report_cmd_t report_cmd;
+        esp_zb_zcl_config_report_cmd_t report_cmd = {0};
         bool report_change = 0;
         report_cmd.zcl_basic_cmd.dst_addr_u.addr_short = on_off_light.short_addr;
         report_cmd.zcl_basic_cmd.dst_endpoint = on_off_light.endpoint;
@@ -93,7 +93,15 @@ static void bind_cb(esp_zb_zdp_status_t zdo_status, void *user_ctx)
         report_cmd.clusterID = ESP_ZB_ZCL_CLUSTER_ID_ON_OFF;
 
         esp_zb_zcl_config_report_record_t records[] = {
-            {ESP_ZB_ZCL_CMD_DIRECTION_TO_SRV, ESP_ZB_ZCL_ATTR_ON_OFF_ON_OFF_ID, ESP_ZB_ZCL_ATTR_TYPE_BOOL, 0, 30, &report_change}};
+            {
+                .direction = ESP_ZB_ZCL_CMD_DIRECTION_TO_SRV,
+                .attributeID = ESP_ZB_ZCL_ATTR_ON_OFF_ON_OFF_ID,
+                .attrType = ESP_ZB_ZCL_ATTR_TYPE_BOOL,
+                .min_interval = 0,
+                .max_interval = 30,
+                .reportable_change = &report_change
+            },
+        };
         report_cmd.record_number = sizeof(records) / sizeof(esp_zb_zcl_config_report_record_t);
         report_cmd.record_field = records;
 
@@ -169,7 +177,7 @@ static void user_find_cb(esp_zb_zdp_status_t zdo_status, uint16_t addr, uint8_t 
         ieee_req.request_type = 0;
         ieee_req.start_index = 0;
         esp_zb_zdo_ieee_addr_req(&ieee_req, ieee_cb, NULL);
-        esp_zb_zcl_read_attr_cmd_t read_req;
+        esp_zb_zcl_read_attr_cmd_t read_req = {0};
         uint16_t attributes[] = {ESP_ZB_ZCL_ATTR_ON_OFF_ON_OFF_ID};
         read_req.address_mode = ESP_ZB_APS_ADDR_MODE_16_ENDP_PRESENT;
         read_req.attr_number = sizeof(attributes) / sizeof(uint16_t);
