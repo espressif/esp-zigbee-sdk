@@ -25,10 +25,10 @@ before_script:
   - cd $CI_PROJECT_DIR
   - git clone --depth=1 -b $CI_COMMIT_REF_NAME ${IDF_GIT_REPO_URL} || git clone --depth=1 -b v5.1.4 ${IDF_GIT_REPO_URL}
   - cd esp-idf
+  - git submodule update --init --depth=1
   - ./install.sh
   - . ./export.sh
   - export PYTHONPATH="$IDF_PATH/tools/ci/python_packages:$PYTHONPATH"
-  - python tools/ci/ci_fetch_submodule.py -s all
 
 .setup_esp_zboss_lib: &setup_esp_zboss_lib
   - cd $CI_PROJECT_DIR
