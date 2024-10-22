@@ -95,6 +95,9 @@ def update_component_yml_files():
 
     os.chdir(os.path.join(DEF_APP_PATH, 'esp_zigbee_ota', 'ota_client'))
     os.remove('main/idf_component.yml')
+    os.system(
+        f'cp {os.path.join(PROJECT_ROOT, "tools", "managed_component_yml", "ota_idf_component.yml")} main'
+        f'/idf_component.yml')
 
     os.chdir(os.path.join(DEF_APP_PATH, 'esp_zigbee_ota', 'ota_server'))
     os.remove('main/idf_component.yml')
