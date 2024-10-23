@@ -10,3 +10,4 @@ This section provides a guide to the ESP Zigbee SDK, detailing common usage scen
    aps
    zcl_custom
    zcl_groups
+   zcl_ota_upgrade
