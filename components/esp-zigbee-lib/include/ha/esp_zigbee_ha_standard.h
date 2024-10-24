@@ -335,6 +335,29 @@ extern "C" {
     }
 
 /**
+ * @brief Zigbee HA standard wind speed sensor device default config value.
+ *
+ */
+#define ESP_ZB_DEFAULT_WIND_SPEED_SENSOR_CONFIG()                                                  \
+    {                                                                                               \
+        .basic_cfg =                                                                                \
+            {                                                                                       \
+                .zcl_version = ESP_ZB_ZCL_BASIC_ZCL_VERSION_DEFAULT_VALUE,                          \
+                .power_source = ESP_ZB_ZCL_BASIC_POWER_SOURCE_DEFAULT_VALUE,                        \
+            },                                                                                      \
+        .identify_cfg =                                                                             \
+            {                                                                                       \
+                .identify_time = ESP_ZB_ZCL_IDENTIFY_IDENTIFY_TIME_DEFAULT_VALUE,                   \
+            },                                                                                      \
+        .temp_meas_cfg =                                                                            \
+            {                                                                                       \
+                .measured_value = ESP_ZB_ZCL_WIND_SPEED_MEASUREMENT_MEASURED_VALUE_DEFAULT,               \
+                .min_value = ESP_ZB_ZCL_WIND_SPEED_MEASUREMENT_MIN_MEASURED_VALUE_DEFAULT,                \
+                .max_value = ESP_ZB_ZCL_WIND_SPEED_MEASUREMENT_MAX_MEASURED_VALUE_DEFAULT,                \
+            },                                                                                      \
+    }
+
+/**
  * @brief Zigbee HA standard window covering device default config value.
  *
  */
