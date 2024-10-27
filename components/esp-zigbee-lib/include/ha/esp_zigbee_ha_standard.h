@@ -349,7 +349,7 @@ extern "C" {
             {                                                                                       \
                 .identify_time = ESP_ZB_ZCL_IDENTIFY_IDENTIFY_TIME_DEFAULT_VALUE,                   \
             },                                                                                      \
-        .temp_meas_cfg =                                                                            \
+        .wind_speed_meas_cfg =                                                                            \
             {                                                                                       \
                 .measured_value = ESP_ZB_ZCL_WIND_SPEED_MEASUREMENT_MEASURED_VALUE_DEFAULT,               \
                 .min_value = ESP_ZB_ZCL_WIND_SPEED_MEASUREMENT_MIN_MEASURED_VALUE_DEFAULT,                \
