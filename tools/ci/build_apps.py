@@ -100,7 +100,9 @@ def main(args: argparse.Namespace) -> None:
         'Suggest setting the parallel count to %d for this build job',
         len(apps_for_build) // APPS_BUILD_PER_JOB + 1,
     )
-
+    ignore_warnings = IGNORE_WARNINGS
+    if args.ignore_warning:
+        ignore_warnings = [r"warning: .*"]
     ret_code = build_apps(
         apps_for_build,
         parallel_count=args.parallel_count,
@@ -109,7 +111,7 @@ def main(args: argparse.Namespace) -> None:
         collect_size_info=args.collect_size_info,
         # build_verbose=0,
         keep_going=True,
-        ignore_warning_strs=IGNORE_WARNINGS,
+        ignore_warning_strs=ignore_warnings,
         copy_sdkconfig=True,
     )
 
@@ -168,6 +170,12 @@ if __name__ == '__main__':
         '--rcp_gateway',
         action="store_true",
         help='Only build rcp_gateway pytest apps, defined in GATEWAY_APPS',
+    )
+
+    parser.add_argument(
+        '--ignore_warning',
+        action="store_true",
+        help='Ignore all warnings',
     )
 
     arguments = parser.parse_args()
