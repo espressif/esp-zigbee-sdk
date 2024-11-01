@@ -109,13 +109,13 @@ static void bind_cb(esp_zb_zdp_status_t zdo_status, void *user_ctx)
     }
 }
 
-static void ieee_cb(esp_zb_zdp_status_t zdo_status, esp_zb_ieee_addr_t ieee_addr, void *user_ctx)
+static void ieee_cb(esp_zb_zdp_status_t zdo_status, esp_zb_zdo_ieee_addr_rsp_t *resp, void *user_ctx)
 {
     if (zdo_status == ESP_ZB_ZDP_STATUS_SUCCESS) {
-        memcpy(&(on_off_light.ieee_addr), ieee_addr, sizeof(esp_zb_ieee_addr_t));
-        ESP_LOGI(TAG, "IEEE address: %02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x",
-                 ieee_addr[7], ieee_addr[6], ieee_addr[5], ieee_addr[4],
-                 ieee_addr[3], ieee_addr[2], ieee_addr[1], ieee_addr[0]);
+        memcpy(&(on_off_light.ieee_addr), resp->ieee_addr, sizeof(esp_zb_ieee_addr_t));
+        ESP_LOGI(TAG, "IEEE address: %02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x", resp->ieee_addr[7], resp->ieee_addr[6],
+                 resp->ieee_addr[5], resp->ieee_addr[4], resp->ieee_addr[3], resp->ieee_addr[2], resp->ieee_addr[1],
+                 resp->ieee_addr[0]);
         /* bind the on-off light to on-off switch */
         esp_zb_zdo_bind_req_param_t bind_req;
         memcpy(&(bind_req.src_address), on_off_light.ieee_addr, sizeof(esp_zb_ieee_addr_t));
