@@ -702,6 +702,24 @@ esp_err_t esp_zb_drlc_cluster_add_attr(esp_zb_attribute_list_t *attr_list, uint1
 esp_err_t esp_zb_cluster_add_attr(esp_zb_attribute_list_t *attr_list, uint16_t cluster_id, uint16_t attr_id, uint8_t attr_type, uint8_t attr_access, void *value_p);
 
 /**
+ * @brief Add an attribute in a specified cluster, with manufacturer code.
+ *
+ * @param[in] attr_list A pointer to attribute list @ref esp_zb_attribute_list_s
+ * @param[in] cluster_id The cluster ID to which the attribute will be added, refer to esp_zb_zcl_cluster_id_t
+ * @param[in] attr_id An attribute id to be added
+ * @param[in] manuf_code Manufacturer code of the attribute
+ * @param[in] attr_type Type of attribute to be added, refer to esp_zb_zcl_attr_type_t
+ * @param[in] attr_access Access type of attribute to be added, refer to esp_zb_zcl_attr_access_t
+ * @param[in] value_p A pointer to attribute value wants to add
+ *
+ * @return
+ * - ESP_OK on success
+ * - ESP_ERR_INVALID_ARG if attribute is existed or attribute type is unsupported
+ *
+ */
+esp_err_t esp_zb_cluster_add_manufacturer_attr(esp_zb_attribute_list_t *attr_list, uint16_t cluster_id, uint16_t attr_id, uint16_t manuf_code, uint8_t attr_type, uint8_t attr_access, void *value_p);
+
+/**
 * @brief Add customized attribute in customized cluster.
 *
 * @param[in] attr_list A pointer to attribute list @ref esp_zb_attribute_list_s

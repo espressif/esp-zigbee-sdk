@@ -161,6 +161,12 @@ def update_component_yml_files():
     os.system(
         f'cp {os.path.join(PROJECT_ROOT, "tools", "managed_component_yml", "ncp_idf_component.yml")} main'
         f'/idf_component.yml')
+    
+    os.chdir(os.path.join(DEF_APP_PATH, 'esp_zigbee_all_device_types_app'))
+    os.remove('main/idf_component.yml')
+    os.system(
+        f'cp {os.path.join(PROJECT_ROOT, "tools", "managed_component_yml", "adt_idf_component.yml")} main'
+        f'/idf_component.yml')
 
 def main(args: argparse.Namespace) -> None:
     current_dir = os.getcwd()

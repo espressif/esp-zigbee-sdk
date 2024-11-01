@@ -1,5 +1,31 @@
 # Espressif Zigbee SDK Release Notes
 
+## 01-NOV-2024
+1.6.0 version release of ESP-ZIGBEE-SDK is based on esp-idf v5.3.1
+
+### Features
+- Added support for the extended responses to ZDO nwk_addr_req and ieee_addr_req commands
+- Added support for ZCL to add attribute with manufacturer code
+- Added support for ZCL to send general request with manufacturer code, direction and disable default response options.
+- Added support for ZCL to report error status for each record in the read reporting configuration response
+
+### Bug Fixes
+- Fixed the error datatype for the `time` and `time_status` member of `esp_zb_time_cluster_cfg_t`
+- Fixed the issue where the Touchlink initiator couldn't rejoin the network on the commissioning channel
+- Fixed the crash occurring when the touchlink initiator recommissioned after a rejoin failure
+- Fixed the issue that certain NWK requests were still encrypted when nwkSecurityLevel was 0
+
+### Changes
+- Updated esp-zboss-lib to v1.6.0
+- Updated esp-zigbee-lib to v1.6.0
+- Added the `manuf_specific`, `direction`, `dis_default_resp` and `manuf_code` options to ZCL general commands. 
+
+### Breaking Changes
+- Removed the `esp_zigbee_cli` support
+- Redefined the callback type for `esp_zb_zdo_ieee_addr_req()` and `esp_zb_zdo_nwk_addr_req()`
+- Redefined the `esp_zb_zcl_cmd_read_report_config_resp_message_t` struct
+
+
 ## 12-Oct-2024
 1.5.1 version release of ESP-ZIGBEE-SDK is based on esp-idf v5.1.4
 

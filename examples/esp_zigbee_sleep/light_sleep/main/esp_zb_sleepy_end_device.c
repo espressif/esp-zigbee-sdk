@@ -41,11 +41,12 @@ static switch_func_pair_t button_func_pair[] = {
     {CONFIG_GPIO_INPUT_IO_WAKEUP, SWITCH_ONOFF_TOGGLE_CONTROL}
 };
 
-static void ieee_cb(esp_zb_zdp_status_t zdo_status, esp_zb_ieee_addr_t ieee_addr, void *user_ctx)
+static void ieee_cb(esp_zb_zdp_status_t zdo_status, esp_zb_zdo_ieee_addr_rsp_t *resp, void *user_ctx)
 {
     if (zdo_status == ESP_ZB_ZDP_STATUS_SUCCESS) {
-        ESP_LOGI(TAG, "Response IEEE address: %02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x", ieee_addr[7], ieee_addr[6], ieee_addr[5], ieee_addr[4],
-                 ieee_addr[3], ieee_addr[2], ieee_addr[1], ieee_addr[0]);
+        ESP_LOGI(TAG, "Response IEEE address: %02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x", resp->ieee_addr[7],
+                 resp->ieee_addr[6], resp->ieee_addr[5], resp->ieee_addr[4], resp->ieee_addr[3], resp->ieee_addr[2],
+                 resp->ieee_addr[1], resp->ieee_addr[0]);
     }
 }
 

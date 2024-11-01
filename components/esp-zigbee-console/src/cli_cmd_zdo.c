@@ -71,25 +71,25 @@ static void cli_zdo_active_ep_cb(esp_zb_zdp_status_t zdo_status, uint8_t ep_coun
     free(req);
 }
 
-static void cli_zdo_nwk_addr_cb(esp_zb_zdp_status_t zdo_status, uint16_t nwk_addr, void *user_ctx)
+static void cli_zdo_nwk_addr_cb(esp_zb_zdp_status_t zdo_status, esp_zb_zdo_nwk_addr_rsp_t *resp, void *user_ctx)
 {
     static const char *request_name = "nwk_addr";
     esp_zb_zdo_ieee_addr_req_param_t *req = user_ctx;
     cli_output_request_status(request_name, req->addr_of_interest, zdo_status);
     if (zdo_status == ESP_ZB_ZDP_STATUS_SUCCESS) {
-        cli_output("nwk address: 0x%04" PRIx16 "\n", nwk_addr);
+        cli_output("nwk address: 0x%04" PRIx16 "\n", resp->nwk_addr);
     }
     esp_zb_console_notify_result(ESP_OK);
     free(req);
 }
 
-static void cli_zdo_ieee_addr_cb(esp_zb_zdp_status_t zdo_status, esp_zb_ieee_addr_t ieee_addr, void *user_ctx)
+static void cli_zdo_ieee_addr_cb(esp_zb_zdp_status_t zdo_status, esp_zb_zdo_ieee_addr_rsp_t *resp, void *user_ctx)
 {
     static const char *request_name = "ieee_addr";
     esp_zb_zdo_ieee_addr_req_param_t *req = user_ctx;
     cli_output_request_status(request_name, req->addr_of_interest, zdo_status);
     if (zdo_status == ESP_ZB_ZDP_STATUS_SUCCESS) {
-        cli_output("ieee address: 0x%016" PRIx64 "\n", *(uint64_t *)ieee_addr);
+        cli_output("ieee address: 0x%016" PRIx64 "\n", *(uint64_t *)resp->ieee_addr);
     }
     esp_zb_console_notify_result(ESP_OK);
     free(req);
