@@ -11,9 +11,9 @@
 #endif
 
 #ifndef ESP_ZB_VER_MINOR
-#define ESP_ZB_VER_MINOR 5
+#define ESP_ZB_VER_MINOR 6
 #endif
 
 #ifndef ESP_ZB_VER_PATCH
-#define ESP_ZB_VER_PATCH 1
+#define ESP_ZB_VER_PATCH 0
 #endif

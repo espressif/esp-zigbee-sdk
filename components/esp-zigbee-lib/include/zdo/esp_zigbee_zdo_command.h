@@ -27,6 +27,35 @@ extern "C" {
 #define ESP_ZB_DEVICE_BIND_TABLE_REQ_TIMEOUT        (5 * ESP_ZB_TIME_ONE_SECOND)            /* timeout for device bind table request */
 #define ESP_ZB_DEVICE_MGMT_LQI_REQ_TIMEOUT          (5 * ESP_ZB_TIME_ONE_SECOND)            /* timeout for zdo mgmt lqi request */
 
+/**
+ * @brief The network address list of assocaited devices.
+ *
+ */
+typedef struct esp_zb_zdo_nwk_addr_list_s {
+    uint8_t start_index;        /*!< Starting index into the list of associated devices for this report. */
+    uint8_t total;              /*!< Count of the number of 16-bit short addresses to follow.*/
+    uint8_t count;              /*!< Number of short addresses in the list. */
+    uint16_t *nwk_addresses;    /*!< Array of network address. */
+} esp_zb_zdo_nwk_addr_list_t;
+
+/**
+ * @brief The Zigbee ZDO nwk_addr response struct.
+ *
+ */
+typedef struct esp_zb_zdo_nwk_addr_rsp_s {
+    esp_zb_ieee_addr_t ieee_addr;           /*!< 64-bit address for the Remote Device. */
+    uint16_t nwk_addr;                      /*!< 16-bit address for the Remote Device. */
+    esp_zb_zdo_nwk_addr_list_t *ext_resp;   /*!< Extended response: network address of assosicated devices.
+                                                 This field only existed when the request was sent with RequestType = 1. */
+} esp_zb_zdo_nwk_addr_rsp_t;
+
+/**
+ * @brief The Zigbee ZDO ieee_addr response struct.
+ *
+ * @anchor esp_zb_zdo_ieee_addr_rsp_t
+ */
+typedef esp_zb_zdo_nwk_addr_rsp_t esp_zb_zdo_ieee_addr_rsp_t;
+
 /** Find device callback
  *
  * @brief A ZDO match desc request callback for user to get response info.
@@ -48,11 +77,11 @@ typedef void (*esp_zb_zdo_match_desc_callback_t)(esp_zb_zdp_status_t zdo_status,
  * @note User's callback get response from the remote device that local node wants to get ieee address.
  *
  * @param[in] zdo_status The ZDO response status, refer to `esp_zb_zdp_status`
- * @param[in] ieee_addr  A ieee address of the device response, 0xFFFF FFFF FFFF FFFF - invalid ieee address
- * @param[in] user_ctx  User information context, set in `esp_zb_zdo_ieee_addr_req()`
+ * @param[in] resp       The response of ieee address request, see @ref esp_zb_zdo_ieee_addr_rsp_t.
+ * @param[in] user_ctx   User information context, set in `esp_zb_zdo_ieee_addr_req()`
  *
  */
-typedef void (*esp_zb_zdo_ieee_addr_callback_t)(esp_zb_zdp_status_t zdo_status, esp_zb_ieee_addr_t ieee_addr, void *user_ctx);
+typedef void (*esp_zb_zdo_ieee_addr_callback_t)(esp_zb_zdp_status_t zdo_status, esp_zb_zdo_ieee_addr_rsp_t *resp, void *user_ctx);
 
 /** Network address request callback
  *
@@ -61,11 +90,11 @@ typedef void (*esp_zb_zdo_ieee_addr_callback_t)(esp_zb_zdp_status_t zdo_status, 
  * @note User's callback gets response from the remote device that local node wants to get network address.
  *
  * @param[in] zdo_status The ZDO response status, refer to `esp_zb_zdp_status`
- * @param[in] nwk_addr  A network address of the device response, 0xFFFF - invalid ieee address
- * @param[in] user_ctx  User information context, set in `esp_zb_zdo_ieee_addr_req()`
+ * @param[in] resp       The response of network address request, see @ref esp_zb_zdo_nwk_addr_rsp_s.
+ * @param[in] user_ctx   User information context, set in `esp_zb_zdo_nwk_addr_req()`
  *
  */
-typedef void (*esp_zb_zdo_nwk_addr_callback_t)(esp_zb_zdp_status_t zdo_status, uint16_t nwk_addr, void *user_ctx);
+typedef void (*esp_zb_zdo_nwk_addr_callback_t)(esp_zb_zdp_status_t zdo_status, esp_zb_zdo_nwk_addr_rsp_t *resp, void *user_ctx);
 
 /** Node descriptor callback
  *

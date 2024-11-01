@@ -436,8 +436,8 @@ typedef struct esp_zb_color_cluster_cfg_s {
  *
  */
 typedef struct esp_zb_time_cluster_cfg_s {
-    uint16_t time;                              /*!<  The time value of the a real time clock */
-    uint16_t time_status;                       /*!<  The time status holds a number of bit field of status */
+    uint32_t time;       /*!<  The time value of the a real time clock */
+    uint8_t time_status; /*!<  The time status holds a number of bit field of status */
 } esp_zb_time_cluster_cfg_t;
 
 /**
