@@ -44,12 +44,6 @@ PYTEST_APPS = [
 
 GATEWAY_APPS = [{"target": "esp32h2", "name": "esp_zigbee_all_device_types_app"},]
 
-HOST_APPS = [{"target": "esp32", "name": "esp_zigbee_host"},
-             {"target": "esp32s2", "name": "esp_zigbee_host"},
-             {"target": "esp32c3", "name": "esp_zigbee_host"},
-             {"target": "esp32s3", "name": "esp_zigbee_host"},
-             {"target": "esp32h2", "name": "esp_zigbee_host"},
-             {"target": "esp32c6", "name": "esp_zigbee_host"}, ]
 
 IGNORE_WARNINGS = [
     r"warning: 'init_spiffs' defined but not used",
@@ -84,94 +78,8 @@ def get_cmake_apps(
     )
     return apps
 
-
-def update_component_yml_files():
-    os.chdir(os.path.join(DEF_APP_PATH, 'esp_zigbee_customized_devices', 'customized_client'))
-    os.remove('main/idf_component.yml')
-
-    os.chdir(os.path.join(DEF_APP_PATH, 'esp_zigbee_customized_devices', 'customized_server'))
-    os.remove('main/idf_component.yml')
-    os.system(f'cp {os.path.join(PROJECT_ROOT, "tools", "managed_component_yml", "light_idf_component.yml")} main'
-              f'/idf_component.yml')
-
-    os.chdir(os.path.join(DEF_APP_PATH, 'esp_zigbee_ota', 'ota_client'))
-    os.remove('main/idf_component.yml')
-    os.system(
-        f'cp {os.path.join(PROJECT_ROOT, "tools", "managed_component_yml", "ota_idf_component.yml")} main'
-        f'/idf_component.yml')
-
-    os.chdir(os.path.join(DEF_APP_PATH, 'esp_zigbee_ota', 'ota_server'))
-    os.remove('main/idf_component.yml')
-
-    os.chdir(os.path.join(DEF_APP_PATH, 'esp_zigbee_gateway'))
-    os.remove('main/idf_component.yml')
-    os.system(
-        f'cp {os.path.join(PROJECT_ROOT, "tools", "managed_component_yml", "gw_idf_component.yml")} main'
-        f'/idf_component.yml')
-
-    os.chdir(os.path.join(DEF_APP_PATH, 'esp_zigbee_HA_sample', 'HA_color_dimmable_light'))
-    os.remove('main/idf_component.yml')
-    os.system(f'cp {os.path.join(PROJECT_ROOT, "tools", "managed_component_yml", "light_idf_component.yml")} main'
-              f'/idf_component.yml')
-
-    os.chdir(os.path.join(DEF_APP_PATH, 'esp_zigbee_HA_sample', 'HA_color_dimmable_switch'))
-    os.remove('main/idf_component.yml')
-
-    os.chdir(os.path.join(DEF_APP_PATH, 'esp_zigbee_HA_sample', 'HA_on_off_switch'))
-    os.remove('main/idf_component.yml')
-
-    os.chdir(os.path.join(DEF_APP_PATH, 'esp_zigbee_HA_sample', 'HA_on_off_light'))
-    os.remove('main/idf_component.yml')
-    os.system(
-        f'cp {os.path.join(PROJECT_ROOT, "tools", "managed_component_yml", "light_idf_component.yml")} main'
-        f'/idf_component.yml')
-
-    os.chdir(os.path.join(DEF_APP_PATH, 'esp_zigbee_HA_sample', 'HA_temperature_sensor'))
-    os.remove('main/idf_component.yml')
-
-    os.chdir(os.path.join(DEF_APP_PATH, 'esp_zigbee_HA_sample', 'HA_thermostat'))
-    os.remove('main/idf_component.yml')
-
-    os.chdir(os.path.join(DEF_APP_PATH, 'esp_zigbee_touchlink', 'touchlink_light'))
-    os.remove('main/idf_component.yml')
-    os.system(
-        f'cp {os.path.join(PROJECT_ROOT, "tools", "managed_component_yml", "light_idf_component.yml")} main'
-        f'/idf_component.yml')
-
-    os.chdir(os.path.join(DEF_APP_PATH, 'esp_zigbee_touchlink', 'touchlink_switch'))
-    os.remove('main/idf_component.yml')
-
-    os.chdir(os.path.join(DEF_APP_PATH, 'esp_zigbee_sleep', 'deep_sleep'))
-    os.remove('main/idf_component.yml')
-
-    os.chdir(os.path.join(DEF_APP_PATH, 'esp_zigbee_sleep', 'light_sleep'))
-    os.remove('main/idf_component.yml')
-
-    os.chdir(os.path.join(DEF_APP_PATH, 'esp_zigbee_greenpower', 'esp_zigbee_gpc'))
-    os.remove('main/idf_component.yml')
-    os.system(
-        f'cp {os.path.join(PROJECT_ROOT, "tools", "managed_component_yml", "light_idf_component.yml")} main'
-        f'/idf_component.yml')
-
-    os.chdir(os.path.join(DEF_APP_PATH, 'esp_zigbee_greenpower', 'esp_zigbee_gpd'))
-    os.remove('main/idf_component.yml')
-
-    os.chdir(os.path.join(DEF_APP_PATH, 'esp_zigbee_ncp'))
-    os.remove('main/idf_component.yml')
-    os.system(
-        f'cp {os.path.join(PROJECT_ROOT, "tools", "managed_component_yml", "ncp_idf_component.yml")} main'
-        f'/idf_component.yml')
-    
-    os.chdir(os.path.join(DEF_APP_PATH, 'esp_zigbee_all_device_types_app'))
-    os.remove('main/idf_component.yml')
-    os.system(
-        f'cp {os.path.join(PROJECT_ROOT, "tools", "managed_component_yml", "adt_idf_component.yml")} main'
-        f'/idf_component.yml')
-
 def main(args: argparse.Namespace) -> None:
     current_dir = os.getcwd()
-    # update_sdkconfig_files()
-    update_component_yml_files()
     os.chdir(current_dir)
     apps = get_cmake_apps(args.paths, args.target, args.config)
 
@@ -179,14 +87,11 @@ def main(args: argparse.Namespace) -> None:
     assert not (args.no_pytest and args.pytest)
     if args.no_pytest:
         apps_for_build = [app for app in apps if not (_is_pytest_app(app, PYTEST_APPS)
-                                                      or _is_pytest_app(app, GATEWAY_APPS)
-                                                      or _is_pytest_app(app, HOST_APPS))]
+                                                      or _is_pytest_app(app, GATEWAY_APPS))]
     elif args.pytest:
         apps_for_build = [app for app in apps if _is_pytest_app(app, PYTEST_APPS)]
     elif args.rcp_gateway:
         apps_for_build = [app for app in apps if _is_pytest_app(app, GATEWAY_APPS)]
-    elif args.host:
-        apps_for_build = [app for app in apps if _is_pytest_app(app, HOST_APPS)]
     else:
         apps_for_build = apps[:]
 
@@ -263,11 +168,6 @@ if __name__ == '__main__':
         '--rcp_gateway',
         action="store_true",
         help='Only build rcp_gateway pytest apps, defined in GATEWAY_APPS',
-    )
-    parser.add_argument(
-        '--host',
-        action="store_true",
-        help='Only build host apps, defined in HOST_APPS',
     )
 
     arguments = parser.parse_args()

@@ -36,15 +36,14 @@ before_script:
   - cd ${ESP_ZBOSS_LIB_PATH}
   - echo $(git branch --show-current)
   - echo $(git log -1 --oneline)
-  - cp -r ${ESP_ZBOSS_LIB_PATH} ${IDF_PATH}/components/espressif__esp-zboss-lib
 
 .update_zigbee_lib_script: &update_zigbee_lib_script
   - *setup_idf
   - *setup_esp_zboss_lib
-  - cp -r ${ESP_ZIGBEE_SDK_PATH}/components/esp-zigbee-lib ${IDF_PATH}/components/espressif__esp-zigbee-lib
   - cd ${ESP_ZIGBEE_SDK_PATH}
   - echo $(git branch --show-current)
   - echo $(git log -1 --oneline)
+  - bash ./tools/ci/update_cmake_files.sh
   - pip install -r tools/ci/requirements-build.txt
 
 .build_rcp_gateway: &build_rcp_gateway
@@ -80,19 +79,6 @@ build_non_pytest_examples:
   parallel: 2
   tags:
     - build
-
-build_non_pytest_host:
-    stage: build
-    image: ${CI_DOCKER_REGISTRY}/esp-env-v5.3:1
-    artifacts:
-      when: always
-      expire_in: 4 days
-    script:
-      - *setup_idf
-      - cd ${ESP_ZIGBEE_SDK_PATH}
-      - python tools/ci/build_apps.py ./examples --host
-    tags:
-      - build
 
 build_pytest_examples:
   stage: build

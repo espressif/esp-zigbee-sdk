@@ -1,8 +1,0 @@
-## IDF Component Manager Manifest File
-dependencies:
-  espressif/esp-zigbee-ncp:
-    version: "1.*"
-    override_path: "../../../components/esp-zigbee-ncp"
-  ## Required IDF version
-  idf:
-    version: ">=5.0.0"
