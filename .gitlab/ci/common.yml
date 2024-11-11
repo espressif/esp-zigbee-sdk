@@ -1,0 +1,61 @@
+stages:
+  - generate
+  - build
+  - target_test
+  - docs
+
+variables:
+    GIT_STRATEGY: fetch
+    GIT_SUBMODULE_STRATEGY: none
+    DEFAULT_IDF_VERSION: "v5.3.1"
+    DEFAULT_DOC_DOCKER_ENV: "v5.3:1-1"
+    # tell build system do not check submodule update as we download archive instead of clone
+    IDF_SKIP_CHECK_SUBMODULES: 1
+
+.init_ssh: &init_ssh
+  - mkdir -p ~/.ssh
+  - chmod 700 ~/.ssh
+  - echo -n "${GITLAB_KEY}" >~/.ssh/id_rsa_base64
+  - base64 --decode --ignore-garbage ~/.ssh/id_rsa_base64 >~/.ssh/id_rsa
+  - chmod 600 ~/.ssh/id_rsa
+  - echo -e "Host gitlab.espressif.cn\n\tStrictHostKeyChecking no\n" >>~/.ssh/config
+
+.setup_idf: &setup_idf
+  - cd $CI_PROJECT_DIR
+  - echo "Fetching ESP-IDF ${IDF_VERSION} from ${IDF_GIT_REPO_URL}"
+  - git clone --depth=1 -b $CI_COMMIT_REF_NAME ${IDF_GIT_REPO_URL} || git clone --depth=1 -b ${IDF_VERSION} ${IDF_GIT_REPO_URL}
+  - cd esp-idf
+  - git submodule update --init --depth=1
+  - ./install.sh
+  - . ./export.sh
+  - export PYTHONPATH="$CI_PROJECT_DIR/esp-idf/tools/ci/python_packages:$PYTHONPATH"
+
+.setup_esp_zboss_lib: &setup_esp_zboss_lib
+  - cd $CI_PROJECT_DIR
+  - echo "Fetching esp-zboss-lib from ${ESP_ZBOSS_LIB_REPO_URL}"
+  - git clone --depth=1 -b $CI_COMMIT_REF_NAME ${ESP_ZBOSS_LIB_REPO_URL} || git clone --depth=1 -b master ${ESP_ZBOSS_LIB_REPO_URL}
+  - cd esp-zboss-lib
+
+.update_zigbee_lib_script:
+  before_script:
+    - *init_ssh
+    - *setup_idf
+    - *setup_esp_zboss_lib
+    - cd ${CI_PROJECT_DIR}
+    - bash ./tools/ci/update_cmake_files.sh
+    - pip install -r tools/ci/requirements-build.txt
+
+.build_rcp_gateway_script:
+  script:
+    - python tools/ci/build_apps.py ./examples --rcp_gateway
+    - mv $CI_PROJECT_DIR/examples/esp_zigbee_gateway/sdkconfig.defaults $CI_PROJECT_DIR/examples/esp_zigbee_gateway/sdkconfig.defaults.ori
+    - cp $CI_PROJECT_DIR/tools/ci/sdkconfig_for_gateway_ci.defaults $CI_PROJECT_DIR/examples/esp_zigbee_gateway/sdkconfig.defaults
+    - cd esp-idf/examples/openthread/ot_rcp
+    - echo "CONFIG_OPENTHREAD_NCP_VENDOR_HOOK=y" >> sdkconfig.defaults
+    - idf.py set-target esp32h2
+    - idf.py build
+    - cd $CI_PROJECT_DIR/examples/esp_zigbee_gateway
+    - idf.py set-target esp32s3
+    - idf.py build
+    - mv $CI_PROJECT_DIR/examples/esp_zigbee_gateway/sdkconfig.defaults.ori $CI_PROJECT_DIR/examples/esp_zigbee_gateway/sdkconfig.defaults
+    - cd ${CI_PROJECT_DIR}

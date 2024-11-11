@@ -1,0 +1,83 @@
+include:
+  - '.gitlab/ci/common.yml'
+
+.build_pytest_example_template:
+  stage: build
+  extends:
+    - .update_zigbee_lib_script
+  image: ${CI_DOCKER_REGISTRY}/esp-env-${DOCKER_ENV_VERSION}
+  artifacts:
+    paths:
+      - "**/build*/*.bin"
+      - "**/build*/*.map"
+      - "**/build*/*.elf"
+      - "**/build*/flasher_args.json"
+      - "**/build*/flash_project_args"
+      - "**/build*/config/sdkconfig.json"
+      - "**/build*/bootloader/*.bin"
+      - "**/build*/partition_table/*.bin"
+    when: always
+    expire_in: 4 days
+  parallel: 2
+  script:
+    - python tools/ci/build_apps.py ./examples --pytest
+  tags:
+    - build
+
+.build_pytest_gateway_template:
+  stage: build
+  extends:
+    - .update_zigbee_lib_script
+    - .build_rcp_gateway_script
+  image: ${CI_DOCKER_REGISTRY}/esp-env-${DOCKER_ENV_VERSION}
+  artifacts:
+    paths:
+      - "**/build*/*.bin"
+      - "**/build*/*.map"
+      - "**/build*/*.elf"
+      - "**/build*/flasher_args.json"
+      - "**/build*/flash_project_args"
+      - "**/build*/config/sdkconfig.json"
+      - "**/build*/bootloader/*.bin"
+      - "**/build*/partition_table/*.bin"
+    when: always
+    expire_in: 4 days
+  tags:
+    - build
+
+.build_non_pytest_example_template:
+  stage: build
+  extends:
+    - .update_zigbee_lib_script
+  image: ${CI_DOCKER_REGISTRY}/esp-env-${DOCKER_ENV_VERSION}
+  artifacts:
+    paths:
+      - "**/build*/*.bin"
+      - "**/build*/flasher_args.json"
+      - "**/build*/config/sdkconfig.json"
+      - "**/build*/bootloader/*.bin"
+      - "**/build*/partition_table/*.bin"
+    when: always
+    expire_in: 4 days
+  parallel: 2
+  script:
+    - python tools/ci/build_apps.py ./examples --no_pytest
+      --parallel-count ${CI_NODE_TOTAL:-1}
+      --parallel-index ${CI_NODE_INDEX:-1}
+  tags:
+    - build
+
+.pytest_template:
+  stage: target_test
+  image: ${CI_DOCKER_REGISTRY}/target-test-env-${DOCKER_ENV_VERSION}
+  artifacts:
+    paths:
+      - "pytest_embedded_log/"
+    when: always
+    expire_in: 4 days
+  script:
+    - pip install -r tools/ci/requirements-pytest.txt
+    - find examples/ -name "pytest_*.py" | xargs pytest --target ${CHIP} -m zigbee_multi_dut
+  tags:
+    - ${CHIP}
+    - zigbee_multi_dut
