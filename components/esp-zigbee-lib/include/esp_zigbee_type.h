@@ -972,6 +972,16 @@ typedef struct esp_zb_light_sensor_cfg_s {
     esp_zb_illuminance_meas_cluster_cfg_t illuminance_cfg;  /*!< Illuminance cluster configuration @ref esp_zb_illuminance_meas_cluster_cfg_s */
 } esp_zb_light_sensor_cfg_t;
 
+/**
+ * @brief Zigbee HA standard wind speed sensor clusters.
+ *
+ */
+typedef struct esp_zb_wind_speed_sensor_cfg_s {
+    esp_zb_basic_cluster_cfg_t basic_cfg;                /*!<  Basic cluster configuration, @ref esp_zb_basic_cluster_cfg_s */
+    esp_zb_identify_cluster_cfg_t identify_cfg;          /*!<  Identify cluster configuration, @ref esp_zb_identify_cluster_cfg_s */
+   esp_zb_wind_speed_measurement_cluster_cfg_t wind_speed_meas_cfg; /*!<  Wind speed measurement cluster configuration, @ref esp_zb_wind_speed_measurement_cluster_cfg_s */
+} esp_zb_wind_speed_sensor_cfg_t;
+
 #ifdef __cplusplus
 }
 #endif
