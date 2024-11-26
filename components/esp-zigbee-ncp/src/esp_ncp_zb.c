@@ -956,7 +956,7 @@ static esp_ncp_zb_cluster_fn_t cluster_list_fn_table[] = {
     { ESP_ZB_ZCL_CLUSTER_ID_PUMP_CONFIG_CONTROL        , esp_zb_cluster_list_add_custom_cluster , NULL },
     { ESP_ZB_ZCL_CLUSTER_ID_THERMOSTAT                 , esp_zb_cluster_list_add_thermostat_cluster , NULL },
     { ESP_ZB_ZCL_CLUSTER_ID_FAN_CONTROL                , esp_zb_cluster_list_add_fan_control_cluster , NULL },
-    { ESP_ZB_ZCL_CLUSTER_ID_DEHUMID_CONTROL            , esp_zb_cluster_list_add_custom_cluster , NULL },
+    { ESP_ZB_ZCL_CLUSTER_ID_DEHUMIDIFICATION_CONTROL   , esp_zb_cluster_list_add_dehumidification_control_cluster , NULL },
     { ESP_ZB_ZCL_CLUSTER_ID_THERMOSTAT_UI_CONFIG       , esp_zb_cluster_list_add_thermostat_ui_config_cluster , NULL },
     { ESP_ZB_ZCL_CLUSTER_ID_COLOR_CONTROL              , esp_zb_cluster_list_add_color_control_cluster , NULL },
     { ESP_ZB_ZCL_CLUSTER_ID_BALLAST_CONFIG             , esp_zb_cluster_list_add_custom_cluster , NULL },

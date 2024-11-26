@@ -99,6 +99,7 @@ The supported features in current ESP Zigbee SDK are listed below:
      window_covering                        0x0102
      thermostat                             0x0201
      fan_control                            0x0202
+     dehumidification_control               0x0203
      thermostat_user_interface              0x0204
      color_control                          0x0300
      illuminance_measurement                0x0400
