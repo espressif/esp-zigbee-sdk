@@ -1,5 +1,30 @@
 # Espressif Zigbee SDK Release Notes
 
+## 05-Dec-2024
+1.6.1 version release of ESP-ZIGBEE-SDK is based on esp-idf v5.3.2
+
+### Features
+- Added support for APS to send data requests in parallel to multiple devices
+- Added support for ZCL dehumidification control cluster
+- Added support for ZCL OTA upgrade cluster to process commands with wildcard parameters
+- Added support for APP to configure Zigbee non-volatile memory by setting the size of zb_storage partition
+- Added support for ESP32C6 and ESP32C5 to communicate via radio spinel
+- Added API to enable/disable install code only mode at runtime
+
+### Bug Fixes
+- Fixed the crash on coordinator when numerous devices attempt to associate with the network simultaneously
+- Fixed the crash caused by insufficient delayed buffers for MAC transactions
+- Fixed the infinite loop issue when the tx queue is no sufficient on ZB_RADIO_SPINEL_UART enabled device
+- Fixed the issue where APS fragments could not be sent again after a previous fragment is not acked
+- Fixed the rejoin issue for Touchlink initiator when attempting to start the network with the second target
+- Fixed the issue where ZDO mgmt LQI req will not trigger user_cb when the response neighbor table is empty
+
+### Changes
+- Updated esp-zboss-lib to v1.6.1
+- Updated esp-zigbee-lib to v1.6.1
+- Rename `ESP_ZB_ZCL_CLUSTER_ID_DEHUMID_CONTROL` to `ESP_ZB_ZCL_CLUSTER_ID_DEHUMIDIFICATION_CONTROL`
+
+
 ## 01-NOV-2024
 1.6.0 version release of ESP-ZIGBEE-SDK is based on esp-idf v5.3.1
 

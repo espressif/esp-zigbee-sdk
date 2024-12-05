@@ -7,7 +7,7 @@ stages:
 variables:
     GIT_STRATEGY: fetch
     GIT_SUBMODULE_STRATEGY: none
-    DEFAULT_IDF_VERSION: "v5.3.1"
+    DEFAULT_IDF_VERSION: "v5.3.2"
     DEFAULT_DOC_DOCKER_ENV: "v5.3:1-1"
     # tell build system do not check submodule update as we download archive instead of clone
     IDF_SKIP_CHECK_SUBMODULES: 1
