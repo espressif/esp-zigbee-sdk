@@ -53,6 +53,7 @@ extern "C" {
 #include "esp_zigbee_zcl_ph_measurement.h"
 #include "esp_zigbee_zcl_wind_speed_measurement.h"
 #include "esp_zigbee_zcl_drlc.h"
+#include "esp_zigbee_zcl_dehumidification_control.h"
 
 #ifdef ZB_ENABLE_ZGP
 #include "esp_zigbee_zcl_green_power.h"
@@ -165,7 +166,7 @@ typedef enum {
     ESP_ZB_ZCL_CLUSTER_ID_PUMP_CONFIG_CONTROL   = 0x0200U,          /*!< Pump configuration and control cluster identifier. */
     ESP_ZB_ZCL_CLUSTER_ID_THERMOSTAT            = 0x0201U,          /*!< Thermostat cluster identifier. */
     ESP_ZB_ZCL_CLUSTER_ID_FAN_CONTROL           = 0x0202U,          /*!< Fan control cluster identifier. */
-    ESP_ZB_ZCL_CLUSTER_ID_DEHUMID_CONTROL       = 0x0203U,          /*!< Dehumidification control cluster identifier. */
+    ESP_ZB_ZCL_CLUSTER_ID_DEHUMIDIFICATION_CONTROL = 0x0203U,       /*!< Dehumidification control cluster identifier. */
     ESP_ZB_ZCL_CLUSTER_ID_THERMOSTAT_UI_CONFIG  = 0x0204U,          /*!< Thermostat user interface configuration cluster identifier. */
     ESP_ZB_ZCL_CLUSTER_ID_COLOR_CONTROL         = 0x0300U,          /*!< Color control cluster identifier. */
     ESP_ZB_ZCL_CLUSTER_ID_BALLAST_CONFIG        = 0x0301U,          /*!< Ballast configuration cluster identifier. */

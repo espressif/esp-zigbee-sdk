@@ -11,7 +11,7 @@ This section talks about setting up your development environment, fetching the G
 
 2.1.1 Setting up the Repositories
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Follow the `ESP-IDF getting started guide <https://docs.espressif.com/projects/esp-idf/en/latest/esp32/get-started/index.html>`_ to set up the IDF development environment. For beginners, please check `Installation Step by Step <https://docs.espressif.com/projects/esp-idf/en/v5.1.3/esp32h2/get-started/linux-macos-setup.html#installation-step-by-step>`_ for esp-idf.
+Follow the `ESP-IDF getting started guide <https://docs.espressif.com/projects/esp-idf/en/latest/esp32/get-started/index.html>`_ to set up the IDF development environment. For beginners, please check `Installation Step by Step <https://docs.espressif.com/projects/esp-idf/en/v5.3.2/esp32h2/get-started/linux-macos-setup.html#installation-step-by-step>`_ for esp-idf.
 
 Cloning esp-idf:
 
@@ -19,7 +19,7 @@ Cloning esp-idf:
 
    git clone --recursive https://github.com/espressif/esp-idf.git
    cd esp-idf
-   git checkout v5.1.3
+   git checkout v5.3.2
    git submodule update --init --recursive
    ./install.sh
    source ./export.sh

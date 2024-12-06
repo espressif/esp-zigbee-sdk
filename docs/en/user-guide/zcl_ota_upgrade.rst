@@ -407,6 +407,10 @@ The ``ESP_ZB_CORE_OTA_UPGRADE_VALUE_CB_ID`` signal handler would look like this:
 
 
 You can retrieve the image block from this handler. It’s essential for you to apply the image block to effectively upgrade the firmware.
+The return value of :cpp:func:`zb_ota_upgrade_status_handler` helps the stack determine the next step. If the OTA upgrade message is valid,
+return ``ESP_OK``. If the application is busy and unable to handle the message, return ``ESP_ERR_INVALID_STATE``. When the message has the
+``ESP_ZB_ZCL_OTA_UPGRADE_STATUS_APPLY`` status and the application can accept a new image and the application wants to request more images,
+return ``ESP_ERR_NOT_FINISHED``. Otherwise, return ``ESP_FAIL``.
 
 More details please see examples:
 

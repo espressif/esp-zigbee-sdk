@@ -804,7 +804,17 @@ typedef struct esp_zb_drlc_cluster_cfg_s {
 } esp_zb_drlc_cluster_cfg_t;
 
 /**
- * @brief Zigbee standard mandatory attribute for toucklink commissioning cluster
+ * @brief Zigbee standard mandatory attribute for dehumidification control cluster
+ */
+typedef struct esp_zb_dehumidification_control_cluster_cfg_s {
+    uint8_t cooling;        /*!< This attribute specifies the current dehumidification cooling output (in %) */
+    uint8_t set_point;      /*!< This attribute represents the relative humidity (in %) at which dehumidification occurs */
+    uint8_t hysteresis;     /*!< This attribute specifies the hysteresis (in %) associated with RelativeHumidity value */
+    uint16_t max_cool;      /*!< This attribute specifies the maximum dehumidification cooling output (in %) */
+} esp_zb_dehumidification_control_cluster_cfg_t;
+
+/**
+ * @brief Zigbee standard mandatory attribute for touchlink commissioning cluster
  *
  */
 typedef struct esp_zb_touchlink_commissioning_cfg_s {

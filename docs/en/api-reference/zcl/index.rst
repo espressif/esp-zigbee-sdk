@@ -53,3 +53,4 @@ This section provides the ESP Zigbee SDK's APIs that support different kind of Z
    esp_zigbee_zcl_ph_measurement
    esp_zigbee_zcl_wind_speed_measurement
    esp_zigbee_zcl_drlc
+   esp_zigbee_zcl_dehumidification_control
