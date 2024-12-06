@@ -25,6 +25,15 @@ typedef enum {
 /********************* Declare functions **************************/
 
 /**
+ * @brief Enable Trust Center to only use install code policy
+ *
+ * @param[in] enabled A boolean indicating whether only the install code policy is enabled.
+ * @return
+ *      - ESP_OK: on success, otherwise, failed
+ */
+esp_err_t esp_zb_secur_ic_only_enable(bool enabled);
+
+/**
  * @brief   Get the Zigbee install code from storage
  *
  * @warning  Only for the non-Trust Center device (non Zigbee coordinator)!
