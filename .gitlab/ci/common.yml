@@ -8,6 +8,7 @@ variables:
     GIT_STRATEGY: fetch
     GIT_SUBMODULE_STRATEGY: none
     DEFAULT_IDF_VERSION: "v5.3.2"
+    DEFAULT_BUILD_DOCKER_ENV: "v5.3:1"
     DEFAULT_DOC_DOCKER_ENV: "v5.3:1-1"
     # tell build system do not check submodule update as we download archive instead of clone
     IDF_SKIP_CHECK_SUBMODULES: 1
@@ -28,7 +29,6 @@ variables:
   - git submodule update --init --depth=1
   - ./install.sh
   - . ./export.sh
-  - export PYTHONPATH="$CI_PROJECT_DIR/esp-idf/tools/ci/python_packages:$PYTHONPATH"
 
 .setup_esp_zboss_lib: &setup_esp_zboss_lib
   - cd $CI_PROJECT_DIR

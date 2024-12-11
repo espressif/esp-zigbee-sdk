@@ -52,14 +52,16 @@ def main(arg):
     project_path = arg.project_path
     assert project_path
     template_yaml = arg.template_path
+    if not os.path.exists(template_yaml):
+        raise FileNotFoundError('The file {} does not exist.'.format(template_yaml))
     default_idf = arg.default_idf_version
-    idf_and_docker_lts = ZbCiCons.IDF_DOCKER_ENV.copy()
-    del idf_and_docker_lts[default_idf]
-    idf_and_docker_default = {default_idf:ZbCiCons.IDF_DOCKER_ENV.get(default_idf)}
+    default_docker_version = arg.default_docker_version
+    lts_idf_docker = ZbCiCons.LTS_IDF_DOCKER
     default_yaml_path = os.path.join(project_path, ZbCiCons.PIPELINE_YAML_DEFAULT)
-    full_yaml_path = os.path.join(project_path, ZbCiCons.PIPELINE_YAML_FULL)
-    generate(idf_and_docker_default, default_yaml_path, template_yaml)
-    generate(idf_and_docker_lts, full_yaml_path, template_yaml)
+    lts_yaml_path = os.path.join(project_path, ZbCiCons.PIPELINE_YAML_LTS)
+    default_idf_docker = {default_idf: default_docker_version}
+    generate(default_idf_docker, default_yaml_path, template_yaml)
+    generate(lts_idf_docker, lts_yaml_path, template_yaml)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
@@ -69,20 +71,26 @@ if __name__ == '__main__':
     parser.add_argument(
         '-p',
         '--project_path',
-        default=None,
+        required=True,
         help='Paths to project',
     )
     parser.add_argument(
         '-t',
         '--template_path',
-        default=None,
+        required=True,
         help='Paths to template.yml',
     )
     parser.add_argument(
-        '-d',
+        '-i',
         '--default_idf_version',
-        default=None,
+        required=True,
         help='default_idf_version',
+    )
+    parser.add_argument(
+        '-d',
+        '--default_docker_version',
+        required=True,
+        help='default_docker_version',
     )
     args = parser.parse_args()
     main(args)
