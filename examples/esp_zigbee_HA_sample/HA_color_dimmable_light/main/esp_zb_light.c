@@ -28,8 +28,12 @@ static const char *TAG = "ESP_ZB_COLOR_DIMM_LIGHT";
 /********************* Define functions **************************/
 static esp_err_t deferred_driver_init(void)
 {
-    light_driver_init(LIGHT_DEFAULT_OFF);
-    return ESP_OK;
+    static bool is_inited = false;
+    if (!is_inited) {
+        light_driver_init(LIGHT_DEFAULT_OFF);
+        is_inited = true;
+    }
+    return is_inited ? ESP_OK : ESP_FAIL;
 }
 
 static void bdb_start_top_level_commissioning_cb(uint8_t mode_mask)

@@ -208,10 +208,15 @@ static void find_temperature_sensor(esp_zb_zdo_match_desc_req_param_t *param, es
 
 static esp_err_t deferred_driver_init(void)
 {
-    ESP_RETURN_ON_FALSE(switch_driver_init(button_func_pair, PAIR_SIZE(button_func_pair), esp_app_buttons_handler), ESP_FAIL, TAG,
-                        "Failed to initialize switch driver");
-    return ESP_OK;
+    static bool is_inited = false;
+    if (!is_inited) {
+        ESP_RETURN_ON_FALSE(switch_driver_init(button_func_pair, PAIR_SIZE(button_func_pair), esp_app_buttons_handler),
+                            ESP_FAIL, TAG, "Failed to initialize switch driver");
+        is_inited = true;
+    }
+    return is_inited ? ESP_OK : ESP_FAIL;
 }
+
 void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
 {
     uint32_t *p_sg_p       = signal_struct->p_app_signal;

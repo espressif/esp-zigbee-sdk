@@ -54,9 +54,13 @@ static void zb_buttons_handler(switch_func_pair_t *button_func_pair)
 
 static esp_err_t deferred_driver_init(void)
 {
-    ESP_RETURN_ON_FALSE(switch_driver_init(button_func_pair, PAIR_SIZE(button_func_pair), zb_buttons_handler), ESP_FAIL, TAG,
-                        "Failed to initialize switch driver");
-    return ESP_OK;
+    static bool is_inited = false;
+    if (!is_inited) {
+        ESP_RETURN_ON_FALSE(switch_driver_init(button_func_pair, PAIR_SIZE(button_func_pair), zb_buttons_handler),
+                            ESP_FAIL, TAG, "Failed to initialize switch driver");
+        is_inited = true;
+    }
+    return is_inited ? ESP_OK : ESP_FAIL;
 }
 
 static void bdb_start_top_level_commissioning_cb(uint8_t mode_mask)

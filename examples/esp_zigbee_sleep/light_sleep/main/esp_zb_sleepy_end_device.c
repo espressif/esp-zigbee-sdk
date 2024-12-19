@@ -68,23 +68,26 @@ static void zb_buttons_handler(switch_func_pair_t* button_func_pair)
 
 static esp_err_t deferred_driver_init(void)
 {
-    ESP_RETURN_ON_FALSE(switch_driver_init(button_func_pair, PAIR_SIZE(button_func_pair), zb_buttons_handler), ESP_FAIL, TAG,
-                        "Failed to initialize switch driver");
-    /* Configure RTC IO wake up:
-    The configuration mode depends on your hardware design.
-    Since the BOOT button is connected to a pull-up resistor, the wake-up mode is configured as LOW.
-    */
-    ESP_ERROR_CHECK(esp_sleep_enable_ext1_wakeup(
-        1ULL << CONFIG_GPIO_INPUT_IO_WAKEUP, ESP_EXT1_WAKEUP_ANY_LOW));
+    static bool is_inited = false;
+    if (!is_inited) {
+        ESP_RETURN_ON_FALSE(switch_driver_init(button_func_pair, PAIR_SIZE(button_func_pair), zb_buttons_handler),
+                            ESP_FAIL, TAG, "Failed to initialize switch driver");
+        /* Configure RTC IO wake up:
+        The configuration mode depends on your hardware design.
+        Since the BOOT button is connected to a pull-up resistor, the wake-up mode is configured as LOW.
+        */
+        ESP_ERROR_CHECK(esp_sleep_enable_ext1_wakeup(1ULL << CONFIG_GPIO_INPUT_IO_WAKEUP, ESP_EXT1_WAKEUP_ANY_LOW));
 
 #if SOC_RTCIO_INPUT_OUTPUT_SUPPORTED
-    rtc_gpio_pulldown_dis(CONFIG_GPIO_INPUT_IO_WAKEUP);
-    rtc_gpio_pullup_en(CONFIG_GPIO_INPUT_IO_WAKEUP);
+        rtc_gpio_pulldown_dis(CONFIG_GPIO_INPUT_IO_WAKEUP);
+        rtc_gpio_pullup_en(CONFIG_GPIO_INPUT_IO_WAKEUP);
 #else
-    gpio_pulldown_dis(CONFIG_GPIO_INPUT_IO_WAKEUP);
-    gpio_pullup_en(CONFIG_GPIO_INPUT_IO_WAKEUP);
+        gpio_pulldown_dis(CONFIG_GPIO_INPUT_IO_WAKEUP);
+        gpio_pullup_en(CONFIG_GPIO_INPUT_IO_WAKEUP);
 #endif
-    return ESP_OK;
+        is_inited = true;
+    }
+    return is_inited ? ESP_OK : ESP_FAIL;
 }
 
 /********************* Define functions **************************/

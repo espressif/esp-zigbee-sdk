@@ -29,8 +29,12 @@ static const char *TAG = "ESP_TL_ON_OFF_LIGHT";
 
 static esp_err_t deferred_driver_init(void)
 {
-    light_driver_init(LIGHT_DEFAULT_OFF);
-    return ESP_OK;
+    static bool is_inited = false;
+    if (!is_inited) {
+        light_driver_init(LIGHT_DEFAULT_OFF);
+        is_inited = true;
+    }
+    return is_inited ? ESP_OK : ESP_FAIL;
 }
 
 void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
