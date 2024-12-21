@@ -133,7 +133,7 @@ esp_err_t esp_delta_ota_begin(const esp_partition_t *partition, size_t image_siz
 
     s_delta_ota_ctx = calloc(1, sizeof(esp_delta_ota_ctx_t));
     assert(s_delta_ota_ctx);
-    s_delta_ota_ctx->header_data = calloc(1, sizeof(DELTA_OTA_UPGRADE_IMAGE_HEADER_SIZE));
+    s_delta_ota_ctx->header_data = calloc(1, DELTA_OTA_UPGRADE_IMAGE_HEADER_SIZE);
     assert(s_delta_ota_ctx->header_data);
 
     *out_handle = ota_handle;
