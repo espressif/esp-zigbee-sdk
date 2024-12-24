@@ -6,8 +6,8 @@ class ZigbeeCIConstants:
     channel_min = 11
     channel_max = 26
     channel = 13
-    ota_total_package = '618480'
-    ota_version = '0x1010101'
+    ota_total_package = '618486'
+    ota_version = '0x1010100'
     image_type = '0x1011'
     manufacturer_code = '1001'
     on_off_cluster_id = 0x0006

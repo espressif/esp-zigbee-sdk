@@ -11,6 +11,7 @@
  * software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
  * CONDITIONS OF ANY KIND, either express or implied.
  */
+#include <string.h>
 
 #include "esp_log.h"
 #include "esp_ota_server.h"
@@ -19,11 +20,66 @@
 
 static const char *TAG = "ESP_OTA_SERVER";
 
+static uint16_t s_ota_image_type;
+static uint16_t s_ota_manuf_code;
 static uint32_t s_ota_image_offset = 0;
+static uint32_t s_ota_image_size = 0;
+static const uint8_t *s_ota_image_start = NULL;
 
 static switch_func_pair_t button_func_pair[] = {{GPIO_INPUT_IO_TOGGLE_SWITCH, SWITCH_ON_CONTROL}};
 
 static esp_err_t zb_ota_next_data_handler(esp_zb_ota_zcl_information_t message, uint16_t index, uint8_t size, uint8_t **data);
+
+static esp_err_t zb_populate_ota_file_header(esp_zb_ota_file_header_t *ota_file_header)
+{
+    const uint8_t *image_info = NULL;
+    esp_zb_ota_image_header_t ota_image_header = {0};
+    uint8_t length = sizeof(esp_zb_ota_image_header_t);
+
+    memcpy(&ota_image_header, ota_file_start, length);
+    if (ota_image_header.upgrade_file_id != OTA_UPGRADE_FILE_MAGIC_VALUE) {
+        return ESP_ERR_INVALID_ARG;
+    }
+
+    if (ota_image_header.header_version != OTA_UPGRADE_FILE_HEADER_VERSION) {
+        return ESP_ERR_INVALID_ARG;
+    }
+
+    /* Indicate mandatory information */
+    ota_file_header->manufacturer_code = ota_image_header.manufacturer_id;
+    ota_file_header->image_type = ota_image_header.image_type;
+    ota_file_header->file_version = ota_image_header.file_version;
+    ota_file_header->image_size = ota_image_header.image_size - ota_image_header.header_length;
+
+    /* Indicate whether additional optional information */
+    if (ota_image_header.field_control & ESP_ZB_ZCL_OTA_UPGRADE_FILE_HEADER_FC_CREDENTIAL_VER) {
+        image_info = (const uint8_t *)(ota_file_start + length);
+        ZB_OTA_FILE_HEADER_OPTIONAL(ota_file_header->optional, security_credential_version, length);
+        ota_file_header->field_control |= ESP_ZB_ZCL_OTA_UPGRADE_FILE_HEADER_FC_CREDENTIAL_VER;
+    }
+
+    if (ota_image_header.field_control & ESP_ZB_ZCL_OTA_UPGRADE_FILE_HEADER_FC_DEVICE_SPECIFIC) {
+        image_info = (const uint8_t *)(ota_file_start + length);
+        ZB_OTA_FILE_HEADER_OPTIONAL(ota_file_header->optional, upgrade_file_destination, length);
+        ota_file_header->field_control |= ESP_ZB_ZCL_OTA_UPGRADE_FILE_HEADER_FC_DEVICE_SPECIFIC;
+    }
+
+    if (ota_image_header.field_control & ESP_ZB_ZCL_OTA_UPGRADE_FILE_HEADER_FC_HW_VER) {
+        image_info = (const uint8_t *)(ota_file_start + length);
+        ZB_OTA_FILE_HEADER_OPTIONAL(ota_file_header->optional, minimum_hardware_version, length);
+        image_info = (const uint8_t *)(ota_file_start + length);
+        ZB_OTA_FILE_HEADER_OPTIONAL(ota_file_header->optional, maximum_hardware_version, length);
+        ota_file_header->field_control |= ESP_ZB_ZCL_OTA_UPGRADE_FILE_HEADER_FC_HW_VER;
+    }
+
+    /* Indicate information is used to OTA server query image and retrieve the next data */
+    s_ota_image_type = ota_file_header->image_type;
+    s_ota_manuf_code = ota_file_header->manufacturer_code;
+    s_ota_image_size = ota_file_header->image_size;
+    s_ota_image_start = (const uint8_t *)(ota_file_start + ota_image_header.header_length);
+
+    return ESP_OK;
+}
 
 static void bdb_start_top_level_commissioning_cb(uint8_t mode_mask)
 {
@@ -43,15 +99,12 @@ static esp_err_t zb_ota_upgrade_srv_send_notify_image(bool notify_on)
         .index = OTA_UPGRADE_INDEX,
         .notify_on = notify_on,
         .ota_upgrade_time = OTA_UPGRADE_TIME,
-        .ota_file_header =
-            {
-                .manufacturer_code = OTA_UPGRADE_MANUFACTURER,
-                .image_type = OTA_UPGRADE_IMAGE_TYPE,
-                .file_version = OTA_UPGRADE_FILE_VERSION,
-                .image_size = ota_file_end - ota_file_start,
-            },
         .next_data_cb = zb_ota_next_data_handler,
     };
+
+    esp_err_t ret = zb_populate_ota_file_header(&req.ota_file_header);
+    ESP_RETURN_ON_ERROR(ret, TAG, "Failed to initialize OTA file header fileds, status: %s", esp_err_to_name(ret));
+
     return esp_zb_ota_upgrade_server_notify_req(&req);
 }
 
@@ -158,7 +211,7 @@ static esp_err_t zb_ota_next_data_handler(esp_zb_ota_zcl_information_t message, 
 {
     switch (index) {
     case OTA_UPGRADE_INDEX:
-        *data = (uint8_t *)ota_file_start + s_ota_image_offset;
+        *data = (uint8_t *)s_ota_image_start + s_ota_image_offset;
         s_ota_image_offset += size;
         break;
     default:
@@ -166,10 +219,10 @@ static esp_err_t zb_ota_next_data_handler(esp_zb_ota_zcl_information_t message, 
         return ESP_FAIL;
         break;
     }
-    ESP_LOGI(TAG, "-- OTA Server transmits data from 0x%x to 0x%x: progress [%ld/%d]", message.dst_short_addr, message.src_addr.u.short_addr,
-             s_ota_image_offset, (ota_file_end - ota_file_start));
+    ESP_LOGI(TAG, "-- OTA Server transmits data from 0x%x to 0x%x: progress [%ld/%ld]", message.dst_short_addr, message.src_addr.u.short_addr,
+             s_ota_image_offset, s_ota_image_size);
 
-    if (s_ota_image_offset >= (ota_file_end - ota_file_start)) {
+    if (s_ota_image_offset >= s_ota_image_size) {
         s_ota_image_offset = 0;
     }
     return (*data) ? ESP_OK : ESP_FAIL;
@@ -200,7 +253,7 @@ static esp_err_t zb_ota_upgrade_server_query_image_handler(esp_zb_zcl_ota_upgrad
     if (message.table_idx) {
         ESP_LOGI(TAG, "OTA table index: 0x%x", *message.table_idx);
     }
-    ESP_RETURN_ON_FALSE((message.image_type == OTA_UPGRADE_IMAGE_TYPE && message.manufacturer_code == OTA_UPGRADE_MANUFACTURER), ESP_ERR_NOT_FOUND,
+    ESP_RETURN_ON_FALSE((message.image_type == s_ota_image_type && message.manufacturer_code == s_ota_manuf_code), ESP_ERR_NOT_FOUND,
                         TAG, "OTA query image mismatch");
     s_ota_image_offset = 0;
     return ret;
