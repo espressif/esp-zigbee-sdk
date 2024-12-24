@@ -27,8 +27,12 @@ static const char *TAG = "ESP_ZB_ON_OFF_LIGHT";
 /********************* Define functions **************************/
 static esp_err_t deferred_driver_init(void)
 {
-    light_driver_init(LIGHT_DEFAULT_OFF);
-    return ESP_OK;
+    static bool is_inited = false;
+    if (!is_inited) {
+        light_driver_init(LIGHT_DEFAULT_OFF);
+        is_inited = true;
+    }
+    return is_inited ? ESP_OK : ESP_FAIL;
 }
 
 static void bdb_start_top_level_commissioning_cb(uint8_t mode_mask)
@@ -50,7 +54,7 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
     case ESP_ZB_BDB_SIGNAL_DEVICE_REBOOT:
         if (err_status == ESP_OK) {
             ESP_LOGI(TAG, "Deferred driver initialization %s", deferred_driver_init() ? "failed" : "successful");
-            ESP_LOGI(TAG, "Device started up in %s factory-reset mode", esp_zb_bdb_is_factory_new() ? "" : "non");
+            ESP_LOGI(TAG, "Device started up in%s factory-reset mode", esp_zb_bdb_is_factory_new() ? "" : " non");
             if (esp_zb_bdb_is_factory_new()) {
                 ESP_LOGI(TAG, "Start network steering");
                 esp_zb_bdb_start_top_level_commissioning(ESP_ZB_BDB_MODE_NETWORK_STEERING);
@@ -58,8 +62,10 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
                 ESP_LOGI(TAG, "Device rebooted");
             }
         } else {
-            /* commissioning failed */
-            ESP_LOGW(TAG, "Failed to initialize Zigbee stack (status: %s)", esp_err_to_name(err_status));
+            ESP_LOGW(TAG, "%s failed with status: %s, retrying", esp_zb_zdo_signal_to_string(sig_type),
+                     esp_err_to_name(err_status));
+            esp_zb_scheduler_alarm((esp_zb_callback_t)bdb_start_top_level_commissioning_cb,
+                                   ESP_ZB_BDB_MODE_INITIALIZATION, 1000);
         }
         break;
     case ESP_ZB_BDB_SIGNAL_STEERING:

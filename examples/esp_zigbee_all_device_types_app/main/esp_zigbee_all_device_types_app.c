@@ -38,9 +38,10 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
     case ESP_ZB_BDB_SIGNAL_DEVICE_FIRST_START:
     case ESP_ZB_BDB_SIGNAL_DEVICE_REBOOT:
         if (err_status == ESP_OK) {
-            ESP_LOGI(TAG, "Device started up in %s factory-reset mode", esp_zb_bdb_is_factory_new() ? "" : "non");
+            ESP_LOGI(TAG, "Device started up in%s factory-reset mode", esp_zb_bdb_is_factory_new() ? "" : " non");
         } else {
-            ESP_LOGE(TAG, "Failed to initialize Zigbee stack (status: %s)", err_name);
+            ESP_LOGE(TAG, "%s failed with status: %s, please retry", esp_zb_zdo_signal_to_string(sig_type),
+                     esp_err_to_name(err_status));
         }
         break;
     case ESP_ZB_BDB_SIGNAL_FORMATION:
