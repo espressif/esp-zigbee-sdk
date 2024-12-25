@@ -17,6 +17,8 @@ update_dependency(){
     sed -i "/\besp-zboss-lib\b/d;/\besp-zigbee-lib\b/d" "${ESP_ZIGBEE_SDK}"/examples/**/main/idf_component.yml
     #   for components in ESP-ZIGBEE-SDK
     sed -i "/\besp-zboss-lib\b/d;/\besp-zigbee-lib\b/d" "${ESP_ZIGBEE_SDK}"/components/*/idf_component.yml
+    #   for examples in idf examples
+    sed -i "/\besp-zboss-lib\b/d;/\besp-zigbee-lib\b/d" "${IDF_PATH}"/examples/zigbee/**/main/idf_component.yml
 
     # Link the local LIB components to the components directory of ESP-IDF
     for component in "${!LIB_COMPONENTS[@]}"; do

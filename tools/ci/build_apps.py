@@ -7,19 +7,12 @@
 import argparse
 import sys
 import os
-import logging
-from pathlib import Path
 from typing import List
-
-idf_build_apps_logger = logging.getLogger('idf_build_apps')
+from pathlib import Path
 from idf_build_apps import App, build_apps, find_apps, setup_logging
 
 # from idf_ci_utils import IDF_PATH, get_pytest_app_paths, get_pytest_cases, get_ttfw_app_paths
-
-PROJECT_ROOT = Path(__file__).parent.parent.parent.absolute()
-DEF_APP_PATH = PROJECT_ROOT / 'examples'
 APPS_BUILD_PER_JOB = 30
-
 PYTEST_APPS = [
     {"target": "esp32h2", "name": "esp_zigbee_all_device_types_app"},
     {"target": "esp32h2", "name": "HA_color_dimmable_light"},
@@ -42,18 +35,13 @@ PYTEST_APPS = [
     {"target": "esp32c6", "name": "touchlink_light"},
 ]
 
-GATEWAY_APPS = [{"target": "esp32h2", "name": "esp_zigbee_all_device_types_app"},]
-
+GATEWAY_APPS = [{"target": "esp32h2", "name": "esp_zigbee_all_device_types_app"}, ]
 
 IGNORE_WARNINGS = [
     r"warning: 'init_spiffs' defined but not used",
     r"warning: 'esp_zb_gateway_board_try_update' defined but not used",
     r"DeprecationWarning: pkg_resources is deprecated as an API",
 ]
-MAINFEST_FILES = [
-    str(PROJECT_ROOT / 'examples' / '.build-rules.yml'),
-]
-
 
 def _is_pytest_app(app: App, app_list) -> bool:
     for pytest_app in app_list:
@@ -63,26 +51,28 @@ def _is_pytest_app(app: App, app_list) -> bool:
 
 
 def get_cmake_apps(
-        paths: List[str],
+        path: str,
         target: str,
         config_rules_str: List[str],
 ) -> List[App]:
+    current_working_dir = Path.cwd()
+    manifest_files = str(current_working_dir / path / '.build-test-rules.yml')
+    print('manifest path:{}'.format(manifest_files))
+    if not os.path.exists(manifest_files):
+        raise FileNotFoundError(f"The file '{manifest_files}' does not exist.")
     apps = find_apps(
-        paths,
+        path,
         recursive=True,
         target=target,
         build_dir='build_@t_@w',
         config_rules_str=config_rules_str,
         check_warnings=True,
-        manifest_files=MAINFEST_FILES,
+        manifest_files=manifest_files,
     )
     return apps
 
 def main(args: argparse.Namespace) -> None:
-    current_dir = os.getcwd()
-    os.chdir(current_dir)
-    apps = get_cmake_apps(args.paths, args.target, args.config)
-
+    apps = get_cmake_apps(args.path, args.target, args.config)
     # no_pytest and only_pytest can not be both True
     assert not (args.no_pytest and args.pytest)
     if args.no_pytest:
@@ -94,12 +84,10 @@ def main(args: argparse.Namespace) -> None:
         apps_for_build = [app for app in apps if _is_pytest_app(app, GATEWAY_APPS)]
     else:
         apps_for_build = apps[:]
+    assert apps_for_build, 'Found no apps for build'
+    print('Found %d apps after filtering', len(apps_for_build))
+    print('Suggest setting the parallel count to %d for this build job', len(apps_for_build) // APPS_BUILD_PER_JOB + 1)
 
-    logging.info('Found %d apps after filtering', len(apps_for_build))
-    logging.info(
-        'Suggest setting the parallel count to %d for this build job',
-        len(apps_for_build) // APPS_BUILD_PER_JOB + 1,
-    )
     ignore_warnings = IGNORE_WARNINGS
     if args.ignore_warning:
         ignore_warnings = [r"warning: .*"]
@@ -124,7 +112,7 @@ if __name__ == '__main__':
         description='Build all the apps for different test types. Will auto remove those non-test apps binaries',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
-    parser.add_argument('paths', nargs='*', help='Paths to the apps to build.')
+    parser.add_argument('path', help='Path to the file .build-test-rules.yml, it must be a relative path')
     parser.add_argument(
         '-t',
         '--target',
@@ -171,15 +159,11 @@ if __name__ == '__main__':
         action="store_true",
         help='Only build rcp_gateway pytest apps, defined in GATEWAY_APPS',
     )
-
     parser.add_argument(
         '--ignore_warning',
         action="store_true",
         help='Ignore all warnings',
     )
-
     arguments = parser.parse_args()
-    if not arguments.paths:
-        arguments.paths = [DEF_APP_PATH]
     setup_logging(verbose=1)  # Info
     main(arguments)
