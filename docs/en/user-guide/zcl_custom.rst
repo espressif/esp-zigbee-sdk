@@ -23,7 +23,6 @@ The following APIs are related to the main implementation of the custom cluster.
 - :cpp:func:`esp_zb_cluster_list_add_custom_cluster`
 - :cpp:func:`esp_zb_zcl_custom_cluster_handlers_update`
 - :cpp:func:`esp_zb_zcl_custom_cluster_cmd_req`
-- :cpp:func:`esp_zb_zcl_custom_cluster_cmd_resp`
 - :cpp:func:`esp_zb_core_action_handler_register`
 
 5.3.3  Typical Usage
@@ -176,24 +175,24 @@ the code below.
                 esp_zb_zcl_set_attribute_val(CUSTOM_SERVER_ENDPOINT, CUSTOM_CLUSTER_ID, ESP_ZB_ZCL_CLUSTER_SERVER_ROLE, 0x0000, user_ctx, false);
                 free(user_ctx);
             }
-            /* Response custom command */
-            esp_zb_zcl_custom_cluster_cmd_resp_t resp;
+            /* Response customized command via binding */
+            esp_zb_zcl_custom_cluster_cmd_req_t req;
             uint8_t custom_value[] = "\x05""Done";
-            resp.zcl_basic_cmd.src_endpoint = CUSTOM_SERVER_ENDPOINT;
-            resp.address_mode = ESP_ZB_APS_ADDR_MODE_DST_ADDR_ENDP_NOT_PRESENT;
-            resp.profile_id = ESP_ZB_AF_HA_PROFILE_ID;
-            resp.cluster_id = CUSTOM_CLUSTER_ID;
-            resp.direction = ESP_ZB_ZCL_CMD_DIRECTION_TO_SRV;
-            resp.custom_cmd_id = CUSTOM_COMMAND_RESP;
-            resp.data.type = ESP_ZB_ZCL_ATTR_TYPE_CHAR_STRING;
-            resp.data.size = sizeof(custom_value);
-            resp.data.value = custom_value;
-            esp_zb_zcl_custom_cluster_cmd_resp(&resp);
-            ESP_EARLY_LOGI(TAG, "Send %s to address: 0x%04x", custom_value, resp.zcl_basic_cmd.dst_addr_u.addr_short);
+            req.zcl_basic_cmd.src_endpoint = CUSTOM_SERVER_ENDPOINT;
+            req.address_mode = ESP_ZB_APS_ADDR_MODE_DST_ADDR_ENDP_NOT_PRESENT;
+            req.profile_id = ESP_ZB_AF_HA_PROFILE_ID;
+            req.cluster_id = CUSTOM_CLUSTER_ID;
+            req.direction = ESP_ZB_ZCL_CMD_DIRECTION_TO_CLI;
+            req.custom_cmd_id = CUSTOM_COMMAND_RESP;
+            req.data.type = ESP_ZB_ZCL_ATTR_TYPE_CHAR_STRING;
+            req.data.size = sizeof(custom_value);
+            req.data.value = custom_value;
+            esp_zb_zcl_custom_cluster_cmd_req(&req);
+            ESP_EARLY_LOGI(TAG, "Send %s", custom_value);
         }
     }
 
-    static esp_err_t zb_custom_request_handler(const esp_zb_zcl_custom_cluster_command_message_t *message)
+    static esp_err_t zb_custom_cmd_handler(const esp_zb_zcl_custom_cluster_command_message_t *message)
     {
         esp_err_t ret = ESP_OK;
 
@@ -224,7 +223,7 @@ the code below.
         esp_err_t ret = ESP_OK;
         switch (callback_id) {
         case ESP_ZB_CORE_CMD_CUSTOM_CLUSTER_REQ_CB_ID:
-            ret = zb_custom_request_handler((esp_zb_zcl_custom_cluster_command_message_t *)message);
+            ret = zb_custom_cmd_handler((esp_zb_zcl_custom_cluster_command_message_t *)message);
             break;
         default:
             ESP_LOGW(TAG, "Receive Zigbee action(0x%x) callback", callback_id);
@@ -233,7 +232,7 @@ the code below.
         return ret;
     }
 
-If you expect to **parse** and **handle** the report attribute information and custom response command from the **HACS Device** on **HACC Device**, you need to **register**
+If you expect to **parse** and **handle** the report attribute information and custom command from the **HACS Device** on **HACC Device**, you need to **register**
 :cpp:func:`esp_zb_core_action_handler_register` you can refer to below code:
 
 .. code-block:: c
@@ -251,7 +250,7 @@ If you expect to **parse** and **handle** the report attribute information and c
         return ESP_OK;
     }
 
-    static esp_err_t zb_custom_response_handler(const esp_zb_zcl_custom_cluster_command_message_t *message)
+    static esp_err_t zb_custom_cmd_handler(const esp_zb_zcl_custom_cluster_command_message_t *message)
     {
         esp_err_t ret = ESP_OK;
 
@@ -271,8 +270,8 @@ If you expect to **parse** and **handle** the report attribute information and c
         case ESP_ZB_CORE_REPORT_ATTR_CB_ID:
             ret = zb_attribute_reporting_handler((esp_zb_zcl_report_attr_message_t *)message);
             break;
-        case ESP_ZB_CORE_CMD_CUSTOM_CLUSTER_RESP_CB_ID:
-            ret = zb_custom_response_handler((esp_zb_zcl_custom_cluster_command_message_t *)message);
+        case ESP_ZB_CORE_CMD_CUSTOM_CLUSTER_REQ_CB_ID:
+            ret = zb_custom_cmd_handler((esp_zb_zcl_custom_cluster_command_message_t *)message);
             break;
         default:
             ESP_LOGW(TAG, "Receive Zigbee action(0x%x) callback", callback_id);
@@ -281,6 +280,6 @@ If you expect to **parse** and **handle** the report attribute information and c
         return ret;
     }
 
-Please note that if the direction of the custom command is ``ESP_ZB_ZCL_CMD_DIRECTION_TO_SRV`` / ``ESP_ZB_ZCL_CMD_DIRECTION_TO_CLI`` and its destination
-cluster is ``ESP_ZB_ZCL_CLUSTER_SERVER_ROLE`` / ``ESP_ZB_ZCL_CLUSTER_CLIENT_ROLE``, the ``ESP_ZB_CORE_CMD_CUSTOM_CLUSTER_REQ_CB_ID`` signal will be triggered.
-Otherwise, ``ESP_ZB_CORE_CMD_CUSTOM_CLUSTER_RESP_CB_ID`` will be triggered.
+Please note that the ``ESP_ZB_CORE_CMD_CUSTOM_CLUSTER_REQ_CB_ID`` will only be raised when the stack has the related endpoint with a custom cluster in the
+``ESP_ZB_ZCL_CLUSTER_SERVER_ROLE`` (``ESP_ZB_ZCL_CLUSTER_CLIENT_ROLE``) and receives a ``ESP_ZB_ZCL_CMD_DIRECTION_TO_SRV`` (``ESP_ZB_ZCL_CMD_DIRECTION_TO_CLI``)
+custom cluster command.
