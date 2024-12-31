@@ -485,6 +485,45 @@ exit:
 
 /* Sub-commands of `ic` */
 
+static esp_err_t cli_ic_policy(esp_zb_cli_cmd_t *self, int argc, char **argv)
+{
+    struct {
+        arg_int_t  *ic_policy;
+        arg_end_t  *end;
+    } argtable = {
+        .ic_policy = arg_intn(NULL, NULL,  "<int:IC Policy>", 1, 1, "install code policy\n"
+                                                                    "0 - Not support\n"
+                                                                    "1 - Support\n"
+                                                                    "2 - IC Required\n"),
+        .end = arg_end(2),
+    };
+    esp_err_t ret = ESP_OK;
+
+    /* Parse command line arguments */
+    EXIT_ON_FALSE(argc > 1, ESP_OK, arg_print_help((void**)&argtable, argv[0]));
+    int nerrors = arg_parse(argc, argv, (void**)&argtable);
+    EXIT_ON_FALSE(nerrors == 0, ESP_ERR_INVALID_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
+
+    switch (argtable.ic_policy->ival[0]) {
+        case 0:
+            ret = ESP_ERR_NOT_SUPPORTED;
+            break;
+        case 1:
+            EXIT_ON_ERROR(esp_zb_secur_ic_only_enable(false));
+            break;
+        case 2:
+            EXIT_ON_ERROR(esp_zb_secur_ic_only_enable(true));
+            break;
+        default:
+            EXIT_NOW(ret = ESP_ERR_INVALID_ARG; cli_output("Unknow policy value: %d\n", argtable.ic_policy->ival[0]));
+            break;
+    }
+
+exit:
+    ESP_ZB_CLI_FREE_ARGSTRUCT(&argtable);
+    return ret;
+}
+
 static esp_err_t cli_ic_add(esp_zb_cli_cmd_t *self, int argc, char **argv)
 {
     struct {
@@ -873,6 +912,7 @@ DECLARE_ESP_ZB_CLI_CMD_WITH_SUB(network, "Network configuration",
     ESP_ZB_CLI_SUBCMD(ed_scan,  cli_nwk_ed_scan,  "Scan for energy detect on channels"),
 );
 DECLARE_ESP_ZB_CLI_CMD_WITH_SUB(ic, "Install code configuration",
+    ESP_ZB_CLI_SUBCMD(policy, cli_ic_policy, "Set install code policy"),
     ESP_ZB_CLI_SUBCMD(add,    cli_ic_add,    "Add install code for a device"),
     ESP_ZB_CLI_SUBCMD(remove, cli_ic_remove, "Remove install code for a device"),
     ESP_ZB_CLI_SUBCMD(set,    cli_ic_set,    "Set install code on device"),
