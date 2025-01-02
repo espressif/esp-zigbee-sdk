@@ -10,6 +10,8 @@
 
 #include "../cli_util.h"
 
+#include "zb_custom_clusters/custom_common.h"
+
 typedef esp_err_t (*register_fn_t)(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 typedef esp_zb_attribute_list_t* (*create_fn_t)(void *);
 typedef esp_err_t (*add_attr_fn_t)(esp_zb_attribute_list_t *attr_list, uint16_t attr_id, void *value_p);
@@ -126,6 +128,7 @@ const static esp_zcl_cluster_fn_t s_cluster_fn_table[] = {
     CLUSTER_FN_ENTRY(electrical_meas, ESP_ZB_ZCL_CLUSTER_ID_ELECTRICAL_MEASUREMENT),
     CLUSTER_FN_ENTRY(diagnostics, ESP_ZB_ZCL_CLUSTER_ID_DIAGNOSTICS),
     CLUSTER_NO_ATTR_FN_ENTRY(touchlink_commissioning, 0x1000),
+    CLUSTER_FN_ENTRY(ping_iperf_test, ESP_ZB_ZCL_CLUSTER_ID_PING_IPERF_TEST),
 };
 
 static const esp_zcl_cluster_fn_t* cluster_fn_table_get_by_idx(uint16_t idx)

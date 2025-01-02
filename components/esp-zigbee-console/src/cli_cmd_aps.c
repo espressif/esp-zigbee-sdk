@@ -79,7 +79,8 @@ static void zb_apsde_data_confirm_handler(esp_zb_apsde_data_confirm_t confirm)
 static bool zb_apsde_data_indication_handler(esp_zb_apsde_data_ind_t ind)
 {
     if (ind.status == 0x00) {
-        cli_output_line("Received aps data frame"); 
+        cli_output("Received aps data frame successful, src ep %d src addr 0x%04x -> dst ep %d dst addr 0x%04x\n", 
+                   ind.src_endpoint, ind.src_short_addr, ind.dst_endpoint, ind.dst_short_addr); 
         if (ind.asdu_length > 0) {
             cli_output_buffer(ind.asdu, ind.asdu_length);
         }

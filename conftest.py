@@ -135,7 +135,7 @@ def junit_properties(
 
 
 @pytest.fixture()
-def teardown_fixture(serial_ports, dut):
+def teardown_fixture(dut):
     """
     A pytest fixture responsible for erasing the flash memory of a list of test devices post-testing.
     Yields:
@@ -145,26 +145,18 @@ def teardown_fixture(serial_ports, dut):
     """
     yield
     # after test, close dut monitor, and do erase flash process
+    serial_port_list = []
     for device in dut:
         device.serial.close()
+        serial_port_list.append(device.serial.port)
     proc = None
-    for serial_port in serial_ports:
+    for serial_port in serial_port_list:
         print(f'erase flash on serial_port: {serial_port}')
         proc = subprocess.Popen(f'python -m esptool --port {serial_port} erase_flash', shell=True)
         proc.wait()
     if proc is not None:
         proc.kill()
     time.sleep(1)
-
-
-@pytest.fixture()
-def serial_ports():
-    usb_ports = glob.glob('/dev/ttyUSB*')
-    acm_ports = glob.glob('/dev/ttyACM*')
-    serial_port_list = usb_ports + acm_ports
-    print(f'serial_port_list:{serial_port_list}')
-    return serial_port_list
-
 
 ##################
 # Hook functions #
