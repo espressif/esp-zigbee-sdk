@@ -15,5 +15,5 @@
 #endif
 
 #ifndef ESP_ZB_VER_PATCH
-#define ESP_ZB_VER_PATCH 1
+#define ESP_ZB_VER_PATCH 2
 #endif

@@ -16,7 +16,6 @@ extern "C" {
  * @anchor esp_zb_trace_level_cfg_t
  */
 typedef enum {
-    ESP_ZB_TRACE_LEVEL_NONE     = -1,
     ESP_ZB_TRACE_LEVEL_CRITICAL = 0,
     ESP_ZB_TRACE_LEVEL_WARN     = 1,
     ESP_ZB_TRACE_LEVEL_INFO     = 2,
@@ -27,6 +26,7 @@ typedef enum {
 /** The Zigbee SDK trace mask
  * @note Different masks represent different sections of the zigbee stack
  */
+#define ESP_ZB_TRACE_SUBSYSTEM_NONE            0x0000U     /*!< None subsystem */
 #define ESP_ZB_TRACE_SUBSYSTEM_COMMON          0x0001U     /*!< Common subsystem */
 #define ESP_ZB_TRACE_SUBSYSTEM_MEM             0x0002U     /*!< MEM subsystem (buffers pool) */
 #define ESP_ZB_TRACE_SUBSYSTEM_MAC             0x0004U     /*!< MAC subsystem */
@@ -61,7 +61,6 @@ typedef enum {
 #define ESP_ZB_TRACE_SUBSYSTEM_NS              0x20000000U /*!< Network simulator subsystem */
 
 /**
- * @note Please ensure to call `esp_zb_set_trace_level_mask` before invoking `esp_zb_init`
  * @brief The Zigbee trace configuration.
  *
  * @param[in] trace_level set trace level refer to esp_zb_trace_level_cfg_t
