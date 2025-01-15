@@ -334,6 +334,24 @@ esp_err_t esp_zb_nwk_get_next_route(esp_zb_nwk_info_iterator_t *iterator, esp_zb
  */
 esp_err_t esp_zb_nwk_get_next_route_record(esp_zb_nwk_info_iterator_t *iterator, esp_zb_nwk_route_record_info_t *route_record_info);
 
+/**
+ * @brief  Get the nwkLinkStatusPeriod attribute in NIB
+ *
+ * @return The time in seconds between link status command frames.
+ *
+ */
+uint8_t esp_zb_nwk_get_link_status_period(void);
+
+/**
+ * @brief  Set the nwkLinkStatusPeriod attribute in NIB
+ *
+ * @param[in] period The time in seconds between link status command frames.
+ *
+ * @return - ESP_OK on success, error code otherwise.
+ *
+ */
+esp_err_t esp_zb_nwk_set_link_status_period(uint8_t period);
+
 #ifdef __cplusplus
 }
 #endif

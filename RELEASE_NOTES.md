@@ -1,5 +1,29 @@
 # Espressif Zigbee SDK Release Notes
 
+## 14-Jan-2025
+1.6.2 version release of ESP-ZIGBEE-SDK is based on esp-idf v5.3.2
+
+### Features
+- Added support to configure the nwkLinkStatusPeriod
+- Added support to configure the MAC CSMA-CA parameters
+- Added support for ZCL to control reporting of float data by configuring the delta in reporting_info
+- Added support to configure the trace log at runtime
+- Adjusted the BDB and ZDO trace log levels to make them more concise and intuitive
+
+### Bug Fixes
+- Fixed the buffer leak issue when using `esp_zb_scheduler_user_alarm_cancel()`
+- Fixed the trigger condition for `ESP_ZB_CORE_CMD_CUSTOM_CLUSTER_RESP_CB_ID` to ensure it only triggers when the command direction matches the cluster role
+- Fixed the issue where `get_scene_membership` and `view_scene` requests with non-zero group IDs did not receive correct responses
+- Fixed the issue where `esp_zb_zcl_command_send_status_callback_t` triggers an error message when a ZCL command is sent in a mode other than `ESP_ZB_APS_ADDR_MODE_DST_ADDR_ENDP_NOT_PRESENT`
+- Fixed the issue where the pre-configured link key set by `esp_zb_secur_TC_standard_preconfigure_key_set()` does not take effect when the device recommissions
+- Fixed an issue where the router would no longer allow new devices to join the network after reaching the max_child limit, even if some previously joined devices had left the network
+- Fixed unexpected crashes on the coordinator when numerous devices are joining at the same time
+
+### Changes
+- Updated esp-zboss-lib to v1.6.2
+- Updated esp-zigbee-lib to v1.6.2
+
+
 ## 05-Dec-2024
 1.6.1 version release of ESP-ZIGBEE-SDK is based on esp-idf v5.3.2
 
