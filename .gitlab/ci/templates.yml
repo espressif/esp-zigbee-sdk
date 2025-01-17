@@ -1,10 +1,17 @@
 include:
   - '.gitlab/ci/common.yml'
 
+.common_before_scripts: &common_before_scripts
+  - source tools/ci/utils.sh
+  - setup_idf
+  - setup_zboss_lib
+  - bash tools/ci/update_cmake_files.sh
+  - pip install -r tools/ci/requirements-build.txt
+
 .build_pytest_example_template:
   stage: build
-  extends:
-    - .update_zigbee_lib_script
+  before_script:
+    - *common_before_scripts
   image: ${CI_DOCKER_REGISTRY}/esp-env-${DOCKER_ENV_VERSION}
   artifacts:
     paths:
@@ -26,9 +33,8 @@ include:
 
 .build_pytest_gateway_template:
   stage: build
-  extends:
-    - .update_zigbee_lib_script
-    - .build_rcp_gateway_script
+  before_script:
+    - *common_before_scripts
   image: ${CI_DOCKER_REGISTRY}/esp-env-${DOCKER_ENV_VERSION}
   artifacts:
     paths:
@@ -42,13 +48,16 @@ include:
       - "**/build*/partition_table/*.bin"
     when: always
     expire_in: 4 days
+  script:
+    - python tools/ci/build_apps.py ./examples --rcp_gateway
+    - build_rcp_gateway
   tags:
     - build
 
 .build_non_pytest_example_template:
   stage: build
-  extends:
-    - .update_zigbee_lib_script
+  before_script:
+    - *common_before_scripts
   image: ${CI_DOCKER_REGISTRY}/esp-env-${DOCKER_ENV_VERSION}
   artifacts:
     paths:
@@ -59,6 +68,7 @@ include:
       - "**/build*/partition_table/*.bin"
     when: always
     expire_in: 4 days
+  parallel: 2
   script:
     - python tools/ci/build_apps.py ./examples --no_pytest
       --parallel-count ${CI_NODE_TOTAL:-1}

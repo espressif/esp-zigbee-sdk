@@ -1,8 +1,12 @@
 build_idf_examples:
   stage: build
   image: ${CI_DOCKER_REGISTRY}/esp-env-${DEFAULT_BUILD_DOCKER_ENV}
-  extends:
-    - .update_zigbee_lib_script
+  before_script:
+    - source tools/ci/utils.sh
+    - setup_idf
+    - setup_zboss_lib
+    - bash ./tools/ci/update_cmake_files.sh
+    - pip install -r tools/ci/requirements-build.txt
   artifacts:
     paths:
       - "**/build*/*.bin"
