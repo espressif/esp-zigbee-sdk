@@ -47,13 +47,17 @@ For specific type of argument, correct format should be provided so that it can 
 - [`dm`](#dm): ZigBee Cluster Library data model management.
 - [`factoryreset`](#factoryreset): Reset the device to factory new.
 - [`ic`](#ic): Install code configuration.
+- [`macfilter`](#macfilter): Zigbee stack mac filter management.
+- [`neighbor`](#neighbor): Neighbor information.
 - [`network`](#network): Network configuration.
 - [`panid`](#panid): Get/Set the (extended) PAN ID of the node.
 - [`radio`](#radio): Enable/Disable the radio.
 - [`reboot`](#reboot): Reboot the device.
 - [`role`](#role): Get/Set the Zigbee role of a device.
+- [`route`](#route): Route information.
 - [`start`](#start): Start Zigbee stack.
 - [`tl`](#tl): TouchLink configuration.
+- [`trace`](#trace): Configure Zigbee stack trace log.
 - [`zcl`](#zcl): ZigBee Cluster Library management.
 - [`zdo`](#zdo): Zigbee Device Object management.
 - [`zgp`](#zgp): ZigBee Green Power Profile management.
@@ -328,6 +332,19 @@ Reboot the device
 ### ic
 Install code configuration.
 
+#### `ic policy <int:IC policy>`
+Set install code policy.
+
+Supported policy values are:
+- `0`: Not support install code.
+- `1`: Support install code.
+- `2`: Require install code.
+
+Set the TC to require use install code by joining devices
+```bash
+esp> ic policy 2
+```
+
 #### `ic add <eui64:EUI64> <IC>`
 Add install code for a remote device.
 
@@ -359,6 +376,44 @@ Get the install code configured on local device.
 esp> ic get
 I (837619) : 0x4080fa50   83 fe d3 40 7a 93 97 23  a5 c6 39 b2 69 16 d5 05  |...@z..#..9.i...|
 I (837619) : 0x4080fa60   c3 b5                                             |..|
+```
+
+
+### macfilter
+Zigbee stack mac filter management.
+
+#### `macfilter add [-i] <addr:ADDR>`
+Add device ieee addr for filter in.
+
+```bash
+esp> macfilter add 0x0123456789abcdef
+```
+
+Use `-i` to filter out short address:
+```bash
+esp> macfilter add -i 0x1234
+```
+
+#### `macfilter clear`
+Clear all entries in the filter
+
+```bash
+esp> macfilter clear
+```
+
+
+### neighbor
+Neighbor information.
+
+#### `neighbor table`
+Dump the neighbor table on current node.
+
+```bash
+esp> neighbor table
+|Index| Age |NwkAddr | MacAddr            |Type |Rel|Depth| LQI | Cost |
++-----+-----+--------+--------------------+-----+---+-----+-----+------+
+|   1 |   1 | 0x83a6 | 0x4831b7fffec182eb |  ZR | S |   1 | 255 |  o:1 |
+|   2 |   1 | 0xcb75 | 0x4831b7fffec18311 |  ZR | S |   2 | 255 |  o:7 |
 ```
 
 
@@ -401,7 +456,7 @@ I (77200) : 0x4084f6f4   83 38 66 7a d8 b6 b4 b4  63 17 12 39 0f 83 f8 6a  |.8fz
 #### `network legacy`
 Enable/Disable legacy device support.
 
-> Note: Getting the current state has not been supported yet.
+> **Note:** Getting the current state has not been supported yet.
 
 ```bash
 esp> network legacy enable
@@ -536,6 +591,20 @@ esp> role
 zc
 ```
 
+
+### route
+Route information.
+
+#### `neighbor table`
+Dump the route table in current node.
+
+```bash
+|Index|DestAddr|NextHop |Expiry| State  |Flags |
++-----+--------+--------+------+--------+------+
+|   1 | 0x3095 | 0x83a6 |   59 | Active | 0x00 |
+```
+
+
 ### start
 Start Zigbee stack.
 
@@ -574,6 +643,22 @@ Set touchlink master key.
 
 ```bash
 tl key 0x0123456789abcdeffedcba9876543210
+```
+
+
+### trace
+Configure Zigbee stack trace log.
+
+> **NOTE:** The command only supported when `ZB_DEBUG_MODE` is enabled.
+
+#### `trace <LEVEL> <MASK>`
+Configure the minimum level and modules of the trace log to output.
+
+Please refer to [esp_zigbee_trace.h](../esp-zigbee-lib/include/esp_zigbee_trace.h) for available values.
+
+To enable `WARN` level for `MAC` and `NWK` layers:
+```bash
+esp> trace 1 0x000C
 ```
 
 
