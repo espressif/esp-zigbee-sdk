@@ -31,81 +31,79 @@ Build the project, flash it to the board, and start the monitor tool to view the
 As you run the example, you will see the following log:
 
 ```
-I (623) app_start: Starting scheduler on CPU0
-I (628) main_task: Started on CPU0                                    
-I (632) main_task: Calling app_main()
-I (655) phy: phy_version: 230,2, 9aae6ea, Jan 15 2024, 11:17:12
-I (656) phy: libbtbb version: 944f18e, Jan 15 2024, 11:17:25
-I (660) main_task: Returned from app_main()
-I (730) ESP_OTA_SERVER: ZDO signal: ZDO Config Ready (0x17), status: ESP_FAIL                                                                
-I (731) ESP_OTA_SERVER: Initialize Zigbee stack
-I (737) gpio: GPIO[9]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:4                                                 
-I (736) ESP_OTA_SERVER: Deferred driver initialization successful
-I (749) ESP_OTA_SERVER: Device started up in  factory-reset mode
-I (755) ESP_OTA_SERVER: Start network formation
-W (909) ESP_OTA_SERVER: Network(0xa1ea) closed, devices joining not allowed.                                                                 
-I (912) ESP_OTA_SERVER: Formed network successfully (Extended PAN ID: 74:4d:bd:ff:fe:63:78:8a, PAN ID: 0xa1ea, Channel:13, Short Address: 0x0000)
-I (1389) ESP_OTA_SERVER: Network(0xa1ea) is open for 180 seconds
-I (1392) ESP_OTA_SERVER: Network steering started
-I (5769) ESP_OTA_SERVER: ZDO signal: NWK Device Associated (0x12), status: ESP_OK                                                            
-I (5773) ESP_OTA_SERVER: ZDO signal: ZDO Device Update (0x30), status: ESP_OK                                                                
-I (5805) ESP_OTA_SERVER: New device commissioned or rejoined (short: 0xfc9a)                                                                 
-I (5806) ESP_OTA_SERVER: Notify OTA upgrade
-I (5898) ESP_OTA_SERVER: ZDO signal: ZDO Device Authorized (0x2f), status: ESP_OK                                                            
-I (5928) ESP_OTA_SERVER: Network(0xa1ea) is open for 180 seconds
-I (6301) ESP_OTA_SERVER: OTA upgrade server query image
-I (6301) ESP_OTA_SERVER: OTA client address: 0xfc9a
-I (6302) ESP_OTA_SERVER: OTA version: 0x1010101, image type: 0x1011, manufacturer code: 1001,                                                
-I (6311) ESP_OTA_SERVER: OTA table index: 0x0
-I (6816) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0xfc9a: progress [167/618480]                                              
-I (6817) ESP_OTA_SERVER: OTA client address: 0xfc9a
-I (6821) ESP_OTA_SERVER: OTA version: 0x1010110, image type: 0x1011, server status: 0                                                        
-I (7102) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0xfc9a: progress [390/618480]                                              
-I (7347) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0xfc9a: progress [613/618480]                                              
-I (7592) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0xfc9a: progress [836/618480]                                              
-I (7837) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0xfc9a: progress [1059/618480]                                             
-I (8086) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0xfc9a: progress [1282/618480]                                             
-I (8331) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0xfc9a: progress [1505/618480]                                             
-I (8576) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0xfc9a: progress [1728/618480]                                             
-I (8821) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0xfc9a: progress [1951/618480]                                             
-I (9066) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0xfc9a: progress [2174/618480]                                             
-I (9312) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0xfc9a: progress [2397/618480]                                             
-I (9557) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0xfc9a: progress [2620/618480]                                             
-I (9802) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0xfc9a: progress [2843/618480]                                             
-I (10047) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0xfc9a: progress [3066/618480]                                            
-I (10295) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0xfc9a: progress [3289/618480]                                            
-I (10541) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0xfc9a: progress [3512/618480]                                            
-I (10786) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0xfc9a: progress [3735/618480]                                            
-I (11031) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0xfc9a: progress [3958/618480]                                            
-I (11280) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0xfc9a: progress [4181/618480]                                            
-I (11525) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0xfc9a: progress [4404/618480]                                            
-I (11770) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0xfc9a: progress [4627/618480]
+I (616) main_task: Started on CPU0
+I (626) main_task: Calling app_main()
+I (646) phy: phy_version: 310,2, 8fa9cb4, Jun  5 2024, 14:19:10
+I (646) phy: libbtbb version: a024da6, Jun  5 2024, 14:19:22
+I (656) main_task: Returned from app_main()
+I (746) ESP_OTA_SERVER: ZDO signal: ZDO Config Ready (0x17), status: ESP_FAIL
+I (746) ESP_OTA_SERVER: Initialize Zigbee stack
+I (746) gpio: GPIO[9]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:4 
+I (746) ESP_OTA_SERVER: Deferred driver initialization successful
+I (766) ESP_OTA_SERVER: Device started up in factory-reset mode
+I (766) ESP_OTA_SERVER: Start network formation
+W (926) ESP_OTA_SERVER: Network(0x0841) closed, devices joining not allowed.
+I (926) ESP_OTA_SERVER: Formed network successfully (Extended PAN ID: 48:31:b7:ff:fe:c0:2b:6b, PAN ID: 0x0841, Channel:13, Short Address: 0x0000)
+I (1536) ESP_OTA_SERVER: Network(0x0841) is open for 180 seconds
+I (1536) ESP_OTA_SERVER: Network steering started
+I (5136) ESP_OTA_SERVER: ZDO signal: NWK Device Associated (0x12), status: ESP_OK
+I (5146) ESP_OTA_SERVER: ZDO signal: ZDO Device Update (0x30), status: ESP_OK
+I (5176) ESP_OTA_SERVER: New device commissioned or rejoined (short: 0x43a7)
+I (5176) ESP_OTA_SERVER: Notify OTA upgrade
+I (5286) ESP_OTA_SERVER: ZDO signal: ZDO Device Authorized (0x2f), status: ESP_OK
+I (5316) ESP_OTA_SERVER: Network(0x0841) is open for 180 seconds
+I (5846) ESP_OTA_SERVER: OTA upgrade server query image
+I (5846) ESP_OTA_SERVER: OTA client address: 0x43a7
+I (5846) ESP_OTA_SERVER: OTA version: 0x1010100, image type: 0x1011, manufacturer code: 1001, 
+I (5856) ESP_OTA_SERVER: OTA table index: 0x0
+I (6436) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [167/618486]
+I (6436) ESP_OTA_SERVER: OTA client address: 0x43a7
+I (6436) ESP_OTA_SERVER: OTA version: 0x1010101, image type: 0x1011, server status: 0
+I (6746) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [390/618486]
+I (6996) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [613/618486]
+I (7246) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [836/618486]
+I (7496) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [1059/618486]
+I (7756) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [1282/618486]
+I (8006) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [1505/618486]
+I (8256) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [1728/618486]
+I (8506) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [1951/618486]
+I (8756) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [2174/618486]
+I (9006) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [2397/618486]
+I (9256) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [2620/618486]
+I (9506) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [2843/618486]
+I (9756) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [3066/618486]
+I (10006) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [3289/618486]
+I (10256) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [3512/618486]
+I (10516) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [3735/618486]
+I (10766) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [3958/618486]
+I (11016) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [4181/618486]
+I (11266) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [4404/618486]
+I (11526) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [4627/618486]
 ...
-I (685405) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0xfc9a: progress [614086/618480]
-I (685650) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0xfc9a: progress [614309/618480]
-I (685905) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0xfc9a: progress [614532/618480]
-I (686151) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0xfc9a: progress [614755/618480]
-I (686400) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0xfc9a: progress [614978/618480]
-I (686648) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0xfc9a: progress [615201/618480]
-I (686893) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0xfc9a: progress [615424/618480]
-I (687143) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0xfc9a: progress [615647/618480]
-I (687388) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0xfc9a: progress [615870/618480]
-I (687633) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0xfc9a: progress [616093/618480]
-I (687879) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0xfc9a: progress [616316/618480]
-I (688124) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0xfc9a: progress [616539/618480]
-I (688374) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0xfc9a: progress [616762/618480]
-I (688625) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0xfc9a: progress [616985/618480]
-I (688876) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0xfc9a: progress [617208/618480]
-I (689121) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0xfc9a: progress [617431/618480]
-I (689366) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0xfc9a: progress [617654/618480]
-I (689611) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0xfc9a: progress [617877/618480]
-I (689856) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0xfc9a: progress [618100/618480]
-I (690104) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0xfc9a: progress [618323/618480]
-I (690349) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0xfc9a: progress [618480/618480]
-I (690404) ESP_OTA_SERVER: OTA client address: 0xfc9a
-I (690405) ESP_OTA_SERVER: OTA version: 0x1010110, image type: 0x1011, server status: 2
-I (690408) ESP_OTA_SERVER: OTA upgrade time: 0x1234a
-
+I (699346) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [614086/618486]
+I (699606) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [614309/618486]
+I (699856) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [614532/618486]
+I (700106) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [614755/618486]
+I (700356) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [614978/618486]
+I (700616) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [615201/618486]
+I (700866) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [615424/618486]
+I (701116) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [615647/618486]
+I (701366) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [615870/618486]
+I (701616) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [616093/618486]
+I (701866) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [616316/618486]
+I (702116) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [616539/618486]
+I (702366) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [616762/618486]
+I (702616) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [616985/618486]
+I (702866) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [617208/618486]
+I (703116) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [617431/618486]
+I (703376) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [617654/618486]
+I (703626) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [617877/618486]
+I (703876) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [618100/618486]
+I (704126) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [618323/618486]
+I (704386) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [618486/618486]
+I (704436) ESP_OTA_SERVER: OTA client address: 0x43a7
+I (704436) ESP_OTA_SERVER: OTA version: 0x1010101, image type: 0x1011, server status: 2
+I (704446) ESP_OTA_SERVER: OTA upgrade time: 0x1234a
 ```
 
 Note: The example also supports the user pressing the `boot` button to broadcast the `IMAGE_NOTIFY` command to the network.

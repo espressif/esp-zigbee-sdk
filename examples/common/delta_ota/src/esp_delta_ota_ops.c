@@ -145,22 +145,42 @@ esp_err_t esp_delta_ota_write(esp_ota_handle_t handle, uint8_t *data, int size)
 {
     esp_err_t ret = ESP_OK;
 
+    static uint8_t *patch_buf = NULL;
+    static uint8_t  patch_len = 0;
     const uint8_t *patch_data = (const uint8_t *)data;
     int patch_size = size;
     if (!s_delta_ota_ctx->verify_patch_flag) {
-        ret = (size <= DELTA_OTA_UPGRADE_PATCH_HEADER_SIZE) ? ESP_ERR_INVALID_ARG : ESP_OK;
-        ESP_RETURN_ON_ERROR(ret, TAG, "Invalid size of received data, status: %s", esp_err_to_name(ret));
-        ret = delta_ota_patch_header_verify(data);
-        ESP_RETURN_ON_ERROR(ret, TAG, "Patch Header verification failed, status: %s", esp_err_to_name(ret));
+        if (!patch_buf) {
+            patch_buf = calloc(1, size);
+        } else {
+            patch_buf = realloc(patch_buf, patch_len + size);
+        }
+        ESP_RETURN_ON_FALSE(patch_buf, ESP_ERR_NO_MEM, TAG, "No memory for delta OTA write");
+        memcpy(patch_buf + patch_len, data, size);
+        patch_len += size;
+
+        if (patch_len <= DELTA_OTA_UPGRADE_PATCH_HEADER_SIZE) {
+            return ESP_OK;
+        }
+
+        ret = delta_ota_patch_header_verify(patch_buf);
+        ESP_GOTO_ON_ERROR(ret, exit, TAG, "Patch Header verification failed, status: %s", esp_err_to_name(ret));
                     
         s_delta_ota_ctx->verify_patch_flag = true;
-        patch_data = (const uint8_t *)data + DELTA_OTA_UPGRADE_PATCH_HEADER_SIZE;
-        patch_size = size - DELTA_OTA_UPGRADE_PATCH_HEADER_SIZE;
+        patch_data = (const uint8_t *)patch_buf + DELTA_OTA_UPGRADE_PATCH_HEADER_SIZE;
+        patch_size = patch_len - DELTA_OTA_UPGRADE_PATCH_HEADER_SIZE;
     }
 
     if (s_delta_ota_ctx->verify_patch_flag) {
         ret = esp_delta_ota_feed_patch(s_delta_ota_handle, patch_data, patch_size);
-        ESP_RETURN_ON_ERROR(ret, TAG, "Failed to apply the patch on the source data, status: %s", esp_err_to_name(ret));
+        ESP_GOTO_ON_ERROR(ret, exit, TAG, "Failed to apply the patch on the source data, status: %s", esp_err_to_name(ret));
+    }
+
+exit:
+    if (patch_buf) {
+        free(patch_buf);
+        patch_buf = NULL;
+        patch_len = 0;
     }
 
     return ret;

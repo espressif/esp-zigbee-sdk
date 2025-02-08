@@ -170,12 +170,118 @@ Generate an OTA Upgrade Image for the ESP Platform
 
 In general, any application binary file compiled by ESP-IDF can be used as an OTA upgrade image for ESP devices. The ESP-IDF file system also provides various
 methods for storing binary files on the chip. For more details, please refer to the `Storage API <https://docs.espressif.com/projects/esp-idf/en/latest/esp32h2/api-reference/storage/index.html>`__.
+
+The Zigbee OTA file is composed of a header followed by a number of sub-elements. The format is as follows:
+
+.. highlight:: none
+
+::
+
+    ---------------------------------------------------------------
+    | Octets | Variable               | Variable                  |
+    ---------------------------------------------------------------
+      Data    OTA Header               Sub-elements              
+
+- OTA Header: The OTA header describes general information about the file such as version, the manufacturer that created it. The format is as follows:
+
+    +--------+-----------+-------------------------------------+-----+
+    | Octets | Data Types| Field Names                         | M/O |
+    +--------+-----------+-------------------------------------+-----+
+    | 4      | uint32    | OTA upgrade file identifier         | M   |
+    +--------+-----------+-------------------------------------+-----+
+    | 2      | uint16    | OTA Header version                  | M   |
+    +--------+-----------+-------------------------------------+-----+
+    | 2      | uint16    | OTA Header length                   | M   |
+    +--------+-----------+-------------------------------------+-----+
+    | 2      | uint16    | OTA Header Field control            | M   |
+    +--------+-----------+-------------------------------------+-----+
+    | 2      | uint32    | Manufacturer code                   | M   |
+    +--------+-----------+-------------------------------------+-----+
+    | 2      | uint16    | Image type                          | M   |
+    +--------+-----------+-------------------------------------+-----+
+    | 4      | uint32    | File version                        | M   |
+    +--------+-----------+-------------------------------------+-----+
+    | 2      | uint16    | ZigBee Stack version                | M   |
+    +--------+-----------+-------------------------------------+-----+
+    | 32     | ASCII     | OTA Header string                   | M   |
+    +--------+-----------+-------------------------------------+-----+
+    | 4      | uint32    | Total Image size (including header) | M   |
+    +--------+-----------+-------------------------------------+-----+
+    | 0/1    | uint8     | Security credential version         | O   |
+    +--------+-----------+-------------------------------------+-----+
+    | 0/8    | EUI64     | Upgrade file destination            | O   |
+    +--------+-----------+-------------------------------------+-----+
+    | 0/2    | uint16    | Minimum hardware version            | O   |
+    +--------+-----------+-------------------------------------+-----+
+    | 0/2    | uint16    | Maximum hardware version            | O   |
+    +--------+-----------+-------------------------------------+-----+
+
+- Sub-elements: Sub-elements may contain upgrade data for the embedded device, certificates, or other manufacturer specific pieces. The format is as follows:
+
+    .. highlight:: none
+
+    ::
+
+        ---------------------------------------------------------------------------------
+        | Octets | 2-bytes            | 4-bytes                  | Variable             |
+        ---------------------------------------------------------------------------------
+          Data    Tag ID               Length Field               Data
+
+    - Tag ID: The tag identifier denotes the type and format of the data contained within the sub-element. The identifier is one of the values as follows:
+
+        +-----------------+--------------------------------------------+
+        | Tag Identifiers | Description                                |
+        +-----------------+--------------------------------------------+
+        | 0x0000          | Upgrade Image                              |
+        +-----------------+--------------------------------------------+
+        | 0x0001          | ECDSA Signature (Crypto Suite 1)           |
+        +-----------------+--------------------------------------------+
+        | 0x0002          | ECDSA Signing Certificate (Crypto Suite 1) |
+        +-----------------+--------------------------------------------+
+        | 0x0003          | Image Integrity Code                       |
+        +-----------------+--------------------------------------------+
+        | 0x0004          | Picture Data                               |
+        +-----------------+--------------------------------------------+
+        | 0x0005          | ECDSA Signature (Crypto Suite 2)           |
+        +-----------------+--------------------------------------------+
+        | 0x0006          | ECDSA Signing Certificate (Crypto Suite 2) |
+        +-----------------+--------------------------------------------+
+        | 0xf000 - 0xffff | Manufacturer Specific Use                  |
+        +-----------------+--------------------------------------------+
+
+- Length Field: This value dictates the length of the rest of the data within the sub-element in bytes. It does not include the size of the Tag ID or the Length Fields.
+- Date: The length of the data in the sub-element must be equal to the value of the Length Field in bytes. The type and format of the data contained in the sub-element is specific to the Tag.
+
+:project_file:`image_builder_tool <tools/image_builder_tool/image_builder_tool.py>` is Espressif's tool for creating Zigbee OTA image files.
+It wraps the application binary file in the file format specified by the Zigbee specification.
+
+.. code-block:: bash
+
+    usage: image_builder_tool.py [-h] [-c CREATE] -v VERSION -m MANUF_ID -i IMAGE_TYPE [-s STACK_VERSION] [--header_string HEADER_STRING] [--security-credentials SECURITY_CREDENTIALS]
+                             [--upgrade-dest UPGRADE_DEST] [--min-hw-ver MIN_HW_VER] [--max-hw-ver MAX_HW_VER] [-t TAG_ID] [-l TAG_LENGTH] [-f TAG_FILE]
+
+    options:
+    -h, --help                              show this help message and exit
+    -c, --create=<filename>                 Create OTA file
+    -v, --version=<4-bytes-hex>             Firmware version
+    -m, --manuf-id=<2-bytes-hex>            Manufacturer code
+    -i, --image-type=<2-bytes-hex>          Image type
+    -s, --stack-version=<2-bytes>           Zigbee stack version (optional)
+    --header_string=<text>                  OTA Header string (optional)
+    --security-credentials=<1-byte-hex>     The security credentials required for this upgrade (optional)
+    --upgrade-dest=<8-bytes-hex-big-endian> The EUI64 of the device the file is intended for (optional)
+    --min-hw-ver=<2-bytes-hex>              Minimum hardware version (optional)
+    --max-hw-ver=<2-bytes-hex>              Maximum hardware version (optional)
+    -t, --tag-id=<2-bytes-hex>              Tag identifier
+    -l, --tag-length=<4-bytes>              Length of dummy data for tag (optional)
+    -f, --tag-file<filepath>                File to include or extract as data with associated tag
+
 If you would like to use the `On Off Light <https://github.com/espressif/esp-zigbee-sdk/tree/main/examples/esp_zigbee_HA_sample/HA_on_off_light/>`_  application
 firmware as the OTA upgrade image for the `OTA Upgrade Server <https://github.com/espressif/esp-zigbee-sdk/tree/main/examples/esp_zigbee_ota/ota_server/>`_,
 please refer to the below steps:
 
-
-Build the light application binary file
+Build the light application binary file and use the :project_file:`image_builder_tool <tools/image_builder_tool/image_builder_tool.py>` to create an OTA image file
+with the ``OTA_UPGRADE_MANUFACTURER(0x1001)``, ``OTA_UPGRADE_IMAGE_TYPE(0x1011)`` and ``OTA_UPGRADE_FILE_VERSION(0x01010110)``
 
 .. code-block:: bash
 
@@ -187,13 +293,15 @@ Build the light application binary file
 
    idf.py build
 
-Copy the binary file to the ``main`` folder of OTA upgrade server
+   python ~/esp/esp-zigbee-sdk/tools/image_builder_tool/image_builder_tool.py --create build/on_off_light_bulb.bin --manuf-id 0x1001 --image-type 0x1011 --version 0x01010110 --tag-id 0x0000 --tag-file build/on_off_light_bulb.bin
+
+Copy the OTA image file to the ``main`` folder of OTA upgrade server
 
 .. code-block:: bash
 
     cp -f build/on_off_light_bulb.bin ~/esp/esp-zigbee-sdk/examples/esp_zigbee_ota/ota_server/main/ota_file.bin
 
-    cd ~/esp/esp-zigbee-sdk/examples/esp_zigbee_ota/ota_server/main/ota_file.bin
+    cd ~/esp/esp-zigbee-sdk/examples/esp_zigbee_ota/ota_server
 
     idf.py fullclean
 
@@ -213,27 +321,19 @@ For more detailed information on applying the image on the ESP platform, please 
 Add OTA Upgrade Image
 """""""""""""""""""""
 
-If you expect to add an OTA Upgrade image with the ``OTA_UPGRADE_MANUFACTURER(0x1001)``, ``OTA_UPGRADE_IMAGE_TYPE(0x1011)``, ``OTA_UPGRADE_FILE_VERSION(0x01010110)``
-and ``OTA_UPGRADE_IMAGE_SIZE(618480)`` to first entry in the OTA upgrade table of the **HAOUS** device. You can call the :cpp:func:`esp_zb_ota_upgrade_server_notify_req`
-API to register this image in the OTA upgrade table at the specified index.
+You can call the :cpp:func:`esp_zb_ota_upgrade_server_notify_req` API to register this image in the OTA upgrade table at the specified index.
 
 .. code-block:: c
 
-    #define OTA_IMAGE_SIZE 618480
     esp_zb_ota_upgrade_server_notify_req_t req = {
         .endpoint = ESP_OTA_SERVER_ENDPOINT,
         .index = 0,                                       // The index of OTA Server OTA image table
         .notify_on = false,                               // Simply register the OTA image without sending a notification.
         .ota_upgrade_time = OTA_UPGRADE_CURRENT_TIME + 1, // When to upgrade its running firmware image
-        .ota_file_header =
-            {
-                .manufacturer_code = OTA_UPGRADE_MANUFACTURER,
-                .image_type = OTA_UPGRADE_IMAGE_TYPE,
-                .file_version = OTA_UPGRADE_FILE_VERSION,
-                .image_size = OTA_IMAGE_SIZE,
-            },
         .next_data_cb = zb_ota_next_data_handler,
     };
+    esp_err_t ret = zb_ota_file_header_fileds(&req.ota_file_header);
+    ESP_RETURN_ON_ERROR(ret, TAG, "Failed to initialize OTA file header fileds, status: %s", esp_err_to_name(ret));
     esp_zb_ota_upgrade_server_notify_req(&req);
 
 
@@ -244,8 +344,13 @@ application.
 Notify OTA Upgrade Image
 """"""""""""""""""""""""
 
-If you expect to notify the OTA upgrade image to specific device whose network address is ``0x1234`` on **HAOUS** side, you can set the optional ``field_control``
-to achieve this, you can refer to below code.
+If you expect to notify the OTA upgrade image to specific device whose network address is ``01:23:45:67:89:AB:CD:EF`` on **HAOUS** side.
+
+.. code-block:: bash
+
+    python ~/esp/esp-zigbee-sdk/tools/image_builder_tool/image_builder_tool.py --create build/on_off_light_bulb.bin --manuf-id 0x1001 --image-type 0x1011 --version 0x01010102 --upgrade-dest 01:23:45:67:89:AB:CD:EF --tag-id 0x0000 --tag-file build/on_off_light_bulb.bin
+
+You can refer to below code.
 
 .. code-block:: c
 
@@ -254,17 +359,11 @@ to achieve this, you can refer to below code.
         .index = 0,                                       // The index of OTA Server OTA image table
         .notify_on = true,                                // Notify current image
         .ota_upgrade_time = OTA_UPGRADE_CURRENT_TIME + 1, // When to upgrade its running firmware image
-        .ota_file_header = {
-                .manufacturer_code = OTA_UPGRADE_MANUFACTURER,
-                .image_type = OTA_UPGRADE_IMAGE_TYPE,
-                .file_version = OTA_UPGRADE_FILE_VERSION,
-                .image_size = OTA_IMAGE_SIZE,
-            },
         .next_data_cb = zb_ota_next_data_handler,
     };
 
-    req.ota_file_header.field_control = ESP_ZB_ZCL_OTA_UPGRADE_FILE_HEADER_FC_DEVICE_SPECIFIC;
-    esp_zb_ieee_address_by_short(0x1234, req.ota_file_header.optional.upgrade_file_destination);
+    esp_err_t ret = zb_ota_file_header_fileds(&req.ota_file_header);
+    ESP_RETURN_ON_ERROR(ret, TAG, "Failed to initialize OTA file header fileds, status: %s", esp_err_to_name(ret));
     esp_zb_ota_upgrade_server_notify_req(&req);
 
 
