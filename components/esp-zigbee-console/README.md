@@ -42,9 +42,10 @@ For specific type of argument, correct format should be provided so that it can 
 ## ESP-Zigbee-Console Command List
 
 - [`address`](#address): Get/Set the (extended) address of the node.
+- ['aps'](#aps): Zigbee Application Support management.
 - [`bdb_comm`](#bdb_comm): Perform BDB Commissioning.
 - [`channel`](#channel): Get/Set 802.15.4 channels for network
-- [`dm`](#dm): ZigBee Cluster Library data model management.
+- [`dm`](#dm): Zigbee Cluster Library data model management.
 - [`factoryreset`](#factoryreset): Reset the device to factory new.
 - [`ic`](#ic): Install code configuration.
 - [`macfilter`](#macfilter): Zigbee stack mac filter management.
@@ -58,10 +59,10 @@ For specific type of argument, correct format should be provided so that it can 
 - [`start`](#start): Start Zigbee stack.
 - [`tl`](#tl): TouchLink configuration.
 - [`trace`](#trace): Configure Zigbee stack trace log.
-- [`zcl`](#zcl): ZigBee Cluster Library management.
+- [`zcl`](#zcl): Zigbee Cluster Library management.
 - [`zdo`](#zdo): Zigbee Device Object management.
-- [`zgp`](#zgp): ZigBee Green Power Profile management.
-- [`zha`](#zha): ZigBee Home Automation Profile.
+- [`zgp`](#zgp): Zigbee Green Power Profile management.
+- [`zha`](#zha): Zigbee Home Automation Profile.
 
 ## ESP-Zigbee-Console Command Details
 
@@ -88,6 +89,43 @@ Set the extended address of the Zigbee device node.
 
 ```bash
 esp> address -x 0x0123456789abcdef
+```
+
+
+### aps
+Zigbee Application Support management
+
+#### `aps send_raw [options]`
+options:
+- `-d <addr:ADDR>`: Destination address of the command.
+- `--dst-ep <u8:EID>`: Destination endpoint of the command.
+- `-e <u8:EID>`: Source endpoint of the command.
+- `--profile=<u16:PID>`: Profile id of the command.
+- `-c <u16:CID>`: Cluster id of the command.
+
+Destination address mode selection: same as [`zcl`](#zcl)
+
+```bash
+esp> aps send_raw -e 2 --dst-ep 3 -c 0x0006 -d 0x33d2 -p 0x11223344
+Send aps data frame successful
+```
+
+#### `aps dump <open|close>`
+Dump APS traffic
+
+Local device start to dump aps traffic.
+```bash
+esp> aps dump open
+```
+Remote device send aps data frame.
+```bash
+esp> aps send_raw -d 0x90eb -e 2 --dst-ep 2 -c 0x0006 -p 0x1122
+Send aps data frame successful
+```
+Local device dump aps data frame.
+```bash
+Received aps data frame
+I (680692) : 0x40817760   11 22                                             |."|
 ```
 
 
@@ -189,7 +227,7 @@ esp> channel -m 0x06ef0000
 
 
 ### dm
-ZigBee Cluster Library data model management.
+Zigbee Cluster Library data model management.
 
 The sub-commands operate on the `ep_list` registered/created by `esp_zb_console_manage_ep_list()`:
 
@@ -644,7 +682,23 @@ Set touchlink master key.
 ```bash
 tl key 0x0123456789abcdeffedcba9876543210
 ```
+#### `tl keymask <u16:mask>`
+Set touchlink key mask.
 
+Enable master key
+```bash
+tl keymask 0x10
+```
+
+Enable cetification key
+```bash
+tl keymask 0x8000
+```
+
+Enable both master key and cetification key
+```bash
+tl keymask 0x8010
+```
 
 ### trace
 Configure Zigbee stack trace log.
@@ -663,7 +717,7 @@ esp> trace 1 0x000C
 
 
 ### zcl
-ZigBee Cluster Library management.
+Zigbee Cluster Library management.
 
 Common options:
 - `-d <addr:ADDR>`: Destination address of the command.
@@ -899,11 +953,11 @@ Use `-r` to request the node rejoin after leaving the network.
 
 
 ### zgp
-ZigBee Green Power Profile management.
+Zigbee Green Power Profile management.
 
 
 ### zha
-ZigBee Home Automation Profile.
+Zigbee Home Automation Profile.
 
 #### `zha add <u8:EID> <device_name>`
 Add device by device type name.

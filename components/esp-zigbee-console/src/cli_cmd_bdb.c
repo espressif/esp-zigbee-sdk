@@ -897,6 +897,34 @@ exit:
     return ret;
 }
 
+static esp_err_t cli_tl_keymask(esp_zb_cli_cmd_t *self, int argc, char **argv)
+{
+    struct {
+        arg_u16_t  *keymask;
+        arg_lit_t *help;
+        arg_end_t  *end;
+    } argtable = {
+        .keymask = arg_u16n(NULL, NULL,   "<u16:mask>", 1, 1, "Touchlink key mask\n"
+                                                              "1 << 4  - master key\n"
+                                                              "1 << 15 - cetification key\n"),
+        .help    = arg_lit0(NULL, "help", "Print this help message"),
+        .end = arg_end(2),
+    };
+    esp_err_t ret = ESP_OK;
+
+    /* Parse command line arguments */
+    EXIT_ON_FALSE(argc > 1, ESP_OK, arg_print_help((void**)&argtable, argv[0]));
+    int nerrors = arg_parse(argc, argv, (void**)&argtable);
+    EXIT_ON_FALSE(nerrors == 0, ESP_ERR_INVALID_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
+
+    esp_zb_zdo_touchlink_set_key_bitmask((esp_zb_touchlink_key_bitmask_t)argtable.keymask->val[0]);
+    
+exit:
+    ESP_ZB_CLI_FREE_ARGSTRUCT(&argtable);
+    return ret;
+}
+
+
 DECLARE_ESP_ZB_CLI_CMD(role,    cli_role,,    "Get/Set the Zigbee role of a device");
 DECLARE_ESP_ZB_CLI_CMD(panid,   cli_panid,,   "Get/Set the (extended) PAN ID of the node");
 DECLARE_ESP_ZB_CLI_CMD(address, cli_address,, "Get/Set the (extended) address of the node");
@@ -928,4 +956,5 @@ DECLARE_ESP_ZB_CLI_CMD_WITH_SUB(tl, "TouchLink configuration",
     ESP_ZB_CLI_SUBCMD(timeout, cli_tl_timeout, "Get/Set touchlink target timeout"),
     ESP_ZB_CLI_SUBCMD(rssi,    cli_tl_rssi,    "Get/Set touchlink target rssi threshold"),
     ESP_ZB_CLI_SUBCMD(key,     cli_tl_key,     "Get/Set touchlink master key"),
+    ESP_ZB_CLI_SUBCMD(keymask, cli_tl_keymask, "Set touchlink master key mask"),
 );
