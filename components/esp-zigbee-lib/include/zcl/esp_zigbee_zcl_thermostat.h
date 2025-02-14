@@ -190,7 +190,7 @@ typedef enum {
 #define ESP_ZB_ZCL_THERMOSTAT_LOCAL_TEMPERATURE_INVALID ((zb_int16_t)0x8000)
 
 /** @brief Default value for Local Temperature attribute */
-#define ESP_ZB_ZCL_THERMOSTAT_LOCAL_TEMPERATURE_DEFAULT_VALUE 0xffff
+#define ESP_ZB_ZCL_THERMOSTAT_LOCAL_TEMPERATURE_DEFAULT_VALUE (ESP_ZB_ZCL_VALUE_FF)
 
 /** @brief Min value for Local Temperature Calibration attribute */
 #define ESP_ZB_ZCL_THERMOSTAT_LOCAL_TEMPERATURE_CALIBRATION_MIN_VALUE 0xe7

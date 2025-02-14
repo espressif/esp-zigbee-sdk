@@ -1,5 +1,34 @@
 # Espressif Zigbee SDK Release Notes
 
+## 14-Feb-2025
+1.6.3 version release of ESP-ZIGBEE-SDK is based on esp-idf v5.3.2
+
+### Features
+- Added API support for touchlink to configure the key bitmask
+- Added APIs support for APSME to send transport key and switch key
+- Added API support for MAC to intercept the IEEE802.15.4 frame
+- Added detailed usage information for application signals in `esp_zb_app_signal_type_t`.
+- Added the payload definitions of `ESP_ZB_COMMON_SIGNAL_CAN_SLEEP`, `ESP_ZB_ZDO_DEVICE_UNAVAILABLE`, `ESP_ZB_NLME_STATUS_INDICATION`
+  and `ESP_ZB_NWK_SIGNAL_DEVICE_ASSOCIATED`signals
+- Optimized the route discovery mechanism to prevent the neighbor from expiring immediately upon receiving its forwarded frame
+
+### Bug Fixes
+- Fixed the missing mandatory `present_value` attribute in binary input cluster
+- Fixed the incorrect default value of `ESP_ZB_ZCL_THERMOSTAT_LOCAL_TEMPERATURE_DEFAULT_VALUE` by changing it to `FF`
+- Fixed the potential buffer overflow when the ZCL write, report, or custom request needs to be fragmented for transmission
+- Fixed the APSDE-DATA confirm crashing issue when the APSDE-DATA command is sent in binding mode
+- Fixed the Touchlink issue where the `scan_request` would be handled when the device was not in Touchlink target commissioning mode
+- Fixed the Touchlink issue where the first commissioning would always fail when the Touchlink initiator was in
+  `ESP_ZB_BDB_MODE_INITIALIZATION | ESP_ZB_BDB_TOUCHLINK_COMMISSIONING` mode
+- Fixed the Touchlink issue where the initiator could not exit commissioning if the response from the target was not received
+- Fixed the Touchlink issue where commissioning always failed when the initiator acting as a router failed to find a target
+
+
+### Changes
+- Updated esp-zboss-lib to v1.6.3
+- Updated esp-zigbee-lib to v1.6.3
+- Removed the unused application signal type from `esp_zb_app_signal_type_t`
+
 ## 14-Jan-2025
 1.6.2 version release of ESP-ZIGBEE-SDK is based on esp-idf v5.3.2
 

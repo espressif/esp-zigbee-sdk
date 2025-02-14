@@ -458,6 +458,7 @@ typedef struct esp_zb_shade_config_cluster_cfg_s {
 typedef struct esp_zb_binary_input_cluster_cfg_s {
     bool  out_of_service;                              /*!< Out of Service */
     uint8_t  status_flags;                             /*!< Status flags */
+    bool present_value;                                /*!< Present value */
 } esp_zb_binary_input_cluster_cfg_t;
 
 /**

@@ -21,6 +21,33 @@ typedef enum {
     ESP_ZB_DEVICE_TYPE_NONE = 0x3,              /*!<  Unknown Device */
 } esp_zb_nwk_device_type_t;
 
+/**
+ * @brief Enumeration of Zigbee network command status code
+ *
+ */
+typedef enum {
+    ESP_ZB_NWK_COMMAND_STATUS_NO_ROUTE_AVAILABLE          = 0x00U, /*!< No route available */
+    ESP_ZB_NWK_COMMAND_STATUS_TREE_LINK_FAILURE           = 0x01U, /*!< Tree link failure */
+    ESP_ZB_NWK_COMMAND_STATUS_NONE_TREE_LINK_FAILURE      = 0x02U, /*!< None-tree link failure */
+    ESP_ZB_NWK_COMMAND_STATUS_LOW_BATTERY_LEVEL           = 0x03U, /*!< Low battery level */
+    ESP_ZB_NWK_COMMAND_STATUS_NO_ROUTING_CAPACITY         = 0x04U, /*!< No routing capacity */
+    ESP_ZB_NWK_COMMAND_STATUS_NO_INDIRECT_CAPACITY        = 0x05U, /*!< No indirect capacity */
+    ESP_ZB_NWK_COMMAND_STATUS_INDIRECT_TRANSACTION_EXPIRY = 0x06U, /*!< Indirect transaction expiry */
+    ESP_ZB_NWK_COMMAND_STATUS_TARGET_DEVICE_UNAVAILABLE   = 0x07U, /*!< Target device unavailable */
+    ESP_ZB_NWK_COMMAND_STATUS_TARGET_ADDRESS_UNALLOCATED  = 0x08U, /*!< Target address unallocated */
+    ESP_ZB_NWK_COMMAND_STATUS_PARENT_LINK_FAILURE         = 0x09U, /*!< Parent link failure */
+    ESP_ZB_NWK_COMMAND_STATUS_VALIDATE_ROUTE              = 0x0aU, /*!< Validate route */
+    ESP_ZB_NWK_COMMAND_STATUS_SOURCE_ROUTE_FAILURE        = 0x0bU, /*!< Source route failure */
+    ESP_ZB_NWK_COMMAND_STATUS_MANY_TO_ONE_ROUTE_FAILURE   = 0x0cU, /*!< Many-to-one route failure */
+    ESP_ZB_NWK_COMMAND_STATUS_ADDRESS_CONFLICT            = 0x0dU, /*!< Address conflict */
+    ESP_ZB_NWK_COMMAND_STATUS_VERIFY_ADDRESS              = 0x0eU, /*!< Verify address */
+    ESP_ZB_NWK_COMMAND_STATUS_PAN_IDENTIFIER_UPDATE       = 0x0fU, /*!< Pan ID update */
+    ESP_ZB_NWK_COMMAND_STATUS_NETWORK_ADDRESS_UPDATE      = 0x10U, /*!< Network address update */
+    ESP_ZB_NWK_COMMAND_STATUS_BAD_FRAME_COUNTER           = 0x11U, /*!< Bad frame counter */
+    ESP_ZB_NWK_COMMAND_STATUS_BAD_KEY_SEQUENCE_NUMBER     = 0x12U, /*!< Bad key sequence number */
+    ESP_ZB_NWK_COMMAND_STATUS_UNKNOWN_COMMAND             = 0x13U, /*!< Command received is not known */
+} esp_zb_nwk_command_status_t;
+
 #define ESP_ZB_NWK_INFO_ITERATOR_INIT 0         /*!< Initializer for esp_zb_neighbor_info_iterator_t. */
 #define ESP_ZB_NWK_INFO_ITERATOR_EOT  0xFFFF    /*!< Indicate the iterator reach the End of Table. */
 
