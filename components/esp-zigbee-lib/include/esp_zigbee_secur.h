@@ -183,6 +183,17 @@ esp_err_t esp_zb_secur_primary_network_key_get(uint8_t *key);
 esp_err_t esp_zb_secur_network_key_set(uint8_t *key);
 
 /**
+ * @brief Switches the network key using the specified Key Sequence Number.
+ *
+ * @param[in] key A 16-byte security network key that will be switched
+ * @param[in] key_seq_num The sequence number of the network key to switch to.
+ * @return
+ *      - ESP_OK: on success
+ *      - ESP_ERR_INVALID_ARG: invalid argument
+ */
+esp_err_t esp_zb_secur_network_key_switch(const uint8_t *key, uint8_t key_seq_num);
+
+/**
  * @brief Get the minimum LQI values for device joining the network
  *
  * @return The minimum LQI values

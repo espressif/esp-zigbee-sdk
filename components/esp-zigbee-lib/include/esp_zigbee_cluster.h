@@ -160,7 +160,7 @@ esp_zb_attribute_list_t *esp_zb_shade_config_cluster_create(esp_zb_shade_config_
 /**
  * @brief  Create a standard binary input (basic) cluster attribute list.
  *
- * @note  This only contains the mandatory attribute. Switch type attribute default set to 0. User could change it if necessary.
+ * @note  This only contains the mandatory attribute.
  * @param[in] binary_input_cfg  Configuration parameters for this cluster defined by @ref esp_zb_binary_input_cluster_cfg_s
  *
  * @return Pointer to attribute list @ref esp_zb_attribute_list_s
@@ -195,7 +195,7 @@ esp_zb_attribute_list_t *esp_zb_door_lock_cluster_create(esp_zb_door_lock_cluste
 /**
  * @brief  Create a standard IAS zone cluster attribute list.
  *
- * @note  This only contains the mandatory attribute. Switch type attribute default set to 0. User could change it if necessary.
+ * @note  This only contains the mandatory attribute.
  * @param[in] ias_zone_cfg  Configuration parameters for this cluster defined by @ref esp_zb_ias_zone_cluster_cfg_s
  *
  * @return Pointer to attribute list @ref esp_zb_attribute_list_s

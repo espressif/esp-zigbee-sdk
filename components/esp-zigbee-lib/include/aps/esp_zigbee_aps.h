@@ -40,6 +40,16 @@ typedef enum esp_zb_apsde_tx_opt_e {
 } esp_zb_apsde_tx_opt_t;
 
 /**
+ * @brief Enumeration the standard key type of the Transport-Key, Verify-Key and Confirm-Key
+ *
+ */
+typedef enum esp_zb_apsme_key_type_s {
+    ESP_ZB_APSME_STANDARD_NETWORK_KEY            = 1U, /*!< NWK key */
+    ESP_ZB_APSME_APP_LINK_KEY                    = 3U, /*!< Application link key */
+    ESP_ZB_APSME_TC_LINK_KEY                     = 4U, /*!< Trust-center link key */
+} esp_zb_apsme_key_type_t;
+
+/**
  * @brief APSDE-DATA.request Parameters
  *
  */
@@ -93,10 +103,48 @@ typedef struct esp_zb_apsde_data_ind_s {
     uint16_t cluster_id;        /*!< The identifier of the received object.*/
     uint32_t asdu_length;       /*!< The number of octets comprising the ASDU being indicated by the APSDE.*/
     uint8_t *asdu;              /*!< The set of octets comprising the ASDU being indicated by the APSDE. */
-    uint8_t security_status;    /*!< UNSECURED if the ASDU was received without any security. SECURED_NWK_KEY if the received ASDU was secured with the NWK key.*/
+    uint8_t security_status;    /*!< UNSECURED if the ASDU was received without any security. SECURED_NWK_KEY if the received ASDU was secured with the NWK key. */
     int lqi;                    /*!< The link quality indication delivered by the NLDE.*/
     int rx_time;                /*!< Reserved, a time indication for the received packet based on the local clock */
 } esp_zb_apsde_data_ind_t;
+
+/**
+ * @brief APSME-TRANSPORT-KEY Request Parameters
+ *
+ */
+typedef struct esp_zb_apsme_transport_key_req_s {
+    esp_zb_ieee_addr_t dst_address;             /*!< The extended 64-bit address of the destination device, if the DestinationAddress parameter is all
+                                                     zeros, this request will be broadcasted */
+    uint8_t key_type;                           /*!< Identifies the type of key material that should be transported, refer to esp_zb_apsme_key_type_t */
+    union {
+        struct {
+            uint8_t key[ESP_ZB_CCM_KEY_SIZE];   /*!< The network key */
+            esp_zb_ieee_addr_t parent_address;  /*!< Indicates the address of parent when the use_parent is TRUE */
+            uint8_t key_seq_number;             /*!< A sequence number assigned to a network key by the Trust Center and used to distinguish
+                                                     network keys for purposes of key updates and incoming frame security operations.*/
+            bool use_parent;                    /*!< Indicates if the destination device’s parent shall be used to forward the key to the
+                                                     destination device:  */
+        } nwk;                                  /*!< TransportKeyData Parameter for a Network Key */
+        struct {
+            uint8_t key[ESP_ZB_CCM_KEY_SIZE];   /*!< The application link key */
+            esp_zb_ieee_addr_t partner_address; /*!< The extended 64-bit address of the device that was also sent this link key. */
+            uint8_t initiator;                  /*!< Indicates if the destination device of this application link key requested it */
+        } app;                                  /*!< TransportKeyData Parameter for an Application Link Key */
+        struct {
+            uint8_t key[ESP_ZB_CCM_KEY_SIZE];   /*!< The Trust Center link key */
+        } tc;                                   /*!< TransportKeyData Parameter for a Trust Center Link Key */
+    } key_data;                                 /*!< TransportKeyData */
+} esp_zb_apsme_transport_key_req_t;
+
+
+/**
+ * @brief APSME-SWITCH-KEY Request Parameters
+ *
+ */
+typedef struct esp_zb_apsme_switch_key_req_s {
+    esp_zb_ieee_addr_t dst_address;     /*!< The extended 64-bit address of the device to which the switch-key command is sent. */
+    uint8_t key_seq_number;             /*!< A sequence number assigned to a network key by the Trust Center and used to distinguish network keys.*/
+} esp_zb_apsme_switch_key_req_t;
 
 /**
  * @brief APSDE data indication application callback
@@ -129,6 +177,7 @@ void esp_zb_aps_data_indication_handler_register(esp_zb_apsde_data_indication_ca
  * @param[in] req A pointer for apsde data request, @ref esp_zb_apsde_data_req_s
  * @return
  *      - ESP_OK: on success
+ *      - ESP_ERR_INVALID_ARG: invalid arguments
  *      - ESP_ERR_NO_MEM: not memory
  *      - ESP_FAIL: on failed
  */
@@ -158,6 +207,30 @@ esp_err_t esp_zb_aps_set_trust_center_address(esp_zb_ieee_addr_t address);
  * @param[out] address A 64-bit value will be assigned from the trust center address
  */
 void esp_zb_aps_get_trust_center_address(esp_zb_ieee_addr_t address);
+
+/**
+ * @brief APSME-TRANSPORT-KEY Request
+ *
+ * @param[in] req A pointer to the service parameters. See esp_zb_apsme_transport_key_req_t.
+ * @return
+ *      - ESP_OK: On success
+ *      - ESP_ERR_NO_MEM: Insufficient memory for the request
+ *      - ESP_ERR_NOT_SUPPORTED: Unsupported key or role type
+ *      - Otherwise: Failure
+ */
+esp_err_t esp_zb_apsme_transport_key_request(const esp_zb_apsme_transport_key_req_t *req);
+
+/**
+ * @brief APSME-SWITCH-KEY Request
+ *
+ * @param[in] req A pointer to the service parameters. See esp_zb_apsme_switch_key_req_t.
+ * @return
+ *      - ESP_OK: On success
+ *      - ESP_ERR_NO_MEM: Insufficient memory for the request
+ *      - ESP_ERR_NOT_SUPPORTED: Unsupported role type
+ *      - Otherwise: Failure
+ */
+esp_err_t esp_zb_apsme_switch_key_request(const esp_zb_apsme_switch_key_req_t *req);
 
 #ifdef __cplusplus
 }
