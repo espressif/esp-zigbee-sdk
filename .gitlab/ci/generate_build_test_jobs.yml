@@ -1,11 +1,14 @@
 generate_child_pipeline:
   stage: generate
+  image: ${CI_DOCKER_REGISTRY}/esp-env-${DEFAULT_BUILD_DOCKER_ENV}
   artifacts:
     paths:
       - child_pipeline_default.yml
       - child_pipeline_lts.yml
     expire_in: 3 days
     when: always
+  tags:
+    - build
   script:
     - python3 tools/ci/dynamic_pipelines/generate_child_pipeline.py -p $CI_PROJECT_DIR -t .gitlab/ci/templates.yml -i ${DEFAULT_IDF_VERSION} -d ${DEFAULT_BUILD_DOCKER_ENV}
 
