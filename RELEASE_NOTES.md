@@ -1,5 +1,20 @@
 # Espressif Zigbee SDK Release Notes
 
+## 21-Feb-2025
+1.6.4 version release of ESP-ZIGBEE-SDK is based on esp-idf v5.3.2
+
+### Features
+- Added support to trigger the ZCL general command response callback of cluster server direction 
+
+### Bug Fixes
+- Fixed the APS fragment hang issue when multiple fragment frames are scheduled before the previous fragment transaction is completed
+
+### Changes
+- Updated esp-zboss-lib to v1.6.4
+- Updated esp-zigbee-lib to v1.6.4
+- Moved platform configuration files to esp-zigbee-lib
+
+
 ## 14-Feb-2025
 1.6.3 version release of ESP-ZIGBEE-SDK is based on esp-idf v5.3.2
 
