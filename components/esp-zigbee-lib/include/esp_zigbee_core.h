@@ -10,7 +10,7 @@ extern "C" {
 #endif
 #include "esp_err.h"
 #include "zb_vendor.h"
-#include "zb_config_platform.h"
+#include "platform/esp_zigbee_platform.h"
 #include "esp_zigbee_version.h"
 #include "esp_zigbee_trace.h"
 #include "esp_zigbee_type.h"
