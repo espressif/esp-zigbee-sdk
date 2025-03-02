@@ -7,13 +7,13 @@ This test code shows touchlink initiator how to find and join network.
 
 ## Hardware Required
 
-* One development board with ESP32-H2 SoC acting as Touchlink initiator(Zigbee end deivce) (see [touchlink_switch](./))
+* One development board with ESP32-H2 SoC acting as Touchlink initiator(Zigbee end device) (see [touchlink_switch](./))
 * A USB cable for power supply and programming
 * Choose another ESP32-H2 as Touchlink target(Zigbee Router)(see [touchlink_light](../touchlink_light))
 
 ## Important operating steps
 * 1) Power on touchlink_light (Zigbee Router) and flash touchlink_light application code.
-* 2) Then wait for `5-10 seconds` and Power on touchlink_switch (Zigbee end deivce) and flash touchlink_switch application code.
+* 2) Then wait for `5-10 seconds` and Power on touchlink_switch (Zigbee end device) and flash touchlink_switch application code.
 
 ## Configure the project
 
