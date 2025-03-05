@@ -14,6 +14,7 @@
 #include "cli_cmd.h"
 #include "cmdline_parser.h"
 #include "zb_data/zcl.h"
+#include "cli_cmd_aps.h"
 
 #define TAG "cli_cmd_zcl"
 
@@ -700,61 +701,6 @@ exit:
 }
 
 /* Implementation of ``zcl <general_cmd>`` commands */
-
-typedef struct esp_zb_cli_aps_argtable_s {
-    arg_addr_t *dst_addr;
-    arg_u8_t   *dst_ep;
-    arg_u8_t   *src_ep;
-    arg_u16_t  *profile;
-    arg_u16_t  *cluster;
-} esp_zb_cli_aps_argtable_t;
-
-static void esp_zb_cli_fill_aps_argtable(esp_zb_cli_aps_argtable_t *aps)
-{
-    aps->dst_addr = arg_addrn("d", "dst-addr", "<addr:ADDR>", 0, 1, "destination address");
-    aps->dst_ep   = arg_u8n(NULL,  "dst-ep",   "<u8:EID>",    0, 1, "destination endpoint id");
-    aps->src_ep   = arg_u8n("e",   "src-ep",   "<u8:EID>",    1, 1, "source endpoint id");
-    aps->profile  = arg_u16n(NULL, "profile",  "<u16:PID>",   0, 1, "profile id of the command");
-    aps->cluster  = arg_u16n("c",  "cluster",  "<u16:CID>",   1, 1, "cluster id of the command");
-}
-
-static esp_err_t esp_zb_cli_parse_aps_dst(esp_zb_cli_aps_argtable_t *parsed_argtable, esp_zb_addr_u *dst_addr_u,
-                                          uint8_t  *dst_endpoint, esp_zb_zcl_address_mode_t *address_mode,
-                                          uint8_t  *src_endpoint, uint16_t *cluster_id, uint16_t *profile_id)
-{
-    esp_err_t ret = ESP_OK;
-    /* Fill "dst_addr", "dst_ep" and "addr_mode" */
-    if (parsed_argtable->dst_addr->count > 0) {
-        esp_zb_zcl_addr_t *dst_addr = &parsed_argtable->dst_addr->addr[0];
-        esp_zb_aps_address_mode_t address_mode_select[][2] = {
-            [ESP_ZB_ZCL_ADDR_TYPE_SHORT][0] = ESP_ZB_APS_ADDR_MODE_16_GROUP_ENDP_NOT_PRESENT,
-            [ESP_ZB_ZCL_ADDR_TYPE_IEEE][0]  = ESP_ZB_APS_ADDR_MODE_64_PRESENT_ENDP_NOT_PRESENT,
-            [ESP_ZB_ZCL_ADDR_TYPE_SHORT][1] = ESP_ZB_APS_ADDR_MODE_16_ENDP_PRESENT,
-            [ESP_ZB_ZCL_ADDR_TYPE_IEEE][1]  = ESP_ZB_APS_ADDR_MODE_64_ENDP_PRESENT,
-        };
-        /* Copy parse address */
-        memcpy(dst_addr_u, &dst_addr->u, sizeof(esp_zb_addr_u));
-        if (parsed_argtable->dst_ep->count > 0) {
-            *dst_endpoint = parsed_argtable->dst_ep->val[0];
-        }
-        *address_mode = address_mode_select[dst_addr->addr_type][parsed_argtable->dst_ep->count > 0 ? 1 : 0];
-        EXIT_ON_FALSE(*address_mode !=  ESP_ZB_APS_ADDR_MODE_64_PRESENT_ENDP_NOT_PRESENT,
-                      ESP_ERR_NOT_SUPPORTED, cli_output_line("Unsupported address mode, dst-ep is required"));
-    }
-
-    if (parsed_argtable->profile->count > 0 && profile_id) {
-        *profile_id = parsed_argtable->profile->val[0];
-    }
-    if (parsed_argtable->src_ep->count > 0 && src_endpoint) {
-        *src_endpoint = parsed_argtable->src_ep->val[0];
-    }
-    if (parsed_argtable->cluster->count > 0 && cluster_id) {
-        *cluster_id = parsed_argtable->cluster->val[0];
-    }
-
-exit:
-    return ret;
-}
 
 static esp_err_t cli_zcl_attr_cmd(esp_zb_cli_cmd_t *self, int argc, char **argv)
 {

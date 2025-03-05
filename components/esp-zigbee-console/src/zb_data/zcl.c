@@ -220,7 +220,7 @@ esp_err_t esp_zb_cluster_register(esp_zb_cluster_list_t *cluster_list, esp_zb_at
     if (ent != NULL && ent->register_fn != NULL) {
         ret = ent->register_fn(cluster_list, attr_list, role_mask);
     } else {
-        ret = ESP_ERR_NOT_SUPPORTED;
+        ret = esp_zb_cluster_list_add_custom_cluster(cluster_list, attr_list, role_mask);
     }
     return ret;
 }
