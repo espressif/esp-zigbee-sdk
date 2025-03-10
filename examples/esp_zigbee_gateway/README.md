@@ -3,7 +3,8 @@
 
 # Gateway Example
 
-This example demonstrates how to build a Zigbee Gateway device. It runs on a Wi-Fi SoC such as ESP32, ESP32-C3 and ESP32-S3, with an 802.15.4 SoC like ESP32-H2 running [ot_rcp](https://github.com/espressif/esp-idf/tree/master/examples/openthread/ot_rcp) to provide 802.15.4 radio.
+This example demonstrates how to build a Zigbee Gateway device. It runs on a Wi-Fi SoC such as ESP32, ESP32-C3 and ESP32-S3, with an 802.15.4 SoC like ESP32-H2
+running [ot_rcp](https://github.com/espressif/esp-idf/tree/master/examples/openthread/ot_rcp) to provide 802.15.4 radio.
 
 ## Hardware Platforms
 
@@ -11,8 +12,8 @@ This example demonstrates how to build a Zigbee Gateway device. It runs on a Wi-
 
 The Wi-Fi based ESP Zigbee Gateway consists of two SoCs:
 
-* An ESP32 series Wi-Fi SoC (ESP32, ESP32-C, ESP32-S, etc) loaded with ESP Zigbbe Gateway and Zigbee Stack.
-* An ESP32-H 802.15.4 SoC loaded with OpenThread RCP.
+* An ESP32 series Wi-Fi SoC (ESP32, ESP32-C, ESP32-S, etc) loaded with this example.
+* An 802.15.4 enabled SoC (e.g., ESP32-H2 or ESP32-C6) loaded with [OpenThread RCP](https://github.com/espressif/esp-idf/tree/master/examples/openthread/ot_rcp) example.
 
 #### ESP Zigbee Gateway Board
 
@@ -49,13 +50,6 @@ The following image shows an example connection between ESP32 DevKitC and ESP32-
 
 ![Zigbee_gateway](zigbee-gateway-esp32-esp32h2.jpg)
 
-## Configure the project
-
-Notes:
-- Please use the esp-idf master branch ([Commit ad3e1e3](https://github.com/espressif/esp-idf/commit/ad3e1e3daf7037e58c650c735e1f6218ee886651) or later).
-
-Before project configuration and build, make sure to set the correct chip target using `idf.py set-target` command.
-
 ## Erase the NVRAM 
 
 Before flash it to the board, it is recommended to erase NVRAM if user doesn't want to keep the previous examples or other projects stored info 
@@ -76,10 +70,9 @@ Build the project, flash it to the board, and start the monitor tool to view the
 
 (To exit the serial monitor, type ``Ctrl-]``.)
 
-## Example Output
+## Application Functions
 
-As you run the example, you will see the following log:
-
+- When the program starts, the board will attempt to read the RCP version from the remote radio via UART.
 ```
 I (550) RCP_UPDATE: RCP: using update sequence 0
 I (550) ESP_RADIO_SPINEL: spinel UART interface initialization completed
@@ -92,7 +85,12 @@ I (610) ZB_ESP_SPINEL: Radio spinel workflow register successfully
 I (610) ESP_ZB_GATEWAY: Running RCP Version: openthread-esp32/ad3e1e3daf-41ef80717; esp32h2;  2024-02-04 06:16:56 UTC
 I (620) ESP_ZB_GATEWAY: Storage RCP Version: openthread-esp32/ad3e1e3daf-41ef80717; esp32h2;  2024-02-04 06:16:56 UTC
 I (630) ESP_ZB_GATEWAY: *** MATCH VERSION! ***
-I (800) ESP_ZB_GATEWAY: ZDO signal: ZDO Config Ready (0x17), status: ESP_FAIL
+```
+
+- If `CONFIG_ZIGBEE_GW_AUTO_UPDATE_RCP` is enabled and the version does not match the stored one, the board will automatically update the RCP using the stored version.
+
+- After confirming that the remote radio is functioning properly, the board will connect to Wi-Fi as configured in menuconfig.
+```
 I (800) example_connect: Start example_connect.
 I (800) pp: pp rom version: e7ae62f
 I (810) net80211: net80211 rom version: e7ae62f
@@ -144,7 +142,10 @@ I (5490) example_common: Connected to example_netif_sta
 I (5500) example_common: - IPv4 address: 192.168.1.103,
 I (5500) example_common: - IPv6 address: fe80:0000:0000:0000:3685:18ff:fe7e:7c9c, type: ESP_IP6_ADDR_IS_LINK_LOCAL
 I (5510) wifi:Set ps type: 0, coexist: 0
+```
 
+- Finally, the board will act as the `Zigbee Gateway`, forming a network and handling commands from the network.
+```
 I (5520) ESP_ZB_GATEWAY: Zigbee stack initialized
 I (5530) ESP_ZB_GATEWAY: Device started up in  factory-reset mode
 I (5530) ESP_ZB_GATEWAY: Start network formation
@@ -154,11 +155,7 @@ I (6310) ESP_ZB_GATEWAY: Network(0x79f0) is open for 180 seconds
 I (6310) ESP_ZB_GATEWAY: Network steering started
 ```
 
-## Gateway Functions
-
- * The built esp_zigbee_gateway image will contain an updatable RCP image and can automatically update the RCP on version mismatch or RCP failure.
- * After Zigbee gateway starts up, it will read MAC ieee address and Zigbee stack version string from the ot_rcp and start working together with ot_rcp via UART communication to form a Zigbee network
- * More Gateway functionalities supporting Wi-Fi interaction will come later
+- Gateway functionalities supporting Wi-Fi interaction will be added in future updates.
 
 ## Troubleshooting
 
