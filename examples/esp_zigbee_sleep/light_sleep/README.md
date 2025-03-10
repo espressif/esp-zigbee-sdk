@@ -3,13 +3,11 @@
 
 # Sleepy End Device Example 
 
-This test code shows how to configure Zigbee sleepy end device.
+This example demonstrates how to configure a Zigbee end device in [light sleep mode](https://docs.espressif.com/projects/esp-idf/en/latest/esp32h2/api-reference/system/sleep_modes.html#id1).
 
 ## Hardware Required
-
-* One development board with ESP32-H2 SoC acting as Zigbee end-device (loaded with sleepy_end_device example)
-* A USB cable for power supply and programming
-* Choose another ESP32-H2 as Zigbee coordinator (see [HA_on_off_switch example](../../esp_zigbee_HA_sample/))
+* One 802.15.4 enabled development board (e.g., ESP32-H2 or ESP32-C6) running this example.
+* A second board running a Zigbee coordinator (see [HA_on_off_switch](../../esp_zigbee_HA_sample/HA_on_off_switch/) example)
 
 ## Configure the project
 
@@ -26,10 +24,9 @@ Build the project, flash it to the board, and start the monitor tool to view the
 
 (To exit the serial monitor, type ``Ctrl-]``.)
 
-## Example Output
+## Application Functions
 
-As you run the example, you will see the following log:
-
+- When the program starts, the board will attempt to detect an available Zigbee network every **1 second** until one is found.
 ```
 I (418) sleep: Enable automatic switching of GPIO sleep configuration
 I (425) sleep_clock: System Power, Clock and Reset sleep retention initialization
@@ -55,50 +52,41 @@ I (563) main_task: Returned from app_main()
 I (650) ESP_ZB_SLEEP: ZDO signal: ZDO Config Ready (0x17), status: ESP_FAIL
 I (651) ESP_ZB_SLEEP: Zigbee stack initialized
 I (655) ESP_ZB_SLEEP: Start network steering
-I (1679) ESP_ZB_SLEEP: Zigbee can sleep
-I (2192) ESP_ZB_SLEEP: Zigbee can sleep
-I (2386) ESP_ZB_SLEEP: Zigbee can sleep
-I (2519) ESP_ZB_SLEEP: Zigbee can sleep
-I (2736) ESP_ZB_SLEEP: Zigbee can sleep
-I (2853) ESP_ZB_SLEEP: Zigbee can sleep
-I (3014) ESP_ZB_SLEEP: Zigbee can sleep
-I (3112) ESP_ZB_SLEEP: Zigbee can sleep
-I (3238) ESP_ZB_SLEEP: Zigbee can sleep
-I (3371) ESP_ZB_SLEEP: Zigbee can sleep
-I (3557) ESP_ZB_SLEEP: Zigbee can sleep
-I (3718) ESP_ZB_SLEEP: Zigbee can sleep
-I (4083) ESP_ZB_SLEEP: Joined network successfully (Extended PAN ID: 60:55:f9:ff:fe:f7:2e:16, PAN ID: 0x6a2a, Channel:13)
+I (1608) ESP_ZB_SLEEP: Zigbee can sleep
+I (2090) ESP_ZB_SLEEP: BDB Device Start failed with status: ESP_FAIL, retrying
+I (2718) ESP_ZB_SLEEP: Zigbee can sleep
+I (3083) ESP_ZB_SLEEP: Joined network successfully (Extended PAN ID: 60:55:f9:ff:fe:f7:2e:16, PAN ID: 0x6a2a, Channel:13, Short Address: 0x3a41)
 I (4137) ESP_ZB_SLEEP: Zigbee can sleep
 I (4585) ESP_ZB_SLEEP: Zigbee can sleep
-I (5638) ESP_ZB_SLEEP: Zigbee can sleep
-I (7504) ESP_ZB_SLEEP: Zigbee can sleep
-I (8622) ESP_ZB_SLEEP: Zigbee can sleep
+```
+
+- If the board on a network, it acts as a Zigbee end device with the `Home Automation On/Off Light` function.
+
+- The board enters light sleep mode when the Zigbee stack is idle and wakes up either by an RTC timeout (approximately `ED_KEEP_ALIVE` seconds) or a GPIO interrupt.
+```
 I (9643) ESP_ZB_SLEEP: Zigbee can sleep
 I (12585) ESP_ZB_SLEEP: Zigbee can sleep
 I (12668) ESP_ZB_SLEEP: Zigbee can sleep
 I (16677) ESP_ZB_SLEEP: Zigbee can sleep
 I (20701) ESP_ZB_SLEEP: Zigbee can sleep
 I (24730) ESP_ZB_SLEEP: Zigbee can sleep
-I (24876) ESP_ZB_SLEEP: Zigbee can sleep
-I (28778) ESP_ZB_SLEEP: Zigbee can sleep
-I (32812) ESP_ZB_SLEEP: Zigbee can sleep
-I (36837) ESP_ZB_SLEEP: Zigbee can sleep
-I (40866) ESP_ZB_SLEEP: Zigbee can sleep
-I (44893) ESP_ZB_SLEEP: Zigbee can sleep
-I (48920) ESP_ZB_SLEEP: Zigbee can sleep
-I (52929) ESP_ZB_SLEEP: Zigbee can sleep
-I (56957) ESP_ZB_SLEEP: Zigbee can sleep
-I (60995) ESP_ZB_SLEEP: Received message: endpoint(10), cluster(0x6), attribute(0x0), data size(1)
-I (61048) ESP_ZB_SLEEP: Light sets to On
-I (61084) ESP_ZB_SLEEP: Zigbee can sleep
-I (61199) ESP_ZB_SLEEP: Zigbee can sleep
-I (61353) ESP_ZB_SLEEP: Zigbee can sleep
-I (61545) ESP_ZB_SLEEP: Zigbee can sleep
-I (65371) ESP_ZB_SLEEP: Zigbee can sleep
-
 ```
 
-Please note that due to the default sleep threshold of 20 milliseconds, the device may enter sleep mode frequently and print log `Zigbee can sleep`. If you want to reduce the number of sleep occurrences, you can adjust the sleep threshold using the function `esp_zb_sleep_set_threshold(uint32_t threshold_ms)`. For example, you can set the threshold to a higher value like `esp_zb_sleep_set_threshold(2000); // 2000 milliseconds` after initializing Zigbee with `esp_zb_init(&zb_nwk_cfg);`.
+- Pressing the `BOOT` button will also wake up the board.
+```
+I (41897) ESP_ZB_SLEEP: Send 'ieee_addr req' command
+I (41906) ESP_ZB_SLEEP: Zigbee can sleep
+I (42015) ESP_ZB_SLEEP: Received message: endpoint(10), cluster(0x6), attribute(0x0), data size(1)
+I (42066) ESP_ZB_SLEEP: Light sets to On
+I (42081) ESP_ZB_SLEEP: Zigbee can sleep
+I (42129) ESP_ZB_SLEEP: Zigbee can sleep
+I (42293) ESP_ZB_SLEEP: Response IEEE address: 60:55:f9:ff:fe:f7:2e:16
+I (42351) ESP_ZB_SLEEP: Zigbee can sleep
+```
+
+- With the default sleep threshold set to 20 milliseconds, the device may frequently enter sleep mode, logging `Zigbee can sleep`. To reduce the frequency of
+  sleep occurrences, adjust the sleep threshold using `esp_zb_sleep_set_threshold()`.
+
 
 During the light sleep, a typical power consumption is shown below:
 ![H2-light-sleep-power-consumption](image/ESP32H2-light-sleep-power-consumption.png)
