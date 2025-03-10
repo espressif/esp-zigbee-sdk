@@ -7,8 +7,8 @@ The examples are grouped into subdirectories by category. Each category director
 - [esp_zigbee_all_device_types_app](esp_zigbee_all_device_types_app) Zigbee all device types example in command line interface mode
 - [esp_zigbee_customized_devices](esp_zigbee_customized_devices) Zigbee fully customized attribute/cluster/endpoint for server and client devices
 - [esp_zigbee_gateway](esp_zigbee_gateway) Zigbee gateway example, runs on a Wi-Fi SoC such as ESP32, ESP32-C3 and ESP32-S3, with an 802.15.4 SoC like ESP32-H2 running [ot_rcp example](https://github.com/espressif/esp-idf/tree/master/examples/openthread/ot_rcp)
-- [esp_zigbee_greenpower] (esp_zigbee_greenpower) Zigbee Green Power examples
-- [esp_zigbee_HA_sample](esp_zigbee_HA_sample) Zigbee Home Automation examples including lighting, switch, etc
+- [esp_zigbee_greenpower](esp_zigbee_greenpower) Zigbee Green Power examples
+- [esp_zigbee_HA_sample](esp_zigbee_HA_sample) Zigbee Home Automation examples including lighting, switch, temperature sensor, thermostat, etc
 - [esp_zigbee_host](esp_zigbee_host) Zigbee Host example, runs on a Wi-Fi SoC such as ESP32, ESP32-C3 and ESP32-S3, with an 802.15.4 SoC like ESP32-H2 running [esp_zigbee_ncp](esp_zigbee_ncp)
 - [esp_zigbee_ncp](esp_zigbee_ncp) Zigbee NCP (Network Co-Processor) example
 - [esp_zigbee_ota](esp_zigbee_ota) Zigbee OTA (Over-The-Air) upgrade examples
