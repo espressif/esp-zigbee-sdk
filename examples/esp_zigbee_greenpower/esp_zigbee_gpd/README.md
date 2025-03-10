@@ -3,13 +3,12 @@
 
 # Green Power device Example 
 
-This example code shows how to configure Zigbee Green Power device and use it as on/off switch to send Zigbee Green Power frame to control Zigbee Green Power combo (proxy + sink).
+This example demonstrates how to configure Zigbee Green Power device and use it as on/off switch to send Zigbee Green Power frame to control Zigbee Green Power combo (proxy + sink).
 
 ## Hardware Required
 
-* One development board with ESP32-H2 SoC acting as Zigbee Green Power device (loaded with esp_zigbee_gpd example)
-* A USB cable for power supply and programming
-* Choose another ESP32-H2 as Zigbee Green Power Combo (see [green power combo example](../esp_zigbee_gpc/))
+* One 802.15.4 enabled development board (e.g., ESP32-H2 or ESP32-C6) running this example.
+* A second board running as Zigbee Green Power Combo (see [green power combo](../esp_zigbee_gpc/) example)
 
 ## Configure the project
 
@@ -26,31 +25,29 @@ Build the project, flash it to the board, and start the monitor tool to view the
 
 (To exit the serial monitor, type ``Ctrl-]``.)
 
-## Example Output
+## Application Application
 
-As you run the example, you will see the following log:
-
-```                                                                 
+- When the program starts, the board, acting as the `Green Power Device` with the `Green Power Switch` function.
+```
 I (342) main_task: Calling app_main()
 I (352) gpio: GPIO[9]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:2 
 I (362) phy: phy_version: 220,2, 37a29de, Dec 29 2023, 16:30:13
 I (362) phy: libbtbb version: 944f18e, Dec 29 2023, 16:30:30
 I (372) ESP_ZGP_DEVICE: ZGPD device started successfully
+```
+
+- Pressing the `BOOT` button on the board will initiate commissioning with the `Green Power Proxy`.
+```
 I (372) ESP_ZGP_DEVICE:  Wait to press the button to start commissioning ...
-I (382) main_task: Returned from app_main()
-I (19172) ESP_ZGP_DEVICE: Start commissioning
-I (19172) ESP_ZGP_DEVICE: Commissioning success
+```
+
+- If commissioning is successful, pressing the button again will broadcast an On/Off `toggle` command to the network.
+```
 I (22822) ESP_ZGP_DEVICE: ZGPD send toggle command
 I (23572) ESP_ZGP_DEVICE: ZGPD send toggle command
 I (24082) ESP_ZGP_DEVICE: ZGPD send toggle command
 I (24972) ESP_ZGP_DEVICE: ZGPD send toggle command
-
 ```
-
-## Switch Control Functions
-
-First time press button is to start commissioning. The rest of time press button is to send toggle command to Zigbee Green Power combo to trigger the light on/off.
-
 
 ## Troubleshooting
 
