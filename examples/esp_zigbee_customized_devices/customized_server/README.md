@@ -3,13 +3,12 @@
 
 # Light Bulb Example 
 
-This test code shows how to customized add / update attribute, how to customized a cluster based on the pre-defined cluster, how to update the cluster.
+This example demonstrates how to register a customized ZCL On/Off light device with the Zigbee stack.
 
 ## Hardware Required
 
-* One development board with ESP32-H2 SoC acting as Zigbee coordinator device (loaded with customized_server example)
-* A USB cable for power supply and programming
-* Choose another ESP32-H2 as Zigbee coordinator (see [customized_client](../customized_client/))
+* One 802.15.4 enabled development board (e.g., ESP32-H2 or ESP32-C6) running this example.
+* A second board running as Zigbee end device (see [customized_client](../customized_client) example)
 
 ## Configure the project
 
@@ -26,39 +25,43 @@ Build the project, flash it to the board, and start the monitor tool to view the
 
 (To exit the serial monitor, type ``Ctrl-]``.)
 
-## Example Output
+## Application Functions
 
-As you run the example, you will see the following log:
-
+- When the program starts, the board will register a `Customized` endpoint with the `On/Off Light` function and act as a Zigbee coordinator to form an open network
+  within 180 seconds.
 ```
-I (390) main_task: Calling app_main()
-I (400) gpio: GPIO[8]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 
-I (400) phy_init: phy_version 220,2dbbbe7,Sep 25 2023,20:39:25
-I (480) phy: libbtbb version: 90c587c, Sep 25 2023, 20:39:57
-I (480) ESP_HA_ON_OFF_LIGHT: ZDO signal: ZDO Config Ready (0x17), status: ESP_FAIL
-I (480) ESP_HA_ON_OFF_LIGHT: Zigbee stack initialized
-I (490) ESP_HA_ON_OFF_LIGHT: Start network formation
-I (490) main_task: Returned from app_main()
-I (1000) ESP_HA_ON_OFF_LIGHT: ZDO signal: NWK Permit Join (0x36), status: ESP_OK
-I (1000) ESP_HA_ON_OFF_LIGHT: Formed network successfully (Extended PAN ID: 60:55:f9:00:00:f6:07:b4, PAN ID: 0x9479, Channel:13)
-I (1480) ESP_HA_ON_OFF_LIGHT: ZDO signal: NWK Permit Join (0x36), status: ESP_OK
-I (1480) ESP_HA_ON_OFF_LIGHT: Network steering started
-I (9220) ESP_HA_ON_OFF_LIGHT: ZDO signal: NWK Device Associated (0x12), status: ESP_OK
-I (9720) ESP_HA_ON_OFF_LIGHT: ZDO signal: ZDO Device Update (0x30), status: ESP_OK
-I (9750) ESP_HA_ON_OFF_LIGHT: New device commissioned or rejoined (short: 0x8ceb)
-I (9910) ESP_HA_ON_OFF_LIGHT: ZDO signal: ZDO Device Authorized (0x2f), status: ESP_OK
-I (9950) ESP_HA_ON_OFF_LIGHT: ZDO signal: NWK Permit Join (0x36), status: ESP_OK
-I (10130) ESP_HA_ON_OFF_LIGHT: ZDO signal: NLME Status Indication (0x32), status: ESP_OK
-I (10390) ESP_HA_ON_OFF_LIGHT: ZDO signal: NLME Status Indication (0x32), status: ESP_OK
-I (21440) ESP_HA_ON_OFF_LIGHT: Received message: endpoint(10), cluster(0x6), attribute(0x0), data size(1)
-I (21440) ESP_HA_ON_OFF_LIGHT: Light sets to On
-I (30320) ESP_HA_ON_OFF_LIGHT: Received message: endpoint(10), cluster(0x6), attribute(0x0), data size(1)
-I (30320) ESP_HA_ON_OFF_LIGHT: Light sets to Off
+I (426) main_task: Calling app_main()
+I (446) phy: phy_version: 321,2, 632dc08, Feb 13 2025, 16:29:11
+I (446) phy: libbtbb version: 509a2a6, Feb 13 2025, 16:29:25
+I (456) main_task: Returned from app_main()
+I (586) ESP_HA_ON_OFF_LIGHT: ZDO signal: ZDO Config Ready (0x17), status: ESP_FAIL
+I (586) ESP_HA_ON_OFF_LIGHT: Initialize Zigbee stack
+W (596) rmt: channel resolution loss, real=10666666
+I (586) ESP_HA_ON_OFF_LIGHT: Deferred driver initialization successful
+I (596) ESP_HA_ON_OFF_LIGHT: Device started up in factory-reset mode
+I (606) ESP_HA_ON_OFF_LIGHT: Start network formation
+W (766) ESP_HA_ON_OFF_LIGHT: Network(0x46c5) closed, devices joining not allowed.
+I (766) ESP_HA_ON_OFF_LIGHT: Formed network successfully (Extended PAN ID: 74:4d:bd:ff:fe:63:de:c5, PAN ID: 0x46c5, Channel:13, Short Address: 0x0000)
+I (1366) ESP_HA_ON_OFF_LIGHT: Network(0x46c5) is open for 180 seconds
+I (1366) ESP_HA_ON_OFF_LIGHT: Network steering started
 ```
 
-## Light Control Functions
-
- * By toggling the switch button (BOOT) on the ESP32-H2 board loaded with the `customized_client` example, the LED on this board loaded with `customized_server` example will be on and off.
+- If a Zigbee device joins this network and sends an `On/Off` command to the board, the LED on the board will be controlled accordingly.
+```
+I (16506) ESP_HA_ON_OFF_LIGHT: Received message: endpoint(10), cluster(0x6), attribute(0x0), data size(1)
+I (16506) ESP_HA_ON_OFF_LIGHT: Light sets to On
+W (16556) ESP_HA_ON_OFF_LIGHT: Receive Zigbee action(0x1005) callback
+I (17746) ESP_HA_ON_OFF_LIGHT: Received message: endpoint(10), cluster(0x6), attribute(0x0), data size(1)
+I (17746) ESP_HA_ON_OFF_LIGHT: Light sets to Off
+W (17796) ESP_HA_ON_OFF_LIGHT: Receive Zigbee action(0x1005) callback
+I (19516) ESP_HA_ON_OFF_LIGHT: Received message: endpoint(10), cluster(0x6), attribute(0x0), data size(1)
+I (19516) ESP_HA_ON_OFF_LIGHT: Light sets to On
+W (19566) ESP_HA_ON_OFF_LIGHT: Receive Zigbee action(0x1005) callback
+I (22666) ESP_HA_ON_OFF_LIGHT: Received message: endpoint(10), cluster(0x6), attribute(0x0), data size(1)
+I (22666) ESP_HA_ON_OFF_LIGHT: Light sets to Off
+W (22716) ESP_HA_ON_OFF_LIGHT: Receive Zigbee action(0x1005) callback
+```
+- If the joined device sends a command to configure the `On/Off` attribute on the customized endpoint, the attribute will be reported based on the configuration.
 
 ## Troubleshooting
 

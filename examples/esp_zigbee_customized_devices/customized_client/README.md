@@ -3,13 +3,12 @@
 
 # Light Switch Example 
 
-This test code shows how to customized add / update attribute, add cluster and add endpoint to a device. This example also shows how to use varieties ZDO commands and ZCL commands, like binding, finding, read attribute, configure report attribute.
+This example demonstrates how to register a customized ZCL On/Off switch device with the Zigbee stack and implement the ZCL attribute reporting mechanism.
 
 ## Hardware Required
 
-* One development board with ESP32-H2 SoC acting as Zigbee end device (loaded with customized_client example)
-* A USB cable for power supply and programming
-* Choose another ESP32-H2 as Zigbee coordinator (see [customized_server](../customized_server/))
+* One 802.15.4 enabled development board (e.g., ESP32-H2 or ESP32-C6) running this example.
+* A second board running as Zigbee coordinator (see [customized_server](../customized_server/) example)
 
 ## Configure the project
 
@@ -26,50 +25,71 @@ Build the project, flash it to the board, and start the monitor tool to view the
 
 (To exit the serial monitor, type ``Ctrl-]``.)
 
-## Example Output
+## Application Functions
 
-As you run the example, you will see the following log:
-
+- When the program starts, the board will attempt to detect an available Zigbee network every **1 second** until one is found.
 ```
-I (372) main_task: Calling app_main()
-I (382) gpio: GPIO[9]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:2 
-I (382) phy_init: phy_version 220,2dbbbe7,Sep 25 2023,20:39:25
-I (442) phy: libbtbb version: 90c587c, Sep 25 2023, 20:39:57
-I (452) ESP_HA_ON_OFF_SWITCH: ZDO signal: ZDO Config Ready (0x17), status: ESP_FAIL
-I (452) main_task: Returned from app_main()
-I (4382) ESP_HA_ON_OFF_SWITCH: Joined network successfully (Extended PAN ID: 60:55:f9:00:00:f6:07:b4, PAN ID: 0x9479, Channel:13)
-I (4442) ESP_HA_ON_OFF_SWITCH: Match desc response: status(0), address(0x0), endpoint(10)
-I (4552) ESP_HA_ON_OFF_SWITCH: ZDO signal: NLME Status Indication (0x32), status: ESP_OK
-I (4602) ESP_HA_ON_OFF_SWITCH: IEEE address: 60:55:f9:00:00:f6:07:b4
-I (4662) ESP_HA_ON_OFF_SWITCH: ZDO signal: NLME Status Indication (0x32), status: ESP_OK
-I (4702) ESP_HA_ON_OFF_SWITCH: Read attribute response: status(0), cluster(0x6), attribute(0x0), type(0x10), value(0)
-I (4732) ESP_HA_ON_OFF_SWITCH: Bind response from address(0x0), endpoint(1) with status(0)
-I (4782) ESP_HA_ON_OFF_SWITCH: Configure report response: status(0), cluster(0x6), attribute(0xffff)
-I (7512) ESP_HA_ON_OFF_SWITCH: Simple desc resposne: status(0), device_id(256), app_version(0), profile_id(0x104), endpoint_ID(10)
-I (7512) ESP_HA_ON_OFF_SWITCH: Cluster ID list: 0x0
-I (7512) ESP_HA_ON_OFF_SWITCH: Cluster ID list: 0x3
-I (7522) ESP_HA_ON_OFF_SWITCH: Cluster ID list: 0x4
-I (7522) ESP_HA_ON_OFF_SWITCH: Cluster ID list: 0x5
-I (7532) ESP_HA_ON_OFF_SWITCH: Cluster ID list: 0x6
-I (7562) ESP_HA_ON_OFF_SWITCH: Active endpoint response: status(0) and endpoint count(1)
-I (7562) ESP_HA_ON_OFF_SWITCH: Endpoint ID List: 10
-I (7812) ESP_HA_ON_OFF_SWITCH: Reveived report from address(0x0) src endpoint(10) to dst endpoint(1) cluster(0x6)
-I (7812) ESP_HA_ON_OFF_SWITCH: Received report information: attribute(0x0), type(0x10), value(0)
-
-I (15862) ESP_HA_ON_OFF_SWITCH: Send 'on_off toggle' command to address(0x0) endpoint(10)
-I (15952) ESP_HA_ON_OFF_SWITCH: Reveived report from address(0x0) src endpoint(10) to dst endpoint(1) cluster(0x6)
-I (15952) ESP_HA_ON_OFF_SWITCH: Received report information: attribute(0x0), type(0x10), value(1)
-
-I (24742) ESP_HA_ON_OFF_SWITCH: Send 'on_off toggle' command to address(0x0) endpoint(10)
-I (24802) ESP_HA_ON_OFF_SWITCH: Reveived report from address(0x0) src endpoint(10) to dst endpoint(1) cluster(0x6)
-I (24802) ESP_HA_ON_OFF_SWITCH: Received report information: attribute(0x0), type(0x10), value(0)
-
+I (416) main_task: Returned from app_main()
+I (426) ESP_HA_ON_OFF_SWITCH: ZDO signal: ZDO Config Ready (0x17), status: ESP_FAIL
+I (1406) gpio: GPIO[9]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:4 
+I (1406) ESP_HA_ON_OFF_SWITCH: Deferred driver initialization successful
+I (1406) ESP_HA_ON_OFF_SWITCH: Joined network successfully (Extended PAN ID: 74:4d:bd:ff:fe:63:de:c5, PAN ID: 0x46c5, Channel:13, Short Address: 0x5cf2)
 ```
 
-## Light Control Functions
+- If the board successfully joins a Zigbee network, it acts as a Zigbee end device, registers a `Customized` endpoint with the `On/Off Switch` function,
+  and then attempts to match an `On/Off Light` device on the network.
+```
+I (1446) ESP_HA_ON_OFF_SWITCH: Match desc response: status(0), address(0x0), endpoint(10)
+```
 
- * By toggling the switch button (BOOT) on the ESP32-H2 board loaded with the `customized_client` example, the LED on this board loaded with `customized_server` example will be on and off.
+- If the matching is successful, the board will send ZDO `Active Ep`, `Simple Desc`, `IEEE Addr`, and `Read Attr` requests to collect basic information
+  about the matched remote device.
+```
+I (1446) ESP_HA_ON_OFF_SWITCH: Match desc response: status(0), address(0x0), endpoint(10)
+I (1486) ESP_HA_ON_OFF_SWITCH: Active endpoint response: status(0) and endpoint count(2)
+I (1486) ESP_HA_ON_OFF_SWITCH: Endpoint ID List: 10
+I (1486) ESP_HA_ON_OFF_SWITCH: Endpoint ID List: 242
+I (1506) ESP_HA_ON_OFF_SWITCH: Simple desc response: status(0), device_id(256), app_version(0), profile_id(0x104), endpoint_ID(10)
+I (1506) ESP_HA_ON_OFF_SWITCH: Cluster ID list: 0x0
+I (1516) ESP_HA_ON_OFF_SWITCH: Cluster ID list: 0x3
+I (1516) ESP_HA_ON_OFF_SWITCH: Cluster ID list: 0x4
+I (1526) ESP_HA_ON_OFF_SWITCH: Cluster ID list: 0x5
+I (1526) ESP_HA_ON_OFF_SWITCH: Cluster ID list: 0x6
+I (1546) ESP_HA_ON_OFF_SWITCH: IEEE address: 74:4d:bd:ff:fe:63:de:c5
+I (1556) ESP_HA_ON_OFF_SWITCH: Read attribute response: status(0), cluster(0x6), attribute(0x0), type(0x10), value(0)
+```
 
+- After this, the board will send `Bind` and `Config Report` requests to the matched `On/Off Light` device, enabling the light to report its `On/Off`
+  attribute whenever it changes or when the maximum reporting interval is reached.
+```
+I (1596) ESP_HA_ON_OFF_SWITCH: Bind response from address(0x0), endpoint(1) with status(0)
+I (1626) ESP_HA_ON_OFF_SWITCH: Configure report response: status(0), cluster(0x6), attribute(0xffff)
+I (1636) ESP_HA_ON_OFF_SWITCH: Received report from address(0x0) src endpoint(10) to dst endpoint(1) cluster(0x6)
+I (1636) ESP_HA_ON_OFF_SWITCH: Received report information: attribute(0x0), type(0x10), value(0)
+```
+
+- Pressing the `BOOT` button on the board will send an `On/Off toggle` command to control the remote `On/Off Light` device.
+```
+I (14686) ESP_HA_ON_OFF_SWITCH: Send 'on_off toggle' command to address(0x0) endpoint(10)
+W (14716) ESP_HA_ON_OFF_SWITCH: Receive Zigbee action(0x1005) callback
+I (14716) ESP_HA_ON_OFF_SWITCH: Received report from address(0x0) src endpoint(10) to dst endpoint(1) cluster(0x6)
+I (14716) ESP_HA_ON_OFF_SWITCH: Received report information: attribute(0x0), type(0x10), value(1)
+
+I (15926) ESP_HA_ON_OFF_SWITCH: Send 'on_off toggle' command to address(0x0) endpoint(10)
+W (15956) ESP_HA_ON_OFF_SWITCH: Receive Zigbee action(0x1005) callback
+I (15956) ESP_HA_ON_OFF_SWITCH: Received report from address(0x0) src endpoint(10) to dst endpoint(1) cluster(0x6)
+I (15956) ESP_HA_ON_OFF_SWITCH: Received report information: attribute(0x0), type(0x10), value(0)
+
+I (17696) ESP_HA_ON_OFF_SWITCH: Send 'on_off toggle' command to address(0x0) endpoint(10)
+W (17726) ESP_HA_ON_OFF_SWITCH: Receive Zigbee action(0x1005) callback
+I (17726) ESP_HA_ON_OFF_SWITCH: Received report from address(0x0) src endpoint(10) to dst endpoint(1) cluster(0x6)
+I (17726) ESP_HA_ON_OFF_SWITCH: Received report information: attribute(0x0), type(0x10), value(1)
+
+I (20846) ESP_HA_ON_OFF_SWITCH: Send 'on_off toggle' command to address(0x0) endpoint(10)
+W (20876) ESP_HA_ON_OFF_SWITCH: Receive Zigbee action(0x1005) callback
+I (20876) ESP_HA_ON_OFF_SWITCH: Received report from address(0x0) src endpoint(10) to dst endpoint(1) cluster(0x6)
+I (20876) ESP_HA_ON_OFF_SWITCH: Received report information: attribute(0x0), type(0x10), value(0)
+```
 
 ## Troubleshooting
 
