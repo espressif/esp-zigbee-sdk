@@ -8,7 +8,7 @@ This example demonstrates how to configure a Home Automation color dimmable ligh
 ## Hardware Required
 
 * One 802.15.4 enabled development board (e.g., ESP32-H2 or ESP32-C6) running this example.
-* A second board running as Zigbee coordinator (see [HA_color_dimmable_switch](../HA_color_dimmable_switch/) example)
+* A second board running as a Zigbee coordinator (see [HA_color_dimmable_switch](../HA_color_dimmable_switch/) example)
 
 ## Configure the project
 
