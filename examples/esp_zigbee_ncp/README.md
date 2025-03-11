@@ -3,13 +3,13 @@
 
 # Ncp Example 
 
-This example code shows how to configure Zigbee ncp (Network Co-Processor) device.
+This example demonstrates how to configure a Zigbee Network Co-Processor (NCP) device.
 
 ## Hardware Required
 
 * The example is a single SoC solution, it doesn't need a Wi-Fi SoC to run the example. We will provide a esp_zigbee_host example later as a reference.
-* A USB cable for power supply, output log and programming.
-* Choose ESP32 or ESP32-S3 as host and **Flash** Zigbee ncp on the ESP32-H2 DevKitC .
+* One 802.15.4 enabled development board (e.g., ESP32-H2 or ESP32-C6) running this example acts as a Zigbee NCP.
+* A second board (e.g., ESP32 or ESP32-S3 ) running as as host (see [esp-zigbee-host](../esp_zigbee_host/) example).
 * Connect the two SoCs via UART, below is an example setup with ESP32-DevKitC and ESP32-H2-DevKitC:
 
 ESP32 pin     | ESP32-H2 pin
@@ -33,13 +33,9 @@ using `idf.py -p PORT erase-flash`
 
 Build the project, flash it to the board by running `idf.py -p <PORT> build flash`
 
-## Ncp Functions
+## Application Functions
 
- * After ncp starts up, it will start working together with host via UART communication
-
-## Example Output
-
-As you run the example, you will see the following log:
+- When the program starts, the board will start working together with host via UART communication
 
 ```
 I (215) cpu_start: Unicore app
