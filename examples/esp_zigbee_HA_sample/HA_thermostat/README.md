@@ -3,13 +3,12 @@
 
 # Thermostat Example
 
-This test code shows how to configure Zigbee Coordinator and use it as an HA thermostat.
+This example demonstrates how to configure a Home Automation thermostat on a Zigbee Coordinator.
 
 ## Hardware Required
 
-* One development board with ESP32-H2 SoC acting as Zigbee Coordinator (loaded with HA_thermostat)
-* A USB cable for power supply and programming
-* Choose another ESP32-H2 as Zigbee end-device (see [HA_temperature_sensor](../HA_temperature_sensor/))
+* One 802.15.4 enabled development board (e.g., ESP32-H2 or ESP32-C6) running this example.
+* A second board running as a Zigbee end-device (see [HA_temperature_sensor](../HA_temperature_sensor) example)
 
 ## Configure the project
 
@@ -26,10 +25,9 @@ Build the project, flash it to the board, and start the monitor tool to view the
 
 (To exit the serial monitor, type ``Ctrl-]``.)
 
-## Example Output
+## Application Functions
 
-As you run the example, you will see the following log:
-
+- When the program starts, the board, acting as a Zigbee Coordinator with the `Home Automation Thermostat` function, will form an open network within 180 seconds.
 ```
 I (497) main_task: Returned from app_main()
 I (627) ESP_ZB_THERMOSTAT: ZDO signal: ZDO Config Ready (0x17), status: ESP_FAIL
@@ -40,6 +38,11 @@ W (797) ESP_ZB_THERMOSTAT: Network(0xbcc7) closed, devices joining not allowed.
 I (797) ESP_ZB_THERMOSTAT: Formed network successfully (Extended PAN ID: 74:4d:bd:ff:fe:60:2d:57, PAN ID: 0xbcc7, Channel:13, Short Address: 0x0000)
 I (1397) ESP_ZB_THERMOSTAT: Network(0xbcc7) is open for 180 seconds
 I (1397) ESP_ZB_THERMOSTAT: Network steering started
+```
+
+- If a Zigbee device with the `Home Automation Temperature Sensor` function joins the network, the board read its manufacturer code and model then add it to
+  the binding table.
+```
 I (4637) ESP_ZB_THERMOSTAT: ZDO signal: NWK Device Associated (0x12), status: ESP_OK
 I (5157) ESP_ZB_THERMOSTAT: ZDO signal: ZDO Device Update (0x30), status: ESP_OK
 I (5187) ESP_ZB_THERMOSTAT: New device commissioned or rejoined (short: 0xe6d0)
@@ -58,6 +61,12 @@ I (8387) ESP_ZB_THERMOSTAT: Read attribute response: status(0), cluster(0x0), at
 I (8397) ESP_ZB_THERMOSTAT: Peer Model is "esp32h2"
 I (10317) ESP_ZB_THERMOSTAT: ZDO signal: ZDO Device Authorized (0x2f), status: ESP_OK
 I (10347) ESP_ZB_THERMOSTAT: Network(0xbcc7) is open for 180 seconds
+```
+
+- By clicking the `BOOT` button on this board, it will read the temperature value, temperature measurement range, and temperature tolerance from the
+  remote board. Additionally, it will configure the remote temperature sensor to report the measured temperature value every 10 seconds or whenever
+  there is a 2-degree change.
+```
 I (11207) ESP_ZB_THERMOSTAT: Received report from address(0xe6d0) src endpoint(10) to dst endpoint(1) cluster(0x402)
 I (11207) ESP_ZB_THERMOSTAT: Measured Value is 25.00 degrees Celsius
 I (12267) ESP_ZB_THERMOSTAT: Received report from address(0xe6d0) src endpoint(10) to dst endpoint(1) cluster(0x402)
@@ -84,16 +93,6 @@ I (23087) ESP_ZB_THERMOSTAT: Read attribute response: status(134), cluster(0x402
 I (33077) ESP_ZB_THERMOSTAT: Received report from address(0xe6d0) src endpoint(10) to dst endpoint(1) cluster(0x402)
 I (33077) ESP_ZB_THERMOSTAT: Measured Value is 25.00 degrees Celsius
 ```
-
-## Thermostat Functions
-
-Note:
- * This board means the board (e.g. ESP32-H2) loaded with `HA_thermostat` example.
- * The remote board means the board (e.g. ESP32-H2) loaded with `HA_temperature_sensor` example.
-
-Functions:
- * By clicking the switch button (BOOT) on this board, this board will read temperature value, temperature measurement range and temperature tolerance from the remote board. Also, this board will configure the remote board to report the measured temperature value every 10 seconds or every 2 degree changes.
-
 
 ## Troubleshooting
 
