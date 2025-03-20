@@ -15,6 +15,7 @@
 #include "cmdline_parser.h"
 #include "zb_data/zcl.h"
 #include "cli_cmd_aps.h"
+#include "zb_data/zb_custom_clusters/custom_common.h"
 
 #define TAG "cli_cmd_zcl"
 
@@ -116,7 +117,7 @@ static esp_err_t zcl_default_resp_handler(esp_zb_zcl_cmd_default_resp_message_t 
 {
     cli_output_callback_info("Default response", &message->info);
 
-    ESP_LOGI(TAG, "- command(0x%02x), status(%d)", message->resp_to_cmd, message->status_code);
+    ESP_LOGI(TAG, "- command(0x%02x), status(0x%x)", message->resp_to_cmd, message->status_code);
 
     return ESP_OK;
 }
@@ -148,6 +149,11 @@ esp_err_t cli_zcl_core_action_handler(esp_zb_core_action_callback_id_t callback_
             break;
         case ESP_ZB_CORE_CMD_DEFAULT_RESP_CB_ID:
             ret = zcl_default_resp_handler((esp_zb_zcl_cmd_default_resp_message_t *)message);
+            break;
+        case ESP_ZB_CORE_CMD_CUSTOM_CLUSTER_RESP_CB_ID:
+        case ESP_ZB_CORE_CMD_CUSTOM_CLUSTER_REQ_CB_ID:
+            ret = esp_zb_custom_clusters_command_handler((esp_zb_zcl_custom_cluster_command_message_t *)message);
+            break;
         default:
             break;
     }
@@ -808,7 +814,7 @@ static esp_err_t cli_zcl_attr_cmd(esp_zb_cli_cmd_t *self, int argc, char **argv)
         ret = esp_zb_zcl_report_attr_cmd_req(&req_params.report_req);
     } else if (!strcmp(cmd, "config_rp")) {
         int n = argtable.attr_id->count;
-        bool report_change = 0;
+        uint64_t report_change = 0;
         esp_zb_zcl_config_report_record_t rprt_cfg_records[n];
         EXIT_ON_FALSE(n == argtable.attr_type->count, ESP_ERR_INVALID_ARG,
                       cli_output("%s: unbalanced options of --attr and --type\n", cmd));

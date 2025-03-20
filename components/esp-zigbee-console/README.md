@@ -42,16 +42,18 @@ For specific type of argument, correct format should be provided so that it can 
 ## ESP-Zigbee-Console Command List
 
 - [`address`](#address): Get/Set the (extended) address of the node.
-- ['aps'](#aps): Zigbee Application Support management.
+- [`aps`](#aps): Zigbee Application Support management.
 - [`bdb_comm`](#bdb_comm): Perform BDB Commissioning.
 - [`channel`](#channel): Get/Set 802.15.4 channels for network
 - [`dm`](#dm): Zigbee Cluster Library data model management.
 - [`factoryreset`](#factoryreset): Reset the device to factory new.
 - [`ic`](#ic): Install code configuration.
+- [`iperf`](#iperf): Iperf over Zigbee.
 - [`macfilter`](#macfilter): Zigbee stack mac filter management.
 - [`neighbor`](#neighbor): Neighbor information.
 - [`network`](#network): Network configuration.
 - [`panid`](#panid): Get/Set the (extended) PAN ID of the node.
+- [`ping`](#ping): Ping over Zigbee.
 - [`radio`](#radio): Enable/Disable the radio.
 - [`reboot`](#reboot): Reboot the device.
 - [`role`](#role): Get/Set the Zigbee role of a device.
@@ -63,6 +65,7 @@ For specific type of argument, correct format should be provided so that it can 
 - [`zdo`](#zdo): Zigbee Device Object management.
 - [`zgp`](#zgp): Zigbee Green Power Profile management.
 - [`zha`](#zha): Zigbee Home Automation Profile.
+
 
 ## ESP-Zigbee-Console Command Details
 
@@ -417,6 +420,34 @@ I (837619) : 0x4080fa60   c3 b5                                             |..|
 ```
 
 
+### iperf
+Iperf over Zigbee
+
+> **Note:** ping_iperf_test cluster (0xff01) should be registered with the stack first.
+
+#### `iperf start -d <addr:ADDR> --dst-ep=<u8:EID> -e <u8:EID> -t <u16:TIME> [-i <u16:TIME>] -l <u16:DATA>`
+- `-d, --dst-addr=<addr:ADDR>`: Destination address.
+- `--dst-ep=<u8:EID>`: Destination endpoint id.
+- `-e, --src-ep=<u8:EID>`: Source endpoint id.
+- `-t, --iperf-time=<u16:TIME>`: Iperf duration time in second.
+- `-i, --iperf-interval=<u16:TIME>`: Iperf interval in millisecond, default: 20.
+- `-l, --payload-len=<u16:DATA>`: The payload length in byte of the iperf command.
+
+```bash
+esp> iperf start -e 2 --dst-ep 3 -d 0x2cc4 -t 3 -i 50 -l 100
+I (379614) ping_iperf_test: throughput: 10.000 kbps, count: 1
+```
+
+#### `iperf result [-r <sc:C|S>] -e <u8:EID>`
+- `-r, --role=<sc:C|S>`: The role of the iperf cluster, default: S
+- `-e, --src-ep=<u8:EID>`: Source endpoint id
+
+```bash
+esp> iperf result -r C -e 2
+iperf test throughput: 13 kbps
+```
+
+
 ### macfilter
 Zigbee stack mac filter management.
 
@@ -594,6 +625,27 @@ esp> panid 0xabcd
 
 ```bash
 esp> panid -x 0x0123456789abcdef
+```
+
+
+### ping
+Ping over Zigbee
+
+> **Note:** ping_iperf_test cluster (0xff01) should be registered with the stack first.
+
+#### `ping -d <addr:ADDR> --dst-ep=<u8:EID> -e <u8:EID> -l <u16:DATA>`
+- `-d, --dst-addr=<addr:ADDR>`: Destination address.
+- `--dst-ep=<u8:EID>`: Destination endpoint id.
+- `-e, --src-ep=<u8:EID>`: Source endpoint id.
+- `-l, --payload-len=<u16:DATA>`: Payload length in byte of the ping command.
+
+```bash
+esp> ping -e 2 --dst-ep 2 -d 0x735b -l 10
+I (102904) ping_iperf_test: Request to ping address: 0x735b
+I (102904) ping_iperf_test: 0x408175bc   01 01 01 01 01 01 01 01  01 01                    |..........|
+I (102954) esp-zigbee-console: Receive Zigbee action(0x1040) callback
+I (102954) ping_iperf_test: RECEIVE PING RESPONSE from 0x735b with 10 bytes, rtt: 56 ms
+I (102964) ping_iperf_test: 0x4081c746   01 01 01 01 01 01 01 01  01 01                    |..........|
 ```
 
 
