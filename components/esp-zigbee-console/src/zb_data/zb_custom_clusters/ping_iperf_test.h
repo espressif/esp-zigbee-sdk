@@ -26,6 +26,7 @@ typedef struct esp_zb_ping_req_info {
     uint8_t dst_ep;
     uint8_t src_ep;
     uint16_t payload_len;
+    uint32_t timeout;
 } esp_zb_ping_req_info_t;
 
 typedef struct esp_zb_ipref_req_info {
@@ -59,7 +60,7 @@ esp_err_t esp_zb_ping_iperf_test_cluster_add_attr(esp_zb_attribute_list_t *attr_
 
 esp_err_t esp_zb_ping_iperf_test_cluster_iperf_req(const esp_zb_iperf_req_info_t *info);
 
-esp_err_t esp_zb_ping_iperf_test_cluster_ping_req(const esp_zb_ping_req_info_t *info);
+esp_err_t esp_zb_ping_iperf_test_cluster_ping_req(const esp_zb_ping_req_info_t *info, void *ping_finish_cb);
 
 esp_err_t esp_zb_ping_iperf_set_iperf_info(const esp_zb_iperf_req_info_t *info);
 

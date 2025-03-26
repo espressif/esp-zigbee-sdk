@@ -638,14 +638,14 @@ Ping over Zigbee
 - `--dst-ep=<u8:EID>`: Destination endpoint id.
 - `-e, --src-ep=<u8:EID>`: Source endpoint id.
 - `-l, --payload-len=<u16:DATA>`: Payload length in byte of the ping command.
+- `-t, --timeout=<u32:DATA>`: Time to wait for response in millisecond, default: 2000
 
 ```bash
-esp> ping -e 2 --dst-ep 2 -d 0x735b -l 10
-I (102904) ping_iperf_test: Request to ping address: 0x735b
-I (102904) ping_iperf_test: 0x408175bc   01 01 01 01 01 01 01 01  01 01                    |..........|
-I (102954) esp-zigbee-console: Receive Zigbee action(0x1040) callback
-I (102954) ping_iperf_test: RECEIVE PING RESPONSE from 0x735b with 10 bytes, rtt: 56 ms
-I (102964) ping_iperf_test: 0x4081c746   01 01 01 01 01 01 01 01  01 01                    |..........|
+esp> ping -e 2 --dst-ep 2 -d 0x5da9 -l 10
+I (109594) ping_iperf_test: Request to ping address: 0x5da9
+I (109654) ping_iperf_test: Ping request success
+I (109664) esp-zigbee-console: Receive Zigbee action(0x1040) callback
+I (109664) ping_iperf_test: RECEIVE PING RESPONSE from 0x5da9 with 10 bytes, rtt: 69 ms
 ```
 
 
