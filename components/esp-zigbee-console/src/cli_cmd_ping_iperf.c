@@ -14,7 +14,11 @@
 
 #define TAG "cli_cmd_ping_iperf"
 
-static void cli_ping_finish_callback(void) {
+static void cli_ping_finish_callback(esp_err_t result) {
+    esp_zb_console_notify_result(result);
+}
+
+static void cli_iperf_finish_callback(void) {
     esp_zb_console_notify_result(ESP_OK);
 }
 
@@ -36,7 +40,7 @@ static esp_err_t cli_ping(esp_zb_cli_cmd_t *self, int argc, char **argv)
         .end = arg_end(2),
     };
 
-    esp_err_t ret = ESP_ERR_NOT_FINISHED;;
+    esp_err_t ret = ESP_ERR_NOT_FINISHED;
 
     /* Parse command line arguments */
     EXIT_ON_FALSE(argc > 1, ESP_OK, arg_print_help((void**)&argtable, argv[0]));
@@ -53,8 +57,7 @@ static esp_err_t cli_ping(esp_zb_cli_cmd_t *self, int argc, char **argv)
     if (argtable.timeout->count > 0) {
         ping_info.timeout = argtable.timeout->val[0];
     }
-
-    ret = esp_zb_ping_iperf_test_cluster_ping_req(&ping_info, cli_ping_finish_callback);
+    EXIT_ON_ERROR(esp_zb_ping_iperf_test_cluster_ping_req(&ping_info, cli_ping_finish_callback));
     
 exit:
     ESP_ZB_CLI_FREE_ARGSTRUCT(&argtable);
@@ -81,7 +84,7 @@ static esp_err_t cli_iperf_start(esp_zb_cli_cmd_t *self, int argc, char **argv)
         .end = arg_end(2),
     };
 
-    esp_err_t ret = ESP_OK;
+    esp_err_t ret = ESP_ERR_NOT_FINISHED;
 
     uint16_t iperf_interval = 20;
 
@@ -103,8 +106,7 @@ static esp_err_t cli_iperf_start(esp_zb_cli_cmd_t *self, int argc, char **argv)
         .src_endpoint   = argtable.src_ep->val[0],
     };
     EXIT_ON_ERROR(esp_zb_ping_iperf_set_iperf_info(&iperf_req_info));
-
-    ret = esp_zb_ping_iperf_test_cluster_iperf_req(&iperf_req_info);
+    EXIT_ON_ERROR(esp_zb_ping_iperf_test_cluster_iperf_req(&iperf_req_info, cli_iperf_finish_callback));
 
 exit:
     ESP_ZB_CLI_FREE_ARGSTRUCT(&argtable);
