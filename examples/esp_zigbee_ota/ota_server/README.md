@@ -3,13 +3,12 @@
 
 # OTA Upgrade Example 
 
-This example code shows how to add OTA server parameter, add OTA server cluster and add endpoint to a device as well as performing an OTA process.
+This example demonstrates how to perform an OTA process from Zigbee OTA upgrade server side.
 
 ## Hardware Required
 
-* One development board with ESP32-H2 SoC acting as Zigbee coordinator device (loaded with ota_server example)
-* A USB cable for power supply and programming
-* Choose another ESP32-H2 as Zigbee end device (loaded with ota_client example), (see [ota_client](../ota_client/))
+* One 802.15.4 enabled development board (e.g., ESP32-H2 or ESP32-C6) running this example.
+* A second board running as a Zigbee end device (see [ota_client](../ota_client/) example)
 
 ## Configure the project
 
@@ -26,10 +25,9 @@ Build the project, flash it to the board, and start the monitor tool to view the
 
 (To exit the serial monitor, type ``Ctrl-]``.)
 
-## Example Output
+## Application Function
 
-As you run the example, you will see the following log:
-
+- When the program starts, the board, acting as the Zigbee Coordinator with the `OTA Upgrade Server` function and forms an open Zigbee network within 180 seconds.
 ```
 I (616) main_task: Started on CPU0
 I (626) main_task: Calling app_main()
@@ -46,12 +44,19 @@ W (926) ESP_OTA_SERVER: Network(0x0841) closed, devices joining not allowed.
 I (926) ESP_OTA_SERVER: Formed network successfully (Extended PAN ID: 48:31:b7:ff:fe:c0:2b:6b, PAN ID: 0x0841, Channel:13, Short Address: 0x0000)
 I (1536) ESP_OTA_SERVER: Network(0x0841) is open for 180 seconds
 I (1536) ESP_OTA_SERVER: Network steering started
+```
+
+- If a device joins the network created by the board, an `Image Notify` request will be broadcasted to the network.
+```
 I (5136) ESP_OTA_SERVER: ZDO signal: NWK Device Associated (0x12), status: ESP_OK
 I (5146) ESP_OTA_SERVER: ZDO signal: ZDO Device Update (0x30), status: ESP_OK
 I (5176) ESP_OTA_SERVER: New device commissioned or rejoined (short: 0x43a7)
 I (5176) ESP_OTA_SERVER: Notify OTA upgrade
 I (5286) ESP_OTA_SERVER: ZDO signal: ZDO Device Authorized (0x2f), status: ESP_OK
-I (5316) ESP_OTA_SERVER: Network(0x0841) is open for 180 seconds
+```
+
+- If a `Query Next Image` request is received by the board, the OTA upgrade process will begin, provided that the OTA version matches.
+```
 I (5846) ESP_OTA_SERVER: OTA upgrade server query image
 I (5846) ESP_OTA_SERVER: OTA client address: 0x43a7
 I (5846) ESP_OTA_SERVER: OTA version: 0x1010100, image type: 0x1011, manufacturer code: 1001, 
@@ -65,36 +70,10 @@ I (7246) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progre
 I (7496) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [1059/618486]
 I (7756) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [1282/618486]
 I (8006) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [1505/618486]
-I (8256) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [1728/618486]
-I (8506) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [1951/618486]
-I (8756) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [2174/618486]
-I (9006) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [2397/618486]
-I (9256) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [2620/618486]
-I (9506) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [2843/618486]
-I (9756) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [3066/618486]
-I (10006) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [3289/618486]
-I (10256) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [3512/618486]
-I (10516) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [3735/618486]
-I (10766) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [3958/618486]
-I (11016) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [4181/618486]
-I (11266) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [4404/618486]
-I (11526) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [4627/618486]
-...
-I (699346) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [614086/618486]
-I (699606) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [614309/618486]
-I (699856) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [614532/618486]
-I (700106) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [614755/618486]
-I (700356) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [614978/618486]
-I (700616) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [615201/618486]
-I (700866) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [615424/618486]
-I (701116) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [615647/618486]
-I (701366) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [615870/618486]
-I (701616) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [616093/618486]
-I (701866) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [616316/618486]
-I (702116) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [616539/618486]
-I (702366) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [616762/618486]
-I (702616) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [616985/618486]
-I (702866) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [617208/618486]
+```
+
+- After the OTA upgrade is completed, the board will finalize the OTA process.
+```
 I (703116) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [617431/618486]
 I (703376) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [617654/618486]
 I (703626) ESP_OTA_SERVER: -- OTA Server transmits data from 0x0 to 0x43a7: progress [617877/618486]
@@ -106,16 +85,14 @@ I (704436) ESP_OTA_SERVER: OTA version: 0x1010101, image type: 0x1011, server st
 I (704446) ESP_OTA_SERVER: OTA upgrade time: 0x1234a
 ```
 
-Note: The example also supports the user pressing the `boot` button to broadcast the `IMAGE_NOTIFY` command to the network.
+- This board can initiate an `Image Notify` request again when the `BOOT` button on the board is pressed.
 
-## OTA Upgrade Functions
+- The [OTA file](main/ota_file.bin) in this example is built using the [image_builder_tool](../../../tools/image_builder_tool/image_builder_tool.py), which generates a standard OTA image format.
 
- *  After server starts, server send OTA image notify to client. Then client send the query image request to server.
- *  On receipt of the query image request, server initializes by loading the client that holds the three field values (manufacturer code, image type and new file version). If the client values matches with server values, server send response back to client. Otherwise, it shall discard the command and no further processing shall continue.
- *  Following diagram explains the OTA upgrade process in detail:
+
+## OTA Upgrade Message Diagram 
+
  ![Zigbee_ota](../../../docs/_static/zigbee-ota-upgrade-process.png)
- * There will be offset time of 5 seconds, calculated by the difference between upgrade time and current time and use it as upgrade delay.
- * ota_file.bin is upgrade bin file for client side to upgrade. Server gets the upgrade bin file (ota_file.bin) and transmit it through OTA process. After OTA finish, the client receive the upgrade bin file and trigger restart. For details see the [esp_ota_client](../ota_client/README.md).
 
 ## Troubleshooting
 

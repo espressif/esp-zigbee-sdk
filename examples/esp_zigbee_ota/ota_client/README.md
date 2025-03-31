@@ -3,13 +3,12 @@
 
 # OTA Upgrade Example 
 
-This example code shows how to add OTA client attribute and parameter, add OTA cluster and add endpoint to a device. It demonstrates the whole OTA process from client side.
+This example demonstrates the whole OTA process from Zigbee OTA upgrade client side.
 
 ## Hardware Required
 
-* One development board with ESP32-H2 SoC acting as Zigbee end device (loaded with ota_client example)
-* A USB cable for power supply and programming
-* Choose another ESP32-H2 as Zigbee coordinator (loaded with ota_server example), see [ota_server](../ota_server/))
+* One 802.15.4 enabled development board (e.g., ESP32-H2 or ESP32-C6) running this example.
+* A second board running a Zigbee coordinator with OTA file (see [ota_server](../ota_server/) example)
 
 ## Configure the project
 
@@ -26,10 +25,9 @@ Build the project, flash it to the board, and start the monitor tool to view the
 
 (To exit the serial monitor, type ``Ctrl-]``.)
 
-## Example Output
+## Application Functions
 
-As you run the example, you will see the following log:
-
+- When the program starts, the board will attempt to detect an available Zigbee network every **1 second** until one is found.
 ```
 I (414) main_task: Started on CPU0
 I (424) main_task: Calling app_main()
@@ -44,8 +42,18 @@ I (524) ESP_OTA_CLIENT: Deferred driver initialization successful
 I (544) ESP_OTA_CLIENT: Device started up in factory-reset mode
 I (544) ESP_OTA_CLIENT: Start network steering
 I (25254) ESP_OTA_CLIENT: Joined network successfully (Extended PAN ID: 48:31:b7:ff:fe:c0:2b:6b, PAN ID: 0x0841, Channel:13, Short Address: 0x43a7)
+```
+
+- If the board is on a network, it acts as the Zigbee end device with the `OTA Upgrade Client` function.
+
+- If an `Image Notify` request from the network is received by the board, a `Query Next Image` request will be sent to query the OTA image information.
+```
 I (25824) ESP_OTA_CLIENT: Queried OTA image from address: 0x0000, endpoint: 5
 I (25824) ESP_OTA_CLIENT: Image version: 0x1010101, manufacturer code: 0x1001, image size: 618542
+```
+
+- If the image is available, the OTA upgrade process will be initiated.
+```
 I (25824) ESP_OTA_CLIENT: Approving OTA image upgrade
 I (25834) ESP_OTA_CLIENT: -- OTA upgrade start
 I (26494) ESP_OTA_CLIENT: -- OTA Client receives data: progress [167/618486]
@@ -56,29 +64,11 @@ I (27494) ESP_OTA_CLIENT: -- OTA Client receives data: progress [1059/618486]
 I (27744) ESP_OTA_CLIENT: -- OTA Client receives data: progress [1282/618486]
 I (27994) ESP_OTA_CLIENT: -- OTA Client receives data: progress [1505/618486]
 I (28244) ESP_OTA_CLIENT: -- OTA Client receives data: progress [1728/618486]
-I (28494) ESP_OTA_CLIENT: -- OTA Client receives data: progress [1951/618486]
-I (28744) ESP_OTA_CLIENT: -- OTA Client receives data: progress [2174/618486]
-I (28994) ESP_OTA_CLIENT: -- OTA Client receives data: progress [2397/618486]
-I (29244) ESP_OTA_CLIENT: -- OTA Client receives data: progress [2620/618486]
-I (29494) ESP_OTA_CLIENT: -- OTA Client receives data: progress [2843/618486]
-I (29744) ESP_OTA_CLIENT: -- OTA Client receives data: progress [3066/618486]
-I (29994) ESP_OTA_CLIENT: -- OTA Client receives data: progress [3289/618486]
-I (30254) ESP_OTA_CLIENT: -- OTA Client receives data: progress [3512/618486]
-...
-I (720604) ESP_OTA_CLIENT: -- OTA Client receives data: progress [615201/618486]
-I (720854) ESP_OTA_CLIENT: -- OTA Client receives data: progress [615424/618486]
-I (721104) ESP_OTA_CLIENT: -- OTA Client receives data: progress [615647/618486]
-I (721354) ESP_OTA_CLIENT: -- OTA Client receives data: progress [615870/618486]
-I (721604) ESP_OTA_CLIENT: -- OTA Client receives data: progress [616093/618486]
-I (721854) ESP_OTA_CLIENT: -- OTA Client receives data: progress [616316/618486]
-I (722104) ESP_OTA_CLIENT: -- OTA Client receives data: progress [616539/618486]
-I (722354) ESP_OTA_CLIENT: -- OTA Client receives data: progress [616762/618486]
-I (722604) ESP_OTA_CLIENT: -- OTA Client receives data: progress [616985/618486]
-I (722854) ESP_OTA_CLIENT: -- OTA Client receives data: progress [617208/618486]
-I (723114) ESP_OTA_CLIENT: -- OTA Client receives data: progress [617431/618486]
-I (723364) ESP_OTA_CLIENT: -- OTA Client receives data: progress [617654/618486]
-I (723614) ESP_OTA_CLIENT: -- OTA Client receives data: progress [617877/618486]
-I (723864) ESP_OTA_CLIENT: -- OTA Client receives data: progress [618100/618486]
+```
+
+- After the OTA image is successfully transmitted, the board will reboot with the upgraded image.
+
+```
 I (724124) ESP_OTA_CLIENT: -- OTA Client receives data: progress [618323/618486]
 I (724374) ESP_OTA_CLIENT: -- OTA Client receives data: progress [618486/618486]
 I (724374) ESP_OTA_CLIENT: -- OTA upgrade check status: ESP_OK
@@ -118,14 +108,13 @@ I (100251) ESP_OTA_CLIENT: Image version: 0x1010101, manufacturer code: 0x1001, 
 I (100257) ESP_OTA_CLIENT: Rejecting OTA image upgrade, status: ESP_ERR_INVALID_VERSION
 ```
 
-Note: The example also supports the user pressing the `boot` button to send the `QUERY_NEXT_IMAGE` command to query the image from the coordinator.
+- The `OTA example 2.0 is running` message indicates that the device has started up from the upgraded firmware.
 
-## OTA Upgrade Functions
+- This board can initiate the `Query Next Image` request again  when the `BOOT` button on the board is pressed.
 
- * After receiving OTA image notify from server, client send the query image request and image block requests to server upon receiving the response from server.
- * Following diagram explains the OTA upgrade process in detail:
+## OTA Upgrade Message Diagram
+
  ![Zigbee_ota](../../../docs/_static/zigbee-ota-upgrade-process.png)
- * Server gets the upgrade bin file (ota_file.bin) and transmit it through OTA process. After upgrade finish, the client will restart. Upgrade bin file will be loaded from client side and a log "OTA example 2.0 is running" can be seen on the log indicates OTA file upgraded successfully.
 
 ## Delta OTA Upgrade Functions
 

@@ -3,13 +3,12 @@
 
 # Light Bulb Example 
 
-This test code shows how to configure Zigbee end device and use it as HA on/off light bulb
+This example demonstrates how to configure a Home Automation on/off light on a Zigbee end device.
 
 ## Hardware Required
 
-* One development board with ESP32-H2 SoC acting as Zigbee end-device (loaded with HA_on_off_light example)
-* A USB cable for power supply and programming
-* Choose another ESP32-H2 as Zigbee coordinator (see [HA_on_off_switch example](../HA_on_off_switch/))
+* One 802.15.4 enabled development board (e.g., ESP32-H2 or ESP32-C6) running this example.
+* A second board running as a Zigbee coordinator (see [HA_on_off_switch](../HA_on_off_switch/) example)
 
 ## Configure the project
 
@@ -26,34 +25,36 @@ Build the project, flash it to the board, and start the monitor tool to view the
 
 (To exit the serial monitor, type ``Ctrl-]``.)
 
-## Example Output
+## Application Functions
 
-As you run the example, you will see the following log:
-
+- When the program starts, the board will attempt to detect an available Zigbee network every **1 second** until one is found.
 ```
-I (394) main_task: Calling app_main()
-I (404) gpio: GPIO[8]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 
-I (404) phy_init: phy_version 220,2dbbbe7,Sep 25 2023,20:39:25
-I (464) phy: libbtbb version: 90c587c, Sep 25 2023, 20:39:57
-I (474) ESP_ZB_COLOR_DIMM_LIGHT: ZDO signal: ZDO Config Ready (0x17), status: ESP_FAIL
-I (474) ESP_ZB_COLOR_DIMM_LIGHT: Zigbee stack initialized
-I (484) ESP_ZB_COLOR_DIMM_LIGHT: Start network steering
-I (484) main_task: Returned from app_main()
-I (9614) ESP_ZB_COLOR_DIMM_LIGHT: ZDO signal: NWK Permit Join (0x36), status: ESP_OK
-I (9834) ESP_ZB_COLOR_DIMM_LIGHT: ZDO signal: NWK Permit Join (0x36), status: ESP_OK
-I (9834) ESP_ZB_COLOR_DIMM_LIGHT: Joined network successfully (Extended PAN ID: 60:55:f9:00:00:f6:07:b4, PAN ID: 0x2a74, Channel:13)
-I (32944) ESP_ZB_COLOR_DIMM_LIGHT: Received message: endpoint(10), cluster(0x6), attribute(0x0), data size(1)
-I (32944) ESP_ZB_COLOR_DIMM_LIGHT: Light sets to On
-I (33984) ESP_ZB_COLOR_DIMM_LIGHT: Received message: endpoint(10), cluster(0x6), attribute(0x0), data size(1)
-I (33984) ESP_ZB_COLOR_DIMM_LIGHT: Light sets to Off
-I (35304) ESP_ZB_COLOR_DIMM_LIGHT: ZDO signal: NLME Status Indication (0x32), status: ESP_OK
-I (35534) ESP_ZB_COLOR_DIMM_LIGHT: Received message: endpoint(10), cluster(0x6), attribute(0x0), data size(1)
-I (35534) ESP_ZB_COLOR_DIMM_LIGHT: Light sets to On
+I (392) main_task: Calling app_main()
+I (412) phy: phy_version: 321,2, 632dc08, Feb 13 2025, 16:29:11
+I (412) phy: libbtbb version: 509a2a6, Feb 13 2025, 16:29:25
+I (422) main_task: Returned from app_main()
+I (432) ESP_ZB_ON_OFF_LIGHT: ZDO signal: ZDO Config Ready (0x17), status: ESP_FAIL
+I (432) ESP_ZB_ON_OFF_LIGHT: Initialize Zigbee stack
+W (442) rmt: channel resolution loss, real=10666666
+I (432) ESP_ZB_ON_OFF_LIGHT: Deferred driver initialization successful
+I (442) ESP_ZB_ON_OFF_LIGHT: Device started up in factory-reset mode
+I (452) ESP_ZB_ON_OFF_LIGHT: Start network steering
+I (3382) ESP_ZB_ON_OFF_LIGHT: Joined network successfully (Extended PAN ID: 74:4d:bd:ff:fe:63:c2:e4, PAN ID: 0x1ce4, Channel:13, Short Address: 0x2638)
 ```
 
-## Light Control Functions
+- If the board is on a network, it acts as a Zigbee end device with the `Home Automation On/Off Light` function.
 
- * By toggling the switch button (BOOT) on the ESP32-H2 board loaded with the `HA_on_off_switch` example, the LED on this board loaded with `HA_on_off_light` example will be on and off.
+- If the board receives a `On/Off` command from the joined network, the LED on the board will adjust accordingly.
+```
+I (7162) ESP_ZB_ON_OFF_LIGHT: Received message: endpoint(10), cluster(0x6), attribute(0x0), data size(1)
+I (7162) ESP_ZB_ON_OFF_LIGHT: Light sets to On
+I (7742) ESP_ZB_ON_OFF_LIGHT: Received message: endpoint(10), cluster(0x6), attribute(0x0), data size(1)
+I (7742) ESP_ZB_ON_OFF_LIGHT: Light sets to Off
+I (8462) ESP_ZB_ON_OFF_LIGHT: Received message: endpoint(10), cluster(0x6), attribute(0x0), data size(1)
+I (8462) ESP_ZB_ON_OFF_LIGHT: Light sets to On
+I (8932) ESP_ZB_ON_OFF_LIGHT: Received message: endpoint(10), cluster(0x6), attribute(0x0), data size(1)
+I (8932) ESP_ZB_ON_OFF_LIGHT: Light sets to Off
+```
 
 ## Troubleshooting
 

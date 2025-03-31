@@ -3,13 +3,12 @@
 
 # Light Bulb Example 
 
-This test code shows how to configure Zigbee end device and use it as a HA color dimmable light bulb
+This example demonstrates how to configure a Home Automation color dimmable light on a Zigbee router.
 
 ## Hardware Required
 
-* One development board with ESP32-H2 SoC acting as Zigbee end-device (loaded with HA_color_dimmable_light example)
-* A USB cable for power supply and programming
-* Choose another ESP32-H2 as Zigbee coordinator (see [HA_color_dimmable_switch example](../HA_color_dimmable_switch/))
+* One 802.15.4 enabled development board (e.g., ESP32-H2 or ESP32-C6) running this example.
+* A second board running as a Zigbee coordinator (see [HA_color_dimmable_switch](../HA_color_dimmable_switch/) example)
 
 ## Configure the project
 
@@ -26,10 +25,9 @@ Build the project, flash it to the board, and start the monitor tool to view the
 
 (To exit the serial monitor, type ``Ctrl-]``.)
 
-## Example Output
+## Application Functions
 
-As you run the example, you will see the following log:
-
+- When the program starts, the board will attempt to detect an available Zigbee network every **1 second** until one is found.
 ```
 I (394) main_task: Calling app_main()
 I (404) gpio: GPIO[8]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 
@@ -42,7 +40,12 @@ I (484) main_task: Returned from app_main()
 I (9604) ESP_ZB_COLOR_DIMM_LIGHT: ZDO signal: NWK Permit Join (0x36), status: ESP_OK
 I (9774) ESP_ZB_COLOR_DIMM_LIGHT: ZDO signal: NWK Permit Join (0x36), status: ESP_OK
 I (9774) ESP_ZB_COLOR_DIMM_LIGHT: Joined network successfully (Extended PAN ID: 60:55:f9:00:00:f6:07:b4, PAN ID: 0x17ef, Channel:13)
-I (11234) ESP_ZB_COLOR_DIMM_LIGHT: Received message: endpoint(10), cluster(0x8), attribute(0x0), data size(1)
+```
+- If the board is on a network, it acts as a Zigbee router with the `Home Automation Dimmable Light` function.
+
+- If the board receives a `Level Control` or `Color Control` command from the joined network, the LED on the board will adjust accordingly.
+```
+ (11234) ESP_ZB_COLOR_DIMM_LIGHT: Received message: endpoint(10), cluster(0x8), attribute(0x0), data size(1)
 I (11234) ESP_ZB_COLOR_DIMM_LIGHT: Light level changes to 5
 I (12554) ESP_ZB_COLOR_DIMM_LIGHT: Received message: endpoint(10), cluster(0x300), attribute(0x3), data size(2)
 I (12554) ESP_ZB_COLOR_DIMM_LIGHT: Light color x changes to 0x4ccc
@@ -60,12 +63,7 @@ I (21864) ESP_ZB_COLOR_DIMM_LIGHT: Received message: endpoint(10), cluster(0x300
 I (21864) ESP_ZB_COLOR_DIMM_LIGHT: Light color x changes to 0x2666
 I (21864) ESP_ZB_COLOR_DIMM_LIGHT: Received message: endpoint(10), cluster(0x300), attribute(0x4), data size(2)
 I (21874) ESP_ZB_COLOR_DIMM_LIGHT: Light color y changes to 0xf5c
-
 ```
- 
-## Light Control Functions
-
- * By toggling the switch button (BOOT) on the ESP32-H2 board loaded with the `HA_color_dimmable_switch` example, the LED on this board loaded with `HA_color_dimmable_light` example will change the color from red, green to blue and also light level will change.
 
 ## Troubleshooting
 

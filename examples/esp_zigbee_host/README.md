@@ -3,14 +3,12 @@
 
 # Host Example 
 
-This example demonstrates how to build a host device. It runs on any Espressif Wi-Fi SoCs such as ESP32, ESP32-C3 and ESP32-S3, with an 802.15.4 SoC like ESP32-H2 running [esp_zigbee_ncp](../esp_zigbee_ncp) to provide Zigbee functionality.
+This example demonstrates how to build a host device. It runs on any Espressif Wi-Fi SoC, such as ESP32, ESP32-C3, or ESP32-S3, while an 802.15.4 SoC like ESP32-H2, running [esp_zigbee_ncp](../esp_zigbee_ncp), provides Zigbee functionality.
 
 ## Hardware Required
 
-* One development board with ESP32 or ESP32-S3 SoC acting as Zigbee host (loaded with esp_zigbee_host example)
-* A USB cable for power supply, output log and programming
-* Three jumper wires for UART (TX, RX, and GND)
-* Choose ESP32 or ESP32-S3 as host and **Flash** Zigbee ncp on the ESP32-H2 DevKitC
+* One development board (e.g., ESP32 or ESP32-S3) running this example acts as a Zigbee host.
+* A second board (e.g., ESP32H2 or ESP32-C6 ) running as as Zigbee NCP (see [esp-zigbee-ncp](../esp_zigbee_ncp/) example).
 * Connect the two SoCs via UART, below is an example setup with ESP32-DevKitC and ESP32-H2-DevKitC:
 
 ESP32 pin     | ESP32-H2 pin
@@ -34,14 +32,9 @@ using `idf.py -p PORT erase-flash`
 
 Build the project, flash it to the board by running `idf.py -p <PORT> build flash`
 
-## Host Functions
+## Application Functions
 
- * After ncp starts up, it will start working together with host via UART communication
- * More Host functionalities supporting Wi-Fi interaction will come later
-
-## Example Output
-
-As you run the example, you will see the following log:
+- When the program starts, the board will start working together with ncp via UART communication
 
 ```
 I (169) cpu_start: Pro cpu start user code

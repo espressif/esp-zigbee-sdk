@@ -3,17 +3,11 @@
 
 # Touchlink Switch Example 
 
-This test code shows touchlink initiator how to find and join network.
+This example demonstrates how a Touchlink initiator can pair with a Touchlink target.
 
 ## Hardware Required
-
-* One development board with ESP32-H2 SoC acting as Touchlink initiator(Zigbee end deivce) (see [touchlink_switch](./))
-* A USB cable for power supply and programming
-* Choose another ESP32-H2 as Touchlink target(Zigbee Router)(see [touchlink_light](../touchlink_light))
-
-## Important operating steps
-* 1) Power on touchlink_light (Zigbee Router) and flash touchlink_light application code.
-* 2) Then wait for `5-10 seconds` and Power on touchlink_switch (Zigbee end deivce) and flash touchlink_switch application code.
+* One 802.15.4 enabled development board (e.g., ESP32-H2 or ESP32-C6) running this example.
+* A second board running a Zigbee Touchlink target(Zigbee Router)(see [touchlink_light](../touchlink_light) example)
 
 ## Configure the project
 
@@ -30,47 +24,58 @@ Build the project, flash it to the board, and start the monitor tool to view the
 
 (To exit the serial monitor, type ``Ctrl-]``.)
 
+## Application Functions
 
-## Example Output
-
-As you run the example, you will see the following log:
-
+- When the program starts,tThe board, acting as the `Touchlink initiator`, will have the capability to scan nearby `Touchlink targets`.
 ```
-I (373) main_task: Calling app_main()
-I (383) gpio: GPIO[9]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:2 
-I (383) phy_init: phy_version 220,2dbbbe7,Sep 25 2023,20:39:25
-I (453) phy: libbtbb version: 90c587c, Sep 25 2023, 20:39:57
-I (463) ESP_TL_ON_OFF_SWITCH: ZDO signal: ZDO Config Ready (0x17), status: ESP_FAIL
-I (463) ESP_TL_ON_OFF_SWITCH: ZB_ZDO_SIGNAL_SKIP_STARTUP: start join
-I (463) ESP_TL_ON_OFF_SWITCH: Start Touchlink commissioning as initiator
-I (473) main_task: Returned from app_main()
-I (1783) ESP_TL_ON_OFF_SWITCH: Touchlink commissioning as initiator done
-I (1783) ESP_TL_ON_OFF_SWITCH: Start Touchlink commissioning as initiator
-I (3093) ESP_TL_ON_OFF_SWITCH: Touchlink commissioning as initiator done
-I (3093) ESP_TL_ON_OFF_SWITCH: Start Touchlink commissioning as initiator
-I (4393) ESP_TL_ON_OFF_SWITCH: Touchlink commissioning as initiator done
-I (4393) ESP_TL_ON_OFF_SWITCH: Start Touchlink commissioning as initiator
-I (5703) ESP_TL_ON_OFF_SWITCH: Touchlink commissioning as initiator done
-I (5703) ESP_TL_ON_OFF_SWITCH: Start Touchlink commissioning as initiator
-I (7003) ESP_TL_ON_OFF_SWITCH: Touchlink commissioning as initiator done
-I (7003) ESP_TL_ON_OFF_SWITCH: Start Touchlink commissioning as initiator
-I (8313) ESP_TL_ON_OFF_SWITCH: Touchlink commissioning as initiator done
-I (8313) ESP_TL_ON_OFF_SWITCH: Start Touchlink commissioning as initiator
-I (12333) ESP_TL_ON_OFF_SWITCH: Touchlink network started
-I (12333) ESP_TL_ON_OFF_SWITCH: Profile: 0x104, ep: 10
-I (12953) ESP_TL_ON_OFF_SWITCH: Touchlink commissioning as initiator done
-I (12953) ESP_TL_ON_OFF_SWITCH: Touchlink Success, device address: 0x60 55 f9 0 0 f6 6 18
-I (12993) ESP_TL_ON_OFF_SWITCH: User find cb: response_status:0, address:0x7d0, endpoint:10
-I (21193) ESP_TL_ON_OFF_SWITCH: send 'on_off toggle' command
-I (22173) ESP_TL_ON_OFF_SWITCH: send 'on_off toggle' command
-I (22773) ESP_TL_ON_OFF_SWITCH: send 'on_off toggle' command
-I (24003) ESP_TL_ON_OFF_SWITCH: send 'on_off toggle' command
+I (357) main_task: Started on CPU0
+I (367) main_task: Calling app_main()
+I (397) phy: phy_version: 321,2, 632dc08, Feb 13 2025, 16:29:11
+I (397) phy: libbtbb version: 509a2a6, Feb 13 2025, 16:29:25
+I (397) main_task: Returned from app_main()
+I (507) ESP_TL_ON_OFF_SWITCH: ZDO signal: ZDO Config Ready (0x17), status: ESP_FAIL
+I (507) ESP_TL_ON_OFF_SWITCH: Initialize Zigbee stack
+I (507) gpio: GPIO[9]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:4 
+I (507) ESP_TL_ON_OFF_SWITCH: Deferred driver initialization successful
+I (517) ESP_TL_ON_OFF_SWITCH: Device started up in factory-reset mode
+I (527) ESP_TL_ON_OFF_SWITCH: Scanning as a Touchlink initiator...
 ```
 
-## Touchlink Swtich Control Light Functions
+- If no `Touchlink target` is found, the board will exit commissioning mode.
+```
+I (1837) ESP_TL_ON_OFF_SWITCH: Touchlink commissioning as initiator done
+W (1837) ESP_TL_ON_OFF_SWITCH: No Touchlink target devices found
+```
 
- * By toggling the switch button (BOOT) on the ESP32-H2 board loaded with the `touchlink_switch` example, the LED on this board loaded with `touchlink_light` example will be on and off.
+- Pressing the `BOOT` button will re-initiate the Touchlink commissioning process.
+```
+W (1837) ESP_TL_ON_OFF_SWITCH: Press the button to start Touchlink commissioning again
+I (13427) ESP_TL_ON_OFF_SWITCH: Scanning as a Touchlink initiator...
+```
 
+- If a `Touchlink target` is found, the board will pair with it and then exit commissioning mode.
+```
+I (17077) ESP_TL_ON_OFF_SWITCH: Touchlink initiator receives the response for started network
+I (17077) ESP_TL_ON_OFF_SWITCH: Response is from profile: 0x0104, endpoint: 10, address: 0x744dbdfffe637873
+I (17357) ESP_TL_ON_OFF_SWITCH: Touchlink commissioning as initiator done
+I (17357) ESP_TL_ON_OFF_SWITCH: Commissioning successfully, network information (Extended PAN ID: 74:4d:bd:ff:fe:63:78:73, PAN ID: 0x231d, Channel:11, Short Address: 0x6bd8)
+```
+
+- If the board is on a network, it will act as the `Home Automation On/Off Switch` and search for an `Home Automation  On/Off Light` device on the network.
+  If found, it will bind the device to its binding table.
+```
+I (17397) ESP_TL_ON_OFF_SWITCH: Found light
+I (17397) ESP_TL_ON_OFF_SWITCH: Try to bind on/off light
+I (17407) ESP_TL_ON_OFF_SWITCH: Bound successfully!
+```
+
+- Once paired, pressing the `BOOT` button will trigger an `On/Off toggle` command to control the paired `On/Off Light` device.
+```
+I (21197) ESP_TL_ON_OFF_SWITCH: send 'on_off toggle' command
+I (21837) ESP_TL_ON_OFF_SWITCH: send 'on_off toggle' command
+I (22517) ESP_TL_ON_OFF_SWITCH: send 'on_off toggle' command
+I (23397) ESP_TL_ON_OFF_SWITCH: send 'on_off toggle' command
+```
 
 ## Troubleshooting
 

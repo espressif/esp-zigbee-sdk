@@ -3,17 +3,11 @@
 
 # Touchlink Light Example 
 
-This test code shows touchlink target how to quick pairing of devices.
+This example demonstrates how the Touchlink target pairs with the Touchlink initiator.
 
 ## Hardware Required
-
-* One development board with ESP32-H2 SoC acting as Touchlink initiator(Zigbee end deivce) (see [touchlink_switch](../touchlink_switch))
-* A USB cable for power supply and programming
-* Choose another ESP32-H2 as Touchlink target(Zigbee Router)(see [touchlink_light](./))
-
-## Important operating steps
-* 1) Power on touchlink_light (Zigbee Router) and flash touchlink_light application code.
-* 2) Then wait for `5-10 seconds` and Power on touchlink_switch (Zigbee end deivce) and flash touchlink_switch application code.
+* One 802.15.4 enabled development board (e.g., ESP32-H2 or ESP32-C6) running this example.
+* Choose another ESP32-H2 as Touchlink target(Zigbee Router) (see [touchlink_light](../touchlink_light) example)
 
 ## Configure the project
 
@@ -30,38 +24,59 @@ Build the project, flash it to the board, and start the monitor tool to view the
 
 (To exit the serial monitor, type ``Ctrl-]``.)
 
-## Example Output
+## Application Functions
 
-As you run the example, you will see the following log:
-
+- When the program starts, the board, acting as the `Touchlink target`, will enter commissioning mode and wait for a `Touchlink initiator` device to initiate a scan.
 ```
-I (390) main_task: Calling app_main()
-I (400) gpio: GPIO[8]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 
-I (400) phy_init: phy_version 220,2dbbbe7,Sep 25 2023,20:39:25
-I (460) phy: libbtbb version: 90c587c, Sep 25 2023, 20:39:57
-I (470) ESP_TL_ON_OFF_LIGHT: ZDO signal: ZDO Config Ready (0x17), status: ESP_FAIL
-I (470) ESP_TL_ON_OFF_LIGHT: Touchlink target started
-I (470) main_task: Returned from app_main()
-I (16190) ESP_TL_ON_OFF_LIGHT: Device is on permit join status
-I (16190) ESP_TL_ON_OFF_LIGHT: Touchlink target : network started
-I (16190) ESP_TL_ON_OFF_LIGHT: Touchlink target finished: success
-I (18810) ESP_TL_ON_OFF_LIGHT: ZDO signal: ZDO Device Update (0x30), status: ESP_OK
-I (18830) ESP_TL_ON_OFF_LIGHT: New device commissioned or rejoined (short: 0xbf2f)
-I (27070) ESP_TL_ON_OFF_LIGHT: Received message: endpoint(10), cluster(0x6), attribute(0x0), data size(1)
-I (27070) ESP_TL_ON_OFF_LIGHT: Light sets to On
-I (28050) ESP_TL_ON_OFF_LIGHT: Received message: endpoint(10), cluster(0x6), attribute(0x0), data size(1)
-I (28050) ESP_TL_ON_OFF_LIGHT: Light sets to Off
-I (28650) ESP_TL_ON_OFF_LIGHT: Received message: endpoint(10), cluster(0x6), attribute(0x0), data size(1)
-I (28650) ESP_TL_ON_OFF_LIGHT: Light sets to On
-I (29860) ESP_TL_ON_OFF_LIGHT: ZDO signal: NLME Status Indication (0x32), status: ESP_OK
-I (29880) ESP_TL_ON_OFF_LIGHT: Received message: endpoint(10), cluster(0x6), attribute(0x0), data size(1)
-I (29880) ESP_TL_ON_OFF_LIGHT: Light sets to Off
-I (50140) ESP_TL_ON_OFF_LIGHT: ZDO signal: NLME Status Indication (0x32), status: ESP_OK
+I (413) main_task: Started on CPU0
+I (423) main_task: Calling app_main()
+I (443) phy: phy_version: 321,2, 632dc08, Feb 13 2025, 16:29:11
+I (443) phy: libbtbb version: 509a2a6, Feb 13 2025, 16:29:25
+I (453) main_task: Returned from app_main()
+I (463) ESP_TL_ON_OFF_LIGHT: ZDO signal: ZDO Config Ready (0x17), status: ESP_FAIL
+I (463) ESP_TL_ON_OFF_LIGHT: Initialize Zigbee stack
+W (473) rmt: channel resolution loss, real=10666666
+I (473) ESP_TL_ON_OFF_LIGHT: Deferred driver initialization successful
+I (483) ESP_TL_ON_OFF_LIGHT: Device started up in factory-reset mode
+I (493) ESP_TL_ON_OFF_LIGHT: Touchlink target is ready, awaiting commissioning
 ```
 
-## Light Control Functions
+- If a nearby `Touchlink initiator` device is triggered to scan the Touchlink target, the board will print the initiator's IEEE address and RSSI.
+```
+Received Touchlink scan request from 74:4d:bd:ff:fe:63:c2:e4, RSSI: -2 dBm
+Received Touchlink scan request from 74:4d:bd:ff:fe:63:c2:e4, RSSI: -2 dBm
+Received Touchlink scan request from 74:4d:bd:ff:fe:63:c2:e4, RSSI: -2 dBm
+Received Touchlink scan request from 74:4d:bd:ff:fe:63:c2:e4, RSSI: -2 dBm
+Received Touchlink scan request from 74:4d:bd:ff:fe:63:c2:e4, RSSI: -2 dBm
+```
 
- * By toggling the switch button (BOOT) on the ESP32-H2 board loaded with the `touchlink_switch` example, the LED on this board loaded with `touchlink_light` example will be on and off.
+- If the received RSSI value exceeds the RSSI threshold (default: -64 dBm) set by `esp_zb_zdo_touchlink_set_rssi_threshold()`, the board will initiate network
+  formation with the `Touchlink initiator` and complete the commissioning process.
+```
+W (5663) ESP_TL_ON_OFF_LIGHT: Network(0x5182) closed, devices joining not allowed.
+I (5663) ESP_TL_ON_OFF_LIGHT: Commissioning successfully, network information (Extended PAN ID: 74:4d:bd:ff:fe:63:78:73, PAN ID: 0x5182, Channel:11, Short Address: 0xbef5)
+I (5673) ESP_TL_ON_OFF_LIGHT: Touchlink target commissioning finished
+I (7323) ESP_TL_ON_OFF_LIGHT: ZDO signal: ZDO Device Update (0x30), status: ESP_OK
+I (7333) ESP_TL_ON_OFF_LIGHT: New device commissioned or rejoined (short: 0x396a)
+```
+
+- If the commissioning is successful, the board will act as an `Home Automation On/Off Light` that can be controlled by the paired `Touchlink initiator` device.
+```
+I (342253) ESP_TL_ON_OFF_LIGHT: Received message: endpoint(10), cluster(0x6), attribute(0x0), data size(1)
+I (342253) ESP_TL_ON_OFF_LIGHT: Light sets to On
+I (342973) ESP_TL_ON_OFF_LIGHT: Received message: endpoint(10), cluster(0x6), attribute(0x0), data size(1)
+I (342983) ESP_TL_ON_OFF_LIGHT: Light sets to Off
+I (345183) ESP_TL_ON_OFF_LIGHT: Received message: endpoint(10), cluster(0x6), attribute(0x0), data size(1)
+I (345183) ESP_TL_ON_OFF_LIGHT: Light sets to On
+I (345573) ESP_TL_ON_OFF_LIGHT: Received message: endpoint(10), cluster(0x6), attribute(0x0), data size(1)
+I (345573) ESP_TL_ON_OFF_LIGHT: Light sets to Off
+```
+
+- The board will remain in the commissioning state for 60 seconds set by `esp_zb_zdo_touchlink_target_set_timeout()` , waiting for the Touchlink initiator to
+  initiate commissioning.
+
+- If the log `Touchlink target commissioning finished` appears, it indicates that the target has exited the commissioning state and can no longer pair with
+  other Touchlink initiators.
 
 ## Troubleshooting
 

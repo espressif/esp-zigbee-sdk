@@ -217,8 +217,8 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
                      extended_pan_id[3], extended_pan_id[2], extended_pan_id[1], extended_pan_id[0],
                      esp_zb_get_pan_id(), esp_zb_get_current_channel(), esp_zb_get_short_address());
             esp_zb_zdo_match_desc_req_param_t  find_req;
-            find_req.addr_of_interest = 0x0000;
-            find_req.dst_nwk_addr = 0x0000;
+            find_req.addr_of_interest = 0xfffd;
+            find_req.dst_nwk_addr = 0xffff;
             /* find the match on-off light device */
             esp_zb_zdo_find_on_off_light(&find_req, user_find_cb, NULL);
         }
