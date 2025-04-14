@@ -22,20 +22,21 @@ typedef struct esp_zb_ping_iperf_test_cluster_cfg_s {
 } esp_zb_ping_iperf_test_cluster_cfg_t;
 
 typedef struct esp_zb_ping_req_info {
+    uint32_t timeout;
+    uint16_t payload_len;
     uint16_t dst_short_addr;
     uint8_t dst_ep;
     uint8_t src_ep;
-    uint16_t payload_len;
 } esp_zb_ping_req_info_t;
 
 typedef struct esp_zb_ipref_req_info {
-    uint8_t src_endpoint;
-    uint8_t dst_endpoint;
-    uint8_t direction;
     uint16_t dst_address;
     uint16_t payload_len;
     uint16_t iperf_interval;
     uint16_t iperf_duration;
+    uint8_t src_endpoint;
+    uint8_t dst_endpoint;
+    uint8_t direction;
 } esp_zb_iperf_req_info_t;
 
 typedef enum {
@@ -51,15 +52,18 @@ typedef enum {
     ESP_ZB_ZCL_ATTR_PING_IPERF_TEST_IPERF_INTERVAL     = 3,   /* iPerf transmission interval attribute (unit: milliseconds): Used to configure the time interval between sending data packets */
 } esp_zb_ping_iperf_test_cluster_attr_t;
 
+typedef void (*ping_finish_callback_t)(esp_err_t);
+typedef void (*iperf_finish_callback_t)(void);
+
 esp_err_t esp_zb_cluster_list_add_ping_iperf_test_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 esp_zb_attribute_list_t *esp_zb_ping_iperf_test_cluster_create(esp_zb_ping_iperf_test_cluster_cfg_t *ping_iperf_test_cfg);
 
 esp_err_t esp_zb_ping_iperf_test_cluster_add_attr(esp_zb_attribute_list_t *attr_list, uint16_t attr_id, void *value_p);
 
-esp_err_t esp_zb_ping_iperf_test_cluster_iperf_req(const esp_zb_iperf_req_info_t *info);
+esp_err_t esp_zb_ping_iperf_test_cluster_iperf_req(const esp_zb_iperf_req_info_t *info, iperf_finish_callback_t iperf_finish_cb);
 
-esp_err_t esp_zb_ping_iperf_test_cluster_ping_req(const esp_zb_ping_req_info_t *info);
+esp_err_t esp_zb_ping_iperf_test_cluster_ping_req(const esp_zb_ping_req_info_t *info, ping_finish_callback_t ping_finish_cb);
 
 esp_err_t esp_zb_ping_iperf_set_iperf_info(const esp_zb_iperf_req_info_t *info);
 

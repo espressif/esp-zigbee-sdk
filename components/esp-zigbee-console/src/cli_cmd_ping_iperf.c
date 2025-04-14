@@ -14,6 +14,14 @@
 
 #define TAG "cli_cmd_ping_iperf"
 
+static void cli_ping_finish_callback(esp_err_t result) {
+    esp_zb_console_notify_result(result);
+}
+
+static void cli_iperf_finish_callback(void) {
+    esp_zb_console_notify_result(ESP_OK);
+}
+
 static esp_err_t cli_ping(esp_zb_cli_cmd_t *self, int argc, char **argv)
 {
     struct {
@@ -21,16 +29,18 @@ static esp_err_t cli_ping(esp_zb_cli_cmd_t *self, int argc, char **argv)
         arg_u8_t   *dst_ep;
         arg_u8_t   *src_ep;
         arg_u16_t  *payload_len;
+        arg_u32_t  *timeout;
         arg_end_t  *end;
     } argtable = {
-        .dst_addr      = arg_addrn("d", "dst-addr",    "<addr:ADDR>", 1, 1, "destination address"),
-        .dst_ep        = arg_u8n(NULL,  "dst-ep",      "<u8:EID>",    1, 1, "destination endpoint id"),
-        .src_ep        = arg_u8n("e",   "src-ep",      "<u8:EID>",    1, 1, "source endpoint id"),
-        .payload_len   = arg_u16n("l",  "payload-len", "<u16:DATA>",  1, 1, "payload len of the command"),
+        .dst_addr    = arg_addrn("d", "dst-addr",    "<addr:ADDR>", 1, 1, "destination address"),
+        .dst_ep      = arg_u8n(NULL,  "dst-ep",      "<u8:EID>",    1, 1, "destination endpoint id"),
+        .src_ep      = arg_u8n("e",   "src-ep",      "<u8:EID>",    1, 1, "source endpoint id"),
+        .payload_len = arg_u16n("l",  "payload-len", "<u16:DATA>",  1, 1, "payload len of the command"),
+        .timeout     = arg_u32n("t",  "timeout",     "<u32:DATA>",  0, 1, "time to wait for response in millisecond, default: 2000"),
         .end = arg_end(2),
     };
 
-    esp_err_t ret = ESP_OK;
+    esp_err_t ret = ESP_ERR_NOT_FINISHED;
 
     /* Parse command line arguments */
     EXIT_ON_FALSE(argc > 1, ESP_OK, arg_print_help((void**)&argtable, argv[0]));
@@ -41,10 +51,13 @@ static esp_err_t cli_ping(esp_zb_cli_cmd_t *self, int argc, char **argv)
         .dst_short_addr = argtable.dst_addr->addr[0].u.short_addr,
         .dst_ep         = argtable.dst_ep->val[0],
         .payload_len    = argtable.payload_len->val[0],
-        .src_ep         = argtable.src_ep->val[0]
+        .src_ep         = argtable.src_ep->val[0],
+        .timeout        = 2000,
     };
-
-    ret = esp_zb_ping_iperf_test_cluster_ping_req(&ping_info);
+    if (argtable.timeout->count > 0) {
+        ping_info.timeout = argtable.timeout->val[0];
+    }
+    EXIT_ON_ERROR(esp_zb_ping_iperf_test_cluster_ping_req(&ping_info, cli_ping_finish_callback));
     
 exit:
     ESP_ZB_CLI_FREE_ARGSTRUCT(&argtable);
@@ -71,7 +84,7 @@ static esp_err_t cli_iperf_start(esp_zb_cli_cmd_t *self, int argc, char **argv)
         .end = arg_end(2),
     };
 
-    esp_err_t ret = ESP_OK;
+    esp_err_t ret = ESP_ERR_NOT_FINISHED;
 
     uint16_t iperf_interval = 20;
 
@@ -93,8 +106,7 @@ static esp_err_t cli_iperf_start(esp_zb_cli_cmd_t *self, int argc, char **argv)
         .src_endpoint   = argtable.src_ep->val[0],
     };
     EXIT_ON_ERROR(esp_zb_ping_iperf_set_iperf_info(&iperf_req_info));
-
-    ret = esp_zb_ping_iperf_test_cluster_iperf_req(&iperf_req_info);
+    EXIT_ON_ERROR(esp_zb_ping_iperf_test_cluster_iperf_req(&iperf_req_info, cli_iperf_finish_callback));
 
 exit:
     ESP_ZB_CLI_FREE_ARGSTRUCT(&argtable);
