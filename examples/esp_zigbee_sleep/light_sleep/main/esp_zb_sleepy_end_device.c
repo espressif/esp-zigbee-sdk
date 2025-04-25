@@ -79,6 +79,7 @@ static esp_err_t deferred_driver_init(void)
         ESP_ERROR_CHECK(esp_sleep_enable_ext1_wakeup(1ULL << CONFIG_GPIO_INPUT_IO_WAKEUP, ESP_EXT1_WAKEUP_ANY_LOW));
 
 #if SOC_RTCIO_INPUT_OUTPUT_SUPPORTED
+        rtc_gpio_init(CONFIG_GPIO_INPUT_IO_WAKEUP);
         rtc_gpio_pulldown_dis(CONFIG_GPIO_INPUT_IO_WAKEUP);
         rtc_gpio_pullup_en(CONFIG_GPIO_INPUT_IO_WAKEUP);
 #else
