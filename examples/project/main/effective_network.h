@@ -18,7 +18,7 @@
 
 #define ESP_ZB_ZC_CONFIG()                                                              \
     {                                                                                   \
-        .esp_zb_role = ESP_ZB_DEVICE_TYPE_ROUTER,                                  \
+        .esp_zb_role = ESP_ZB_DEVICE_TYPE_COORDINATOR,                                  \
         .install_code_policy = INSTALLCODE_POLICY_ENABLE,                               \
         .nwk_cfg.zczr_cfg = {                                                           \
             .max_children = MAX_CHILDREN,                                               \
