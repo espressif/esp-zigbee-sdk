@@ -8,7 +8,7 @@
 #include "esp_log.h"
 #include "nvs_flash.h"
 
-#include "esp_zigbee_all_device_types_app.h"
+#include "esp_zigbee_all_device_types_app2.h"
 
 static const char *TAG = "ESP_ZB_CONSOLE_APP";
 
@@ -153,6 +153,7 @@ static void zb_stack_main_task(void *pvParameters)
 
 void app_main(void)
 {
+    light_driver_init(LIGHT_DEFAULT_ON);
     esp_zb_platform_config_t config = {
         .radio_config = ESP_ZB_DEFAULT_RADIO_CONFIG(),
         .host_config = ESP_ZB_DEFAULT_HOST_CONFIG(),
