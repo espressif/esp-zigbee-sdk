@@ -25,7 +25,7 @@
 #endif
 
 static const char *TAG = "ESP_ZB_COLOR_DIMM_LIGHT";
-/********************* Define functions **************************/
+//********************* Define functions **************************/
 static esp_err_t deferred_driver_init(void)
 {
     static bool is_inited = false;
