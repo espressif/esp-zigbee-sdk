@@ -24,7 +24,6 @@
 #endif
 
 static const char *TAG = "ESP_ZB_ON_OFF_LIGHT";
-/********************* Define functions **************************/
 static esp_err_t deferred_driver_init(void)
 {
     static bool is_inited = false;
