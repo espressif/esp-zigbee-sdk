@@ -17,6 +17,35 @@ static void bdb_start_top_level_commissioning_cb(uint8_t mode_mask)
     ESP_RETURN_ON_FALSE(esp_zb_bdb_start_top_level_commissioning(mode_mask) == ESP_OK, , TAG, "Failed to start Zigbee commissioning");
 }
 
+static void esp_show_neighbor_table(){
+    static const char *titles[] = {"Index", "Age", "NwkAddr", "MacAddr", "Type", "Rel", "Depth", "LQI", "Cost"};
+    static const uint8_t widths[] = {5, 5, 8, 20, 5, 3, 5, 5, 6};
+    static const char *dev_type_name[] = {
+        [ESP_ZB_DEVICE_TYPE_COORDINATOR] = "ZC",
+        [ESP_ZB_DEVICE_TYPE_ROUTER]      = "ZR",
+        [ESP_ZB_DEVICE_TYPE_ED]          = "ZED",
+        [ESP_ZB_DEVICE_TYPE_NONE]        = "UNK",
+    };
+    static const char rel_name[] = {
+        [ESP_ZB_NWK_RELATIONSHIP_PARENT]                = 'P', /* Parent */
+        [ESP_ZB_NWK_RELATIONSHIP_CHILD]                 = 'C', /* Child */
+        [ESP_ZB_NWK_RELATIONSHIP_SIBLING]               = 'S', /* Sibling */
+        [ESP_ZB_NWK_RELATIONSHIP_NONE_OF_THE_ABOVE]     = 'O', /* Others */
+        [ESP_ZB_NWK_RELATIONSHIP_PREVIOUS_CHILD]        = 'c', /* Previous Child */
+        [ESP_ZB_NWK_RELATIONSHIP_UNAUTHENTICATED_CHILD] = 'u', /* Unauthenticated Child */
+    };
+    esp_zb_nwk_info_iterator_t itor = ESP_ZB_NWK_INFO_ITERATOR_INIT;
+    esp_zb_nwk_neighbor_info_t neighbor = {};
+
+    ESP_LOGI(TAG,"system");
+    while (ESP_OK == esp_zb_nwk_get_next_neighbor(&itor, &neighbor)) {
+        ESP_LOGI(TAG,"| %3d | %3d | 0x%04hx | 0x%016" PRIx64 " |",
+                    itor, neighbor.age, neighbor.short_addr, *(uint64_t *)neighbor.ieee_addr);
+        ESP_LOGI(TAG, " %3s | %c |", dev_type_name[neighbor.device_type], rel_name[neighbor.relationship]);
+        ESP_LOGI(TAG," %3d | %3d |  o:%d |", neighbor.depth, neighbor.lqi, neighbor.outgoing_cost);
+    }
+}
+
 void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
 {
     uint32_t *p_sg_p = signal_struct->p_app_signal;
@@ -68,6 +97,7 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
             break;
         default:
             ESP_LOGI(TAG, "ZDO signal: %s (0x%x), status: %s", esp_zb_zdo_signal_to_string(sig_type), sig_type, esp_err_to_name(err_status));
+            esp_show_neighbor_table();
             break;
     }
 }
@@ -161,6 +191,7 @@ static void esp_zb_task(void *pcParameters){
     ESP_ERROR_CHECK(esp_zb_start(false));
     esp_zb_stack_main_loop();
 }
+
 
 void app_main(void){
     esp_zb_platform_config_t config = {
