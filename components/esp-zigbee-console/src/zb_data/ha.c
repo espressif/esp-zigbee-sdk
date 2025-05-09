@@ -10,6 +10,8 @@
 
 #include "../cli_util.h"
 
+#include "zb_custom_clusters/custom_common.h"
+
 typedef esp_zb_cluster_list_t* (*ep_create_fn_t)(void *);
 
 typedef struct esp_zcl_ha_device_type_s {
@@ -86,6 +88,7 @@ static const esp_zcl_ha_device_t s_ha_device_table[] = {
     HA_DEVICE_ENTRY_UNSUPPORT(test_device, ESP_ZB_HA_TEST_DEVICE_ID),
     HA_DEVICE_ENTRY_UNSUPPORT(custom_tunnel, ESP_ZB_HA_CUSTOM_TUNNEL_DEVICE_ID),
     HA_DEVICE_ENTRY_UNSUPPORT(custom_attr, ESP_ZB_HA_CUSTOM_ATTR_DEVICE_ID),
+    HA_DEVICE_ENTRY(custom_test_tool, ESP_ZB_HA_CUSTOM_TEST_TOOL_DEVICE_ID),
 };
 
 static const esp_zcl_ha_device_t* device_table_get_by_idx(uint16_t idx)
