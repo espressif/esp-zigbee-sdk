@@ -1,0 +1,4 @@
+# Clion
+*.iml
+.idea/
+cmake-build-*/
