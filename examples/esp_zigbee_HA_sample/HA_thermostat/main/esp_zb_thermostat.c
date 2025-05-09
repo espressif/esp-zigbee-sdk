@@ -23,7 +23,7 @@
 #include "freertos/task.h"
 #include "ha/esp_zigbee_ha_standard.h"
 
-#define ARRAY_LENTH(arr) (sizeof(arr) / sizeof(arr[0]))
+#define ARRAY_LENGTH(arr) (sizeof(arr) / sizeof(arr[0]))
 
 #if defined ZB_ED_ROLE
 #error Define ZB_COORDINATOR_ROLE in idf.py menuconfig to compile thermostat source code.
@@ -69,7 +69,7 @@ static void esp_app_buttons_handler(switch_func_pair_t *button_func_pair)
             ESP_ZB_ZCL_ATTR_TEMP_MEASUREMENT_MAX_VALUE_ID,
             ESP_ZB_ZCL_ATTR_TEMP_MEASUREMENT_TOLERANCE_ID
         };
-        read_req.attr_number = ARRAY_LENTH(attributes);
+        read_req.attr_number = ARRAY_LENGTH(attributes);
         read_req.attr_field = attributes;
 
         /* Send "configure report attribute" command to the bound sensor */
@@ -89,7 +89,7 @@ static void esp_app_buttons_handler(switch_func_pair_t *button_func_pair)
                 .reportable_change = &report_change,
             },
         };
-        report_cmd.record_number = ARRAY_LENTH(records);
+        report_cmd.record_number = ARRAY_LENGTH(records);
         report_cmd.record_field = records;
 
         esp_zb_lock_acquire(portMAX_DELAY);
@@ -132,7 +132,7 @@ static void bind_cb(esp_zb_zdp_status_t zdo_status, void *user_ctx)
                 ESP_ZB_ZCL_ATTR_BASIC_MANUFACTURER_NAME_ID,
                 ESP_ZB_ZCL_ATTR_BASIC_MODEL_IDENTIFIER_ID,
             };
-            read_req.attr_number = ARRAY_LENTH(attributes);
+            read_req.attr_number = ARRAY_LENGTH(attributes);
             read_req.attr_field = attributes;
 
             esp_zb_zcl_read_attr_cmd_req(&read_req);
