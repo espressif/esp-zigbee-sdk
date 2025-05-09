@@ -25,6 +25,9 @@
 #if defined ZB_ED_ROLE
 #error Define ZB_COORDINATOR_ROLE in idf.py menuconfig to compile light switch source code.
 #endif
+
+static const char *TAG = "ESP_ZB_ON_OFF_SWITCH";
+
 typedef struct light_bulb_device_params_s {
     esp_zb_ieee_addr_t ieee_addr;
     uint8_t  endpoint;
@@ -35,7 +38,56 @@ static switch_func_pair_t button_func_pair[] = {
     {GPIO_INPUT_IO_TOGGLE_SWITCH, SWITCH_ONOFF_TOGGLE_CONTROL}
 };
 
-static const char *TAG = "ESP_ZB_ON_OFF_SWITCH";
+static void esp_show_neighbor_table(){
+    static const char *titles[] = {"Index", "Age", "NwkAddr", "MacAddr", "Type", "Rel", "Depth", "LQI", "Cost"};
+    static const uint8_t widths[] = {5, 5, 8, 20, 5, 3, 5, 5, 6};
+    static const char *dev_type_name[] = {
+        [ESP_ZB_DEVICE_TYPE_COORDINATOR] = "ZC",
+        [ESP_ZB_DEVICE_TYPE_ROUTER]      = "ZR",
+        [ESP_ZB_DEVICE_TYPE_ED]          = "ZED",
+        [ESP_ZB_DEVICE_TYPE_NONE]        = "UNK",
+    };
+    static const char rel_name[] = {
+        [ESP_ZB_NWK_RELATIONSHIP_PARENT]                = 'P', /* Parent */
+        [ESP_ZB_NWK_RELATIONSHIP_CHILD]                 = 'C', /* Child */
+        [ESP_ZB_NWK_RELATIONSHIP_SIBLING]               = 'S', /* Sibling */
+        [ESP_ZB_NWK_RELATIONSHIP_NONE_OF_THE_ABOVE]     = 'O', /* Others */
+        [ESP_ZB_NWK_RELATIONSHIP_PREVIOUS_CHILD]        = 'c', /* Previous Child */
+        [ESP_ZB_NWK_RELATIONSHIP_UNAUTHENTICATED_CHILD] = 'u', /* Unauthenticated Child */
+    };
+    esp_zb_nwk_info_iterator_t itor = ESP_ZB_NWK_INFO_ITERATOR_INIT;
+    esp_zb_nwk_neighbor_info_t neighbor = {};
+
+    ESP_LOGI(TAG,"nwk");
+    while (ESP_OK == esp_zb_nwk_get_next_neighbor(&itor, &neighbor)) {
+        ESP_LOGI(TAG,"| %3d | %3d | 0x%04hx | 0x%016" PRIx64 " |",
+                    itor, neighbor.age, neighbor.short_addr, *(uint64_t *)neighbor.ieee_addr);
+        ESP_LOGI(TAG, " %3s | %c |", dev_type_name[neighbor.device_type], rel_name[neighbor.relationship]);
+        ESP_LOGI(TAG," %3d | %3d |  o:%d |", neighbor.depth, neighbor.lqi, neighbor.outgoing_cost);
+    }
+}
+
+static void esp_show_route_table(){
+    // static const char *titles[] = {"Index", "Age", "NwkAddr", "MacAddr", "Type", "Rel", "Depth", "LQI", "Cost"};
+    // static const uint8_t widths[] = {5, 5, 8, 20, 5, 3, 5, 5, 6};
+    static const char *route_state_name[] = {
+        [ESP_ZB_NWK_ROUTE_STATE_ACTIVE] = "Active",
+        [ESP_ZB_NWK_ROUTE_STATE_DISCOVERY_UNDERWAY] = "Disc",
+        [ESP_ZB_NWK_ROUTE_STATE_DISCOVERY_FAILED] = "Fail",
+        [ESP_ZB_NWK_ROUTE_STATE_INACTIVE] = "Inactive",
+    };
+    esp_zb_nwk_info_iterator_t itor = ESP_ZB_NWK_INFO_ITERATOR_INIT;
+    esp_zb_nwk_route_info_t route = {};
+
+    ESP_LOGI(TAG,"routes:");
+    while (ESP_OK == esp_zb_nwk_get_next_route(&itor, &route)) {
+        ESP_LOGI(TAG,"| %3d | 0x%04hx%c| 0x%04hx | %4d | %6s | 0x%02x |",
+        itor, route.dest_addr, route.flags.group_id ? 'g' : ' ', route.next_hop_addr,
+        route.expiry, route_state_name[route.flags.status], *(uint8_t *)&route.flags);
+    }
+}
+
+
 
 static void zb_buttons_handler(switch_func_pair_t *button_func_pair)
 {
@@ -50,6 +102,7 @@ static void zb_buttons_handler(switch_func_pair_t *button_func_pair)
         esp_zb_lock_release();
         ESP_EARLY_LOGI(TAG, "Send 'on_off toggle' command");
     }
+    esp_show_route_table();
 }
 
 static esp_err_t deferred_driver_init(void)
