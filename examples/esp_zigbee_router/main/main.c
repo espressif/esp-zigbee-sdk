@@ -4,7 +4,8 @@
 #include "nvs_flash.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-#include "esp_zigbee_nwk.h"
+#include "esp_zigbee_include.c"
+
 
 #if !defined CONFIG_ZB_ZCZR
 #error Define ZB_ZCZR in idf.py menuconfig to compile light (Router) source code.
@@ -16,56 +17,6 @@ static void bdb_start_top_level_commissioning_cb(uint8_t mode_mask)
 {
     ESP_RETURN_ON_FALSE(esp_zb_bdb_start_top_level_commissioning(mode_mask) == ESP_OK, , TAG, "Failed to start Zigbee commissioning");
 }
-
-static void esp_show_neighbor_table(){
-    static const char *titles[] = {"Index", "Age", "NwkAddr", "MacAddr", "Type", "Rel", "Depth", "LQI", "Cost"};
-    static const uint8_t widths[] = {5, 5, 8, 20, 5, 3, 5, 5, 6};
-    static const char *dev_type_name[] = {
-        [ESP_ZB_DEVICE_TYPE_COORDINATOR] = "ZC",
-        [ESP_ZB_DEVICE_TYPE_ROUTER]      = "ZR",
-        [ESP_ZB_DEVICE_TYPE_ED]          = "ZED",
-        [ESP_ZB_DEVICE_TYPE_NONE]        = "UNK",
-    };
-    static const char rel_name[] = {
-        [ESP_ZB_NWK_RELATIONSHIP_PARENT]                = 'P', /* Parent */
-        [ESP_ZB_NWK_RELATIONSHIP_CHILD]                 = 'C', /* Child */
-        [ESP_ZB_NWK_RELATIONSHIP_SIBLING]               = 'S', /* Sibling */
-        [ESP_ZB_NWK_RELATIONSHIP_NONE_OF_THE_ABOVE]     = 'O', /* Others */
-        [ESP_ZB_NWK_RELATIONSHIP_PREVIOUS_CHILD]        = 'c', /* Previous Child */
-        [ESP_ZB_NWK_RELATIONSHIP_UNAUTHENTICATED_CHILD] = 'u', /* Unauthenticated Child */
-    };
-    esp_zb_nwk_info_iterator_t itor = ESP_ZB_NWK_INFO_ITERATOR_INIT;
-    esp_zb_nwk_neighbor_info_t neighbor = {};
-
-    ESP_LOGI(TAG,"nwk");
-    while (ESP_OK == esp_zb_nwk_get_next_neighbor(&itor, &neighbor)) {
-        ESP_LOGI(TAG,"| %3d | %3d | 0x%04hx | 0x%016" PRIx64 " |",
-                    itor, neighbor.age, neighbor.short_addr, *(uint64_t *)neighbor.ieee_addr);
-        ESP_LOGI(TAG, " %3s | %c |", dev_type_name[neighbor.device_type], rel_name[neighbor.relationship]);
-        ESP_LOGI(TAG," %3d | %3d |  o:%d |", neighbor.depth, neighbor.lqi, neighbor.outgoing_cost);
-    }
-}
-
-static void esp_show_route_table(){
-    // static const char *titles[] = {"Index", "Age", "NwkAddr", "MacAddr", "Type", "Rel", "Depth", "LQI", "Cost"};
-    // static const uint8_t widths[] = {5, 5, 8, 20, 5, 3, 5, 5, 6};
-    static const char *route_state_name[] = {
-        [ESP_ZB_NWK_ROUTE_STATE_ACTIVE] = "Active",
-        [ESP_ZB_NWK_ROUTE_STATE_DISCOVERY_UNDERWAY] = "Disc",
-        [ESP_ZB_NWK_ROUTE_STATE_DISCOVERY_FAILED] = "Fail",
-        [ESP_ZB_NWK_ROUTE_STATE_INACTIVE] = "Inactive",
-    };
-    esp_zb_nwk_info_iterator_t itor = ESP_ZB_NWK_INFO_ITERATOR_INIT;
-    esp_zb_nwk_route_info_t route = {};
-
-    ESP_LOGI(TAG,"routes:");
-    while (ESP_OK == esp_zb_nwk_get_next_route(&itor, &route)) {
-        ESP_LOGI(TAG,"| %3d | 0x%04hx%c| 0x%04hx | %4d | %6s | 0x%02x |",
-        itor, route.dest_addr, route.flags.group_id ? 'g' : ' ', route.next_hop_addr,
-        route.expiry, route_state_name[route.flags.status], *(uint8_t *)&route.flags);
-    }
-}
-
 
 void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
 {
@@ -196,7 +147,8 @@ static esp_err_t zb_action_handler(esp_zb_core_action_callback_id_t callback_id,
     return ret;
 }
 
-static void esp_zb_task(void *pcParameters){
+static void esp_zb_task(void *pcParameters)
+{
     esp_zb_cfg_t zb_nwk_cfg = ESP_ZB_ZR_CONFIG();
     esp_zb_init(&zb_nwk_cfg);
 
