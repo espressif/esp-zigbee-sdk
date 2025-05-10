@@ -137,8 +137,8 @@ static esp_err_t zb_action_handler(esp_zb_core_action_callback_id_t callback_id,
 {
     esp_err_t ret = ESP_OK;
     switch (callback_id) {
-    case ESP_ZB_CORE_SET_ATTR_VALUE_CB_ID:
-        ret = zb_attribute_handler((esp_zb_zcl_set_attr_value_message_t *)message);
+    case ESP_ZB_CORE_REPORT_ATTR_CB_ID:
+        ret = ESP_FAIL;
         break;
     default:
         ESP_LOGW(TAG, "Receive Zigbee action(0x%x) callback", callback_id);
@@ -160,14 +160,15 @@ static void esp_zb_task(void *pcParameters)
     //  };
     // esp_zcl_utility_add_ep_basic_manufacturer_info(esp_zb_color_dimmable_light_ep, HA_COLOR_DIMMABLE_LIGHT_ENDPOINT, &info);
     // esp_zb_device_register(esp_zb_color_dimmable_light_ep);
-    // esp_zb_core_action_handler_register(zb_action_handler);
+    esp_zb_core_action_handler_register(zb_action_handler);
     esp_zb_set_primary_network_channel_set(ESP_ZB_PRIMARY_CHANNEL_MASK);
     ESP_ERROR_CHECK(esp_zb_start(false));
     esp_zb_stack_main_loop();
 }
 
 
-void app_main(void){
+void app_main(void)
+{
     esp_zb_platform_config_t config = {
         .radio_config = ESP_ZB_DEFAULT_RADIO_CONFIG(),
         .host_config = ESP_ZB_DEFAULT_HOST_CONFIG(),
