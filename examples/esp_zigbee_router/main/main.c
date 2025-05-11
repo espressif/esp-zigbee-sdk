@@ -47,9 +47,11 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
                                        ESP_ZB_BDB_MODE_INITIALIZATION, 1000);
             }
             break;
+        //TODO uzupełnić odpowiedzi na sygnały
         case ESP_ZB_ZDO_SIGNAL_DEVICE_ANNCE:
             dev_annce_params= (esp_zb_zdo_signal_device_annce_params_t *)esp_zb_app_signal_get_params(p_sg_p);
             break;
+        case ESP_ZB_BDB_SIGNAL_FORMATION:
         case ESP_ZB_BDB_SIGNAL_STEERING:
             if (err_status == ESP_OK) {
                 esp_zb_ieee_addr_t extended_pan_id;
