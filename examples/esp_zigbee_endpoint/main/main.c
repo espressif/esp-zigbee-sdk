@@ -11,7 +11,7 @@
 #error Define ZB_ZCZR in idf.py menuconfig to compile light (Router) source code.
 #endif
 
-static const char *TAG= "ESP_ZB_ROUTER";
+static const char *TAG= "ESP_ZB_ENDPOINT";
 
 static void bdb_start_top_level_commissioning_cb(uint8_t mode_mask)
 {
@@ -23,8 +23,6 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
     uint32_t *p_sg_p = signal_struct->p_app_signal;
     esp_err_t err_status = signal_struct->esp_err_status;
     esp_zb_app_signal_type_t sig_type = *p_sg_p;
-    esp_zb_zdo_signal_device_annce_params_t *dev_annce_params = NULL;
-
     switch(sig_type){
     case ESP_ZB_ZDO_SIGNAL_SKIP_STARTUP:
         ESP_LOGI(TAG, "Initialize Zigbee stack");
@@ -47,9 +45,6 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
                                        ESP_ZB_BDB_MODE_INITIALIZATION, 1000);
             }
             break;
-        case ESP_ZB_ZDO_SIGNAL_DEVICE_ANNCE:
-            dev_annce_params= (esp_zb_zdo_signal_device_annce_params_t *)esp_zb_app_signal_get_params(p_sg_p);
-            break;
         case ESP_ZB_BDB_SIGNAL_STEERING:
             if (err_status == ESP_OK) {
                 esp_zb_ieee_addr_t extended_pan_id;
@@ -59,7 +54,6 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
                          extended_pan_id[3], extended_pan_id[2], extended_pan_id[1], extended_pan_id[0],
                          esp_zb_get_pan_id(), esp_zb_get_current_channel(), esp_zb_get_short_address());
             } else {
-                esp_show_route_table();
                 ESP_LOGI(TAG, "Network steering was not successful (status: %s)", esp_err_to_name(err_status));
                 esp_zb_scheduler_alarm((esp_zb_callback_t)bdb_start_top_level_commissioning_cb, ESP_ZB_BDB_MODE_NETWORK_STEERING, 1000);
             }
@@ -93,7 +87,7 @@ static esp_err_t zb_attribute_handler(const esp_zb_zcl_set_attr_value_message_t 
                         message->info.status);
     ESP_LOGI(TAG, "Received message: endpoint(%d), cluster(0x%x), attribute(0x%x), data size(%d)", message->info.dst_endpoint, message->info.cluster,
              message->attribute.id, message->attribute.data.size);
-    if (message->info.dst_endpoint == HA_COLOR_DIMMABLE_LIGHT_ENDPOINT) {
+    if (message->info.dst_endpoint == ED_ID) {
         switch (message->info.cluster) {
         case ESP_ZB_ZCL_CLUSTER_ID_ON_OFF:
             if (message->attribute.id == ESP_ZB_ZCL_ATTR_ON_OFF_ON_OFF_ID && message->attribute.data.type == ESP_ZB_ZCL_ATTR_TYPE_BOOL) {
@@ -160,12 +154,12 @@ static void esp_zb_task(void *pcParameters)
     esp_zb_nwk_set_link_status_period(10);
 
     // esp_zb_color_dimmable_light_cfg_t light_cfg = ESP_ZB_DEFAULT_COLOR_DIMMABLE_LIGHT_CONFIG();
-    // esp_zb_ep_list_t *esp_zb_color_dimmable_light_ep = esp_zb_color_dimmable_light_ep_create(HA_COLOR_DIMMABLE_LIGHT_ENDPOINT, &light_cfg);
+    // esp_zb_ep_list_t *esp_zb_color_dimmable_light_ep = esp_zb_color_dimmable_light_ep_create(ED_ID, &light_cfg);
     // zcl_basic_manufacturer_info_t info = {
     //      .manufacturer_name = ESP_MANUFACTURER_NAME,
     //      .model_identifier = ESP_MODEL_IDENTIFIER,
     //  };
-    // esp_zcl_utility_add_ep_basic_manufacturer_info(esp_zb_color_dimmable_light_ep, HA_COLOR_DIMMABLE_LIGHT_ENDPOINT, &info);
+    // esp_zcl_utility_add_ep_basic_manufacturer_info(esp_zb_color_dimmable_light_ep, ED_ID, &info);
     // esp_zb_device_register(esp_zb_color_dimmable_light_ep);
     esp_zb_core_action_handler_register(zb_action_handler);
     esp_zb_set_primary_network_channel_set(ESP_ZB_PRIMARY_CHANNEL_MASK);
