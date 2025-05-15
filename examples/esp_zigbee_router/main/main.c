@@ -15,7 +15,7 @@ static const char *TAG= "ESP_ZB_ROUTER";
 
 static void bdb_start_top_level_commissioning_cb(uint8_t mode_mask)
 {
-    ESP_RETURN_ON_FALSE(esp_zb_bdb_start_top_level_commissioning(mode_mask) == ESP_OK , TAG, "Failed to start Zigbee commissioning");
+    ESP_RETURN_ON_FALSE(esp_zb_bdb_start_top_level_commissioning(mode_mask) == ESP_OK , , TAG, "Failed to start Zigbee commissioning");
 }
 
 void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
@@ -107,7 +107,7 @@ static esp_err_t zb_attribute_handler(const esp_zb_zcl_set_attr_value_message_t 
                         message->info.status);
     ESP_LOGI(TAG, "Received message: endpoint(%d), cluster(0x%x), attribute(0x%x), data size(%d)", message->info.dst_endpoint, message->info.cluster,
              message->attribute.id, message->attribute.data.size);
-    if (message->info.dst_endpoint == HA_COLOR_DIMMABLE_LIGHT_ENDPOINT) {
+    if (message->info.dst_endpoint == ENDPOINT_ID) {
         switch (message->info.cluster) {
         case ESP_ZB_ZCL_CLUSTER_ID_ON_OFF:
             if (message->attribute.id == ESP_ZB_ZCL_ATTR_ON_OFF_ON_OFF_ID && message->attribute.data.type == ESP_ZB_ZCL_ATTR_TYPE_BOOL) {
@@ -174,7 +174,19 @@ static void esp_zb_task(void *pcParameters)
     esp_zb_nwk_set_link_status_period(10);
 
     // esp_zb_color_dimmable_light_cfg_t light_cfg = ESP_ZB_DEFAULT_COLOR_DIMMABLE_LIGHT_CONFIG();
-     esp_zb_ep_list_t *esp_zb_color_dimmable_light_ep = esp_zb_color_dimmable_light_ep_create(HA_COLOR_DIMMABLE_LIGHT_ENDPOINT, &light_cfg);
+    esp_zb_ep_list_t *esp_zb_ep_list = esp_zb_ep_list_create();
+    esp_zb_cluster_list_t *esp_zb_cluster_list = esp_zb_zcl_cluster_list_create();
+
+    esp_zb_endpoint_config_t esp_zb_ep = {
+        .endpoint = ENDPOINT_ID,
+        .app_profile_id = 60,
+        .app_device_id = ESP_ZB_HA_COLOR_DIMMABLE_LIGHT_DEVICE_ID,
+        .app_device_version = 4,
+    };
+
+    // esp_zb_cluster_add_attr(esp_zb_cluster_list, ESP_ZB_ZCL_CLUSTER_ID_ON_OFF, ESP_ZB_ZCL_CLUSTER_SERVER_ROLE);
+
+    esp_zb_ep_list_add_ep(esp_zb_ep_list, esp_zb_cluster_list, esp_zb_ep);
     // zcl_basic_manufacturer_info_t info = {
     //      .manufacturer_name = ESP_MANUFACTURER_NAME,
     //      .model_identifier = ESP_MODEL_IDENTIFIER,
