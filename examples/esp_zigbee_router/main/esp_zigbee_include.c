@@ -55,7 +55,3 @@ static void esp_show_route_table(){
     }
 }
 
-typedef enum{
-    ADD,
-    MINUS
-}custom_zb_action_handler_callback_id_t;
