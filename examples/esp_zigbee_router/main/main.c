@@ -124,15 +124,8 @@ static esp_err_t zb_action_handler(esp_zb_core_action_callback_id_t callback_id,
     return ret;
 }
 
-
-
-static void esp_zb_task(void *pcParameters)
-{
-    esp_zb_cfg_t zb_nwk_cfg = ESP_ZB_ZR_CONFIG();
-    esp_zb_init(&zb_nwk_cfg);
-    esp_zb_nwk_set_link_status_period(10);
-
-    esp_zb_attribute_list_t *basic_cluster = esp_zb_basic_cluster_create(NULL);
+static esp_err_t zb_register_device(void){
+     esp_zb_attribute_list_t *basic_cluster = esp_zb_basic_cluster_create(NULL);
     esp_zb_attribute_list_t *measure_cluster = esp_zb_zcl_attr_list_create(ESP_ZB_ZCL_CLUSTER_ID_OTA_UPGRADE);
     esp_zb_cluster_list_t *cluster_list = esp_zb_zcl_cluster_list_create();
     esp_zb_ep_list_t *ep_list = esp_zb_ep_list_create();
@@ -158,8 +151,20 @@ static void esp_zb_task(void *pcParameters)
     /* Added endpoints */
     ESP_ERROR_CHECK(esp_zb_ep_list_add_ep(ep_list, cluster_list, endpoint_config));
     /* Register device */
-    ESP_ERROR_CHECK(esp_zb_device_register(ep_list));
-    ESP_ERROR_CHECK(esp_zb_zcl_register_attr_callback(zb_attribute_handler));
+    return esp_zb_device_register(ep_list);
+}
+
+static void esp_zb_task(void *pcParameters)
+{
+    esp_zb_cfg_t zb_nwk_cfg = ESP_ZB_ZR_CONFIG();
+    esp_zb_init(&zb_nwk_cfg);
+    esp_zb_nwk_set_link_status_period(10);
+    esp_zb_core_action_handler_register(zb_action_handler);
+    esp_zb_set_channel_mask(ESP_ZB_PRIMARY_CHANNEL_MASK);
+
+    ESP_RETURN_ON_ERROR(zb_register_device(), TAG, "Failed to register device");
+    ESP_ERROR_CHECK(esp_zb_start(false));
+    esp_zb_stack_main_loop();
 }
 
 

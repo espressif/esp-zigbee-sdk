@@ -337,12 +337,10 @@ void app_main(void)
 
 
 
-//---------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------------
 
 
 static void esp_show_neighbor_table(){
-    static const char *titles[] = {"Index", "Age", "NwkAddr", "MacAddr", "Type", "Rel", "Depth", "LQI", "Cost"};
-    static const uint8_t widths[] = {5, 5, 8, 20, 5, 3, 5, 5, 6};
     static const char *dev_type_name[] = {
         [ESP_ZB_DEVICE_TYPE_COORDINATOR] = "ZC",
         [ESP_ZB_DEVICE_TYPE_ROUTER]      = "ZR",
@@ -370,8 +368,6 @@ static void esp_show_neighbor_table(){
 }
 
 static void esp_show_route_table(){
-    // static const char *titles[] = {"Index", "Age", "NwkAddr", "MacAddr", "Type", "Rel", "Depth", "LQI", "Cost"};
-    // static const uint8_t widths[] = {5, 5, 8, 20, 5, 3, 5, 5, 6};
     static const char *route_state_name[] = {
         [ESP_ZB_NWK_ROUTE_STATE_ACTIVE] = "Active",
         [ESP_ZB_NWK_ROUTE_STATE_DISCOVERY_UNDERWAY] = "Disc",
