@@ -45,7 +45,7 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
             ESP_LOGW(TAG, "%s failed with status: %s, retrying", esp_zb_zdo_signal_to_string(sig_type),
                      esp_err_to_name(err_status));
             esp_zb_scheduler_alarm((esp_zb_callback_t)bdb_start_top_level_commissioning_cb,
-                                   ESP_ZB_BDB_MODE_INITIALIZATION, 1000);
+                                   ESP_ZB_BDB_MODE_INITIALIZATION, 2000);
         }
         break;
     //TODO uzupełnić odpowiedzi na sygnały
@@ -92,10 +92,11 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
             }
         }
         break;
+    case ESP_ZB_ZDO_SIGNAL_PRODUCTION_CONFIG_READY:
+        ESP_LOGI(TAG, "Production config ready");
+        break;
     default:
         ESP_LOGI(TAG, "ZDO signal: %s (0x%x), status: %s", esp_zb_zdo_signal_to_string(sig_type), sig_type, esp_err_to_name(err_status));
-        esp_show_neighbor_table();
-        esp_show_route_table();
         break;
     }
 }
@@ -125,7 +126,7 @@ static esp_err_t zb_action_handler(esp_zb_core_action_callback_id_t callback_id,
 }
 
 static esp_err_t zb_register_device(void){
-     esp_zb_attribute_list_t *basic_cluster = esp_zb_basic_cluster_create(NULL);
+    esp_zb_attribute_list_t *basic_cluster = esp_zb_basic_cluster_create(NULL);
     esp_zb_attribute_list_t *measure_cluster = esp_zb_zcl_attr_list_create(ESP_ZB_ZCL_CLUSTER_ID_OTA_UPGRADE);
     esp_zb_cluster_list_t *cluster_list = esp_zb_zcl_cluster_list_create();
     esp_zb_ep_list_t *ep_list = esp_zb_ep_list_create();
@@ -162,7 +163,7 @@ static void esp_zb_task(void *pcParameters)
     esp_zb_core_action_handler_register(zb_action_handler);
     esp_zb_set_channel_mask(ESP_ZB_PRIMARY_CHANNEL_MASK);
 
-    ESP_RETURN_ON_ERROR(zb_register_device(), TAG, "Failed to register device");
+    ESP_ERROR_CHECK(zb_register_device());
     ESP_ERROR_CHECK(esp_zb_start(false));
     esp_zb_stack_main_loop();
 }
