@@ -27,3 +27,12 @@ esp_err_t esp_zb_custom_clusters_command_handler(const esp_zb_zcl_custom_cluster
 
     return ret;
 }
+
+esp_zb_cluster_list_t *esp_zb_custom_test_tool_clusters_create(void *test_tool_cfg)
+{
+    esp_zb_cluster_list_t *cluster_list = esp_zb_zcl_cluster_list_create();
+    esp_zb_cluster_list_add_ping_iperf_test_cluster(cluster_list, esp_zb_ping_iperf_test_cluster_create(NULL), ESP_ZB_ZCL_CLUSTER_SERVER_ROLE);
+    esp_zb_cluster_list_add_ping_iperf_test_cluster(cluster_list, esp_zb_ping_iperf_test_cluster_create(NULL), ESP_ZB_ZCL_CLUSTER_CLIENT_ROLE);
+
+    return cluster_list;
+}

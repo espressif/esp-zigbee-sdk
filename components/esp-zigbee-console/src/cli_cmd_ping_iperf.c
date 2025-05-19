@@ -159,6 +159,6 @@ exit:
 DECLARE_ESP_ZB_CLI_CMD(ping, cli_ping,, "Ping over Zigbee");
 
 DECLARE_ESP_ZB_CLI_CMD_WITH_SUB(iperf, "Iperf over Zigbee",
-    ESP_ZB_CLI_SUBCMD(start,    cli_iperf_start,  "Start iperf test"),
-    ESP_ZB_CLI_SUBCMD(result,   cli_iperf_result, "Print iperf result"),
+    ESP_ZB_CLI_SUBCMD(start,  cli_iperf_start,  "Start iperf test"),
+    ESP_ZB_CLI_SUBCMD(result, cli_iperf_result, "Print iperf result"),
 );

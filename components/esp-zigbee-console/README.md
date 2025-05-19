@@ -423,9 +423,16 @@ I (837619) : 0x4080fa60   c3 b5                                             |..|
 ### iperf
 Iperf over Zigbee
 
-> **Note:** ping_iperf_test cluster (0xff01) should be registered with the stack first.
+> **Prerequisites:** A custom ZHA custom_test_tool device should be registered.
+
+```bash
+esp> zha add 2 custom_test_tool
+esp> dm register
+```
 
 #### `iperf start -d <addr:ADDR> --dst-ep=<u8:EID> -e <u8:EID> -t <u16:TIME> [-i <u16:TIME>] -l <u16:DATA>`
+Do iperf with remote device
+
 - `-d, --dst-addr=<addr:ADDR>`: Destination address.
 - `--dst-ep=<u8:EID>`: Destination endpoint id.
 - `-e, --src-ep=<u8:EID>`: Source endpoint id.
@@ -439,6 +446,8 @@ I (379614) ping_iperf_test: throughput: 10.000 kbps, count: 1
 ```
 
 #### `iperf result [-r <sc:C|S>] -e <u8:EID>`
+Dump iperf throughput on current node.
+
 - `-r, --role=<sc:C|S>`: The role of the iperf cluster, default: S
 - `-e, --src-ep=<u8:EID>`: Source endpoint id
 
@@ -631,7 +640,12 @@ esp> panid -x 0x0123456789abcdef
 ### ping
 Ping over Zigbee
 
-> **Note:** ping_iperf_test cluster (0xff01) should be registered with the stack first.
+> **Prerequisites:** A custom ZHA custom_test_tool device should be registered.
+
+```bash
+esp> zha add 2 custom_test_tool
+esp> dm register
+```
 
 #### `ping -d <addr:ADDR> --dst-ep=<u8:EID> -e <u8:EID> -l <u16:DATA>`
 - `-d, --dst-addr=<addr:ADDR>`: Destination address.
