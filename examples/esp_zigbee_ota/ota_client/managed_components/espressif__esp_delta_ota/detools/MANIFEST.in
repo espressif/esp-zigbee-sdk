@@ -1,0 +1,6 @@
+include LICENSE
+include Makefile
+recursive-include detools/sais *.h *.c
+recursive-include detools/libdivsufsort *.h *.c
+recursive-include detools/HDiffPatch *.h *.c *.cpp
+recursive-include tests *.py *.old *.new *.patch *.bin *.rst *.c *.1.0 old new patch *.elf

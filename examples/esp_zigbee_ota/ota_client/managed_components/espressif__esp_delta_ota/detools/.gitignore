@@ -1,0 +1,100 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+# C extensions
+*.so
+*.o
+a.out
+
+# Distribution / packaging
+.Python
+env/
+venv/
+.venv/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# PyInstaller
+#  Usually these files are written by a python script from a template
+#  before PyInstaller builds the exe, so as to inject date/other infos into it.
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*,cover
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
+*.log
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+target/
+
+# Vim IDE
+*~
+*.swp
+*.swo
+
+# IntelliJ IDEA
+.idea/
+
+/foo*
+*.gcov
+*.gcda
+*.gcno
+/main
+c/detools
+c/foo.new
+/fuzzer*
+data-format-from.bin
+data-format-to.bin
+data-format-from-apply.bin
+pybv11-data-format-with-data-sections.patch
+pybv11-aarch64.patch
+pybv11-data-format-with-elf-data-sections.patch
+pybv11-elf-data-sections.new
+pybv11-data-format-with-elf-data-sections-offsets.patch
+libdetools.a
+Python-3.7.3.tar
+Python-3.8.1.tar
+Python.tar
+/*.patch
+to.tar
+c/tst/assert-apply-patch-in-place.mem
+c/tst/assert-apply-patch.new
+c/tst/corpus
+c/tst/fuzzer-corrupt-patch*
+c/tst/slow-unit-*
+c/tst/from
+c/tst/patch
+c/tst/to
