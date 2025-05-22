@@ -1,0 +1,3 @@
+[submodule "detools/HDiffPatch"]
+	path = detools/HDiffPatch
+	url = https://github.com/eerimoq/HDiffPatch

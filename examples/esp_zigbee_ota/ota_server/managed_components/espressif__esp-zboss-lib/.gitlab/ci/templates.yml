@@ -1,0 +1,99 @@
+include:
+  - '.gitlab/ci/common.yml'
+
+.common_before_scripts: &common_before_scripts
+  - source $CI_PROJECT_DIR/tools/ci/utils.sh
+  - setup_idf
+  - setup_esp_sdk
+  - update_cmake_dependency
+  - cd $CI_PROJECT_DIR/esp-zigbee-sdk
+  - pip install -r tools/ci/requirements-build.txt
+
+.build_non_pytest_example_template:
+  stage: build
+  image: ${CI_DOCKER_REGISTRY}/esp-env-${DOCKER_ENV_VERSION}
+  before_script:
+    - *common_before_scripts
+  artifacts:
+    paths:
+      - "**/build*/*.bin"
+      - "**/build*/flasher_args.json"
+      - "**/build*/config/sdkconfig.json"
+      - "**/build*/bootloader/*.bin"
+      - "**/build*/partition_table/*.bin"
+    when: always
+    expire_in: 3 days
+  script:
+    - python tools/ci/build_apps.py ./examples --no_pytest --ignore_warning
+      --parallel-count ${CI_NODE_TOTAL:-1}
+      --parallel-index ${CI_NODE_INDEX:-1}
+  tags:
+    - build
+
+.build_pytest_example_template:
+  stage: build
+  image: ${CI_DOCKER_REGISTRY}/esp-env-${DOCKER_ENV_VERSION}
+  before_script:
+    - *common_before_scripts
+  artifacts:
+    paths:
+      - "**/build*/*.bin"
+      - "**/build*/flasher_args.json"
+      - "**/build*/config/sdkconfig.json"
+      - "**/build*/bootloader/*.bin"
+      - "**/build*/partition_table/*.bin"
+      - "**/build*/*.map"
+      - "**/build*/*.elf"
+      - "**/build*/flash_project_args"
+      - "**/esp-zigbee-sdk/conftest.py"
+      - "**/esp-zigbee-sdk/pytest.ini"
+      - "**/examples/*.py"
+      - "**/ci/requirements-pytest.txt"
+    when: always
+    expire_in: 3 days
+  script:
+    - python tools/ci/build_apps.py ./examples --pytest --ignore_warning
+  tags:
+
+.build_pytest_gateway_template:
+  stage: build
+  image: ${CI_DOCKER_REGISTRY}/esp-env-${DOCKER_ENV_VERSION}
+  before_script:
+    - *common_before_scripts
+  artifacts:
+    paths:
+      - "**/build*/*.bin"
+      - "**/build*/flasher_args.json"
+      - "**/build*/config/sdkconfig.json"
+      - "**/build*/bootloader/*.bin"
+      - "**/build*/partition_table/*.bin"
+      - "**/build*/*.map"
+      - "**/build*/*.elf"
+      - "**/build*/flash_project_args"
+      - "**/esp-zigbee-sdk/conftest.py"
+      - "**/esp-zigbee-sdk/pytest.ini"
+      - "**/examples/*.py"
+      - "**/ci/requirements-pytest.txt"
+    when: always
+    expire_in: 3 days
+  script:
+    - python tools/ci/build_apps.py ./examples --rcp_gateway --ignore_warning
+    - build_rcp_gateway
+  tags:
+    - build
+
+.pytest_template:
+  stage: target_test
+  image: ${CI_DOCKER_REGISTRY}/target-test-env-${DOCKER_ENV_VERSION}
+  artifacts:
+    paths:
+      - "$CI_PROJECT_DIR/esp-zigbee-sdk/pytest_embedded_log/"
+    when: always
+    expire_in: 3 days
+  script:
+    - cd $CI_PROJECT_DIR/esp-zigbee-sdk
+    - pip install -r tools/ci/requirements-pytest.txt
+    - find examples/ -name "pytest_*.py" | xargs pytest --target ${CHIP} -m zigbee_multi_dut
+  tags:
+    - ${CHIP}
+    - zigbee_multi_dut

@@ -9,7 +9,9 @@ build_*/
 sdkconfig
 sdkconfig.old
 dependencies.lock
-managed_components
+
+esp_zigbee_greenpower/
+esp_zigbee_customized_devices/
 __pycache__/
 out/
 _build/
