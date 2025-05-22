@@ -1,0 +1,5 @@
+## IDF Component Manager Manifest File
+dependencies:
+  espressif/led_strip:
+    version: '^3'
+    override_path: '../../../'

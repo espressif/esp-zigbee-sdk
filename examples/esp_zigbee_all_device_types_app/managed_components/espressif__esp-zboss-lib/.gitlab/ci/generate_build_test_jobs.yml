@@ -1,0 +1,42 @@
+generate_child_pipeline:
+  stage: generate
+  before_script:
+    - source tools/ci/utils.sh
+    - setup_esp_sdk
+  artifacts:
+    paths:
+      - child_pipeline_default.yml
+      - child_pipeline_lts.yml
+    expire_in: 1 week
+    when: always
+  script:
+    - python3 $CI_PROJECT_DIR/esp-zigbee-sdk/tools/ci/dynamic_pipelines/generate_child_pipeline.py -p $CI_PROJECT_DIR -t .gitlab/ci/templates.yml -i ${DEFAULT_IDF_VERSION} -d ${DEFAULT_BUILD_DOCKER_ENV}
+
+build_and_test_pipeline_default:
+  stage: build
+  needs:
+    - generate_child_pipeline
+  inherit:
+    variables: true
+  trigger:
+    include:
+      - artifact: child_pipeline_default.yml
+        job: generate_child_pipeline
+    forward:
+      pipeline_variables: true
+    strategy: depend
+
+build_and_test_pipeline_lts:
+  stage: build
+  needs:
+    - generate_child_pipeline
+  inherit:
+    variables: true
+  when: manual
+  trigger:
+    include:
+      - artifact: child_pipeline_lts.yml
+        job: generate_child_pipeline
+    forward:
+      pipeline_variables: true
+    strategy: depend
