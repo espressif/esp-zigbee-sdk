@@ -156,37 +156,50 @@ static esp_err_t zb_action_handler(esp_zb_core_action_callback_id_t callback_id,
     return ret;
 }
 
+
+static esp_err_t zb_register_device(void){
+    esp_zb_attribute_list_t *basic_cluster = esp_zb_basic_cluster_create(NULL);
+    esp_zb_attribute_list_t *measure_cluster = esp_zb_zcl_attr_list_create(ESP_ZB_ZCL_CLUSTER_ID_OTA_UPGRADE);
+    esp_zb_cluster_list_t *cluster_list = esp_zb_zcl_cluster_list_create();
+    esp_zb_ep_list_t *ep_list = esp_zb_ep_list_create();
+    esp_zb_zcl_ota_upgrade_server_variable_t variable = {
+        .query_jitter = 5,
+        .current_time = 0,
+        .file_count = 0,
+    };
+    esp_zb_endpoint_config_t endpoint_config = {
+        .endpoint = ENDPOINT_ID,
+        .app_profile_id = ESP_ZB_AF_HA_PROFILE_ID,
+        .app_device_id = ESP_ZB_HA_TEST_DEVICE_ID,
+        .app_device_version = 0,
+    };
+
+    /* Added attributes */
+    ESP_ERROR_CHECK(esp_zb_basic_cluster_add_attr(basic_cluster, ESP_ZB_ZCL_ATTR_BASIC_MANUFACTURER_NAME_ID, ESP_MANUFACTURER_NAME));
+    ESP_ERROR_CHECK(esp_zb_basic_cluster_add_attr(basic_cluster, ESP_ZB_ZCL_ATTR_BASIC_MODEL_IDENTIFIER_ID, ESP_MODEL_IDENTIFIER));
+    ESP_ERROR_CHECK(esp_zb_ota_cluster_add_attr(measure_cluster, ESP_ZB_ZCL_ATTR_OTA_UPGRADE_SERVER_DATA_ID, (void *)&variable));
+    /* Added clusters */
+    ESP_ERROR_CHECK(esp_zb_cluster_list_add_basic_cluster(cluster_list, basic_cluster, ESP_ZB_ZCL_CLUSTER_SERVER_ROLE));
+    ESP_ERROR_CHECK(esp_zb_cluster_list_add_ota_cluster(cluster_list, measure_cluster, ESP_ZB_ZCL_CLUSTER_SERVER_ROLE));
+    /* Added endpoints */
+    ESP_ERROR_CHECK(esp_zb_ep_list_add_ep(ep_list, cluster_list, endpoint_config));
+    /* Register device */
+    return esp_zb_device_register(ep_list);
+}
+
 static void esp_zb_task(void *pcParameters)
 {
     esp_zb_cfg_t zb_nwk_cfg = ESP_ZB_ZR_CONFIG();
     esp_zb_init(&zb_nwk_cfg);
     esp_zb_nwk_set_link_status_period(10);
-
-    // esp_zb_color_dimmable_light_cfg_t light_cfg = ESP_ZB_DEFAULT_COLOR_DIMMABLE_LIGHT_CONFIG();
-    esp_zb_ep_list_t *esp_zb_ep_list = esp_zb_ep_list_create();
-    esp_zb_cluster_list_t *esp_zb_cluster_list = esp_zb_zcl_cluster_list_create();
-
-    esp_zb_endpoint_config_t esp_zb_ep = {
-        .endpoint = ENDPOINT_ID,
-        .app_profile_id = 60,
-        .app_device_id = ESP_ZB_HA_COLOR_DIMMABLE_LIGHT_DEVICE_ID,
-        .app_device_version = 4,
-    };
-
-    // esp_zb_cluster_add_attr(esp_zb_cluster_list, ESP_ZB_ZCL_CLUSTER_ID_ON_OFF, ESP_ZB_ZCL_CLUSTER_SERVER_ROLE);
-
-    esp_zb_ep_list_add_ep(esp_zb_ep_list, esp_zb_cluster_list, esp_zb_ep);
-    // zcl_basic_manufacturer_info_t info = {
-    //      .manufacturer_name = ESP_MANUFACTURER_NAME,
-    //      .model_identifier = ESP_MODEL_IDENTIFIER,
-    //  };
-    // esp_zcl_utility_add_ep_basic_manufacturer_info(esp_zb_color_dimmable_light_ep, HA_COLOR_DIMMABLE_LIGHT_ENDPOINT, &info);
-    // esp_zb_device_register(esp_zb_color_dimmable_light_ep);
     esp_zb_core_action_handler_register(zb_action_handler);
-    esp_zb_set_primary_network_channel_set(ESP_ZB_PRIMARY_CHANNEL_MASK);
+    esp_zb_set_channel_mask(ESP_ZB_PRIMARY_CHANNEL_MASK);
+
+    ESP_ERROR_CHECK(zb_register_device());
     ESP_ERROR_CHECK(esp_zb_start(false));
     esp_zb_stack_main_loop();
 }
+
 
 
 void app_main(void)
