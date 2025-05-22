@@ -66,16 +66,7 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
             break;  
         case ESP_ZB_BDB_SIGNAL_STEERING:
             if (err_status == ESP_OK) {
-                esp_zb_ieee_addr_t extended_pan_id;
-                esp_zb_get_extended_pan_id(extended_pan_id);
-                ESP_LOGI(TAG, "Joined network successfully (Extended PAN ID: %02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x, PAN ID: 0x%04hx, Channel:%d, Short Address: 0x%04hx)",
-                         extended_pan_id[7], extended_pan_id[6], extended_pan_id[5], extended_pan_id[4],
-                         extended_pan_id[3], extended_pan_id[2], extended_pan_id[1], extended_pan_id[0],
-                         esp_zb_get_pan_id(), esp_zb_get_current_channel(), esp_zb_get_short_address());
-            } else {
-                esp_show_route_table();
-                ESP_LOGI(TAG, "Network steering was not successful (status: %s)", esp_err_to_name(err_status));
-                esp_zb_scheduler_alarm((esp_zb_callback_t)bdb_start_top_level_commissioning_cb, ESP_ZB_BDB_MODE_NETWORK_STEERING, 1000);
+                ESP_LOGI(TAG, "Steering started");
             }
             break;
         case ESP_ZB_NWK_SIGNAL_PERMIT_JOIN_STATUS:
@@ -89,8 +80,6 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
             break;
         default:
             ESP_LOGI(TAG, "ZDO signal: %s (0x%x), status: %s", esp_zb_zdo_signal_to_string(sig_type), sig_type, esp_err_to_name(err_status));
-            esp_show_neighbor_table();
-            esp_show_route_table();
             break;
     }
 }
