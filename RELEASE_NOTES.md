@@ -1,5 +1,26 @@
 # Espressif Zigbee SDK Release Notes
 
+## 21-May-2025
+1.6.5 version release of ESP-ZIGBEE-SDK is based on esp-idf v5.3.2
+
+### Features
+- Enabled the application to call `settimeofday()` to set the stack's UTC time.
+- Enabled the BDB finding & binding commissioning
+- Added `esp_zb_secur_broadcast_network_key()` to broadcast the network key within the network.
+- Added `esp_zb_secur_broadcast_network_key_switch()` to broadcast a network key switch within the network.
+- Added `esp_zb_set_node_descriptor_power_source()` to configure the power source in the local node descriptor.
+- Added `esp_zb_set_node_power_descriptor()` to configure the power descriptor of the local device.
+- Added `esp_zb_zdo_power_desc_req()` to request the power descriptor of a destination device.
+
+### Bug Fixes
+- Fixed missing initialization configuration for the Home Automation light sensor device.
+- Fixed a memory leak issue triggered when `esp_zb_aps_data_request()` is called without registering an APS confirm handler via `esp_zb_aps_data_confirm_handler_register()`.
+- Corrected the `MinMeasuredValue` and `MaxMeasuredValue` attributes in the Pressure Measurement cluster.
+
+### Changes
+- Updated esp-zigbee-lib to v1.6.5
+
+
 ## 21-Feb-2025
 1.6.4 version release of ESP-ZIGBEE-SDK is based on esp-idf v5.3.2
 
