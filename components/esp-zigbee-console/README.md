@@ -885,6 +885,12 @@ Supported information types:
   node_desc request to [addr:0x3ed5] status: 0
   I (1335839) : 0x40815b34   01 40 8e 34 12 6c 4d 06  00 2c 4d 06 00           |.@.4.lM..,M..|
   ```
+- `power_desc`: Get the power descriptor of device node
+  ```bash
+  esp> zdo request power_desc -d 0x3ed5
+  power_desc request to [addr:0x3ed5] status: 0
+  I (59133) : 0x4081b2ac   00 00                                             |..|
+  ```
 - `active_ep`: Get the list of endpoints on a device node with simple descriptors.
   ```bash
   esp> zdo request active_ep -d 0x3ed5

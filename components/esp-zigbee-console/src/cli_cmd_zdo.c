@@ -36,6 +36,20 @@ static void cli_zdo_node_desc_cb(esp_zb_zdp_status_t zdo_status, uint16_t addr, 
     free(req);
 }
 
+static void cli_zdo_power_desc_cb(esp_zb_zdo_power_desc_rsp_t *power_desc, void *user_ctx)
+{
+    static const char *request_name = "power_desc";
+    esp_zb_zdo_power_desc_req_param_t *req = user_ctx;
+    esp_zb_zdp_status_t zdo_status = power_desc->status;
+
+    cli_output_request_status(request_name, req->dst_nwk_addr, zdo_status);
+    if (zdo_status == ESP_ZB_ZDP_STATUS_SUCCESS) {
+        cli_output_buffer(&power_desc->desc, sizeof(esp_zb_af_node_power_desc_t));
+    }
+    esp_zb_console_notify_result(ESP_OK);
+    free(req);
+}
+
 static void cli_zdo_simple_desc_cb(esp_zb_zdp_status_t zdo_status, esp_zb_af_simple_desc_1_1_t *simple_desc, void *user_ctx)
 {
     static const char *request_name = "simple_desc";
@@ -215,7 +229,7 @@ static esp_err_t cli_zdo_request(esp_zb_cli_cmd_t *self, int argc, char **argv)
         arg_end_t  *end;
     } argtable = {
         .request  = arg_strn(NULL, NULL, "<INFO>", 1, 1, "information to request"),
-        .rem_req  = arg_rem("", "node_desc|simple_desc|active_ep|nwk_addr|ieee_addr|neighbors|routes|bindings"),
+        .rem_req = arg_rem("", "node_desc|power_desc|simple_desc|active_ep|nwk_addr|ieee_addr|neighbors|routes|bindings"),
         .address  = arg_addrn("d", "dst-addr", "<addr:ADDR>", 1, 1, "address of interest"),
         .endpoint = arg_u8n("e",   "endpoint", "<u8:EID>",    0, 1, "endpoint ID of interest"),
         .end = arg_end(2),
@@ -239,6 +253,10 @@ static esp_err_t cli_zdo_request(esp_zb_cli_cmd_t *self, int argc, char **argv)
         esp_zb_zdo_node_desc_req_param_t *nd_req = malloc(sizeof(esp_zb_zdo_node_desc_req_param_t));
         nd_req->dst_nwk_addr = argtable.address->addr[0].u.short_addr;
         esp_zb_zdo_node_desc_req(nd_req, cli_zdo_node_desc_cb, nd_req);
+    } else if (!strcmp(argtable.request->sval[0], "power_desc")) {
+        esp_zb_zdo_power_desc_req_param_t *pd_req = malloc(sizeof(esp_zb_zdo_power_desc_req_param_t));
+        pd_req->dst_nwk_addr = argtable.address->addr[0].u.short_addr;
+        esp_zb_zdo_power_desc_req(pd_req, cli_zdo_power_desc_cb, pd_req);
     } else if (!strcmp(argtable.request->sval[0], "simple_desc")) {
         esp_zb_zdo_simple_desc_req_param_t *sd_req = malloc(sizeof(esp_zb_zdo_simple_desc_req_param_t));
         sd_req->addr_of_interest = argtable.address->addr[0].u.short_addr,
