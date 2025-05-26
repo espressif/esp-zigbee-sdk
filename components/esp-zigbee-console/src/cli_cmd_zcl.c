@@ -944,6 +944,11 @@ static esp_err_t cli_zcl_send_raw(esp_zb_cli_cmd_t *self, int argc, char **argv)
         cli_output("prfl:0x%04x, c:0x%04x, dir:%c, cmd:0x%02x\n", req_params.profile_id, req_params.cluster_id,
                    req_params.direction == ESP_ZB_ZCL_CMD_DIRECTION_TO_SRV ? 'S' : 'C',
                    req_params.custom_cmd_id);
+        if (req_params.manuf_specific == 1) {
+            cli_output("manuf_specific: yes, with manuf_code: 0x%04x\n", req_params.manuf_code);
+        } else {
+            cli_output("manuf_specific: no\n");
+        }
         if (req_params.data.value) {
             cli_output_buffer(req_params.data.value, req_params.data.size);
         }
