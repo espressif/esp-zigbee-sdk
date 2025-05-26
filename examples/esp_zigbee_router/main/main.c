@@ -39,6 +39,8 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
                 esp_zb_bdb_start_top_level_commissioning(ESP_ZB_BDB_MODE_NETWORK_STEERING);
             } else {
                 ESP_LOGI(TAG, "Device rebooted");
+                esp_zb_scheduler_alarm((esp_zb_callback_t)bdb_start_top_level_commissioning_cb, ESP_ZB_BDB_MODE_INITIALIZATION, 1000);
+
             }
         } else {
             //Dlaczego reboot ma status błędu?
