@@ -859,6 +859,9 @@ Use `-p <hex:DATA>` to specify the raw payload data of the command.
 
 Use `-n` to perform a dry run. Do not send the command, just dump the content.
 
+Optionally, use `--manuf <u16:CODE>` to send the command as manufacturer-specific
+extension, with given manufacturer code.
+
 ```bash
 esp> zcl send_raw -n -d 0x0000 --dst-ep 1 -e 2 -c 2 --cmd 0x00 -p 0x1234567890
 Send request:
@@ -869,6 +872,10 @@ I (13859) : 0x40815970   12 34 56 78 90                                    |.4Vx
 
 ```bash
 esp> zcl send_raw -d 0xb55c --dst-ep 1 -e 2 -c 6 --cmd 0x01
+```
+
+```bash
+esp> zcl send_raw -d 0x4db8 --dst-ep 1 -e 10 --profile 0x104 -c 0x0 --cmd 0xaa -p 0x1234 --manuf 0x131B
 ```
 
 ### zdo

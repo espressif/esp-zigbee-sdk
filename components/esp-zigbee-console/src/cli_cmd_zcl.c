@@ -862,14 +862,16 @@ static esp_err_t cli_zcl_send_raw(esp_zb_cli_cmd_t *self, int argc, char **argv)
         esp_zb_cli_aps_argtable_t aps;
         arg_str_t  *peer_role;
         arg_u8_t   *command;
+        arg_u16_t  *manuf_code;
         arg_hex_t  *payload;
         arg_lit_t  *dry_run;
         arg_end_t  *end;
     } argtable = {
-        .peer_role = arg_strn("r",  "role",     "<sc:C|S>",    0, 1, "role of the peer cluster, default: S"),
-        .command   = arg_u8n(NULL,  "cmd",      "<u8:CMD_ID>", 1, 1, "identifier of the command"),
-        .payload   = arg_hexn("p",  "payload",  "<hex:DATA>",  0, 1, "ZCL payload of the command, raw HEX data"),
-        .dry_run   = arg_lit0("n",  "dry-run", "print the request being sent"),
+        .peer_role  = arg_strn("r",  "role",     "<sc:C|S>",    0, 1, "role of the peer cluster, default: S"),
+        .command    = arg_u8n(NULL,  "cmd",      "<u8:CMD_ID>", 1, 1, "identifier of the command"),
+        .manuf_code = arg_u16n(NULL, "manuf",    "<u16:CODE>",  0, 1, "set manufacturer's code"),
+        .payload    = arg_hexn("p",  "payload",  "<hex:DATA>",  0, 1, "ZCL payload of the command, raw HEX data"),
+        .dry_run    = arg_lit0("n",  "dry-run",  "print the request being sent"),
         .end = arg_end(2),
     };
     esp_zb_cli_fill_aps_argtable(&argtable.aps);
@@ -894,6 +896,13 @@ static esp_err_t cli_zcl_send_raw(esp_zb_cli_cmd_t *self, int argc, char **argv)
                                            &req_params.zcl_basic_cmd.src_endpoint,
                                            &req_params.cluster_id,
                                            &req_params.profile_id));
+
+    if (argtable.manuf_code->count > 0) {
+        if (argtable.manuf_code->val[0] != ESP_ZB_ZCL_ATTR_NON_MANUFACTURER_SPECIFIC) {
+            req_params.manuf_specific = 1;
+            req_params.manuf_code = argtable.manuf_code->val[0];
+        }
+    }
 
     if (argtable.peer_role->count > 0) {
         switch (argtable.peer_role->sval[0][0]) {
@@ -935,6 +944,11 @@ static esp_err_t cli_zcl_send_raw(esp_zb_cli_cmd_t *self, int argc, char **argv)
         cli_output("prfl:0x%04x, c:0x%04x, dir:%c, cmd:0x%02x\n", req_params.profile_id, req_params.cluster_id,
                    req_params.direction == ESP_ZB_ZCL_CMD_DIRECTION_TO_SRV ? 'S' : 'C',
                    req_params.custom_cmd_id);
+        if (req_params.manuf_specific == 1) {
+            cli_output("manuf_specific: yes, with manuf_code: 0x%04x\n", req_params.manuf_code);
+        } else {
+            cli_output("manuf_specific: no\n");
+        }
         if (req_params.data.value) {
             cli_output_buffer(req_params.data.value, req_params.data.size);
         }
