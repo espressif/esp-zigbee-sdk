@@ -1,6 +1,5 @@
-| Supported Targets | ESP32-H2 | ESP32-C6 |
-| ----------------- | -------- | -------- |
-
+| Supported Targets | ESP32-H2 | ESP32-C6 | ESP32-C5 |
+| ----------------- | -------- | -------- | -------- |
 # Green Power proxy combo Example 
 
 This example demonstrates how to configure Zigbee Green Power combo (proxy + sink) and use it as on/off light to receive Zigbee Green Power frame from Zigbee Green device.

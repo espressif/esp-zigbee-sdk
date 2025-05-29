@@ -22,6 +22,7 @@
 #include "esp_sleep.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+#include "switch_driver.h"
 #include "ha/esp_zigbee_ha_standard.h"
 #include "esp_zb_sleepy_end_device.h"
 
@@ -91,20 +92,9 @@ static void zb_deep_sleep_init(void)
     ESP_LOGI(TAG, "Enabling timer wakeup, %ds\n", wakeup_time_sec);
     ESP_ERROR_CHECK(esp_sleep_enable_timer_wakeup(wakeup_time_sec * 1000000));
 
-    /* 2. GPIO waking-up */
-#if CONFIG_IDF_TARGET_ESP32C6
-    /* For ESP32C6 boards, RTCIO only supports GPIO0~GPIO7 */
-    /* GPIO7 pull down to wake up */
-    const int gpio_wakeup_pin = 7;
-#elif CONFIG_IDF_TARGET_ESP32H2
-    /* You can wake up by pulling down GPIO9. On ESP32H2 development boards, the BOOT button is connected to GPIO9.
-    You can use the BOOT button to wake up the boards directly.*/
-    const int gpio_wakeup_pin = 9;
-#endif
-    const uint64_t gpio_wakeup_pin_mask = 1ULL << gpio_wakeup_pin;
     /* The configuration mode depends on your hardware design.
     Since the BOOT button is connected to a pull-up resistor, the wake-up mode is configured as LOW. */
-    ESP_ERROR_CHECK(esp_sleep_enable_ext1_wakeup(gpio_wakeup_pin_mask, ESP_EXT1_WAKEUP_ANY_LOW));
+    ESP_ERROR_CHECK(esp_sleep_enable_ext1_wakeup(BIT(CONFIG_GPIO_EXT1_WAKEUP_SOURCE), ESP_EXT1_WAKEUP_ANY_LOW));
 
     /* Also these two GPIO configurations are also depended on the hardware design.
     The BOOT button is connected to the pull-up resistor, so enable the pull-up mode and disable the pull-down mode.
@@ -112,8 +102,13 @@ static void zb_deep_sleep_init(void)
     Notice: if these GPIO configurations do not match the hardware design, the deep sleep module will enable the GPIO hold
     feature to hold the GPIO voltage when enter the sleep, which will ensure the board be waked up by GPIO. But it will cause
     3~4 times power consumption increasing during sleep. */
-    ESP_ERROR_CHECK(gpio_pullup_en(gpio_wakeup_pin));
-    ESP_ERROR_CHECK(gpio_pulldown_dis(gpio_wakeup_pin));
+#if SOC_RTCIO_INPUT_OUTPUT_SUPPORTED
+    rtc_gpio_pulldown_dis(CONFIG_GPIO_EXT1_WAKEUP_SOURCE);
+    rtc_gpio_pullup_en(CONFIG_GPIO_EXT1_WAKEUP_SOURCE);
+#else
+    gpio_pulldown_dis(CONFIG_GPIO_EXT1_WAKEUP_SOURCE);
+    gpio_pullup_en(CONFIG_GPIO_EXT1_WAKEUP_SOURCE);
+#endif
 }
 
 static void zb_deep_sleep_start(void)

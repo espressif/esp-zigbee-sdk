@@ -37,9 +37,7 @@
 
 static const char *TAG = "ESP_ZB_SLEEP";
 
-static switch_func_pair_t button_func_pair[] = {
-    {CONFIG_GPIO_INPUT_IO_WAKEUP, SWITCH_ONOFF_TOGGLE_CONTROL}
-};
+static switch_func_pair_t button_func_pair[] = {{CONFIG_GPIO_EXT1_WAKEUP_SOURCE, SWITCH_ONOFF_TOGGLE_CONTROL}};
 
 static void ieee_cb(esp_zb_zdp_status_t zdo_status, esp_zb_zdo_ieee_addr_rsp_t *resp, void *user_ctx)
 {
@@ -76,15 +74,15 @@ static esp_err_t deferred_driver_init(void)
         The configuration mode depends on your hardware design.
         Since the BOOT button is connected to a pull-up resistor, the wake-up mode is configured as LOW.
         */
-        ESP_ERROR_CHECK(esp_sleep_enable_ext1_wakeup(1ULL << CONFIG_GPIO_INPUT_IO_WAKEUP, ESP_EXT1_WAKEUP_ANY_LOW));
+        ESP_ERROR_CHECK(esp_sleep_enable_ext1_wakeup(BIT(CONFIG_GPIO_EXT1_WAKEUP_SOURCE), ESP_EXT1_WAKEUP_ANY_LOW));
 
 #if SOC_RTCIO_INPUT_OUTPUT_SUPPORTED
-        rtc_gpio_init(CONFIG_GPIO_INPUT_IO_WAKEUP);
-        rtc_gpio_pulldown_dis(CONFIG_GPIO_INPUT_IO_WAKEUP);
-        rtc_gpio_pullup_en(CONFIG_GPIO_INPUT_IO_WAKEUP);
+        rtc_gpio_init(CONFIG_GPIO_EXT1_WAKEUP_SOURCE);
+        rtc_gpio_pulldown_dis(CONFIG_GPIO_EXT1_WAKEUP_SOURCE);
+        rtc_gpio_pullup_en(CONFIG_GPIO_EXT1_WAKEUP_SOURCE);
 #else
-        gpio_pulldown_dis(CONFIG_GPIO_INPUT_IO_WAKEUP);
-        gpio_pullup_en(CONFIG_GPIO_INPUT_IO_WAKEUP);
+        gpio_pulldown_dis(CONFIG_GPIO_EXT1_WAKEUP_SOURCE);
+        gpio_pullup_en(CONFIG_GPIO_EXT1_WAKEUP_SOURCE);
 #endif
         is_inited = true;
     }

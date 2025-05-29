@@ -18,11 +18,37 @@ Cloning esp-idf:
 .. code-block:: bash
 
    git clone --recursive https://github.com/espressif/esp-idf.git
+
+.. code-block:: bash
+
    cd esp-idf
-   git checkout v5.3.2
+
+.. only:: not esp32c5
+
+   .. code-block:: bash
+
+      git checkout v5.3.2
+
+.. only:: esp32c5
+
+   .. code-block:: bash
+
+      git checkout master
+
+.. code-block:: bash
+
    git submodule update --init --recursive
+
+.. code-block:: bash
+   
    ./install.sh
+
+.. code-block:: bash
+
    source ./export.sh
+
+.. code-block:: bash
+
    cd ..
 
 Cloning esp-zigbee-sdk:
@@ -41,9 +67,17 @@ Various Zigbee examples are provided with the SDK:
 
 Under an example folder, choose IDF SoC target.
 
-::
+.. only:: not esp32c5
 
-   idf.py set-target {IDF_TARGET_PATH_NAME}
+   .. code-block:: bash
+
+      idf.py set-target {IDF_TARGET_PATH_NAME}
+
+.. only:: esp32c5
+
+   .. code-block:: bash
+
+      idf.py --preview set-target {IDF_TARGET_PATH_NAME}
 
 -  If IDF target has not been set explicitly, then ``esp32`` is
    considered as default.
