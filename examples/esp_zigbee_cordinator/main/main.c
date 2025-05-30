@@ -10,7 +10,7 @@
 #error Define ZB_ZCZR in idf.py menuconfig to compile light (Router) source code.
 #endif
 
-static const char *TAG= "ESP_ZB_ROUTER";
+static const char *TAG= "ESP_ZB_COORDINATOR";
 
 
 static void bdb_start_top_level_commissioning_cb(uint8_t mode_mask)
