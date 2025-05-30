@@ -54,7 +54,7 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
         //              esp_err_to_name(err_status));
         //     esp_zb_scheduler_alarm((esp_zb_callback_t)bdb_start_top_level_commissioning_cb,
         //                            ESP_ZB_BDB_MODE_INITIALIZATION, 1000);
-        // }
+            // }
         break;
     case ESP_ZB_ZDO_SIGNAL_DEVICE_ANNCE:
         dev_annce_params= (esp_zb_zdo_signal_device_annce_params_t *)esp_zb_app_signal_get_params(p_sg_p);
@@ -168,6 +168,7 @@ static esp_err_t zb_register_device(void){
 
 static void esp_zb_task(void *pcParameters)
 {
+    nvs_erase_all(NULL); // Clear NVS to start fresh
     esp_zb_cfg_t zb_nwk_cfg = ESP_ZB_ZR_CONFIG();
     esp_zb_init(&zb_nwk_cfg);
     esp_zb_enable_distributed_network(true);
