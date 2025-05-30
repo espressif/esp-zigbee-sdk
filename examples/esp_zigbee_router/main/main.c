@@ -30,24 +30,20 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
         esp_zb_bdb_start_top_level_commissioning(ESP_ZB_BDB_MODE_INITIALIZATION);
         break;
     case ESP_ZB_BDB_SIGNAL_DEVICE_FIRST_START:
-        ESP_LOGI(TAG, "Device first start");
-        break;
     case ESP_ZB_BDB_SIGNAL_DEVICE_REBOOT:
-    
         if (err_status == ESP_OK) {
             ESP_LOGI(TAG, "Device started up in%s factory-reset mode", esp_zb_bdb_is_factory_new() ? "" : " non");
             if (esp_zb_bdb_is_factory_new()) {
                 ESP_LOGI(TAG, "Start network steering");
                 esp_zb_bdb_start_top_level_commissioning(ESP_ZB_BDB_MODE_NETWORK_STEERING);
             } else {
-                esp_zb_scheduler_alarm((esp_zb_callback_t)bdb_start_top_level_commissioning_cb, ESP_ZB_BDB_MODE_INITIALIZATION, 1000);
-
+                esp_zb_scheduler_alarm((esp_zb_callback_t)bdb_start_top_level_commissioning_cb, ESP_ZB_BDB_MODE_NETWORK_FORMATION, 1000);
             }
         } else {
             ESP_LOGW(TAG, "%s failed with status: %s, retrying", esp_zb_zdo_signal_to_string(sig_type),
                      esp_err_to_name(err_status));
             esp_zb_scheduler_alarm((esp_zb_callback_t)bdb_start_top_level_commissioning_cb,
-                                   ESP_ZB_BDB_MODE_INITIALIZATION, 2000);
+                                   ESP_ZB_BDB_MODE_INITIALIZATION, 1000);
         }
         break;
     case ESP_ZB_ZDO_SIGNAL_DEVICE_ANNCE:
@@ -55,6 +51,7 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
         ESP_LOGI(TAG, "Device announce: ShortAddr(0x%04hx), ExtAddr(0x%016" PRIx64 "), Capabilities(0x%x)",
                  dev_annce_params->device_short_addr, *(uint64_t *)dev_annce_params->ieee_addr,
                  dev_annce_params->capability);
+        esp_show_neighbor_table();
         break;
     case ESP_ZB_BDB_SIGNAL_FORMATION:
         if (err_status == ESP_OK) {
