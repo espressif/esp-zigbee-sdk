@@ -37,7 +37,6 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
         if(esp_zb_bdb_is_factory_new())
         {
             ESP_ERROR_CHECK(deferred_driver_init());//TODO: ma działać
-
             esp_zb_bdb_start_top_level_commissioning(ESP_ZB_BDB_MODE_NETWORK_STEERING);
 
         }

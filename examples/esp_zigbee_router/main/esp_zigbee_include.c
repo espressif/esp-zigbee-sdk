@@ -1,7 +1,7 @@
 #include "esp_check.h"
 #include "esp_log.h"
 #include "nwk/esp_zigbee_nwk.h"
-
+#include "switch_driver.h"
 
 static const char *TAG_include = "esp_zigbee_include";
 
@@ -70,10 +70,22 @@ void esp_zigbee_include_show_tables(void) {
     esp_show_route_table();
 }
 
-esp_err_t handle_buttons(void) {
-    esp_err_t ret = ESP_OK;
+static switch_func_pair_t button_func_pair[] = {
+    {GPIO_INPUT_IO_TOGGLE_SWITCH, SWITCH_ONOFF_TOGGLE_CONTROL}
+};
 
-                  
+void button_handler(switch_func_pair_t *button_func_pair)
+{
+    if(button_func_pair->func == SWITCH_ONOFF_TOGGLE_CONTROL) {
+        esp_zigbee_include_show_tables();
+    }
+    
+}
 
-    return ret;
+static esp_err_t deferred_driver_init(void)
+{
+    uint8_t button_num = PAIR_SIZE(button_func_pair);
+
+    bool is_initialized = switch_driver_init(button_func_pair, button_num, button_handler);
+    return is_initialized ? ESP_OK : ESP_FAIL;
 }

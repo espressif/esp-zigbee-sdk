@@ -35,6 +35,7 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
         ESP_LOGI(TAG, "Zigbee device is joining the network");
         if(esp_zb_bdb_is_factory_new())
         {
+            ESP_ERROR_CHECK(deferred_driver_init());
             esp_zb_bdb_start_top_level_commissioning(ESP_ZB_BDB_MODE_NETWORK_STEERING);
         }
         else{
@@ -46,7 +47,6 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
         ESP_LOGI(TAG, "Device announce: ShortAddr(0x%04hx), ExtAddr(0x%016" PRIx64 "), Capabilities(0x%x)",
                  dev_annce_params->device_short_addr, *(uint64_t *)dev_annce_params->ieee_addr,
                  dev_annce_params->capability);
-        esp_show_neighbor_table();
         break;
     case ESP_ZB_BDB_SIGNAL_STEERING:
         if (err_status == ESP_OK) {
@@ -76,8 +76,6 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
         break;
     default:
         ESP_LOGI(TAG, "ZDO signal: %s (0x%x), status: %s", esp_zb_zdo_signal_to_string(sig_type), sig_type, esp_err_to_name(err_status));
-        esp_show_neighbor_table();
-        esp_show_route_table();
         break;
     }
 }
