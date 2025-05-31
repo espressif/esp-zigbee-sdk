@@ -13,6 +13,7 @@
 
 static const char *TAG= "ESP_ZB_END_DEVICE";
 
+
 static void bdb_start_top_level_commissioning_cb(uint8_t mode_mask)
 {
     ESP_RETURN_ON_FALSE(esp_zb_bdb_start_top_level_commissioning(mode_mask) == ESP_OK , , TAG, "Failed to start Zigbee commissioning");
@@ -35,6 +36,8 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
         ESP_LOGI(TAG, "Zigbee device is joining the network");
         if(esp_zb_bdb_is_factory_new())
         {
+            ESP_ERROR_CHECK(deferred_driver_init());//TODO: ma działać
+
             esp_zb_bdb_start_top_level_commissioning(ESP_ZB_BDB_MODE_NETWORK_STEERING);
 
         }
@@ -58,7 +61,6 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
                          extended_pan_id[7], extended_pan_id[6], extended_pan_id[5], extended_pan_id[4],
                          extended_pan_id[3], extended_pan_id[2], extended_pan_id[1], extended_pan_id[0],
                          esp_zb_get_pan_id(), esp_zb_get_current_channel(), esp_zb_get_short_address());
-                //esp_zb_bdb_start_top_level_commissioning(ESP_ZB_BDB_MODE_NETWORK_FORMATION);
         } else {
             ESP_LOGI(TAG, "Network steering was not successful (status: %s)", esp_err_to_name(err_status));
             esp_zb_scheduler_alarm((esp_zb_callback_t)bdb_start_top_level_commissioning_cb, ESP_ZB_BDB_MODE_NETWORK_STEERING, 1000);
@@ -150,13 +152,14 @@ static void esp_zb_task(void *pcParameters)
 
 void app_main(void)
 {
+    
     esp_zb_platform_config_t config = {
         .radio_config = ESP_ZB_DEFAULT_RADIO_CONFIG(),
         .host_config = ESP_ZB_DEFAULT_HOST_CONFIG(),
     };
     
-    ESP_ERROR_CHECK(nvs_flash_init());
 
+    ESP_ERROR_CHECK(nvs_flash_init());
     ESP_ERROR_CHECK(esp_zb_platform_config(&config));
     xTaskCreate(esp_zb_task, "Zigbee_main", 4096, NULL, 5, NULL);
 }

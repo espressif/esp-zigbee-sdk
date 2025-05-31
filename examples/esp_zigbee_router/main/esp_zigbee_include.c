@@ -24,7 +24,7 @@ static void esp_show_neighbor_table(){
     esp_zb_nwk_info_iterator_t itor = ESP_ZB_NWK_INFO_ITERATOR_INIT;
     esp_zb_nwk_neighbor_info_t neighbor = {};
 
-    ESP_LOGI(TAG_include,"Network Neighbors:");
+    ESP_LOGI(TAG_include,"ZigBee Network Neighbors:");
     while (ESP_OK == esp_zb_nwk_get_next_neighbor(&itor, &neighbor)) {
         ESP_LOGI(TAG_include,"Index: %3d", itor);
         ESP_LOGI(TAG_include,"  Age: %3d", neighbor.age);
@@ -36,8 +36,8 @@ static void esp_show_neighbor_table(){
         ESP_LOGI(TAG_include,"  LQI: %3d", neighbor.lqi);
         ESP_LOGI(TAG_include,"  Cost: o:%d", neighbor.outgoing_cost);
 
-        ESP_LOGI(TAG_include," ");
     }
+    ESP_LOGI(TAG_include," ");
 }
 
 //wyswietla trasy
@@ -59,12 +59,21 @@ static void esp_show_route_table(){
         ESP_LOGI(TAG_include, "  Expiry: %4d", route.expiry);
         ESP_LOGI(TAG_include, "  State: %6s", route_state_name[route.flags.status]);
         ESP_LOGI(TAG_include, "  Flags: 0x%02x", *(uint8_t *)&route.flags);
-        ESP_LOGI(TAG_include," ");
     }
+    ESP_LOGI(TAG_include," ");
+
 }
 
 void esp_zigbee_include_show_tables(void) {
     ESP_LOGI(TAG_include, "Zigbee Network Tables:");
     esp_show_neighbor_table();
     esp_show_route_table();
+}
+
+esp_err_t handle_buttons(void) {
+    esp_err_t ret = ESP_OK;
+
+                  
+
+    return ret;
 }
