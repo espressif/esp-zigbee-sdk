@@ -25,3 +25,7 @@ compile_commands.json
 
 # pre-commit
 .pre-commit-config.yaml
+
+# CLion
+.idea/
+*.iml
