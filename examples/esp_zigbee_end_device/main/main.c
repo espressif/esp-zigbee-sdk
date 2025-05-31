@@ -48,21 +48,7 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
                  dev_annce_params->device_short_addr, *(uint64_t *)dev_annce_params->ieee_addr,
                  dev_annce_params->capability);
         esp_show_neighbor_table();
-        break;
-    // case ESP_ZB_BDB_SIGNAL_FORMATION:
-    //     if (err_status == ESP_OK) {
-    //         esp_zb_ieee_addr_t extended_pan_id;
-    //         esp_zb_get_extended_pan_id(extended_pan_id);
-    //         ESP_LOGI(TAG, "Formed network successfully (Extended PAN ID: %02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x, PAN ID: 0x%04hx, Channel:%d, Short Address: 0x%04hx)",
-    //                  extended_pan_id[7], extended_pan_id[6], extended_pan_id[5], extended_pan_id[4],
-    //                  extended_pan_id[3], extended_pan_id[2], extended_pan_id[1], extended_pan_id[0],
-    //                  esp_zb_get_pan_id(), esp_zb_get_current_channel(), esp_zb_get_short_address());
-    //     } else {
-    //         ESP_LOGI(TAG, "Restart network formation (status: %s)", esp_err_to_name(err_status));
-    //         esp_zb_scheduler_alarm((esp_zb_callback_t)bdb_start_top_level_commissioning_cb, ESP_ZB_BDB_MODE_NETWORK_FORMATION, 1000);
-    //     }
-    //     esp_show_neighbor_table();
-    //     break;  
+        break; 
     case ESP_ZB_BDB_SIGNAL_STEERING:
         if (err_status == ESP_OK) {
             ESP_LOGI(TAG, "Steering started");
@@ -126,14 +112,9 @@ static esp_err_t zb_register_device(void){
     esp_zb_attribute_list_t *basic_cluster = esp_zb_basic_cluster_create(NULL);
     esp_zb_cluster_list_t *cluster_list = esp_zb_zcl_cluster_list_create();
     esp_zb_ep_list_t *ep_list = esp_zb_ep_list_create();
-    esp_zb_zcl_ota_upgrade_server_variable_t variable = {
-        .query_jitter = 5,
-        .current_time = 0,
-        .file_count = 0,
-    };
-    
+  
     esp_zb_endpoint_config_t endpoint_config = {
-        .endpoint = ENDPOINT_ID,
+        .endpoint = ED_ID,
         .app_profile_id = ESP_ZB_AF_HA_PROFILE_ID,
         .app_device_id = ESP_ZB_HA_TEST_DEVICE_ID,
         .app_device_version = 0,
