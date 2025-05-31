@@ -54,4 +54,3 @@ static void esp_show_route_table(){
         route.expiry, route_state_name[route.flags.status], *(uint8_t *)&route.flags);
     }
 }
-
