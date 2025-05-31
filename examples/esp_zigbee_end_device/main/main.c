@@ -11,7 +11,7 @@
 #error Define ZB_ZCZR in idf.py menuconfig to compile light (Router) source code.
 #endif
 
-static const char *TAG= "ESP_ZB_ROUTER";
+static const char *TAG= "ESP_ZB_END_DEVICE";
 
 static void bdb_start_top_level_commissioning_cb(uint8_t mode_mask)
 {
@@ -157,8 +157,6 @@ static void esp_zb_task(void *pcParameters)
     esp_zb_cfg_t zb_nwk_cfg = ESP_ZB_ZR_CONFIG();
     esp_zb_init(&zb_nwk_cfg);
 
-    esp_zb_enable_distributed_network(true);
-    esp_zb_enable_joining_to_distributed(false);
     esp_zb_core_action_handler_register(zb_action_handler);
     esp_zb_nwk_set_link_status_period(10);
     esp_zb_set_channel_mask(ESP_ZB_PRIMARY_CHANNEL_MASK);
