@@ -144,7 +144,7 @@ static void esp_zb_task(void *pcParameters)
     esp_zb_set_channel_mask(ESP_ZB_PRIMARY_CHANNEL_MASK);
 
     ESP_ERROR_CHECK(zb_register_device());
-    ESP_ERROR_CHECK(esp_zb_start(true));
+    ESP_ERROR_CHECK(esp_zb_start(false));
     esp_zb_stack_main_loop();
 }
 
