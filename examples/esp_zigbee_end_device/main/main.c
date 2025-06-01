@@ -6,6 +6,7 @@
 #include "freertos/task.h"
 #include "esp_zigbee_include.c"
 #include "platform/esp_zigbee_platform.h"
+#include "create_endpoints.c"
 
 #if !defined CONFIG_ZB_ZCZR
 #error Define ZB_ZCZR in idf.py menuconfig to compile light (Router) source code.
@@ -110,24 +111,10 @@ static esp_err_t zb_action_handler(esp_zb_core_action_callback_id_t callback_id,
 }
 
 static esp_err_t zb_register_device(void){
-    esp_zb_attribute_list_t *basic_cluster = esp_zb_basic_cluster_create(NULL);
-    esp_zb_cluster_list_t *cluster_list = esp_zb_zcl_cluster_list_create();
+    
     esp_zb_ep_list_t *ep_list = esp_zb_ep_list_create();
-  
-    esp_zb_endpoint_config_t endpoint_config = {
-        .endpoint = ED_ID,
-        .app_profile_id = ESP_ZB_AF_HA_PROFILE_ID,
-        .app_device_id = ESP_ZB_HA_TEST_DEVICE_ID,
-        .app_device_version = 0,
-    };
+    create_test_endpoint(ep_list);
 
-    /* Added attributes */
-    ESP_ERROR_CHECK(esp_zb_basic_cluster_add_attr(basic_cluster, ESP_ZB_ZCL_ATTR_BASIC_MANUFACTURER_NAME_ID, ESP_MANUFACTURER_NAME));
-    ESP_ERROR_CHECK(esp_zb_basic_cluster_add_attr(basic_cluster, ESP_ZB_ZCL_ATTR_BASIC_MODEL_IDENTIFIER_ID, ESP_MODEL_IDENTIFIER));
-    /* Added clusters */
-    ESP_ERROR_CHECK(esp_zb_cluster_list_add_basic_cluster(cluster_list, basic_cluster, ESP_ZB_ZCL_CLUSTER_SERVER_ROLE));
-    /* Added endpoints */
-    ESP_ERROR_CHECK(esp_zb_ep_list_add_ep(ep_list, cluster_list, endpoint_config));
     /* Register device */
     return esp_zb_device_register(ep_list);
 }
