@@ -4,7 +4,7 @@
 #define MAX_CHILDREN                      10                                    /* the max amount of connected devices */
 #define INSTALLCODE_POLICY_ENABLE         false                                 /* enable the install code policy for security */
 #define ENDPOINT_ID                       10                                    /* device endpoint */
-#define ESP_ZB_PRIMARY_CHANNEL_MASK       ESP_ZB_TRANSCEIVER_ALL_CHANNELS_MASK  /* Zigbee primary channel mask use in the example */
+#define ESP_ZB_PRIMARY_CHANNEL_MASK       (1l << 13)                            /* Zigbee primary channel mask use in the example */
 
 /* Basic manufacturer information */
 #define ESP_MANUFACTURER_NAME "\x09""ESPRESSIF"      /* Customized manufacturer name */

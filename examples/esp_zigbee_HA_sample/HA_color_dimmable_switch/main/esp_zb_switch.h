@@ -29,7 +29,8 @@
     {                                                                                   \
         .esp_zb_role = ESP_ZB_DEVICE_TYPE_COORDINATOR,                                  \
         .install_code_policy = INSTALLCODE_POLICY_ENABLE,                               \
-        .nwk_cfg.zczr_cfg = {                                                           \
+        .nwk_cfg.zczr_cfg = {     
+            .max_children = MAX_CHILDREN                                                      \
             .max_children = MAX_CHILDREN,                                               \
         },                                                                              \
     }

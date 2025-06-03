@@ -6,12 +6,14 @@
 #include "freertos/task.h"
 #include "esp_zigbee_include.c"
 #include "platform/esp_zigbee_platform.h"
+#include "create_endpoints.c"
 
 #if !defined CONFIG_ZB_ZCZR
 #error Define ZB_ZCZR in idf.py menuconfig to compile light (Router) source code.
 #endif
 
-static const char *TAG= "ESP_ZB_ROUTER";
+static const char *TAG= "ESP_ZB_END_DEVICE";
+
 
 static void bdb_start_top_level_commissioning_cb(uint8_t mode_mask)
 {
@@ -40,8 +42,6 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
                 esp_zb_bdb_start_top_level_commissioning(ESP_ZB_BDB_MODE_NETWORK_STEERING);
             } else {
                 ESP_LOGI(TAG, "Device rebooted");
-                //Tu można resetować urządzenie, jeśli jest to wymagane lub właczyć steering
-                //esp_zb_bdb_start_top_level_commissioning(ESP_ZB_BDB_MODE_NETWORK_STEERING);
             }
         } else {
             ESP_LOGW(TAG, "%s failed with status: %s, retrying", esp_zb_zdo_signal_to_string(sig_type),
@@ -55,7 +55,8 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
         ESP_LOGI(TAG, "Device announce: ShortAddr(0x%04hx), ExtAddr(0x%016" PRIx64 "), Capabilities(0x%x)",
                  dev_annce_params->device_short_addr, *(uint64_t *)dev_annce_params->ieee_addr,
                  dev_annce_params->capability);
-        break;
+        esp_show_neighbor_table();
+        break; 
     case ESP_ZB_BDB_SIGNAL_STEERING:
         if (err_status == ESP_OK) {
             ESP_LOGI(TAG, "Steering started");
@@ -84,6 +85,8 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
         break;
     default:
         ESP_LOGI(TAG, "ZDO signal: %s (0x%x), status: %s", esp_zb_zdo_signal_to_string(sig_type), sig_type, esp_err_to_name(err_status));
+        esp_show_neighbor_table();
+        esp_show_route_table();
         break;
     }
 }
@@ -113,29 +116,10 @@ static esp_err_t zb_action_handler(esp_zb_core_action_callback_id_t callback_id,
 }
 
 static esp_err_t zb_register_device(void){
-    esp_zb_attribute_list_t *basic_cluster = esp_zb_basic_cluster_create(NULL);
-    esp_zb_cluster_list_t *cluster_list = esp_zb_zcl_cluster_list_create();
-    esp_zb_ep_list_t *ep_list = esp_zb_ep_list_create();
-    esp_zb_zcl_ota_upgrade_server_variable_t variable = {
-        .query_jitter = 5,
-        .current_time = 0,
-        .file_count = 0,
-    };
     
-    esp_zb_endpoint_config_t endpoint_config = {
-        .endpoint = ENDPOINT_ID,
-        .app_profile_id = ESP_ZB_AF_HA_PROFILE_ID,
-        .app_device_id = ESP_ZB_HA_TEST_DEVICE_ID,
-        .app_device_version = 0,
-    };
+    esp_zb_ep_list_t *ep_list = esp_zb_ep_list_create();
+    create_test_endpoint(ep_list);
 
-    /* Added attributes */
-    ESP_ERROR_CHECK(esp_zb_basic_cluster_add_attr(basic_cluster, ESP_ZB_ZCL_ATTR_BASIC_MANUFACTURER_NAME_ID, ESP_MANUFACTURER_NAME));
-    ESP_ERROR_CHECK(esp_zb_basic_cluster_add_attr(basic_cluster, ESP_ZB_ZCL_ATTR_BASIC_MODEL_IDENTIFIER_ID, ESP_MODEL_IDENTIFIER));
-    /* Added clusters */
-    ESP_ERROR_CHECK(esp_zb_cluster_list_add_basic_cluster(cluster_list, basic_cluster, ESP_ZB_ZCL_CLUSTER_SERVER_ROLE));
-    /* Added endpoints */
-    ESP_ERROR_CHECK(esp_zb_ep_list_add_ep(ep_list, cluster_list, endpoint_config));
     /* Register device */
     return esp_zb_device_register(ep_list);
 }
@@ -159,13 +143,14 @@ static void esp_zb_task(void *pcParameters)
 
 void app_main(void)
 {
+    
     esp_zb_platform_config_t config = {
         .radio_config = ESP_ZB_DEFAULT_RADIO_CONFIG(),
         .host_config = ESP_ZB_DEFAULT_HOST_CONFIG(),
     };
     
-    ESP_ERROR_CHECK(nvs_flash_init());
 
+    ESP_ERROR_CHECK(nvs_flash_init());
     ESP_ERROR_CHECK(esp_zb_platform_config(&config));
     xTaskCreate(esp_zb_task, "Zigbee_main", 4096, NULL, 5, NULL);
 }
