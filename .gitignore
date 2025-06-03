@@ -15,7 +15,7 @@ esp_zigbee_customized_devices/
 __pycache__/
 out/
 _build/
-managed_componetns/
+managed_components/
 pytest_embedded_log/
 # VS Code Settings
 .vscode/
