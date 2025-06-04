@@ -279,6 +279,54 @@ typedef struct esp_zb_af_node_desc_s {
 esp_zb_af_node_desc_t;
 
 /**
+ * @brief Values of the current power mode of the node power descriptor
+ *
+ */
+ typedef enum {
+    ESP_ZB_AF_NODE_POWER_MODE_SYNC_ON_WHEN_IDLE        = 0U, /*!< Receiver synchronized with the receiver on when idle subfield of the node descriptor */
+    ESP_ZB_AF_NODE_POWER_MODE_COME_ON_PERIODICALLY     = 1U, /*!< Receiver comes on periodically as defined by the node power descriptor */
+    ESP_ZB_AF_NODE_POWER_MODE_COME_ON_WHEN_SIMULATED   = 2U, /*!< Receiver comes on when stimulated, for example, by a user pressing a button */
+} esp_zb_af_node_power_mode_t;
+
+/**
+ * @brief Values of the power sources of the node power descriptor
+ *
+ */
+typedef enum {
+    ESP_ZB_AF_NODE_POWER_SOURCE_CONSTANT_POWER       = (1 << 0U), /*!< Constant (mains) power */
+    ESP_ZB_AF_NODE_POWER_SOURCE_RECHARGEABLE_BATTERY = (1 << 1U), /*!< Rechargeable battery */
+    ESP_ZB_AF_NODE_POWER_SOURCE_DISPOSABLE_BATTERY   = (1 << 2U), /*!< Disposable battery */
+} esp_zb_af_node_power_source_t;
+
+/**
+ * @brief Values of the current power source level of the node power descriptor
+ *
+ */
+ typedef enum {
+    ESP_ZB_AF_NODE_POWER_SOURCE_LEVEL_CRITICAL     = 0U,    /*!< Charge Level: Critical */
+    ESP_ZB_AF_NODE_POWER_SOURCE_LEVEL_33_PERCENT   = 4U,    /*!< Charge Level: 33% */
+    ESP_ZB_AF_NODE_POWER_SOURCE_LEVEL_66_PERCENT   = 8U,    /*!< Charge Level: 66% */
+    ESP_ZB_AF_NODE_POWER_SOURCE_LEVEL_100_PERCENT  = 12U,   /*!< Charge Level: 100% */
+} esp_zb_af_node_power_source_level_t;
+
+/**
+ * @brief Struture of Node Power descriptor request of ZDO response
+ *
+ * Field Name:                 Length (bits):
+ * Current power mode:            4
+ * Available power sources:       4
+ * Current power source:          4
+ * Current power source level:    4
+ */
+ typedef struct {
+    uint8_t current_power_mode : 4;         /*!< Current power mode, @see esp_zb_af_node_power_mode_t */
+    uint8_t available_power_sources : 4;    /*!< Available power sources, @see esp_zb_af_node_power_source_t */
+    uint8_t current_power_source : 4;       /*!< Current power source, @see esp_zb_af_node_power_source_t */
+    uint8_t current_power_source_level : 4; /*!< Current power source level, @see esp_zb_af_node_power_source_level_t */
+} ESP_ZB_PACKED_STRUCT
+esp_zb_af_node_power_desc_t;
+
+/**
  * @brief Structure of simple descriptor request of ZCL command
  */
 typedef struct esp_zb_af_simple_desc_1_1_s {

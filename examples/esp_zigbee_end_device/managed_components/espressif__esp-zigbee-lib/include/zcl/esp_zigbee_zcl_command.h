@@ -5,40 +5,18 @@
  */
 
 #pragma once
+
+#include <stdint.h>
 #include "esp_err.h"
 #include "esp_zigbee_ota.h"
-#include <stdint.h>
-#include "aps/esp_zigbee_aps.h"
-#ifdef __cplusplus
-extern "C" {
-#endif
-#include "esp_zigbee_type.h"
-#include "esp_zigbee_zcl_common.h"
-
+#include "esp_zigbee_zcl_core.h"
 #ifdef CONFIG_ZB_GP_ENABLED
 #include "zgp/esp_zigbee_zgp.h"
 #endif /* CONFIG_ZB_GP_ENABLED */
 
-/** Defined the ZCL command of address_mode */
-typedef esp_zb_aps_address_mode_t esp_zb_zcl_address_mode_t;
-
-/**
- * @brief ZCL command direction enum
- * @anchor esp_zb_zcl_cmd_direction
- */
-typedef enum {
-    ESP_ZB_ZCL_CMD_DIRECTION_TO_SRV = 0x00U, /*!< Command for cluster server side */
-    ESP_ZB_ZCL_CMD_DIRECTION_TO_CLI = 0x01U, /*!< Command for cluster client side */
-} esp_zb_zcl_cmd_direction_t;
-
-/**
- * @brief ZCL report direction enum of attribute
- * @anchor esp_zb_zcl_report_direction_t
- */
-typedef enum {
-    ESP_ZB_ZCL_REPORT_DIRECTION_SEND = 0x00U, /**< Report should be sent by a cluster. */
-    ESP_ZB_ZCL_REPORT_DIRECTION_RECV = 0x01U, /**< Report should be received by a cluster. */
-} esp_zb_zcl_report_direction_t;
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /**
  * @brief The application message of ZCL command send status message
@@ -59,25 +37,6 @@ typedef struct esp_zb_zcl_command_send_status_s {
 typedef void (*esp_zb_zcl_command_send_status_callback_t)(esp_zb_zcl_command_send_status_message_t message);
 
 /**
- * @brief The Zigbee zcl cluster attribute value struct
- *
- */
-typedef struct esp_zb_zcl_attribute_data_s {
-    esp_zb_zcl_attr_type_t type; /*!< The type of attribute, which can refer to esp_zb_zcl_attr_type_t */
-    uint16_t size;               /*!< The value size of attribute  */
-    void *value;                 /*!< The value of attribute, Note that if the type is string/array, the first byte of value indicates the string length */
-} ESP_ZB_PACKED_STRUCT esp_zb_zcl_attribute_data_t;
-
-/**
- * @brief The Zigbee zcl cluster attribute struct
- *
- */
-typedef struct esp_zb_zcl_attribute_s {
-    uint16_t id;                      /*!< The identify of attribute */
-    esp_zb_zcl_attribute_data_t data; /*!< The data fo attribute */
-} esp_zb_zcl_attribute_t;
-
-/**
  * @brief The Zigbee zcl custom cluster handlers struct
  *
  */
@@ -87,35 +46,6 @@ typedef struct esp_zb_zcl_custom_cluster_handlers_s {
     esp_zb_zcl_cluster_check_value_callback_t check_value_cb;   /*!< The callback for validating the value from ZCL command */
     esp_zb_zcl_cluster_write_attr_callback_t write_attr_cb;     /*!< The callback for validating the ZCL write attribute */
 } esp_zb_zcl_custom_cluster_handlers_t;
-
-/**
- * @brief The Zigbee zcl cluster command properties struct
- *
- */
-typedef struct esp_zb_zcl_command_s {
-    uint8_t id;        /*!< The command id */
-    uint8_t direction; /*!< The command direction */
-    uint8_t is_common; /*!< The command is common type */
-} esp_zb_zcl_command_t;
-
-/**
- * @brief The Zigbee ZCL basic command info
- *
- */
-typedef struct esp_zb_zcl_basic_cmd_s {
-    esp_zb_addr_u dst_addr_u;                   /*!< Single short address or group address */
-    uint8_t  dst_endpoint;                      /*!< Destination endpoint */
-    uint8_t  src_endpoint;                      /*!< Source endpoint */
-} esp_zb_zcl_basic_cmd_t;
-
-/**
- * @brief The Zigbee ZCL command common struct, no command specific payload
- *
- */
-typedef struct esp_zb_zcl_common_cmd_s {
-    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;           /*!< Basic command info */
-    esp_zb_zcl_address_mode_t address_mode;         /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
-} esp_zb_zcl_common_cmd_t;
 
 /**
  * @brief The Zigbee ZCL read attribute command struct
@@ -1251,15 +1181,6 @@ typedef esp_zb_zcl_custom_cluster_cmd_t esp_zb_zcl_custom_cluster_cmd_req_t;
 typedef esp_zb_zcl_custom_cluster_cmd_t esp_zb_zcl_custom_cluster_cmd_resp_t;
 
 /*********************** User Message *****************************/
-/**
- * @brief The Zigbee zcl cluster device callback common information
- *
- */
-typedef struct esp_zb_device_cb_common_info_s {
-    esp_zb_zcl_status_t status;                 /*!< The operation status of ZCL, refer to esp_zb_zcl_status_t */
-    uint8_t dst_endpoint;                       /*!< The destination endpoint id of the ZCL indication */
-    uint16_t cluster;                           /*!< The cluster id of the ZCL indication */
-} esp_zb_device_cb_common_info_t;
 
 /**
  * @brief The Zigbee zcl set attribute value device callback message struct
@@ -1550,21 +1471,6 @@ typedef struct esp_zb_zcl_thermostat_value_message_s {
     uint16_t heat_setpoint;              /*!< Heat Set Point */
     uint16_t cool_setpoint;              /*!< Cool Set Point */
 } esp_zb_zcl_thermostat_value_message_t;
-
-/**
- * @brief The frame header of Zigbee zcl command struct
- *
- * @note frame control field:
- * |----1 bit---|---------1 bit---------|---1 bit---|----------1 bit-----------|---4 bit---|
- * | Frame type | Manufacturer specific | Direction | Disable Default Response | Reserved  |
- *
- */
-typedef struct esp_zb_zcl_frame_header_s {
-    uint8_t fc;          /*!< A 8-bit Frame control */
-    uint16_t manuf_code; /*!< Manufacturer code */
-    uint8_t tsn;         /*!< Transaction sequence number */
-    int8_t rssi;         /*!< Signal strength */
-} esp_zb_zcl_frame_header_t;
 
 /**
  * @brief The Zigbee zcl metering get profile response info offered by user struct
@@ -2128,22 +2034,6 @@ typedef struct esp_zb_zcl_window_covering_movement_message_s {
         uint16_t tilt_value;            /*!< The payload for ESP_ZB_ZCL_CMD_WINDOW_COVERING_GO_TO_TILT_VALUE */
     } payload;                          /*!< Command payload */
 } esp_zb_zcl_window_covering_movement_message_t;
-
-/**
- * @brief The Zigbee zcl command basic application information struct
- *
- */
-typedef struct esp_zb_zcl_cmd_info_s {
-    esp_zb_zcl_status_t status;       /*!< The status of command, which can refer to  esp_zb_zcl_status_t */
-    esp_zb_zcl_frame_header_t header; /*!< The command frame properties, which can refer to esp_zb_zcl_frame_field_t */
-    esp_zb_zcl_addr_t src_address;    /*!< The struct of address contains short and ieee address, which can refer to esp_zb_zcl_addr_s */
-    uint16_t dst_address;             /*!< The destination short address of command */
-    uint8_t src_endpoint;             /*!< The source endpoint of command */
-    uint8_t dst_endpoint;             /*!< The destination endpoint of command */
-    uint16_t cluster;                 /*!< The cluster id for command */
-    uint16_t profile;                 /*!< The application profile identifier*/
-    esp_zb_zcl_command_t command;     /*!< The properties of command */
-} esp_zb_zcl_cmd_info_t;
 
 /**
  * @brief The Zigbee zcl attribute report message struct
@@ -3071,6 +2961,38 @@ uint8_t esp_zb_zcl_scenes_recall_scene_cmd_req(esp_zb_zcl_scenes_recall_scene_cm
  * @return The transaction sequence number
  */
 uint8_t esp_zb_zcl_scenes_get_scene_membership_cmd_req(esp_zb_zcl_scenes_get_scene_membership_cmd_t *cmd_req);
+
+/**
+ * @brief Set the ZCL scenes cluster scene table for users.
+ *
+ * @param[in] endpoint          The endpoint identifier
+ * @param[in] group_id          The group id of scene, which will be used to find scenes table record
+ * @param[in] scene_id          The scene id of scene, which will be used to find scenes table record
+ * @param[in] transition_time   The transition time of scene, whose unit is 100 milliseconds
+ * @param[in] field             The pointer to zcl sense extension field list
+ * @return
+ *      - ESP_OK: on success
+ *      - ESP_FAIL: the group id or scene id is invalid
+ */
+esp_err_t esp_zb_zcl_scenes_table_store(uint8_t endpoint, uint16_t group_id, uint8_t scene_id, uint16_t transition_time, esp_zb_zcl_scenes_extension_field_t *field);
+
+/**
+ * @brief View the zcl scene table
+ *
+ * @param[in] endpoint The specific endpoint identifier
+ */
+void esp_zb_zcl_scenes_table_show(uint8_t endpoint);
+
+/**
+ * @brief Clear zcl scenes table by index
+ *
+ * @param[in] index The index of scenes table
+ * @return
+ *       - ESP_OK: on success
+ *       - ESP_ERR_INVALID: id out of range
+ *       - ESP_FAILED: failed to clear scene table
+ */
+esp_err_t esp_zb_zcl_scenes_table_clear_by_index(uint16_t index);
 
 /**
  * @brief   Send IAS zone enroll response command
