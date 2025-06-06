@@ -14,7 +14,7 @@ extern "C" {
 /** @brief Basic cluster information attribute set identifiers
 */
 typedef enum {
-    ESP_ZB_ZCL_ATTR_BASIC_ZCL_VERSION_ID                  = 0x0000,                 /*!< ZCL version attribute */
+    ESP_ZB_ZCL_ATTR_BASIC_ZCL_VERSION_ID                  = 0x0000,                 /*!<ZCL version attribute */
     ESP_ZB_ZCL_ATTR_BASIC_APPLICATION_VERSION_ID          = 0x0001,                 /*!< Application version attribute */
     ESP_ZB_ZCL_ATTR_BASIC_STACK_VERSION_ID                = 0x0002,                 /*!< Stack version attribute */
     ESP_ZB_ZCL_ATTR_BASIC_HW_VERSION_ID                   = 0x0003,                 /*!< Hardware version attribute */
@@ -36,23 +36,6 @@ typedef enum {
     ESP_ZB_ZCL_ATTR_BASIC_DISABLE_LOCAL_CONFIG_ID         = 0x0014,                 /*!< Disable local config attribute */
     ESP_ZB_ZCL_ATTR_BASIC_SW_BUILD_ID                     = 0x4000                  /*!< Manufacturer-specific reference to the version of the software. */
 } esp_zb_zcl_basic_attr_t;
-
-/**
- *  @brief Permitted values for "Power source" attribute.
- *
- */
-typedef enum esp_zb_zcl_basic_power_source_e {
-    ESP_ZB_ZCL_BASIC_POWER_SOURCE_UNKNOWN                = 0x00,  /*!< Uknown power source */
-    ESP_ZB_ZCL_BASIC_POWER_SOURCE_MAINS_SINGLE_PHASE     = 0x01,  /*!< Single-phase mains. */
-    ESP_ZB_ZCL_BASIC_POWER_SOURCE_MAINS_THREE_PHASE      = 0x02,  /*!< 3-phase mains. */
-    ESP_ZB_ZCL_BASIC_POWER_SOURCE_BATTERY                = 0x03,  /*!< Battery source. */
-    ESP_ZB_ZCL_BASIC_POWER_SOURCE_DC_SOURCE              = 0x04,  /*!< DC source. */
-    ESP_ZB_ZCL_BASIC_POWER_SOURCE_EMERGENCY_MAINS_CONST  = 0x05,  /*!< Emergency mains constantly powered. */
-    ESP_ZB_ZCL_BASIC_POWER_SOURCE_EMERGENCY_MAINS_TRANSF = 0x06   /*!< Emergency mains and transfer switch. */
-} esp_zb_zcl_basic_power_source_t;
-
-/** The secondary backup power source, @p power is listed in esp_zb_zcl_basic_power_source_t */
-#define ESP_ZB_ZCL_BASIC_SECONDARY_POWER_SOURCE(power) ((1U << 7) + power)
 
 /** @brief Default value for ZCL version attribute */
 #define ESP_ZB_ZCL_BASIC_ZCL_VERSION_DEFAULT_VALUE ((uint8_t)0x08)

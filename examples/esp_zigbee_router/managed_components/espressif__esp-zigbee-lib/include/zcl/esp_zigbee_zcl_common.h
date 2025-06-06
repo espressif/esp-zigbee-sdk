@@ -11,21 +11,53 @@ extern "C" {
 
 #include "esp_err.h"
 #include "esp_zigbee_type.h"
-#include "aps/esp_zigbee_aps.h"
+#include "esp_zigbee_zcl_basic.h"
+#include "esp_zigbee_zcl_identify.h"
+#include "esp_zigbee_zcl_groups.h"
+#include "esp_zigbee_zcl_scenes.h"
+#include "esp_zigbee_zcl_on_off.h"
+#include "esp_zigbee_zcl_on_off_switch_config.h"
+#include "esp_zigbee_zcl_level.h"
+#include "esp_zigbee_zcl_color_control.h"
+#include "esp_zigbee_zcl_time.h"
+#include "esp_zigbee_zcl_binary_input.h"
+#include "esp_zigbee_zcl_commissioning.h"
+#include "esp_zigbee_zcl_ias_zone.h"
+#include "esp_zigbee_zcl_ias_ace.h"
+#include "esp_zigbee_zcl_ias_wd.h"
+#include "esp_zigbee_zcl_shade_config.h"
+#include "esp_zigbee_zcl_door_lock.h"
+#include "esp_zigbee_zcl_humidity_meas.h"
+#include "esp_zigbee_zcl_temperature_meas.h"
+#include "esp_zigbee_zcl_ota.h"
+#include "esp_zigbee_zcl_electrical_meas.h"
+#include "esp_zigbee_zcl_illuminance_meas.h"
+#include "esp_zigbee_zcl_pressure_meas.h"
+#include "esp_zigbee_zcl_flow_meas.h"
+#include "esp_zigbee_zcl_occupancy_sensing.h"
+#include "esp_zigbee_zcl_window_covering.h"
+#include "esp_zigbee_zcl_thermostat.h"
+#include "esp_zigbee_zcl_fan_control.h"
+#include "esp_zigbee_zcl_thermostat_ui_config.h"
+#include "esp_zigbee_zcl_analog_input.h"
+#include "esp_zigbee_zcl_analog_output.h"
+#include "esp_zigbee_zcl_analog_value.h"
+#include "esp_zigbee_zcl_carbon_dioxide_measurement.h"
+#include "esp_zigbee_zcl_pm2_5_measurement.h"
+#include "esp_zigbee_zcl_multistate_value.h"
+#include "esp_zigbee_zcl_metering.h"
+#include "esp_zigbee_zcl_diagnostics.h"
+#include "esp_zigbee_zcl_meter_identification.h"
+#include "esp_zigbee_zcl_price.h"
+#include "esp_zigbee_zcl_ec_measurement.h"
+#include "esp_zigbee_zcl_ph_measurement.h"
+#include "esp_zigbee_zcl_wind_speed_measurement.h"
+#include "esp_zigbee_zcl_drlc.h"
+#include "esp_zigbee_zcl_dehumidification_control.h"
 
 #ifdef ZB_ENABLE_ZGP
 #include "esp_zigbee_zcl_green_power.h"
 #endif
-
-/** Green power special endpoint */
-#define ESP_ZGP_ENDPOINT 242
-/** Non manufacturer specific code for certain attribute */
-#define ESP_ZB_ZCL_ATTR_NON_MANUFACTURER_SPECIFIC 0xFFFFU
-/** Non manufacturer specific code for certain cluster */
-#define EZP_ZB_ZCL_CLUSTER_NON_MANUFACTURER_SPECIFIC 0x0000
-
-/** Defined the ZCL command of address_mode */
-typedef esp_zb_aps_address_mode_t esp_zb_zcl_address_mode_t;
 
 /**
  * @brief Application Framework Profile identifiers.
@@ -37,6 +69,13 @@ typedef enum {
     ESP_ZB_AF_ZLL_PROFILE_ID    = 0xC05EU,  /** ZLL profile ID */
     ESP_ZB_AF_GP_PROFILE_ID     = 0xA1E0U,  /** GreenPower profile ID */
 } esp_zb_af_profile_id_t;
+
+/** Green power special endpoint */
+#define ESP_ZGP_ENDPOINT 242
+/** Non manufacturer specific code for certain attribute */
+#define ESP_ZB_ZCL_ATTR_NON_MANUFACTURER_SPECIFIC 0xFFFFU
+/** Non manufacturer specific code for certain cluster */
+#define EZP_ZB_ZCL_CLUSTER_NON_MANUFACTURER_SPECIFIC 0x0000
 
 /** @brief HA Device identifiers.
  */
@@ -271,113 +310,6 @@ typedef enum {
     ESP_ZB_ZCL_ATTR_MANUF_SPEC        = 0x20U,   /*!< Attribute is manufacturer specific */
     ESP_ZB_ZCL_ATTR_ACCESS_INTERNAL   = 0x40U,   /*!< Internal access only Attribute */
 } esp_zb_zcl_attr_access_t;
-
-/**
- * @brief ZCL command direction enum
- * @anchor esp_zb_zcl_cmd_direction
- */
- typedef enum {
-    ESP_ZB_ZCL_CMD_DIRECTION_TO_SRV = 0x00U, /*!< Command for cluster server side */
-    ESP_ZB_ZCL_CMD_DIRECTION_TO_CLI = 0x01U, /*!< Command for cluster client side */
-} esp_zb_zcl_cmd_direction_t;
-
-/**
- * @brief ZCL report direction enum of attribute
- * @anchor esp_zb_zcl_report_direction_t
- */
-typedef enum {
-    ESP_ZB_ZCL_REPORT_DIRECTION_SEND = 0x00U, /**< Report should be sent by a cluster. */
-    ESP_ZB_ZCL_REPORT_DIRECTION_RECV = 0x01U, /**< Report should be received by a cluster. */
-} esp_zb_zcl_report_direction_t;
-
-/**
- * @brief The Zigbee zcl cluster attribute value struct
- *
- */
- typedef struct esp_zb_zcl_attribute_data_s {
-    esp_zb_zcl_attr_type_t type; /*!< The type of attribute, which can refer to esp_zb_zcl_attr_type_t */
-    uint16_t size;               /*!< The value size of attribute  */
-    void *value;                 /*!< The value of attribute, Note that if the type is string/array, the first byte of value indicates the string length */
-} ESP_ZB_PACKED_STRUCT esp_zb_zcl_attribute_data_t;
-
-/**
- * @brief The Zigbee zcl cluster attribute struct
- *
- */
-typedef struct esp_zb_zcl_attribute_s {
-    uint16_t id;                      /*!< The identify of attribute */
-    esp_zb_zcl_attribute_data_t data; /*!< The data fo attribute */
-} esp_zb_zcl_attribute_t;
-
-/**
- * @brief The Zigbee zcl cluster command properties struct
- *
- */
- typedef struct esp_zb_zcl_command_s {
-    uint8_t id;        /*!< The command id */
-    uint8_t direction; /*!< The command direction */
-    uint8_t is_common; /*!< The command is common type */
-} esp_zb_zcl_command_t;
-
-/**
- * @brief The Zigbee ZCL basic command info
- *
- */
- typedef struct esp_zb_zcl_basic_cmd_s {
-    esp_zb_addr_u dst_addr_u;                   /*!< Single short address or group address */
-    uint8_t  dst_endpoint;                      /*!< Destination endpoint */
-    uint8_t  src_endpoint;                      /*!< Source endpoint */
-} esp_zb_zcl_basic_cmd_t;
-
-/**
- * @brief The Zigbee ZCL command common struct, no command specific payload
- *
- */
-typedef struct esp_zb_zcl_common_cmd_s {
-    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;           /*!< Basic command info */
-    esp_zb_zcl_address_mode_t address_mode;         /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
-} esp_zb_zcl_common_cmd_t;
-
-/**
- * @brief The Zigbee zcl cluster device callback common information
- *
- */
- typedef struct esp_zb_device_cb_common_info_s {
-    esp_zb_zcl_status_t status;                 /*!< The operation status of ZCL, refer to esp_zb_zcl_status_t */
-    uint8_t dst_endpoint;                       /*!< The destination endpoint id of the ZCL indication */
-    uint16_t cluster;                           /*!< The cluster id of the ZCL indication */
-} esp_zb_device_cb_common_info_t;
-
-/**
- * @brief The frame header of Zigbee zcl command struct
- *
- * @note frame control field:
- * |----1 bit---|---------1 bit---------|---1 bit---|----------1 bit-----------|---4 bit---|
- * | Frame type | Manufacturer specific | Direction | Disable Default Response | Reserved  |
- *
- */
- typedef struct esp_zb_zcl_frame_header_s {
-    uint8_t fc;          /*!< A 8-bit Frame control */
-    uint16_t manuf_code; /*!< Manufacturer code */
-    uint8_t tsn;         /*!< Transaction sequence number */
-    int8_t rssi;         /*!< Signal strength */
-} esp_zb_zcl_frame_header_t;
-
-/**
- * @brief The Zigbee zcl command basic application information struct
- *
- */
- typedef struct esp_zb_zcl_cmd_info_s {
-    esp_zb_zcl_status_t status;       /*!< The status of command, which can refer to  esp_zb_zcl_status_t */
-    esp_zb_zcl_frame_header_t header; /*!< The command frame properties, which can refer to esp_zb_zcl_frame_field_t */
-    esp_zb_zcl_addr_t src_address;    /*!< The struct of address contains short and ieee address, which can refer to esp_zb_zcl_addr_s */
-    uint16_t dst_address;             /*!< The destination short address of command */
-    uint8_t src_endpoint;             /*!< The source endpoint of command */
-    uint8_t dst_endpoint;             /*!< The destination endpoint of command */
-    uint16_t cluster;                 /*!< The cluster id for command */
-    uint16_t profile;                 /*!< The application profile identifier*/
-    esp_zb_zcl_command_t command;     /*!< The properties of command */
-} esp_zb_zcl_cmd_info_t;
 
 /**
  * @brief The ZCL attribute location information struct
