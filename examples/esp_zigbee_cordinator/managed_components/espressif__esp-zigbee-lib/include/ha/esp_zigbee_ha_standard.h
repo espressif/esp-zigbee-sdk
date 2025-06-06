@@ -386,6 +386,28 @@ extern "C" {
             },                                                                                      \
     }
 
+/**
+ * @brief Zigbee HA light sensor device default config value.
+ *
+ */
+#define ESP_ZB_DEFAULT_LIGHT_SENSOR_CONFIG()                                                        \
+    {                                                                                               \
+        .basic_cfg =                                                                                \
+            {                                                                                       \
+                .zcl_version = ESP_ZB_ZCL_BASIC_ZCL_VERSION_DEFAULT_VALUE,                          \
+                .power_source = ESP_ZB_ZCL_BASIC_POWER_SOURCE_DEFAULT_VALUE,                        \
+            },                                                                                      \
+        .identify_cfg =                                                                             \
+            {                                                                                       \
+                .identify_time = ESP_ZB_ZCL_IDENTIFY_IDENTIFY_TIME_DEFAULT_VALUE,                   \
+            },                                                                                      \
+        .illuminance_cfg =                                                                          \
+            {                                                                                       \
+                .measured_value = ESP_ZB_ZCL_ATTR_ILLUMINANCE_MEASUREMENT_MEASURED_VALUE_DEFAULT,   \
+                .min_value = ESP_ZB_ZCL_ATTR_ILLUMINANCE_MEASUREMENT_MIN_MEASURED_VALUE_MIN_VALUE,  \
+                .max_value = ESP_ZB_ZCL_ATTR_ILLUMINANCE_MEASUREMENT_MAX_MEASURED_VALUE_MAX_VALUE,  \
+        },                                                                                          \
+    }
 /********************************* Declare functions **************************************/
 
 /***************************** ZCL HA device standard cluster list ********************************/

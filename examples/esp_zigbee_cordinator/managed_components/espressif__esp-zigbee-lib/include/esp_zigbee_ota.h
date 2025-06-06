@@ -11,7 +11,6 @@ extern "C" {
 
 #include "esp_err.h"
 #include "esp_zigbee_type.h"
-#include "zcl/esp_zigbee_zcl_common.h"
 
 /**
  * @brief The basic zcl information for OTA command

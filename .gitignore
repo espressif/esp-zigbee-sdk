@@ -16,6 +16,9 @@ __pycache__/
 out/
 _build/
 managed_components/
+managed_components/espressif__esp-zboss-lib/
+managed_components/espressif__esp-zigbee-lib/
+
 pytest_embedded_log/
 # VS Code Settings
 .vscode/

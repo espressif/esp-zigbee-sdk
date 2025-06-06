@@ -7,4 +7,4 @@ set(EXTRA_COMPONENT_DIRS
     ${CMAKE_CURRENT_SOURCE_DIR}/../common/switch_driver
     )
 include($ENV{IDF_PATH}/tools/cmake/project.cmake)
-project(esp_zigbeei_coordinator)
+project(esp_zigbee_coordinator)
