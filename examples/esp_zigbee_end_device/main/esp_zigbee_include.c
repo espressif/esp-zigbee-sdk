@@ -83,7 +83,7 @@ static QueueHandle_t s_aps_data_confirm = NULL;
 static QueueHandle_t s_aps_data_indication = NULL;
 typedef struct payload_data_s {
     uint8_t *data; // Pointer to the payload data
-    uint16_t data_length;
+    uint32_t data_length;
 
 } payload_data_t;
 
@@ -114,11 +114,8 @@ static bool esp_zb_aps_data_confirm_handler(esp_zb_apsde_data_confirm_t confirm)
 void create_network_load(uint16_t dest_addr)
 {
     
-    payload_data_t *payload = {
-        .data  = "Hello Zigbee",
-        .data_length = 12 // Example payload length
-    };
-
+    uint8_t value[]= "hello world";
+    uint32_t data_length = 12;
 
     esp_zb_apsde_data_req_t req ={
         .dst_addr_mode = ESP_ZB_APS_ADDR_MODE_16_ENDP_PRESENT,
@@ -127,8 +124,9 @@ void create_network_load(uint16_t dest_addr)
         .profile_id = ESP_ZB_AF_HA_PROFILE_ID, // Example profile ID
         .cluster_id = ESP_ZB_ZCL_CLUSTER_ID_BASIC, // Example cluster ID (On/Off cluster)
         .src_endpoint = 1, // Example source endpoint
-        .asdu_length = payload->data_length, // Example payload length
-        .asdu = payload->data, // Allocate memory for payload
+        .asdu_length = data_length, // Example payload length
+        .asdu = value, // Character array to be sent
+        // .asdu = malloc(data_length * sizeof(uint8_t)), // Allocate memory for ASDU if needed
         .tx_options = 0, // Example transmission options
         .use_alias = false,
         .alias_src_addr = 0,
@@ -148,7 +146,7 @@ void create_network_load(uint16_t dest_addr)
             return;
         }
 
-        esp_zb_apsde_data_req(&req);
+        esp_zb_aps_data_request(&req);
         i++;
     }
 
@@ -161,7 +159,7 @@ void button_handler(switch_func_pair_t *button_func_pair)
 {
     if(button_func_pair->func == SWITCH_ONOFF_TOGGLE_CONTROL) {
         esp_zigbee_include_show_tables();
-        create_network_load();
+        create_network_load(0x0000);
 
     }
     
