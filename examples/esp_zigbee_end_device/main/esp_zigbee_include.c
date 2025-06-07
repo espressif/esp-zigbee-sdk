@@ -6,6 +6,7 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "esp_zigbee_core.h"
+#include "aps/esp_zigbee_aps.h"
 
 static const char *TAG_include = "esp_zigbee_include";
 
@@ -80,62 +81,81 @@ static switch_func_pair_t button_func_pair[] = {
 
 static QueueHandle_t s_aps_data_confirm = NULL;
 static QueueHandle_t s_aps_data_indication = NULL;
+typedef struct payload_data_s {
+    uint8_t *data;
+    uint16_t data_length;
 
-typedef enum{
-    ESP_LOAD_ZB_DATA_CONFIRM = 0x01,
-    ESP_LOAD_ZB_DATA_INDICATION = 0x02,
-} esp_load_zb_data_type_t;
-typedef struct {
-    uint16_t id;        /*!< ID of the APS data */
-    uint16_t size;      /*!< Size of the APS data */
-    void *data;         /*!< Pointer to the APS data */
-} esp_load_zb_ctx_t;
+} payload_data_t;
 
-void esp_load_zb_aps_data_handle(uint16_t id, const void *buffer, uint16_t length)
-{
-    QueueHandle_t event_queue = (id == ESP_LOAD_ZB_DATA_CONFIRM) ? s_aps_data_confirm : s_aps_data_indication;
-    if (event_queue) {
-        BaseType_t ret = 0;
-        esp_load_zb_ctx_t ncp_ctx = {
-            .id = id,
-            .size = length,
-        };
-
-        if (buffer) {
-            ncp_ctx.data = calloc(1, length);
-            memcpy(ncp_ctx.data, buffer, length);
-        }
-
-        if (xPortInIsrContext() == pdTRUE) {
-            ret = xQueueSendFromISR(event_queue, &ncp_ctx, NULL);
-        } else {
-            ret = xQueueSend(event_queue, &ncp_ctx, 0);
-        }
-        return (ret == pdTRUE) ? ESP_OK : ESP_FAIL ;
-    } else {
-        esp_ncp_header_t ncp_header = {
-            .sn = esp_random() % 0xFF,
-            .id = id,
-        };
-        return 0;
+static esp_err_t esp_zb_aps_data_request(esp_zb_apsde_data_req_t *req){
+    if (req == NULL || req->asdu_length == 0 || req->asdu == NULL) {
+        ESP_LOGE(TAG_include, "Invalid APS data request");
+        return ESP_ERR_INVALID_ARG;
     }
+
+    esp_zb_apsde_data_confirm_t confirm = {0};
+    confirm.status = 0; 
+    confirm.dst_addr_mode = req->dst_addr_mode;
+    confirm.dst_addr = req->dst_addr;
+    confirm.dst_endpoint = req->dst_endpoint;
+    confirm.src_endpoint = req->src_endpoint;
+    confirm.asdu_length = req->asdu_length;
+    confirm.asdu = req->asdu;
+
+    if (!esp_zb_aps_data_confirm_handler(confirm)) {
+        ESP_LOGE(TAG_include, "Failed to handle APS data confirm");
+        return ESP_FAIL;
+    }
+
+    return ESP_OK;
+}
+
+static bool esp_zb_aps_data_confirm_handler(esp_zb_apsde_data_confirm_t confirm)
+{
+    if (confirm.status != 0) {
+        return false;
+    }
+
+    uint16_t outlen = sizeof(esp_zb_apsde_data_confirm_t) + confirm.asdu_length;
+
+    if (s_aps_data_confirm == NULL) {
+        s_aps_data_confirm = xQueueCreate(10, outlen);
+    }
+
+    if (s_aps_data_confirm != NULL) {
+        xQueueSend(s_aps_data_confirm, &confirm, portMAX_DELAY);
+        return true;
+    }
+    return false;
 }
 
 
-void create_network_load(void)
-{
 
-    int i=0;
+
+void create_network_load(uint16_t dest_addr)
+{
+    esp_zb_apsde_data_req_t req ={
+        .dst_addr_mode = ESP_ZB_APS_ADDR_MODE_16_ENDP_PRESENT,
+        .dst_addr.addr_short = dest_addr,
+        .dst_endpoint = 1, // Example endpoint
+        .profile_id = 0x0104, // Example profile ID
+        .cluster_id = 0x0006, // Example cluster ID (On/Off cluster)
+        .src_endpoint = 1, // Example source endpoint
+        .asdu_length = 10, // Example payload length
+        .asdu = (uint8_t *)malloc(10), // Allocate memory for payload
+        .tx_options = 0, // Example transmission options
+        .use_alias = false,
+        .alias_src_addr = 0,
+        .alias_seq_num = 0,
+        .radius = 30 // Example radius
+    };
+
+    uint32_t i=0;
     while(i<100){
 
     }
 
 }
-
-
-
-
-
 
 
 
