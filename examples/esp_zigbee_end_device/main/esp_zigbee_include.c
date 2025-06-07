@@ -82,33 +82,12 @@ static switch_func_pair_t button_func_pair[] = {
 static QueueHandle_t s_aps_data_confirm = NULL;
 static QueueHandle_t s_aps_data_indication = NULL;
 typedef struct payload_data_s {
-    uint8_t *data;
+    uint8_t *data; // Pointer to the payload data
     uint16_t data_length;
 
 } payload_data_t;
 
-static esp_err_t esp_zb_aps_data_request(esp_zb_apsde_data_req_t *req){
-    if (req == NULL || req->asdu_length == 0 || req->asdu == NULL) {
-        ESP_LOGE(TAG_include, "Invalid APS data request");
-        return ESP_ERR_INVALID_ARG;
-    }
 
-    esp_zb_apsde_data_confirm_t confirm = {0};
-    confirm.status = 0; 
-    confirm.dst_addr_mode = req->dst_addr_mode;
-    confirm.dst_addr = req->dst_addr;
-    confirm.dst_endpoint = req->dst_endpoint;
-    confirm.src_endpoint = req->src_endpoint;
-    confirm.asdu_length = req->asdu_length;
-    confirm.asdu = req->asdu;
-
-    if (!esp_zb_aps_data_confirm_handler(confirm)) {
-        ESP_LOGE(TAG_include, "Failed to handle APS data confirm");
-        return ESP_FAIL;
-    }
-
-    return ESP_OK;
-}
 
 static bool esp_zb_aps_data_confirm_handler(esp_zb_apsde_data_confirm_t confirm)
 {
@@ -134,15 +113,22 @@ static bool esp_zb_aps_data_confirm_handler(esp_zb_apsde_data_confirm_t confirm)
 
 void create_network_load(uint16_t dest_addr)
 {
+    
+    payload_data_t *payload = {
+        .data  = "Hello Zigbee",
+        .data_length = 12 // Example payload length
+    };
+
+
     esp_zb_apsde_data_req_t req ={
         .dst_addr_mode = ESP_ZB_APS_ADDR_MODE_16_ENDP_PRESENT,
         .dst_addr.addr_short = dest_addr,
         .dst_endpoint = 1, // Example endpoint
-        .profile_id = 0x0104, // Example profile ID
-        .cluster_id = 0x0006, // Example cluster ID (On/Off cluster)
+        .profile_id = ESP_ZB_AF_HA_PROFILE_ID, // Example profile ID
+        .cluster_id = ESP_ZB_ZCL_CLUSTER_ID_BASIC, // Example cluster ID (On/Off cluster)
         .src_endpoint = 1, // Example source endpoint
-        .asdu_length = 10, // Example payload length
-        .asdu = (uint8_t *)malloc(10), // Allocate memory for payload
+        .asdu_length = payload->data_length, // Example payload length
+        .asdu = payload->data, // Allocate memory for payload
         .tx_options = 0, // Example transmission options
         .use_alias = false,
         .alias_src_addr = 0,
@@ -150,9 +136,20 @@ void create_network_load(uint16_t dest_addr)
         .radius = 30 // Example radius
     };
 
+
     uint32_t i=0;
     while(i<100){
+        if (req.asdu != NULL) {
+            for (uint32_t j = 0; j < req.asdu_length; j++) {
+                req.asdu[j] = i + j; // Fill payload with example data
+            }
+        } else {
+            ESP_LOGE(TAG_include, "Failed to allocate memory for ASDU");
+            return;
+        }
 
+        esp_zb_apsde_data_req(&req);
+        i++;
     }
 
 }
