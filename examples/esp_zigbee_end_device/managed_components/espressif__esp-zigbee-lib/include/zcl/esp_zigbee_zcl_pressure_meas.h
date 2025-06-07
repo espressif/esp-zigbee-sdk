@@ -33,7 +33,7 @@ typedef enum
 #define ESP_ZB_ZCL_ATTR_PRESSURE_MEASUREMENT_VALUE_UNKNOWN                  ((int16_t)0x8000)
 
 /** @brief MinMeasuredValue attribute minimum value */
-#define ESP_ZB_ZCL_ATTR_PRESSURE_MEASUREMENT_MIN_VALUE_MIN_VALUE            ((int16_t)0x8001)
+#define ESP_ZB_ZCL_ATTR_PRESSURE_MEASUREMENT_MIN_VALUE_MIN_VALUE            ((int16_t)0x954d)
 
 /** @brief MinMeasuredValue attribute maximum value */
 #define ESP_ZB_ZCL_ATTR_PRESSURE_MEASUREMENT_MIN_VALUE_MAX_VALUE            ((int16_t)0x7ffe)
@@ -42,7 +42,7 @@ typedef enum
 #define ESP_ZB_ZCL_ATTR_PRESSURE_MEASUREMENT_MIN_VALUE_INVALID              ((int16_t)0x8000)
 
 /** @brief MaxMeasuredValue attribute minimum value */
-#define ESP_ZB_ZCL_ATTR_PRESSURE_MEASUREMENT_MAX_VALUE_MIN_VALUE            ((int16_t)0x8002)
+#define ESP_ZB_ZCL_ATTR_PRESSURE_MEASUREMENT_MAX_VALUE_MIN_VALUE            ((int16_t)0x954e)
 
 /** @brief MaxMeasuredValue attribute maximum value */
 #define ESP_ZB_ZCL_ATTR_PRESSURE_MEASUREMENT_MAX_VALUE_MAX_VALUE            ((int16_t)0x7fff)

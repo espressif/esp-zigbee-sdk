@@ -3,7 +3,9 @@
 #include "nwk/esp_zigbee_nwk.h"
 #include "switch_driver.h"
 #include "switch_driver.h"
-
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "esp_zigbee_core.h"
 
 static const char *TAG_include = "esp_zigbee_include";
 
@@ -75,10 +77,75 @@ static switch_func_pair_t button_func_pair[] = {
     {GPIO_INPUT_IO_TOGGLE_SWITCH, SWITCH_ONOFF_TOGGLE_CONTROL}
 };
 
+
+static QueueHandle_t s_aps_data_confirm = NULL;
+static QueueHandle_t s_aps_data_indication = NULL;
+
+typedef enum{
+    ESP_LOAD_ZB_DATA_CONFIRM = 0x01,
+    ESP_LOAD_ZB_DATA_INDICATION = 0x02,
+} esp_load_zb_data_type_t;
+typedef struct {
+    uint16_t id;        /*!< ID of the APS data */
+    uint16_t size;      /*!< Size of the APS data */
+    void *data;         /*!< Pointer to the APS data */
+} esp_load_zb_ctx_t;
+
+void esp_load_zb_aps_data_handle(uint16_t id, const void *buffer, uint16_t length)
+{
+    QueueHandle_t event_queue = (id == ESP_LOAD_ZB_DATA_CONFIRM) ? s_aps_data_confirm : s_aps_data_indication;
+    if (event_queue) {
+        BaseType_t ret = 0;
+        esp_load_zb_ctx_t ncp_ctx = {
+            .id = id,
+            .size = length,
+        };
+
+        if (buffer) {
+            ncp_ctx.data = calloc(1, length);
+            memcpy(ncp_ctx.data, buffer, length);
+        }
+
+        if (xPortInIsrContext() == pdTRUE) {
+            ret = xQueueSendFromISR(event_queue, &ncp_ctx, NULL);
+        } else {
+            ret = xQueueSend(event_queue, &ncp_ctx, 0);
+        }
+        return (ret == pdTRUE) ? ESP_OK : ESP_FAIL ;
+    } else {
+        esp_ncp_header_t ncp_header = {
+            .sn = esp_random() % 0xFF,
+            .id = id,
+        };
+        return 0;
+    }
+}
+
+
+void create_network_load(void)
+{
+
+    int i=0;
+    while(i<100){
+
+    }
+
+}
+
+
+
+
+
+
+
+
+
 void button_handler(switch_func_pair_t *button_func_pair)
 {
     if(button_func_pair->func == SWITCH_ONOFF_TOGGLE_CONTROL) {
         esp_zigbee_include_show_tables();
+        create_network_load();
+
     }
     
 }
@@ -90,3 +157,5 @@ static esp_err_t deferred_driver_init(void)
     bool is_initialized = switch_driver_init(button_func_pair, button_num, button_handler);
     return is_initialized ? ESP_OK : ESP_FAIL;
 }
+
+
