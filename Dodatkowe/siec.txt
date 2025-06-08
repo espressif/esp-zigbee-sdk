@@ -1,0 +1,5 @@
+Komputer:
+Kordynator: com17
+Routery: com9
+Urządzenia: 
+

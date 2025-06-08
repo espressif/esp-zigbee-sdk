@@ -6,6 +6,7 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "esp_zigbee_core.h"
+#include "esp_zigbee_include.h"
 #include "aps/esp_zigbee_aps.h"
 
 static const char *TAG_include = "esp_zigbee_include";
@@ -81,11 +82,6 @@ static switch_func_pair_t button_func_pair[] = {
 
 static QueueHandle_t s_aps_data_confirm = NULL;
 static QueueHandle_t s_aps_data_indication = NULL;
-typedef struct payload_data_s {
-    uint8_t *data; // Pointer to the payload data
-    uint32_t data_length;
-
-} payload_data_t;
 
 
 
@@ -120,33 +116,31 @@ void create_network_load(uint16_t dest_addr)
     esp_zb_apsde_data_req_t req ={
         .dst_addr_mode = ESP_ZB_APS_ADDR_MODE_16_ENDP_PRESENT,
         .dst_addr.addr_short = dest_addr,
-        .dst_endpoint = 1, // Example endpoint
-        .profile_id = ESP_ZB_AF_HA_PROFILE_ID, // Example profile ID
-        .cluster_id = ESP_ZB_ZCL_CLUSTER_ID_BASIC, // Example cluster ID (On/Off cluster)
-        .src_endpoint = 1, // Example source endpoint
-        .asdu_length = data_length, // Example payload length
-        .asdu = value, // Character array to be sent
+        .dst_endpoint = 10,                          // Example endpoint
+        .profile_id = ESP_ZB_AF_HA_PROFILE_ID,      // Example profile ID
+        .cluster_id = ESP_ZB_ZCL_CLUSTER_ID_BASIC,  // Example cluster ID (On/Off cluster)
+        .src_endpoint = 10,                          // Example source endpoint
+        .asdu_length = data_length,                 // Example payload length
+        .asdu = value,                              // Example uint8_t array to be sent
         // .asdu = malloc(data_length * sizeof(uint8_t)), // Allocate memory for ASDU if needed
-        .tx_options = 0, // Example transmission options
+        .tx_options = 0,                            // Example transmission options
         .use_alias = false,
         .alias_src_addr = 0,
         .alias_seq_num = 0,
-        .radius = 30 // Example radius
+        .radius = 5                                 // Example radius
     };
 
 
     uint32_t i=0;
     while(i<100){
-        if (req.asdu != NULL) {
-            for (uint32_t j = 0; j < req.asdu_length; j++) {
-                req.asdu[j] = i + j; // Fill payload with example data
-            }
-        } else {
+        if (req.asdu == NULL) {
             ESP_LOGE(TAG_include, "Failed to allocate memory for ASDU");
             return;
         }
 
+        esp_zb_lock_acquire(portMAX_DELAY);
         esp_zb_aps_data_request(&req);
+        esp_zb_lock_release();
         i++;
     }
 

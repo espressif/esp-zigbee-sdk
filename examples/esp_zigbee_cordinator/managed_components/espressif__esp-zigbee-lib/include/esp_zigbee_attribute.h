@@ -6,12 +6,12 @@
 
 #pragma once
 
-#include "esp_err.h"
-#include "zcl/esp_zigbee_zcl_core.h"
-
 #ifdef __cplusplus
 extern "C" {
 #endif
+#include "esp_err.h"
+#include "esp_zigbee_type.h"
+#include "zcl/esp_zigbee_zcl_common.h"
 
 /**
  * @brief  Create an empty attribute list.

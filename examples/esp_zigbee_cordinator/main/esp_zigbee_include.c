@@ -1,10 +1,15 @@
 #include "esp_check.h"
 #include "esp_log.h"
 #include "nwk/esp_zigbee_nwk.h"
+#include "create_endpoints.h"
+#include "esp_zigbee_include.h"
 
 #include "switch_driver.h"
 
 static const char *TAG_include = "esp_zigbee_include";
+static switch_func_pair_t button_func_pair[] = {
+    {GPIO_INPUT_IO_TOGGLE_SWITCH, SWITCH_ONOFF_TOGGLE_CONTROL}
+};
 
 //wyświetla sąsiadów
 static void esp_show_neighbor_table(){
@@ -70,9 +75,7 @@ void esp_zigbee_include_show_tables(void) {
     esp_show_route_table();
 }
 
-static switch_func_pair_t button_func_pair[] = {
-    {GPIO_INPUT_IO_TOGGLE_SWITCH, SWITCH_ONOFF_TOGGLE_CONTROL}
-};
+
 
 void button_handler(switch_func_pair_t *button_func_pair)
 {
@@ -88,4 +91,24 @@ static esp_err_t deferred_driver_init(void)
 
     bool is_initialized = switch_driver_init(button_func_pair, button_num, button_handler);
     return is_initialized ? ESP_OK : ESP_FAIL;
+}
+
+static bool zb_apsde_data_indication_handler(esp_zb_apsde_data_ind_t ind)
+{
+    bool processed = false;
+    if (ind.status == 0x00) {
+        if (ind.dst_endpoint == 10 && ind.profile_id == ESP_ZB_AF_HA_PROFILE_ID && ind.cluster_id == 0xFFC0) {
+            ESP_LOGI("APSDE INDICATION",
+                    "Received APSDE-DATA %s request with a length of %ld from endpoint %d, source address 0x%04hx to "
+                    "endpoint %d, destination address 0x%04hx",
+                    ind.dst_addr_mode == 0x01 ? "group" : "unicast", ind.asdu_length, ind.src_endpoint,
+                    ind.src_short_addr, ind.dst_endpoint, ind.dst_short_addr);
+            ESP_LOG_BUFFER_CHAR_LEVEL("APSDE INDICATION", ind.asdu, ind.asdu_length, ESP_LOG_INFO);
+            processed = true;
+        }
+    } else {
+        ESP_LOGE("APSDE INDICATION", "Invalid status of APSDE-DATA indication, error code: %d", ind.status);
+        processed = false;
+    }
+    return processed;
 }
