@@ -38,11 +38,12 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
         if (err_status == ESP_OK) {
             ESP_LOGI(TAG, "Device started up in%s factory-reset mode", esp_zb_bdb_is_factory_new() ? "" : " non");
             if (esp_zb_bdb_is_factory_new()) {
-                ESP_ERROR_CHECK(deferred_driver_init());
+                
                 esp_zb_bdb_start_top_level_commissioning(ESP_ZB_BDB_MODE_NETWORK_FORMATION );
             } else {
                 esp_zb_scheduler_alarm((esp_zb_callback_t)bdb_start_top_level_commissioning_cb, ESP_ZB_BDB_MODE_NETWORK_FORMATION, 1000);
             }
+            ESP_ERROR_CHECK(deferred_driver_init());
         } else {
             
             ESP_LOGW(TAG, "%s failed with status: %s, retrying", esp_zb_zdo_signal_to_string(sig_type),
@@ -141,8 +142,8 @@ static void esp_zb_task(void *pcParameters)
     esp_zb_init(&zb_nwk_cfg);
     esp_zb_enable_distributed_network(false);//TODO: enable distributed network
     esp_zb_nwk_set_link_status_period(10);
-    esp_zb_core_action_handler_register(zb_action_handler);
     esp_zb_aps_data_indication_handler_register(zb_apsde_data_indication_handler);
+    esp_zb_core_action_handler_register(zb_action_handler);
     esp_zb_set_channel_mask(ESP_ZB_PRIMARY_CHANNEL_MASK);
 
     ESP_ERROR_CHECK(zb_register_device());

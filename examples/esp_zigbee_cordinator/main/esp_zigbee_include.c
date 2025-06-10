@@ -8,7 +8,7 @@
 
 static const char *TAG_include = "esp_zigbee_include";
 static switch_func_pair_t button_func_pair[] = {
-    {GPIO_INPUT_IO_TOGGLE_SWITCH, SWITCH_ONOFF_TOGGLE_CONTROL}
+        {GPIO_INPUT_IO_TOGGLE_SWITCH, SWITCH_ONOFF_TOGGLE_CONTROL}
 };
 
 //wyświetla sąsiadów
@@ -79,25 +79,27 @@ void esp_zigbee_include_show_tables(void) {
 
 void button_handler(switch_func_pair_t *button_func_pair)
 {
+    ESP_LOGI(TAG_include, "Button pressed");
     if(button_func_pair->func == SWITCH_ONOFF_TOGGLE_CONTROL) {
         esp_zigbee_include_show_tables();
     }
-    
 }
 
 static esp_err_t deferred_driver_init(void)
 {
     uint8_t button_num = PAIR_SIZE(button_func_pair);
-
+    ESP_LOGW(TAG_include, "Initializing switch driver with %d buttons", button_num);
     bool is_initialized = switch_driver_init(button_func_pair, button_num, button_handler);
     return is_initialized ? ESP_OK : ESP_FAIL;
 }
 
+
+// This function is called when an APSDE-DATA indication is received.
 static bool zb_apsde_data_indication_handler(esp_zb_apsde_data_ind_t ind)
 {
     bool processed = false;
     if (ind.status == 0x00) {
-        if (ind.dst_endpoint == 10 && ind.profile_id == ESP_ZB_AF_HA_PROFILE_ID && ind.cluster_id == 0xFFC0) {
+            if (ind.dst_endpoint == 10 && ind.profile_id == ESP_ZB_AF_HA_PROFILE_ID && ind.cluster_id == ESP_ZB_ZCL_CLUSTER_ID_BASIC) {
             ESP_LOGI("APSDE INDICATION",
                     "Received APSDE-DATA %s request with a length of %ld from endpoint %d, source address 0x%04hx to "
                     "endpoint %d, destination address 0x%04hx",
