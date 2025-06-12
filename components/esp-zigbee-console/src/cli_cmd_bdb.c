@@ -250,9 +250,9 @@ static esp_err_t cli_nwk_legacy(esp_zb_cli_cmd_t *self, int argc, char **argv)
     } else if (argc > 3) {
         ret = ESP_ERR_INVALID_ARG;
     } else if (!strcmp(argv[1], "enable")) {
-        esp_zb_secur_link_key_exchange_required_set(true);
-    } else if (!strcmp(argv[1], "disable")) {
         esp_zb_secur_link_key_exchange_required_set(false);
+    } else if (!strcmp(argv[1], "disable")) {
+        esp_zb_secur_link_key_exchange_required_set(true);
     } else {
         cli_output("Invalid option: %s, use \"enable\" or \"disable\"\n", argv[1]);
         ret = ESP_ERR_INVALID_ARG;
