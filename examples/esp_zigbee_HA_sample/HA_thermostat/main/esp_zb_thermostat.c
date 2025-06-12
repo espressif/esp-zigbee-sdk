@@ -161,7 +161,7 @@ static void user_find_cb(esp_zb_zdp_status_t zdo_status, uint16_t peer_addr, uin
         esp_zb_ieee_address_by_short(sensor->short_addr, sensor->ieee_addr);
 
         /* 1. Send binding request to the sensor */
-        esp_zb_zdo_bind_req_param_t *bind_req = (esp_zb_zdo_bind_req_param_t *)calloc(sizeof(esp_zb_zdo_bind_req_param_t), 1);
+        esp_zb_zdo_bind_req_param_t *bind_req = (esp_zb_zdo_bind_req_param_t *)calloc(1, sizeof(esp_zb_zdo_bind_req_param_t));
         bind_req->req_dst_addr = peer_addr;
 
         /* populate the src information of the binding */
@@ -178,7 +178,7 @@ static void user_find_cb(esp_zb_zdp_status_t zdo_status, uint16_t peer_addr, uin
         esp_zb_zdo_device_bind_req(bind_req, bind_cb, bind_req);
 
         /* 2. Send binding request to self */
-        bind_req = (esp_zb_zdo_bind_req_param_t *)calloc(sizeof(esp_zb_zdo_bind_req_param_t), 1);
+        bind_req = (esp_zb_zdo_bind_req_param_t *)calloc(1, sizeof(esp_zb_zdo_bind_req_param_t));
         bind_req->req_dst_addr = esp_zb_get_short_address();
 
         /* populate the src information of the binding */
