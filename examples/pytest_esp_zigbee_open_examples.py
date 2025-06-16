@@ -151,7 +151,7 @@ def test_zb_touch_link(dut, count, app_path, erase_all):
 @pytest.mark.order(9)
 @pytest.mark.esp32s3
 @pytest.mark.zigbee_multi_dut
-@pytest.mark.parametrize('count, app_path, target', [(2, gateway_pytest_build_dir, 'esp32h2|esp32s3'), ],
+@pytest.mark.parametrize('count, app_path, target, erase_all', [(2, gateway_pytest_build_dir, 'esp32h2|esp32s3', 'y'), ],
                          indirect=True, )
 @pytest.mark.usefixtures('teardown_fixture')
 def test_zb_gateway(dut, count, app_path, target):
