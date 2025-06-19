@@ -143,7 +143,7 @@ static void esp_zb_task(void *pcParameters)
     esp_zb_init(&zb_nwk_cfg);
     esp_zb_enable_distributed_network(false);//TODO: enable distributed network
     esp_zb_nwk_set_link_status_period(10);
-    //esp_zb_aps_data_indication_handler_register(zb_apsde_data_indication_handler);
+    esp_zb_aps_data_indication_handler_register(zb_apsde_data_indication_handler);
     esp_zb_core_action_handler_register(zb_action_handler);
     esp_zb_set_channel_mask(ESP_ZB_PRIMARY_CHANNEL_MASK);
 
@@ -158,12 +158,12 @@ static void esp_zb_task(void *pcParameters)
 
 void app_main(void)
 {
+    ESP_LOGI(TAG, "Zigbee Coordinator starting...");
     esp_zb_platform_config_t config = {
         .radio_config = ESP_ZB_DEFAULT_RADIO_CONFIG(),
         .host_config = ESP_ZB_DEFAULT_HOST_CONFIG(),
     };
     ESP_ERROR_CHECK(nvs_flash_init());
     ESP_ERROR_CHECK(esp_zb_platform_config(&config));
-    ESP_LOGI(TAG, "Zigbee Coordinator starting...");
     xTaskCreate(esp_zb_task, "Zigbee_main", 4096, NULL, 5, NULL);
 }
