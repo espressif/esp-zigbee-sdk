@@ -109,8 +109,6 @@ static bool esp_zb_aps_data_confirm_handler(esp_zb_apsde_data_confirm_t confirm)
 
 void create_network_load(uint16_t dest_addr)
 {
-    
-    uint8_t value[]= "hello world";
     uint32_t data_length = 12;
 
     esp_zb_apsde_data_req_t req ={
@@ -121,8 +119,7 @@ void create_network_load(uint16_t dest_addr)
         .cluster_id = ESP_ZB_ZCL_CLUSTER_ID_BASIC,  // Example cluster ID (On/Off cluster)
         .src_endpoint = 10,                          // Example source endpoint
         .asdu_length = data_length,                 // Example payload length
-        .asdu = value,                              // Example uint8_t array to be sent
-        // .asdu = malloc(data_length * sizeof(uint8_t)), // Allocate memory for ASDU if needed
+        .asdu = malloc(data_length * sizeof(uint8_t)), // Allocate memory for ASDU if needed
         .tx_options = 0,                            // Example transmission options
         .use_alias = false,
         .alias_src_addr = 0,
@@ -136,7 +133,13 @@ void create_network_load(uint16_t dest_addr)
         if (req.asdu == NULL) {
             ESP_LOGE(TAG_include, "Failed to allocate memory for ASDU");
             return;
+        }else{
+            while (i < data_length) {
+                req.asdu[i] = i % 256; // Fill with some data, e.g., incrementing values
+                i++;
+            }
         }
+
 
         esp_zb_lock_acquire(portMAX_DELAY);
         esp_zb_aps_data_request(&req);
@@ -154,7 +157,6 @@ void button_handler(switch_func_pair_t *button_func_pair)
     if(button_func_pair->func == SWITCH_ONOFF_TOGGLE_CONTROL) {
         esp_zigbee_include_show_tables();
         create_network_load(0x0000);
-
     }
     
 }

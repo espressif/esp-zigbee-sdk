@@ -13,6 +13,7 @@
 #error Define ZB_ZCZR in idf.py menuconfig to compile light (Router) source code.
 #endif
 
+
 static const char *TAG= "ESP_ZB_COORDINATOR";
 
 
@@ -38,10 +39,10 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
         if (err_status == ESP_OK) {
             ESP_LOGI(TAG, "Device started up in%s factory-reset mode", esp_zb_bdb_is_factory_new() ? "" : " non");
             if (esp_zb_bdb_is_factory_new()) {
-                
                 esp_zb_bdb_start_top_level_commissioning(ESP_ZB_BDB_MODE_NETWORK_FORMATION );
             } else {
-                esp_zb_scheduler_alarm((esp_zb_callback_t)bdb_start_top_level_commissioning_cb, ESP_ZB_BDB_MODE_NETWORK_FORMATION, 1000);
+                esp_zb_scheduler_alarm((esp_zb_callback_t)bdb_start_top_level_commissioning_cb,
+                                        ESP_ZB_BDB_MODE_NETWORK_FORMATION, 1000);
             }
             ESP_ERROR_CHECK(deferred_driver_init());
         } else {
@@ -142,13 +143,16 @@ static void esp_zb_task(void *pcParameters)
     esp_zb_init(&zb_nwk_cfg);
     esp_zb_enable_distributed_network(false);//TODO: enable distributed network
     esp_zb_nwk_set_link_status_period(10);
-    esp_zb_aps_data_indication_handler_register(zb_apsde_data_indication_handler);
+    //esp_zb_aps_data_indication_handler_register(zb_apsde_data_indication_handler);
     esp_zb_core_action_handler_register(zb_action_handler);
     esp_zb_set_channel_mask(ESP_ZB_PRIMARY_CHANNEL_MASK);
 
+    esp_zb_factory_reset();
     ESP_ERROR_CHECK(zb_register_device());
     ESP_ERROR_CHECK(esp_zb_start(false));
     esp_zb_stack_main_loop();
+    ESP_LOGW(TAG, "Zigbee stack main loop exited, restarting");
+
 }
 
 
@@ -160,6 +164,6 @@ void app_main(void)
     };
     ESP_ERROR_CHECK(nvs_flash_init());
     ESP_ERROR_CHECK(esp_zb_platform_config(&config));
+    ESP_LOGI(TAG, "Zigbee Coordinator starting...");
     xTaskCreate(esp_zb_task, "Zigbee_main", 4096, NULL, 5, NULL);
 }
-
