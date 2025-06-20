@@ -82,6 +82,8 @@ void button_handler(switch_func_pair_t *button_func_pair)
     ESP_LOGI(TAG_include, "Button pressed");
     if(button_func_pair->func == SWITCH_ONOFF_TOGGLE_CONTROL) {
         esp_zigbee_include_show_tables();
+        esp_zb_bdb_open_network(30);
+        
     }
 }
 
@@ -107,6 +109,7 @@ static bool zb_apsde_data_indication_handler(esp_zb_apsde_data_ind_t ind)
                     ind.src_short_addr, ind.dst_endpoint, ind.dst_short_addr);
             ESP_LOG_BUFFER_HEX_LEVEL("APSDE INDICATION", ind.asdu, ind.asdu_length, ESP_LOG_INFO);
             processed = true;
+            
         }
     } else {
         ESP_LOGE("APSDE INDICATION", "Invalid status of APSDE-DATA indication, error code: %d", ind.status);

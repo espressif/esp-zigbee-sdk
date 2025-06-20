@@ -40,8 +40,6 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
                 esp_zb_bdb_start_top_level_commissioning(ESP_ZB_BDB_MODE_NETWORK_STEERING);
             } else {
                 ESP_LOGI(TAG, "Device rebooted");
-                //Tu można resetować urządzenie, jeśli jest to wymagane lub właczyć steering
-                //esp_zb_bdb_start_top_level_commissioning(ESP_ZB_BDB_MODE_NETWORK_STEERING);
             }
         } else {
             ESP_LOGW(TAG, "%s failed with status: %s, retrying", esp_zb_zdo_signal_to_string(sig_type),
@@ -50,6 +48,7 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
                                    ESP_ZB_BDB_MODE_INITIALIZATION, 1000);
         }
         break;
+    
     case ESP_ZB_ZDO_SIGNAL_DEVICE_ANNCE:
         dev_annce_params= (esp_zb_zdo_signal_device_annce_params_t *)esp_zb_app_signal_get_params(p_sg_p);
         ESP_LOGI(TAG, "Device announce: ShortAddr(0x%04hx), ExtAddr(0x%016" PRIx64 "), Capabilities(0x%x)",
@@ -67,6 +66,9 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
                          esp_zb_get_pan_id(), esp_zb_get_current_channel(), esp_zb_get_short_address());
         } else {
             ESP_LOGI(TAG, "Network steering was not successful (status: %s)", esp_err_to_name(err_status));
+            // ESP_LOGI(TAG, "Current channel:  %d.", esp_zb_get_current_channel());
+            // ESP_LOGI(TAG, "Current channel mask:  %ld.", esp_zb_get_channel_mask());
+            // ESP_LOGI(TAG, "Primary chanel channel:  %ld.", ESP_ZB_PRIMARY_CHANNEL_MASK);
             esp_zb_scheduler_alarm((esp_zb_callback_t)bdb_start_top_level_commissioning_cb, ESP_ZB_BDB_MODE_NETWORK_STEERING, 1000);
         }
         break;
@@ -143,12 +145,13 @@ static esp_err_t zb_register_device(void){
 static void esp_zb_task(void *pcParameters)
 {
 
-    esp_zb_nvram_erase_at_start(true);
     esp_zb_cfg_t zb_nwk_cfg = ESP_ZB_ZR_CONFIG();
     esp_zb_init(&zb_nwk_cfg);
 
+    esp_zb_nvram_erase_at_start(true);
+    
     esp_zb_core_action_handler_register(zb_action_handler);
-    esp_zb_nwk_set_link_status_period(10);
+    //esp_zb_nwk_set_link_status_period(10);
     esp_zb_set_channel_mask(ESP_ZB_PRIMARY_CHANNEL_MASK);
 
     ESP_ERROR_CHECK(zb_register_device());
@@ -159,6 +162,7 @@ static void esp_zb_task(void *pcParameters)
 
 void app_main(void)
 {
+
     esp_zb_platform_config_t config = {
         .radio_config = ESP_ZB_DEFAULT_RADIO_CONFIG(),
         .host_config = ESP_ZB_DEFAULT_HOST_CONFIG(),

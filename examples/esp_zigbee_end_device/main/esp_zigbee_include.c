@@ -29,7 +29,7 @@ static void esp_show_neighbor_table(){
     };
     esp_zb_nwk_info_iterator_t itor = ESP_ZB_NWK_INFO_ITERATOR_INIT;
     esp_zb_nwk_neighbor_info_t neighbor = {};
-
+    
     ESP_LOGI(TAG_include,"Network Neighbors:");
     while (ESP_OK == esp_zb_nwk_get_next_neighbor(&itor, &neighbor)) {
         ESP_LOGI(TAG_include,"Index: %3d", itor);
@@ -41,7 +41,7 @@ static void esp_show_neighbor_table(){
         ESP_LOGI(TAG_include,"  Depth: %3d", neighbor.depth);
         ESP_LOGI(TAG_include,"  LQI: %3d", neighbor.lqi);
         ESP_LOGI(TAG_include,"  Cost: o:%d", neighbor.outgoing_cost);
-
+        
         ESP_LOGI(TAG_include," ");
     }
 }
@@ -56,7 +56,7 @@ static void esp_show_route_table(){
     };
     esp_zb_nwk_info_iterator_t itor = ESP_ZB_NWK_INFO_ITERATOR_INIT;
     esp_zb_nwk_route_info_t route = {};
-
+    
     ESP_LOGI(TAG_include, "Zigbee Network Routes:");
     while (ESP_OK == esp_zb_nwk_get_next_route(&itor, &route)) {
         ESP_LOGI(TAG_include,"Index: %3d", itor);
@@ -85,23 +85,18 @@ static QueueHandle_t s_aps_data_indication = NULL;
 
 
 
-static bool esp_zb_aps_data_confirm_handler(esp_zb_apsde_data_confirm_t confirm)
+void esp_zb_aps_data_confirm_handler(esp_zb_apsde_data_confirm_t confirm)
 {
-    if (confirm.status != 0) {
-        return false;
+     if (confirm.status == 0x00) {
+        ESP_LOGI("APSDE CONFIRM",
+                "Sent successfully from endpoint %d, source address 0x%04hx to endpoint %d,"
+                "destination address 0x%04hx",
+                confirm.src_endpoint, esp_zb_get_short_address(), confirm.dst_endpoint, confirm.dst_addr.addr_short);
+        ESP_LOG_BUFFER_CHAR_LEVEL("APSDE CONFIRM", confirm.asdu, confirm.asdu_length, ESP_LOG_INFO);
+        
+    } else {
+        ESP_LOGE("APSDE CONFIRM", "Failed to send APSDE-DATA request, error code: %d", confirm.status);
     }
-
-    uint16_t outlen = sizeof(esp_zb_apsde_data_confirm_t) + confirm.asdu_length;
-
-    if (s_aps_data_confirm == NULL) {
-        s_aps_data_confirm = xQueueCreate(10, outlen);
-    }
-
-    if (s_aps_data_confirm != NULL) {
-        xQueueSend(s_aps_data_confirm, &confirm, portMAX_DELAY);
-        return true;
-    }
-    return false;
 }
 
 
@@ -110,6 +105,7 @@ static bool esp_zb_aps_data_confirm_handler(esp_zb_apsde_data_confirm_t confirm)
 void create_network_load(uint16_t dest_addr)
 {
     uint32_t data_length = 50;
+
 
     esp_zb_apsde_data_req_t req ={
         .dst_addr_mode = ESP_ZB_APS_ADDR_MODE_16_ENDP_PRESENT,
@@ -124,31 +120,30 @@ void create_network_load(uint16_t dest_addr)
         .use_alias = false,
         .alias_src_addr = 0,
         .alias_seq_num = 0,
-        .radius = 5                                 // Example radius
+        .radius = 1,                                 // Example radius
     };
 
 
-    uint32_t i=0;
-    while(i<100){
-        if (req.asdu == NULL) {
-            ESP_LOGE(TAG_include, "Failed to allocate memory for ASDU");
-            return;
-        }else{
-            while (i < data_length) {
-                req.asdu[i] = i % 256; // Fill with some data, e.g., incrementing values
-                i++;
-            }
+    
+    uint8_t i=0;
+
+    if (req.asdu == NULL) {
+        ESP_LOGE(TAG_include, "Failed to allocate memory for ASDU");
+        return;
+    }else{
+        while (i < data_length) {
+            req.asdu[i] = i % 256; // Fill with some data, e.g., incrementing values
+            i++;
         }
-
-
-        esp_zb_lock_acquire(portMAX_DELAY);
-        esp_zb_aps_data_request(&req);
-        esp_zb_lock_release();
-        i++;
     }
+    ESP_LOGI(TAG_include, "Sending APS data request to 0x%04hx with %ld bytes", dest_addr, data_length);
+    esp_zb_lock_acquire(portMAX_DELAY);
+    esp_zb_aps_data_request(&req);
+    esp_zb_lock_release();
+    vTaskDelay(pdMS_TO_TICKS(100)); // Delay to avoid flooding the network
+    
 
 }
-
 
 
 
@@ -157,8 +152,7 @@ void button_handler(switch_func_pair_t *button_func_pair)
     if(button_func_pair->func == SWITCH_ONOFF_TOGGLE_CONTROL) {
         esp_zigbee_include_show_tables();
         create_network_load(0x0000);
-    }
-    
+    }    
 }
 
 static esp_err_t deferred_driver_init(void)

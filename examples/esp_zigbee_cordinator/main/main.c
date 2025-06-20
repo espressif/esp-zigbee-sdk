@@ -8,7 +8,6 @@
 #include "create_endpoints.c"
 
 
-
 #if !defined CONFIG_ZB_ZCZR
 #error Define ZB_ZCZR in idf.py menuconfig to compile light (Router) source code.
 #endif
@@ -28,6 +27,8 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
     esp_err_t err_status = signal_struct->esp_err_status;
     esp_zb_app_signal_type_t sig_type = *p_sg_p;
     esp_zb_zdo_signal_device_annce_params_t *dev_annce_params = NULL;
+    esp_zb_zdo_signal_nwk_status_indication_params_t *nwk_status_params = NULL;
+
 
     switch(sig_type){
     case ESP_ZB_ZDO_SIGNAL_SKIP_STARTUP:
@@ -76,7 +77,7 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
                 extended_pan_id[7], extended_pan_id[6], extended_pan_id[5], extended_pan_id[4],
                 extended_pan_id[3], extended_pan_id[2], extended_pan_id[1], extended_pan_id[0],
                 esp_zb_get_pan_id(), esp_zb_get_current_channel(), esp_zb_get_short_address());
-                } else {
+            } else {
                 ESP_LOGI(TAG, "Network steering was not successful (status: %s)", esp_err_to_name(err_status));
                 esp_zb_scheduler_alarm((esp_zb_callback_t)bdb_start_top_level_commissioning_cb, ESP_ZB_BDB_MODE_NETWORK_STEERING, 1000);
             }
@@ -100,11 +101,13 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
         ESP_LOGI(TAG, "Production config ready");
         break;
     case ESP_ZB_NLME_STATUS_INDICATION:
-        static uint32_t nlme_count = 0;
-        nlme_count++;
-            if(nlme_count % 10 == 0) {
-            ESP_LOGI(TAG, "NLME status indication received %d times", nlme_count);
-        }
+        nwk_status_params = (esp_zb_zdo_signal_nwk_status_indication_params_t *)esp_zb_app_signal_get_params(p_sg_p);
+        ESP_LOGE(TAG, "Network status indication failed with status: %s, network addr: 0x%04hx, status: %d", esp_err_to_name(err_status), nwk_status_params->network_addr, nwk_status_params->status);
+
+        if (nwk_status_params->status == ESP_ZB_NWK_COMMAND_STATUS_ADDRESS_CONFLICT) {
+            ESP_LOGE(TAG, "PAN ID conflict detected, restarting network formation");
+                esp_zb_scheduler_alarm((esp_zb_callback_t)bdb_start_top_level_commissioning_cb, ESP_ZB_BDB_MODE_NETWORK_FORMATION, 1000);
+        }     
         break;
     default:
         ESP_LOGI(TAG, "ZDO signal: %s (0x%x), status: %s", esp_zb_zdo_signal_to_string(sig_type), sig_type, esp_err_to_name(err_status));
@@ -149,7 +152,8 @@ static void esp_zb_task(void *pcParameters)
     esp_zb_cfg_t zb_nwk_cfg = ESP_ZB_ZR_CONFIG();
     esp_zb_init(&zb_nwk_cfg);
     esp_zb_enable_distributed_network(false);//TODO: enable distributed network
-    esp_zb_nwk_set_link_status_period(10);
+    //esp_zb_nwk_set_link_status_period(1);
+    esp_zb_set_tx_power(6);
     esp_zb_aps_data_indication_handler_register(zb_apsde_data_indication_handler);
     esp_zb_core_action_handler_register(zb_action_handler);
     esp_zb_set_channel_mask(ESP_ZB_PRIMARY_CHANNEL_MASK);
@@ -157,7 +161,6 @@ static void esp_zb_task(void *pcParameters)
     ESP_ERROR_CHECK(esp_zb_start(true));
     esp_zb_stack_main_loop();
     ESP_LOGW(TAG, "Zigbee stack main loop exited, restarting");
-
 }
 
 
@@ -170,5 +173,4 @@ void app_main(void)
     ESP_ERROR_CHECK(nvs_flash_init());
     ESP_ERROR_CHECK(esp_zb_platform_config(&config));
     xTaskCreate(esp_zb_task, "Zigbee_main", 4096, NULL, 5, NULL);
-    
 }

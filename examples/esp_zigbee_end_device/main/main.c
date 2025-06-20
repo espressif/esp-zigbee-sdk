@@ -34,15 +34,17 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
         break;
     case ESP_ZB_BDB_SIGNAL_DEVICE_FIRST_START:
     case ESP_ZB_BDB_SIGNAL_DEVICE_REBOOT:
+        ESP_LOGI(TAG, "Device first start or reboot");
         if (err_status == ESP_OK) {
-            ESP_LOGI(TAG, "Deferred driver initialization %s", deferred_driver_init() ? "failed" : "successful");
             ESP_LOGI(TAG, "Device started up in%s factory-reset mode", esp_zb_bdb_is_factory_new() ? "" : " non");
-            if (esp_zb_bdb_is_factory_new()) {
-                ESP_LOGI(TAG, "Start network steering");
-                esp_zb_bdb_start_top_level_commissioning(ESP_ZB_BDB_MODE_NETWORK_STEERING);
+            if(esp_zb_bdb_is_factory_new()) {
+                ESP_LOGI(TAG, "Device is factory new, starting BDB commissioning");
+                    esp_zb_bdb_start_top_level_commissioning(ESP_ZB_BDB_MODE_NETWORK_STEERING);
             } else {
-                ESP_LOGI(TAG, "Device rebooted");
+                ESP_LOGI(TAG, "Device is not factory new.");
             }
+            // Initialize the button handler
+            ESP_LOGI(TAG, "Deferred driver initialization %s", deferred_driver_init() ? "failed" : "successful");
         } else {
             ESP_LOGW(TAG, "%s failed with status: %s, retrying", esp_zb_zdo_signal_to_string(sig_type),
                      esp_err_to_name(err_status));
@@ -127,9 +129,9 @@ static esp_err_t zb_register_device(void){
 static void esp_zb_task(void *pcParameters)
 {
 
-    esp_zb_nvram_erase_at_start(true);
     esp_zb_cfg_t zb_nwk_cfg = ESP_ZB_ZR_CONFIG();
     esp_zb_init(&zb_nwk_cfg);
+    esp_zb_nvram_erase_at_start(true);
 
     esp_zb_core_action_handler_register(zb_action_handler);
     esp_zb_nwk_set_link_status_period(10);
