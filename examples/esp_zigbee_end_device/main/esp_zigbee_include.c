@@ -109,7 +109,7 @@ static bool esp_zb_aps_data_confirm_handler(esp_zb_apsde_data_confirm_t confirm)
 
 void create_network_load(uint16_t dest_addr)
 {
-    uint32_t data_length = 12;
+    uint32_t data_length = 50;
 
     esp_zb_apsde_data_req_t req ={
         .dst_addr_mode = ESP_ZB_APS_ADDR_MODE_16_ENDP_PRESENT,

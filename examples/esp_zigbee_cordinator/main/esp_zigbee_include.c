@@ -105,7 +105,7 @@ static bool zb_apsde_data_indication_handler(esp_zb_apsde_data_ind_t ind)
                     "endpoint %d, destination address 0x%04hx",
                     ind.dst_addr_mode == 0x01 ? "group" : "unicast", ind.asdu_length, ind.src_endpoint,
                     ind.src_short_addr, ind.dst_endpoint, ind.dst_short_addr);
-            ESP_LOG_BUFFER_CHAR_LEVEL("APSDE INDICATION", ind.asdu, ind.asdu_length, ESP_LOG_INFO);
+            ESP_LOG_BUFFER_HEX_LEVEL("APSDE INDICATION", ind.asdu, ind.asdu_length, ESP_LOG_INFO);
             processed = true;
         }
     } else {
