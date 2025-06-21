@@ -110,6 +110,11 @@ static esp_err_t zb_action_handler(esp_zb_core_action_callback_id_t callback_id,
         ESP_LOGI(TAG, "Receive report attribute callback");
         ret = ESP_FAIL;
         break;
+    case ESP_ZB_CORE_CMD_DEFAULT_RESP_CB_ID:
+        esp_zb_zcl_cmd_default_resp_message_t *default_resp = (esp_zb_zcl_cmd_default_resp_message_t *)message;
+        ESP_LOGI(TAG, "Receive default response callback, command id: 0x%x, status code: 0x%x", 
+                 default_resp->resp_to_cmd, default_resp->status_code);
+        break;    
     default:
         ESP_LOGW(TAG, "Receive Zigbee action(0x%x) callback", callback_id);
         break;

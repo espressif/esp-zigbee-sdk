@@ -118,12 +118,7 @@ static esp_err_t zb_register_device(void){
     esp_zb_attribute_list_t *basic_cluster = esp_zb_basic_cluster_create(NULL);
     esp_zb_cluster_list_t *cluster_list = esp_zb_zcl_cluster_list_create();
     esp_zb_ep_list_t *ep_list = esp_zb_ep_list_create();
-    esp_zb_zcl_ota_upgrade_server_variable_t variable = {
-        .query_jitter = 5,
-        .current_time = 0,
-        .file_count = 0,
-    };
-    
+
     esp_zb_endpoint_config_t endpoint_config = {
         .endpoint = ENDPOINT_ID,
         .app_profile_id = ESP_ZB_AF_HA_PROFILE_ID,

@@ -6,6 +6,7 @@
 #include "switch_driver.h"
 
 static const char *TAG_include = "esp_zigbee_include";
+
 static bool zb_apsde_data_indication_handler(esp_zb_apsde_data_ind_t ind)
 {
     bool processed = false;
@@ -13,9 +14,10 @@ static bool zb_apsde_data_indication_handler(esp_zb_apsde_data_ind_t ind)
             if (ind.dst_endpoint == 10 && ind.profile_id == ESP_ZB_AF_HA_PROFILE_ID && ind.cluster_id == ESP_ZB_ZCL_CLUSTER_ID_BASIC) {
             ESP_LOGI("APSDE INDICATION",
                     "Received APSDE-DATA %s request with a length of %ld from endpoint %d, source address 0x%04hx to "
-                    "endpoint %d, destination address 0x%04hx",
+                    "endpoint %d, destination address 0x%04hx, rx_time %d, lqi %d, security status %s",
                     ind.dst_addr_mode == 0x01 ? "group" : "unicast", ind.asdu_length, ind.src_endpoint,
-                    ind.src_short_addr, ind.dst_endpoint, ind.dst_short_addr);
+                    ind.src_short_addr, ind.dst_endpoint, ind.dst_short_addr, ind.rx_time, ind.lqi,
+                    ind.security_status == 0 ? "unsecured network" : "secured network");
             ESP_LOG_BUFFER_HEX_LEVEL("APSDE INDICATION", ind.asdu, ind.asdu_length, ESP_LOG_INFO);
             processed = true;
             
@@ -36,12 +38,12 @@ static void esp_show_neighbor_table(){
         [ESP_ZB_DEVICE_TYPE_NONE]        = "UNK",
     };
     static const char rel_name[] = {
-        [ESP_ZB_NWK_RELATIONSHIP_PARENT]                = 'Parent', /* Parent */
-        [ESP_ZB_NWK_RELATIONSHIP_CHILD]                 = 'Child', /* Child */
-        [ESP_ZB_NWK_RELATIONSHIP_SIBLING]               = 'Sibling', /* Sibling */
-        [ESP_ZB_NWK_RELATIONSHIP_NONE_OF_THE_ABOVE]     = 'Others', /* Others */
-        [ESP_ZB_NWK_RELATIONSHIP_PREVIOUS_CHILD]        = 'Previous Child', /* Previous Child */
-        [ESP_ZB_NWK_RELATIONSHIP_UNAUTHENTICATED_CHILD] = 'Unauthenticated Child', /* Unauthenticated Child */
+        [ESP_ZB_NWK_RELATIONSHIP_PARENT]                = 'P',  /* Parent */
+        [ESP_ZB_NWK_RELATIONSHIP_CHILD]                 = 'C',  /* Child */
+        [ESP_ZB_NWK_RELATIONSHIP_SIBLING]               = 'S',  /* Sibling */
+        [ESP_ZB_NWK_RELATIONSHIP_NONE_OF_THE_ABOVE]     = 'O',  /* Others */
+        [ESP_ZB_NWK_RELATIONSHIP_PREVIOUS_CHILD]        = 'c', /* Previous Child */
+        [ESP_ZB_NWK_RELATIONSHIP_UNAUTHENTICATED_CHILD] = 'U', /* Unauthenticated Child */
     };
     esp_zb_nwk_info_iterator_t itor = ESP_ZB_NWK_INFO_ITERATOR_INIT;
     esp_zb_nwk_neighbor_info_t neighbor = {};
@@ -85,7 +87,7 @@ static void esp_show_route_table(){
     ESP_LOGI(TAG_include," ");
 
 }
-
+    //TODO trace
 void esp_zigbee_include_show_tables(void) {
     ESP_LOGI(TAG_include, "Zigbee Network Tables:");
     esp_show_neighbor_table();

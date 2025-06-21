@@ -145,12 +145,12 @@ void create_network_load_64bit(uint64_t dest_addr)
     uint32_t data_length = 50;
     esp_zb_ieee_addr_t ieee_addr ;
     memcpy(ieee_addr, &dest_addr, sizeof(esp_zb_ieee_addr_t)); // Copy the 64-bit address into the ieee_addr variable
-    ESP_LOGI(TAG_include, "Sending APS data request to 0x%02hx:0x%02hx:0x%02hx:0x%02hx:0x%02hx:0x%02hx:0x%02hx:0x%02hx with %ld bytes",
-                             ieee_addr[0], ieee_addr[1], ieee_addr[2], ieee_addr[3], ieee_addr[4], ieee_addr[5], ieee_addr[6], ieee_addr[7], data_length);
-                             return;
-    esp_zb_apsde_data_req_t req ={
+    // ESP_LOGI(TAG_include, "Sending APS data request to 0x%02hx:0x%02hx:0x%02hx:0x%02hx:0x%02hx:0x%02hx:0x%02hx:0x%02hx with %ld bytes",
+    //                          ieee_addr[0], ieee_addr[1], ieee_addr[2], ieee_addr[3], ieee_addr[4], ieee_addr[5], ieee_addr[6], ieee_addr[7], data_length);
+    //                          return;
+    esp_zb_apsde_data_req_t req = {
         .dst_addr_mode = ESP_ZB_APS_ADDR_MODE_64_ENDP_PRESENT,
-        .dst_addr.addr_long = {ieee_addr},                  // Copy the 64-bit address
+        //Destination address is assingned under strycture definition
         .dst_endpoint = 10,                                 // Example endpoint
         .profile_id = ESP_ZB_AF_HA_PROFILE_ID,              // Example profile ID
         .cluster_id = ESP_ZB_ZCL_CLUSTER_ID_BASIC,          // Example cluster ID (On/Off cluster)
@@ -163,6 +163,7 @@ void create_network_load_64bit(uint64_t dest_addr)
         .alias_seq_num = 0,
         .radius = 3,                                        // Example radius
     };
+    memcpy(req.dst_addr.addr_long, ieee_addr, sizeof(esp_zb_ieee_addr_t)); // Copy the 64-bit address
 
     
     uint8_t i=0;
@@ -173,16 +174,16 @@ void create_network_load_64bit(uint64_t dest_addr)
     }else{
         ESP_LOGD(TAG_include, "Filling ASDU with data");
         while (i < data_length) {
-            req.asdu[i] = (i+0xf) % 256; // Fill with some data, e.g., incrementing values
+            req.asdu[i] = (i+0xf) % 256; 
             i++;
         }
     }
-    ESP_LOGI(TAG_include, "Sending APS data request to 0x%02hx:0x%02hx:0x%02hx:0x%02hx:0x%02hx:0x%02hx:0x%02hx:0x%02hx with %ld bytes",
-                             ieee_addr[0], ieee_addr[1], ieee_addr[2], ieee_addr[3], ieee_addr[4], ieee_addr[5], ieee_addr[6], ieee_addr[7], data_length);
+    ESP_LOGI(TAG_include, "Sending APS data request to 0x%016" PRIx64 " %ld bytes" ,
+                            dest_addr, data_length);
     esp_zb_lock_acquire(portMAX_DELAY);
     esp_zb_aps_data_request(&req);
     esp_zb_lock_release();
-    vTaskDelay(pdMS_TO_TICKS(100)); // Delay to avoid flooding the network
+    vTaskDelay(pdMS_TO_TICKS(500)); // Delay to avoid flooding the network
     
 
 }
