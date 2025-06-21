@@ -100,8 +100,6 @@ void esp_zb_aps_data_confirm_handler(esp_zb_apsde_data_confirm_t confirm)
 }
 
 
-
-
 void create_network_load(uint16_t dest_addr)
 {
     uint32_t data_length = 50;
@@ -145,6 +143,48 @@ void create_network_load(uint16_t dest_addr)
 
 }
 
+void create_network_load_64bit(esp_zb_ieee_addr_t dest_addr)
+{//TODO: modify to use 64-bit address
+    uint32_t data_length = 50;
+
+
+    esp_zb_apsde_data_req_t req ={
+        .dst_addr_mode = ESP_ZB_APS_ADDR_MODE_64_PRESENT_ENDP_NOT_PRESENT,
+        .dst_addr.addr_long = dest_addr,
+        .dst_endpoint = 10,                          // Example endpoint
+        .profile_id = ESP_ZB_AF_HA_PROFILE_ID,      // Example profile ID
+        .cluster_id = ESP_ZB_ZCL_CLUSTER_ID_BASIC,  // Example cluster ID (On/Off cluster)
+        .src_endpoint = 10,                          // Example source endpoint
+        .asdu_length = data_length,                 // Example payload length
+        .asdu = malloc(data_length * sizeof(uint8_t)), // Allocate memory for ASDU if needed
+        .tx_options = 0,                            // Example transmission options
+        .use_alias = false,
+        .alias_src_addr = 0,
+        .alias_seq_num = 0,
+        .radius = 1,                                 // Example radius
+    };
+
+
+    
+    uint8_t i=0;
+
+    if (req.asdu == NULL) {
+        ESP_LOGE(TAG_include, "Failed to allocate memory for ASDU");
+        return;
+    }else{
+        while (i < data_length) {
+            req.asdu[i] = i % 256; // Fill with some data, e.g., incrementing values
+            i++;
+        }
+    }
+    ESP_LOGI(TAG_include, "Sending APS data request to 0x%04hx with %ld bytes", dest_addr, data_length);
+    esp_zb_lock_acquire(portMAX_DELAY);
+    esp_zb_aps_data_request(&req);
+    esp_zb_lock_release();
+    vTaskDelay(pdMS_TO_TICKS(100)); // Delay to avoid flooding the network
+    
+
+}
 
 
 void button_handler(switch_func_pair_t *button_func_pair)
