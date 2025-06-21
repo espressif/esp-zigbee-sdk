@@ -8,6 +8,7 @@
 #include "esp_zigbee_core.h"
 #include "esp_zigbee_include.h"
 #include "aps/esp_zigbee_aps.h"
+#include <memory.h>
 
 static const char *TAG_include = "esp_zigbee_include";
 
@@ -80,10 +81,6 @@ static switch_func_pair_t button_func_pair[] = {
 };
 
 
-static QueueHandle_t s_aps_data_confirm = NULL;
-static QueueHandle_t s_aps_data_indication = NULL;
-
-
 
 void esp_zb_aps_data_confirm_handler(esp_zb_apsde_data_confirm_t confirm)
 {
@@ -143,27 +140,29 @@ void create_network_load(uint16_t dest_addr)
 
 }
 
-void create_network_load_64bit(esp_zb_ieee_addr_t dest_addr)
+void create_network_load_64bit(uint64_t dest_addr)
 {//TODO: modify to use 64-bit address
     uint32_t data_length = 50;
-
-
+    esp_zb_ieee_addr_t ieee_addr ;
+    memcpy(ieee_addr, &dest_addr, sizeof(esp_zb_ieee_addr_t)); // Copy the 64-bit address into the ieee_addr variable
+    ESP_LOGI(TAG_include, "Sending APS data request to 0x%02hx:0x%02hx:0x%02hx:0x%02hx:0x%02hx:0x%02hx:0x%02hx:0x%02hx with %ld bytes",
+                             ieee_addr[0], ieee_addr[1], ieee_addr[2], ieee_addr[3], ieee_addr[4], ieee_addr[5], ieee_addr[6], ieee_addr[7], data_length);
+                             return;
     esp_zb_apsde_data_req_t req ={
-        .dst_addr_mode = ESP_ZB_APS_ADDR_MODE_64_PRESENT_ENDP_NOT_PRESENT,
-        .dst_addr.addr_long = dest_addr,
-        .dst_endpoint = 10,                          // Example endpoint
-        .profile_id = ESP_ZB_AF_HA_PROFILE_ID,      // Example profile ID
-        .cluster_id = ESP_ZB_ZCL_CLUSTER_ID_BASIC,  // Example cluster ID (On/Off cluster)
-        .src_endpoint = 10,                          // Example source endpoint
-        .asdu_length = data_length,                 // Example payload length
-        .asdu = malloc(data_length * sizeof(uint8_t)), // Allocate memory for ASDU if needed
-        .tx_options = 0,                            // Example transmission options
+        .dst_addr_mode = ESP_ZB_APS_ADDR_MODE_64_ENDP_PRESENT,
+        .dst_addr.addr_long = {ieee_addr},                  // Copy the 64-bit address
+        .dst_endpoint = 10,                                 // Example endpoint
+        .profile_id = ESP_ZB_AF_HA_PROFILE_ID,              // Example profile ID
+        .cluster_id = ESP_ZB_ZCL_CLUSTER_ID_BASIC,          // Example cluster ID (On/Off cluster)
+        .src_endpoint = 10,                                 // Example source endpoint
+        .asdu_length = data_length,                         // Example payload length
+        .asdu = malloc(data_length * sizeof(uint8_t)),      // Allocate memory for ASDU if needed
+        .tx_options = 0,                                    // Example transmission options
         .use_alias = false,
         .alias_src_addr = 0,
         .alias_seq_num = 0,
-        .radius = 1,                                 // Example radius
+        .radius = 3,                                        // Example radius
     };
-
 
     
     uint8_t i=0;
@@ -172,12 +171,14 @@ void create_network_load_64bit(esp_zb_ieee_addr_t dest_addr)
         ESP_LOGE(TAG_include, "Failed to allocate memory for ASDU");
         return;
     }else{
+        ESP_LOGD(TAG_include, "Filling ASDU with data");
         while (i < data_length) {
-            req.asdu[i] = i % 256; // Fill with some data, e.g., incrementing values
+            req.asdu[i] = (i+0xf) % 256; // Fill with some data, e.g., incrementing values
             i++;
         }
     }
-    ESP_LOGI(TAG_include, "Sending APS data request to 0x%04hx with %ld bytes", dest_addr, data_length);
+    ESP_LOGI(TAG_include, "Sending APS data request to 0x%02hx:0x%02hx:0x%02hx:0x%02hx:0x%02hx:0x%02hx:0x%02hx:0x%02hx with %ld bytes",
+                             ieee_addr[0], ieee_addr[1], ieee_addr[2], ieee_addr[3], ieee_addr[4], ieee_addr[5], ieee_addr[6], ieee_addr[7], data_length);
     esp_zb_lock_acquire(portMAX_DELAY);
     esp_zb_aps_data_request(&req);
     esp_zb_lock_release();
@@ -191,8 +192,12 @@ void button_handler(switch_func_pair_t *button_func_pair)
 {
     if(button_func_pair->func == SWITCH_ONOFF_TOGGLE_CONTROL) {
         esp_zigbee_include_show_tables();
-        create_network_load(0x0000);
-    }    
+        // create_network_load(0x0000);
+        // esp_zb_ieee_addr_t router1_address = {0x40, 0x4c, 0xca, 0xff, 0xfe, 0x5f, 0xae, 0x8c};
+        create_network_load_64bit(0x404ccafffe5fae8c);
+        //esp_zb_ieee_addr_t router2_address = {0x40, 0x4c, 0xca, 0xff, 0xfe, 0x5f, 0xae, 0x8c};
+        create_network_load_64bit(0x404ccafffe5f964c);
+    }
 }
 
 static esp_err_t deferred_driver_init(void)
