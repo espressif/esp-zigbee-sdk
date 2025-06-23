@@ -210,3 +210,19 @@ static esp_err_t deferred_driver_init(void)
 }
 
 
+static bool zb_apsde_data_indication_handler(esp_zb_apsde_data_ind_t ind)
+{
+    bool processed = false;
+    if (ind.status == 0x00) {
+        if (ind.dst_endpoint == 27 && ind.profile_id == ESP_ZB_AF_HA_PROFILE_ID && ind.cluster_id == ESP_ZB_ZCL_CLUSTER_ID_BASIC) {
+            // ESP_LOGD("APSDE INDICATION",
+            //         "Received data from endpoint %d, source address 0x%04hx to endpoint %d, destination address 0x%04hx",
+            //         ind.src_endpoint, ind.src_short_addr, ind.dst_endpoint, ind.dst_short_addr);    
+            create_network_load(ind.src_short_addr); // Respond to the received data
+        }
+    } else {
+        ESP_LOGE("APSDE INDICATION", "Invalid status of APSDE-DATA indication, error code: %d", ind.status);
+        processed = false;
+    }
+    return processed;
+}

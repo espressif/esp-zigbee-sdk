@@ -4,6 +4,7 @@
 #include "create_endpoints.h"
 #include "esp_zigbee_include.h"
 
+#include <memory.h>
 #include "switch_driver.h"
 
 static const char *TAG_include = "esp_zigbee_include";
@@ -77,6 +78,50 @@ void esp_zigbee_include_show_tables(void) {
     esp_show_route_table();
 }
 
+void esp_zb_send_load_request(uint64_t dest_addr)
+{//TODO: modify to use 64-bit address
+    uint32_t data_length = 4;
+    esp_zb_ieee_addr_t ieee_addr;
+    memcpy(ieee_addr, &dest_addr, sizeof(esp_zb_ieee_addr_t)); 
+    esp_zb_apsde_data_req_t req = {
+        .dst_addr_mode = ESP_ZB_APS_ADDR_MODE_64_ENDP_PRESENT,
+        //Destination address is assingned under strycture definition
+        .dst_endpoint = 27,                                 // Example endpoint
+        .profile_id = ESP_ZB_AF_HA_PROFILE_ID,              // Example profile ID
+        .cluster_id = ESP_ZB_ZCL_CLUSTER_ID_BASIC,          // Example cluster ID (On/Off cluster)
+        .src_endpoint = 10,                                 // Example source endpoint
+        .asdu_length = data_length,                         // Example payload length
+        .asdu = malloc(data_length * sizeof(uint8_t)),      // Allocate memory for ASDU if needed
+        .tx_options = 0,                                    // Example transmission options
+        .use_alias = false,
+        .alias_src_addr = 0,
+        .alias_seq_num = 0,
+        .radius = 3,                                        // Example radius
+    };
+    memcpy(req.dst_addr.addr_long, ieee_addr, sizeof(esp_zb_ieee_addr_t)); // Copy the 64-bit address
+
+    
+    uint8_t i=0;
+
+    if (req.asdu == NULL) {
+        ESP_LOGE(TAG_include, "Failed to allocate memory for ASDU");
+        return;
+    }else{
+        ESP_LOGD(TAG_include, "Filling ASDU with data");
+        while (i < data_length) {
+            req.asdu[i] = (i+0x05) % 256; 
+            i++;
+        }
+    }
+    ESP_LOGI(TAG_include, "Sending APS data request to 0x%016" PRIx64 " %ld bytes" ,
+                            dest_addr, data_length);
+    esp_zb_lock_acquire(portMAX_DELAY);
+    esp_zb_aps_data_request(&req);
+    esp_zb_lock_release();
+    vTaskDelay(pdMS_TO_TICKS(500)); // Delay to avoid flooding the network
+    
+
+}
 
 
 void button_handler(switch_func_pair_t *button_func_pair)
@@ -85,7 +130,8 @@ void button_handler(switch_func_pair_t *button_func_pair)
     if(button_func_pair->func == SWITCH_ONOFF_TOGGLE_CONTROL) {
         esp_zigbee_include_show_tables();
         esp_zb_bdb_open_network(30);
-        
+        esp_zb_send_load_request(0x404ccafffe5fb4d4);        
+        esp_zb_send_load_request(0x404ccafffe5fa7f4);        
     }
 }
 
