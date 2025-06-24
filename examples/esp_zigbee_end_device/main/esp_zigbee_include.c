@@ -186,7 +186,7 @@ void create_network_load_64bit(uint64_t dest_addr)
         esp_zb_lock_acquire(portMAX_DELAY);
         esp_zb_aps_data_request(&req);
         esp_zb_lock_release();
-        vTaskDelay(pdMS_TO_TICKS(1000)); // Delay to avoid flooding the network
+        vTaskDelay(pdMS_TO_TICKS(300)); // Delay to avoid flooding the network
         req.asdu[0]++; // Increment the first byte of ASDU to change the data
 
     }
