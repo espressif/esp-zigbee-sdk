@@ -99,11 +99,13 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
         }    
         break;
     case ESP_ZB_ZDO_SIGNAL_PRODUCTION_CONFIG_READY:
-        ESP_LOGI(TAG, "Production config ready");
+        if(err_status != ESP_OK) {
+            ESP_LOGE(TAG, "Production config not ready, status: %s", esp_err_to_name(err_status));
+        }
         break;
     case ESP_ZB_NLME_STATUS_INDICATION:
         nwk_status_params = (esp_zb_zdo_signal_nwk_status_indication_params_t *)esp_zb_app_signal_get_params(p_sg_p);
-        ESP_LOGD(TAG, "Network status indication failed with status: %s, network addr: 0x%04hx, status: %d", esp_err_to_name(err_status), nwk_status_params->network_addr, nwk_status_params->status);
+        ESP_LOGI(TAG, "Network status indication failed with status: %s, network addr: 0x%04hx, status: %d", esp_err_to_name(err_status), nwk_status_params->network_addr, nwk_status_params->status);
 
         if (nwk_status_params->status == ESP_ZB_NWK_COMMAND_STATUS_ADDRESS_CONFLICT) {
             ESP_LOGE(TAG, "PAN ID conflict detected, restarting network formation");
@@ -169,7 +171,6 @@ static void esp_zb_task(void *pcParameters)
     ESP_ERROR_CHECK(zb_register_device());
     ESP_ERROR_CHECK(esp_zb_start(true));
     esp_zb_stack_main_loop();
-    ESP_LOGW(TAG, "Zigbee stack main loop exited, restarting");
 }
 
 
