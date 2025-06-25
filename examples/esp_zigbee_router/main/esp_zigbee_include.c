@@ -31,7 +31,8 @@ static bool zb_apsde_data_indication_handler(esp_zb_apsde_data_ind_t ind)
 }
 
 //wyświetla sąsiadów
-static void esp_show_neighbor_table(){
+static void esp_show_neighbor_table()
+{
     static const char *dev_type_name[] = {
         [ESP_ZB_DEVICE_TYPE_COORDINATOR] = "ZC",
         [ESP_ZB_DEVICE_TYPE_ROUTER]      = "ZR",
@@ -66,7 +67,8 @@ static void esp_show_neighbor_table(){
 }
 
 //wyswietla trasy
-static void esp_show_route_table(){
+static void esp_show_route_table()
+{
     static const char *route_state_name[] = {
         [ESP_ZB_NWK_ROUTE_STATE_ACTIVE] = "Active",
         [ESP_ZB_NWK_ROUTE_STATE_DISCOVERY_UNDERWAY] = "Disc",
@@ -89,7 +91,8 @@ static void esp_show_route_table(){
 
 }
     //TODO trace
-void esp_zigbee_include_show_tables(void) {
+void esp_zigbee_include_show_tables(void) 
+{
     ESP_LOGI(TAG_include, "Zigbee Network Tables:");
     esp_show_neighbor_table();
     esp_show_route_table();
