@@ -72,7 +72,8 @@ static void esp_show_route_table(){
 
 
 
-void esp_zigbee_include_show_tables(void) {
+void esp_zigbee_include_show_tables(void) 
+{
     ESP_LOGI(TAG_include, "Zigbee Network Tables:");
     esp_show_neighbor_table();
     esp_show_route_table();

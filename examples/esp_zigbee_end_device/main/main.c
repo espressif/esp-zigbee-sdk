@@ -135,11 +135,12 @@ static void esp_zb_task(void *pcParameters)
     esp_zb_cfg_t zb_nwk_cfg = ESP_ZB_ZR_CONFIG();
     esp_zb_init(&zb_nwk_cfg);
     esp_zb_nvram_erase_at_start(true);
-
+    
+    esp_zb_aps_data_indication_handler_register(zb_apsde_data_indication_handler);
+    esp_zb_aps_data_confirm_handler_register(esp_zb_aps_data_confirm_handler);
     esp_zb_core_action_handler_register(zb_action_handler);
     esp_zb_nwk_set_link_status_period(10);
     esp_zb_set_channel_mask(ESP_ZB_PRIMARY_CHANNEL_MASK);
-    esp_zb_aps_data_indication_handler_register(zb_apsde_data_indication_handler);
     ESP_ERROR_CHECK(zb_register_device());
     ESP_ERROR_CHECK(esp_zb_start(false));
     esp_zb_stack_main_loop();

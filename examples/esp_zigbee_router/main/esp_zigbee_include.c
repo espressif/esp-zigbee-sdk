@@ -2,6 +2,7 @@
 #include "esp_log.h"
 #include "nwk/esp_zigbee_nwk.h"
 #include "aps/esp_zigbee_aps.h"
+#include "esp_zigbee_core.h"
 #include "zcl/esp_zigbee_zcl_common.h"
 #include "switch_driver.h"
 
@@ -102,6 +103,7 @@ void button_handler(switch_func_pair_t *button_func_pair)
 {
     if(button_func_pair->func == SWITCH_ONOFF_TOGGLE_CONTROL) {
         esp_zigbee_include_show_tables();
+        esp_zb_bdb_open_network(30);
     }
     
 }

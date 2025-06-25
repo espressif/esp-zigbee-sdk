@@ -5,6 +5,7 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "esp_zigbee_include.c"
+#include "esp_zigbee_secur.h"
 #include "create_endpoints.c"
 
 
@@ -109,6 +110,12 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
                 esp_zb_scheduler_alarm((esp_zb_callback_t)bdb_start_top_level_commissioning_cb, ESP_ZB_BDB_MODE_NETWORK_FORMATION, 1000);
         }     
         break;
+    case ESP_ZB_ZDO_SIGNAL_DEVICE_AUTHORIZED:
+        esp_zb_zdo_signal_device_authorized_params_t *device_authorized_params = (esp_zb_zdo_signal_device_authorized_params_t *)esp_zb_app_signal_get_params(p_sg_p);
+        ESP_LOGI(TAG, "Device authorized: LongAddr(0x%016" PRIx64 "), ShortAddr(0x%04hx), AuthorizationType(0x%x), AuthorizationStatus(0x%x)",
+                 *(uint64_t *)device_authorized_params->long_addr, device_authorized_params->short_addr,
+                 device_authorized_params->authorization_type, device_authorized_params->authorization_status);
+        break;
     default:
         ESP_LOGI(TAG, "ZDO signal: %s (0x%x), status: %s", esp_zb_zdo_signal_to_string(sig_type), sig_type, esp_err_to_name(err_status));
         break;
@@ -154,7 +161,7 @@ static void esp_zb_task(void *pcParameters)
     esp_zb_init(&zb_nwk_cfg);
     esp_zb_enable_distributed_network(false);//TODO: enable distributed network
     //esp_zb_nwk_set_link_status_period(1);
-    esp_zb_set_tx_power(6);
+    esp_zb_set_tx_power(0);
     esp_zb_aps_data_indication_handler_register(zb_apsde_data_indication_handler);
     esp_zb_core_action_handler_register(zb_action_handler);
     esp_zb_set_channel_mask(ESP_ZB_PRIMARY_CHANNEL_MASK);
