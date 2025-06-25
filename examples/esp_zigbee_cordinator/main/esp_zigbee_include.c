@@ -131,8 +131,7 @@ void button_handler(switch_func_pair_t *button_func_pair)
     if(button_func_pair->func == SWITCH_ONOFF_TOGGLE_CONTROL) {
         esp_zigbee_include_show_tables();
         esp_zb_bdb_open_network(30);
-        esp_zb_send_load_request(0x404ccafffe5fb4d4);        
-        esp_zb_send_load_request(0x404ccafffe5fa7f4);        
+    
     }
 }
 

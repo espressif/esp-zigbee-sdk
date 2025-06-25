@@ -87,9 +87,10 @@ void esp_zb_aps_data_confirm_handler(esp_zb_apsde_data_confirm_t confirm)
      if (confirm.status == 0x00) {
         ESP_LOGI("APSDE CONFIRM",
                 "Sent successfully from endpoint %d, source address 0x%04hx to endpoint %d,"
-                "destination address 0x%04hx",
-                confirm.src_endpoint, esp_zb_get_short_address(), confirm.dst_endpoint, confirm.dst_addr.addr_short);
-        ESP_LOG_BUFFER_CHAR_LEVEL("APSDE CONFIRM", confirm.asdu, confirm.asdu_length, ESP_LOG_INFO);
+                "destination address 0x%04hx, tx_time %d ms",
+                confirm.src_endpoint, esp_zb_get_short_address(), confirm.dst_endpoint, confirm.dst_addr.addr_short,
+            confirm.tx_time);
+        // ESP_LOG_BUFFER_CHAR_LEVEL("APSDE CONFIRM", confirm.asdu, confirm.asdu_length, ESP_LOG_INFO);
         
     } else {
         ESP_LOGE("APSDE CONFIRM", "Failed to send APSDE-DATA request, error code: %d", confirm.status);
@@ -199,8 +200,11 @@ void button_handler(switch_func_pair_t *button_func_pair)
     if(button_func_pair->func == SWITCH_ONOFF_TOGGLE_CONTROL) {
         esp_zigbee_include_show_tables();
         // create_network_load(0x0000);
-        create_network_load_64bit(0x404ccafffe5fae8c);
-        create_network_load_64bit(0x404ccafffe5f964c);
+        //create_network_load_64bit(0x404ccafffe5fae8c);
+        create_network_load_64bit(0x404ccafffe5fa7f4);
+        create_network_load_64bit(0x404ccafffe5fb4d4); 
+        create_network_load_64bit(0x404ccafffe5de2a8); 
+        
     }
 }
 
