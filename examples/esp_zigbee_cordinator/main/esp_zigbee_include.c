@@ -7,7 +7,7 @@
 #include <memory.h>
 #include "switch_driver.h"
 
-static const char *TAG_include = "esp_zigbee_include";
+static const char *TAG_include = "ESP_ZB_COORDINATOR";
 static switch_func_pair_t button_func_pair[] = {
         {GPIO_INPUT_IO_TOGGLE_SWITCH, SWITCH_ONOFF_TOGGLE_CONTROL}
 };
@@ -96,7 +96,7 @@ void esp_zb_send_load_request(uint64_t dest_addr)
         .use_alias = false,
         .alias_src_addr = 0,
         .alias_seq_num = 0,
-        .radius = 3,                                        // Example radius
+        .radius = 4,                                        // Example radius
     };
     memcpy(req.dst_addr.addr_long, ieee_addr, sizeof(esp_zb_ieee_addr_t)); // Copy the 64-bit address
 
@@ -116,7 +116,7 @@ void esp_zb_send_load_request(uint64_t dest_addr)
     ESP_LOGI(TAG_include, "Sending APS data request to 0x%016" PRIx64 " %ld bytes" ,
                             dest_addr, data_length);
     esp_zb_lock_acquire(portMAX_DELAY);
-    esp_zb_aps_data_request(&req);
+    ESP_ERROR_CHECK(esp_zb_aps_data_request(&req));
     esp_zb_lock_release();
     vTaskDelay(pdMS_TO_TICKS(500)); // Delay to avoid flooding the network
     

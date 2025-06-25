@@ -139,7 +139,8 @@ static esp_err_t zb_action_handler(esp_zb_core_action_callback_id_t callback_id,
     return ret;
 }
 
-static esp_err_t zb_register_device(void){
+static esp_err_t zb_register_device(void)
+{
     esp_zb_ep_list_t *ep_list = esp_zb_ep_list_create();
     create_test_endpoint(ep_list);
 

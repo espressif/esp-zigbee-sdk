@@ -14,11 +14,11 @@ static bool zb_apsde_data_indication_handler(esp_zb_apsde_data_ind_t ind)
             if (ind.dst_endpoint == 10 && ind.profile_id == ESP_ZB_AF_HA_PROFILE_ID && ind.cluster_id == ESP_ZB_ZCL_CLUSTER_ID_BASIC) {
             ESP_LOGI("APSDE INDICATION",
                     "Received APSDE-DATA %s request with a length of %ld from endpoint %d, source address 0x%04hx to "
-                    "endpoint %d, destination address 0x%04hx,\n    rx_time %d, lqi %d, security status %s",
+                    "endpoint %d, destination address 0x%04hx, rx_time %d, lqi %d, security status %s",
                     ind.dst_addr_mode == 0x01 ? "group" : "unicast", ind.asdu_length, ind.src_endpoint,
                     ind.src_short_addr, ind.dst_endpoint, ind.dst_short_addr, ind.rx_time, ind.lqi,
                     ind.security_status == 0 ? "unsecured network" : "secured network");
-            ESP_LOG_BUFFER_HEX_LEVEL("APSDE INDICATION", ind.asdu, ind.asdu_length, ESP_LOG_INFO);
+            //ESP_LOG_BUFFER_HEX_LEVEL("APSDE INDICATION", ind.asdu, ind.asdu_length, ESP_LOG_INFO);
             processed = true;
             
         }
