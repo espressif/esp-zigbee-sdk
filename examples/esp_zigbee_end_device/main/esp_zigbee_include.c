@@ -51,6 +51,7 @@ static void esp_show_neighbor_table()
         ESP_LOGI(TAG_include,"  Type: %3s", dev_type_name[neighbor.device_type]);   
         ESP_LOGI(TAG_include,"  Rel: %c", rel_name[neighbor.relationship]);
         ESP_LOGI(TAG_include,"  Depth: %3d", neighbor.depth);
+        ESP_LOGI(TAG_include,"  RSSI: %3d", neighbor.rssi);
         ESP_LOGI(TAG_include,"  LQI: %3d", neighbor.lqi);
         ESP_LOGI(TAG_include,"  Cost: o:%d", neighbor.outgoing_cost);
         
