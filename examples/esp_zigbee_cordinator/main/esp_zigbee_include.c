@@ -119,8 +119,8 @@ void esp_zb_send_load_request(uint64_t dest_addr)
     esp_zb_lock_acquire(portMAX_DELAY);
     ESP_ERROR_CHECK(esp_zb_aps_data_request(&req));
     esp_zb_lock_release();
-    vTaskDelay(pdMS_TO_TICKS(500)); // Delay to avoid flooding the network
-    
+    vTaskDelay(pdMS_TO_TICKS(200)); // Delay to avoid flooding the network
+    free(req.asdu); // Free the allocated memory for ASDU
 
 }
 

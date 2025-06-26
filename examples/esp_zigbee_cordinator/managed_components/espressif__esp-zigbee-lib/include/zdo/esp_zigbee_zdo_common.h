@@ -609,16 +609,6 @@ typedef struct {
 } esp_zb_app_signal_msg_t;
 
 /**
- * @brief The enum of mode of Base Device Behavior (BDB)
- * @anchor esp_zb_bdb_commissioning_mode
- */
-typedef enum {
-    ESP_ZB_BDB_MODE_INITIALIZATION                  = 0,
-    ESP_ZB_BDB_MODE_NETWORK_STEERING                = 2,
-    ESP_ZB_BDB_MODE_NETWORK_FORMATION               = 4,
-} esp_zb_bdb_commissioning_mode_t;
-
-/**
  * @brief The enum of bind request destination address mode
  * @anchor esp_zb_zdo_bind_dst_addr_mode_t
  */
@@ -656,7 +646,6 @@ typedef enum {
     ESP_ZB_ZDO_STANDARD_DEV_TC_REJOIN       = 0x03U,    /*!< Standard device trust center rejoin */
     /* 0x04 – 0x07 = Reserved */
 } esp_zb_zdo_update_dev_status_t;
-
 
 /**
  * @brief The payload of ESP_ZB_ZDO_SIGNAL_LEAVE signal

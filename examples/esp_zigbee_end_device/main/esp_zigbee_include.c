@@ -10,14 +10,21 @@
 #include "aps/esp_zigbee_aps.h"
 #include <memory.h>
 
+
+
+
+
 static const char *TAG_include = "esp_zigbee_include";
 static bool wait_for_confirmation_flag = false; //flag to get confirmation from the device
 
-//function creatiing 50 bytes payload and sending it to the destination address
-void create_network_load(uint16_t dest_addr);
-void create_network_load_64bit(uint64_t dest_addr);
+//function creatiing 68 bytes payload and sending it to the destination address
+void create_ping(uint16_t dest_addr);
+void create_ping_64bit(uint64_t dest_addr);
+void create_network_load(uint16_t dest_addr, uint8_t repetitions);
+void create_network_load_64bit(uint64_t dest_addr, uint8_t repetitions);
 //wyświetla sąsiadów
-static void esp_show_neighbor_table(){
+static void esp_show_neighbor_table()
+{
     static const char *dev_type_name[] = {
         [ESP_ZB_DEVICE_TYPE_COORDINATOR] = "ZC",
         [ESP_ZB_DEVICE_TYPE_ROUTER]      = "ZR",
@@ -52,7 +59,8 @@ static void esp_show_neighbor_table(){
 }
 
 //wyswietla trasy
-static void esp_show_route_table(){
+static void esp_show_route_table()
+{
     static const char *route_state_name[] = {
         [ESP_ZB_NWK_ROUTE_STATE_ACTIVE] = "Active",
         [ESP_ZB_NWK_ROUTE_STATE_DISCOVERY_UNDERWAY] = "Disc",
@@ -74,7 +82,8 @@ static void esp_show_route_table(){
     }
 }
 
-void esp_zigbee_include_show_tables(void) {
+void esp_zigbee_include_show_tables(void)
+{
     ESP_LOGI(TAG_include, "Zigbee Network Tables:");
     esp_show_neighbor_table();
     esp_show_route_table();
@@ -108,7 +117,7 @@ static bool zb_apsde_data_indication_handler(esp_zb_apsde_data_ind_t ind)
     bool processed = false;
     if (ind.status == 0x00) {
         if (ind.dst_endpoint == 27 && ind.profile_id == ESP_ZB_AF_HA_PROFILE_ID && ind.cluster_id == ESP_ZB_ZCL_CLUSTER_ID_BASIC) {    
-            create_network_load(ind.src_short_addr); // Respond to the received data
+            create_ping(ind.src_short_addr); // Respond to the received data
             wait_for_confirmation_flag = true; // Set the flag to wait for confirmation
             while (wait_for_confirmation_flag) {
                 vTaskDelay(pdMS_TO_TICKS(1)); // Wait for confirmation
@@ -151,12 +160,12 @@ void create_ping_64(uint64_t dest_addr)
     esp_zb_lock_acquire(portMAX_DELAY);
     esp_zb_aps_data_request(&req);
     esp_zb_lock_release();
-    vTaskDelay(pdMS_TO_TICKS(50)); // Delay to avoid flooding the network
+    free(req.asdu); // Free the allocated memory for ASDU
 }
 
-
-void create_network_load(uint16_t dest_addr)
+void create_ping(uint16_t dest_addr)
 {
+    uint32_t data_length = 50; // Example payload length
     esp_zb_apsde_data_req_t req = {
         .dst_addr_mode = ESP_ZB_APS_ADDR_MODE_16_ENDP_PRESENT,
         .dst_addr.addr_short = dest_addr,
@@ -164,37 +173,43 @@ void create_network_load(uint16_t dest_addr)
         .profile_id = ESP_ZB_AF_HA_PROFILE_ID,      // Example profile ID
         .cluster_id = ESP_ZB_ZCL_CLUSTER_ID_BASIC,  // Example cluster ID (On/Off cluster)
         .src_endpoint = 10,                          // Example source endpoint
-        .asdu_length = 50,                           // Example payload length
-        .asdu = malloc(50 * sizeof(uint8_t)),       // Allocate memory for ASDU if needed
+        .asdu_length = data_length,                  // No payload for ping
+        .asdu = malloc(data_length * sizeof(uint8_t)), // Allocate memory for ASDU if needed
         .tx_options = 0,                            // Example transmission options
         .use_alias = false,
         .alias_src_addr = 0,
         .alias_seq_num = 0,
-        .radius = 1,                                 // Example radius
+        .radius = 3,                                 // Example radius
     };
 
     if (req.asdu == NULL) {
         ESP_LOGE(TAG_include, "Failed to allocate memory for ASDU");
         return;
     } else {
-        for (uint8_t i = 0; i < 50; i++) {
+        for (uint8_t i = 0; i < data_length; i++) {
             req.asdu[i] = i % 256; // Fill with some data, e.g., incrementing values
         }
     }
-    ESP_LOGI(TAG_include, "Sending APS data request to 0x%04hx with %d bytes", dest_addr, 50);
+
+    ESP_LOGI(TAG_include, "Sending APS data request to 0x%04hx with %ld bytes", dest_addr, data_length);
     esp_zb_lock_acquire(portMAX_DELAY);
     esp_zb_aps_data_request(&req);
     esp_zb_lock_release();
-    vTaskDelay(pdMS_TO_TICKS(100)); // Delay to avoid flooding the network
+    free(req.asdu); // Free the allocated memory for ASDU
 }
 
-void create_network_load_64bit(uint64_t dest_addr)
+void create_network_load(uint16_t dest_addr, uint8_t repetitions)
 {
-    for(int8_t i = 0; i < 10; i++) {
-        create_ping_64(dest_addr);
-
+    for(int8_t i = 0; i < repetitions; i++) {
+        create_ping(dest_addr);
     }
+}
 
+void create_network_load_64bit(uint64_t dest_addr, uint8_t repetitions)
+{
+    for(int8_t i = 0; i < repetitions; i++) {
+        create_ping_64(dest_addr);
+    }
 }
 
 
@@ -205,9 +220,9 @@ void button_handler(switch_func_pair_t *button_func_pair)
         esp_zigbee_include_show_tables();
         // create_network_load(0x0000);
         //create_network_load_64bit(0x404ccafffe5fae8c);
-        create_network_load_64bit(0x404ccafffe5fa7f4);
-        create_network_load_64bit(0x404ccafffe5fb4d4); 
-        create_network_load_64bit(0x404ccafffe5de2a8); 
+        create_network_load_64bit(0x404ccafffe5fa7f4,3);
+        create_network_load_64bit(0x404ccafffe5fb4d4,3); 
+        create_network_load_64bit(0x404ccafffe5de2a8,0); 
         
     }
 }

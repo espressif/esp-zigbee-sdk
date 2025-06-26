@@ -115,7 +115,11 @@ static esp_err_t zb_action_handler(esp_zb_core_action_callback_id_t callback_id,
         break;
     case ESP_ZB_CORE_CMD_WRITE_ATTR_RESP_CB_ID:
         esp_zb_zcl_cmd_write_attr_resp_message_t *write_resp = (esp_zb_zcl_cmd_write_attr_resp_message_t *)message;
-        ESP_LOGI(TAG, "Receive write attribute response callback, status code: 0x%x", write_resp->info.command.direction);
+        while(write_resp->variables) {
+            ESP_LOGI(TAG, "Receive write attribute response callback, attribute id: 0x%x, status code: 0x%x",
+                     write_resp->variables->attribute_id, write_resp->variables->status);
+            write_resp->variables = write_resp->variables->next;
+        }
         break;
     default:
         ESP_LOGW(TAG, "Receive Zigbee action(0x%x) callback", callback_id);
