@@ -3,7 +3,6 @@
 import inspect
 import yaml
 
-
 class Job:
     def __init__(
             self,

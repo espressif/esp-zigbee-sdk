@@ -2,66 +2,73 @@
 # SPDX-License-Identifier: Apache-2.0
 """This file is used for generating the child pipeline for build jobs."""
 import argparse
-import os
 from models import BuildJob
 from utils import dump_jobs_to_yaml
 from constants import ZbCiCons
+import os
 
-def generate(idf_and_docker, generate_yaml, template_yaml):
+def generate(idf_and_docker, generate_yaml, build_templates, pytest_job_template, chips):
     generate_jobs = []
     for idf_version, docker_version in idf_and_docker.items():
-        # generate build jobs
-        build_non_pytest_examples_job = BuildJob(
-            name='build_non_pytest_examples_{}'.format(idf_version),
-            extends=['.build_non_pytest_example_template'],
-            variables={'DOCKER_ENV_VERSION': docker_version,
-                       'IDF_VERSION': idf_version},
-        )
-        build_pytest_examples_job = BuildJob(
-            name='build_pytest_examples_{}'.format(idf_version),
-            extends=['.build_pytest_example_template'],
-            variables={'DOCKER_ENV_VERSION': docker_version,
-                       'IDF_VERSION': idf_version},
-        )
-        build_pytest_gateway_job = BuildJob(
-            name='build_pytest_gateway_{}'.format(idf_version),
-            extends=['.build_pytest_gateway_template'],
-            variables={'DOCKER_ENV_VERSION': docker_version,
-                       'IDF_VERSION': idf_version},
-        )
-        # generate test jobs
-        for chip in ZbCiCons.CHIPS:
-            pytest_job = BuildJob(
-                name='pytest_{}_{}'.format(chip, idf_version),
-                extends=['.pytest_template'],
-                variables={'DOCKER_ENV_VERSION': docker_version,
-                           'CHIP': chip},
-                needs=['build_pytest_examples_{}'.format(
-                    idf_version) if chip != 'esp32s3' else 'build_pytest_gateway_{}'.format(idf_version)]
-            )
-            generate_jobs.append(pytest_job)
+        for job_name_fmt, tmpl in build_templates:
+            if not tmpl:
+                continue
+            generate_jobs.append(BuildJob(
+                name=job_name_fmt.format(idf_version),
+                extends=[f'.{tmpl}'],
+                variables={
+                    'DOCKER_ENV_VERSION': docker_version,
+                    'IDF_VERSION': idf_version
+                }
+            ))
+        if pytest_job_template:
+            for chip in chips:
+                needs_target = (
+                    f'build_pytest_examples_{idf_version}'
+                    if chip != 'esp32s3'
+                    else f'build_pytest_gateway_{idf_version}'
+                )
+                generate_jobs.append(BuildJob(
+                    name=f'pytest_{chip}_{idf_version}',
+                    extends=[f'.{pytest_job_template}'],
+                    variables={
+                        'DOCKER_ENV_VERSION': docker_version,
+                        'CHIP': chip,
+                        'IDF_VERSION': idf_version,
+                    },
+                    needs=[needs_target]
+                ))
+    dump_jobs_to_yaml(generate_jobs, generate_yaml, ZbCiCons.PATH_TEMPLATE)
 
-        generate_jobs.append(build_pytest_examples_job)
-        generate_jobs.append(build_pytest_gateway_job)
-        generate_jobs.append(build_non_pytest_examples_job)
+def match_idf_docker(idf_version):
+    idf_and_docker = {}
+    for idf_version in idf_version:
+        if idf_version in ZbCiCons.IDF_DOCKER:
+            idf_and_docker[idf_version] = ZbCiCons.IDF_DOCKER[idf_version]
+        else:
+            raise ValueError(f'Invalid IDF version: {idf_version}')
+    return idf_and_docker
 
-        # generate docs jobs
-    dump_jobs_to_yaml(generate_jobs, generate_yaml, template_yaml)
+def parse_job_templates(job_templates):
+    build_templates = []
+    pytest_template = None
+    for job in job_templates:
+        if "build_pytest_template" in job:
+            build_templates.append(('build_pytest_examples_{}', job))
+        elif "build_non_pytest_template" in job:
+            build_templates.append(('build_non_pytest_examples_{}', job))
+        elif "build_pytest_gateway_template" in job:
+            build_templates.append(('build_pytest_gateway_{}', job))
+        else:
+            pytest_template = job
+    return build_templates, pytest_template
 
 def main(arg):
-    project_path = arg.project_path
-    assert project_path
-    template_yaml = arg.template_path
-    if not os.path.exists(template_yaml):
-        raise FileNotFoundError('The file {} does not exist.'.format(template_yaml))
-    default_idf = arg.default_idf_version
-    default_docker_version = arg.default_docker_version
-    lts_idf_docker = ZbCiCons.LTS_IDF_DOCKER
-    default_yaml_path = os.path.join(project_path, ZbCiCons.PIPELINE_YAML_DEFAULT)
-    lts_yaml_path = os.path.join(project_path, ZbCiCons.PIPELINE_YAML_LTS)
-    default_idf_docker = {default_idf: default_docker_version}
-    generate(default_idf_docker, default_yaml_path, template_yaml)
-    generate(lts_idf_docker, lts_yaml_path, template_yaml)
+    idf_and_docker = match_idf_docker(arg.idf_version)
+    yaml_result_path = os.path.join(ZbCiCons.PATH_PROJECT, arg.result)
+    build_templates, pytest_template = parse_job_templates(arg.job_templates)
+    generate(idf_and_docker, yaml_result_path, build_templates, pytest_template, arg.chips)
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
@@ -69,28 +76,27 @@ if __name__ == '__main__':
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     parser.add_argument(
-        '-p',
-        '--project_path',
+        '--idf_version',
         required=True,
-        help='Paths to project',
+        nargs='+',
+        help='List of IDF versions (e.g. v5.2.3 v5.1.4)',
     )
     parser.add_argument(
-        '-t',
-        '--template_path',
+        '--result',
         required=True,
-        help='Paths to template.yml',
+        help='Output YAML name (e.g. idf.yml)',
     )
     parser.add_argument(
-        '-i',
-        '--default_idf_version',
-        required=True,
-        help='default_idf_version',
+        '--chips',
+        default=None,
+        nargs='+',
+        help='List of chip names (e.g. esp32c6 esp32h2 esp32s3)'
     )
     parser.add_argument(
-        '-d',
-        '--default_docker_version',
+        '--job_templates',
         required=True,
-        help='default_docker_version',
+        help='job template names (e.g. build_pytest_template build_non_pytest_template build_pytest_gateway_template)',
+        nargs='+',
     )
     args = parser.parse_args()
     main(args)

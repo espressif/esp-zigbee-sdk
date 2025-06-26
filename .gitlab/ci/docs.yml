@@ -1,6 +1,6 @@
 build_docs:
     stage: build
-    image: $CI_DOCKER_REGISTRY/esp-idf-doc-env-${DEFAULT_DOC_DOCKER_ENV}
+    image: $CI_DOCKER_REGISTRY/esp-idf-doc-env-${DOCKER_ENV_FOR_DOCS}
     variables:
         ESP_DOCS_LATEST_BRANCH_NAME: "main"
     artifacts:
@@ -15,7 +15,7 @@ build_docs:
 
 .deploy_docs_template:
     stage: docs
-    image: $CI_DOCKER_REGISTRY/esp-idf-doc-env-${DEFAULT_DOC_DOCKER_ENV}
+    image: $CI_DOCKER_REGISTRY/esp-idf-doc-env-${DOCKER_ENV_FOR_DOCS}
     needs:
         - build_docs
     variables:
