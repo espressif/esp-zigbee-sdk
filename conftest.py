@@ -43,11 +43,15 @@ ESPPORT4 = os.getenv('ESPPORT4')
 ESPPORT5 = os.getenv('ESPPORT5')
 ESPPORT6 = os.getenv('ESPPORT6')
 ESPPORT7 = os.getenv('ESPPORT7')
+ESPPORT8 = os.getenv('ESPPORT8')
+ESPPORT9 = os.getenv('ESPPORT9')
 
 PORT_MAPPING = {'esp32s3': [ESPPORT3],
                 'esp32h2': [ESPPORT1, ESPPORT2],
                 'esp32c6': [ESPPORT4, ESPPORT5],
                 'esp32c5': [ESPPORT6, ESPPORT7],}
+PORT_MAPPING_GATEWAY = {'esp32s3': [ESPPORT8],
+                        'esp32h2': [ESPPORT1, ESPPORT9]}
 
 def pytest_generate_tests(metafunc):
     logging.info(f"Generating test for: {metafunc.function.__name__}")
@@ -59,6 +63,16 @@ def pytest_generate_tests(metafunc):
         return
 
     targets = []
+    ports = []
+    # Fix the device port for the dual-chip gateway
+    if 'dual_chip_gateway' in all_target_marks:
+        ports = [PORT_MAPPING_GATEWAY['esp32h2'][0], PORT_MAPPING_GATEWAY['esp32h2'][1], PORT_MAPPING_GATEWAY['esp32s3'][0]]
+        if not all(isinstance(p, str) and p.strip() for p in ports):
+            raise ValueError(f'Environment variable for target {targets} port is not set')
+        port_str = '|'.join(ports)
+        logging.info(f"port: {port_str}")
+        metafunc.parametrize('port', [port_str], indirect=True)
+        return
     # target string e.g. 'esp32h2|esp32h2'
     for mark in metafunc.definition.iter_markers(name='parametrize'):
         if not mark.args:
@@ -75,8 +89,6 @@ def pytest_generate_tests(metafunc):
             targets = target_string.split('|')
     if not targets:
         raise ValueError(f'No targets get from marks')
-
-    ports = []
     for t in targets:
         if t not in port_mapping:
             raise ValueError(f'Target {t} not found in PORT_MAPPING')
@@ -204,13 +216,40 @@ def teardown_fixture(dut):
         device.serial.close()
         serial_port_list.append(device.serial.port)
     proc = None
-    for serial_port in serial_port_list:
-        logging.info(f'erase flash on serial_port: {serial_port}')
+
+    def erase_flash(serial_port):
         proc = subprocess.Popen(f'python -m esptool --port {serial_port} erase_flash', shell=True)
         proc.wait()
+        if proc.returncode != 0:
+            logging.warning(f"Erase failed on {serial_port}: {proc.returncode}")
+            return False
+        return True
+    # Erase flash on all ports, and retry if failed
+    failed_ports = []
+    for serial_port in serial_port_list:
+        logging.info(f'erase flash on serial_port: {serial_port}')
+        if not erase_flash(serial_port):
+            failed_ports.append(serial_port)
+
+    if failed_ports:
+        for port in failed_ports:
+            if not erase_flash(port):
+                logging.warning(f"Failed to erase flash on {port} again")
     if proc is not None:
         proc.kill()
     time.sleep(1)
+
+@pytest.fixture(scope='function', autouse=True)
+def erase_esp32s3_port(request):
+    """
+    Ensures ESP32-S3 is idle to avoid flashing issues on ESP32-H2.
+    """
+    if PORT_MAPPING_GATEWAY['esp32s3'][0]:
+        try:
+            subprocess.run(['python', '-m', 'esptool', '--port', PORT_MAPPING_GATEWAY['esp32s3'][0], 'erase_flash'], check=True)
+        except subprocess.CalledProcessError as e:
+            logging.info(f"Failed to erase ESP32S3 port {PORT_MAPPING_GATEWAY['esp32s3'][0]}: {e}")
+
 
 ##################
 # Hook functions #

@@ -390,3 +390,7 @@ class Common:
             switch_device.zcl_send_gen_and_check('read', switch_device.endpoint, cluster, light_device.short_address,
                                                  light_device.endpoint, attr=4)
             switch_device.check_hex_response(expect_y_value)
+
+    @staticmethod
+    def check_connection_status(src_device, dst_addr):
+        src_device.zdo_request_and_check("ieee_addr", dst_addr)
