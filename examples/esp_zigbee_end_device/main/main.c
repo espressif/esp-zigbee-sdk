@@ -112,7 +112,11 @@ static esp_err_t zb_action_handler(esp_zb_core_action_callback_id_t callback_id,
         esp_zb_zcl_cmd_default_resp_message_t *default_resp = (esp_zb_zcl_cmd_default_resp_message_t *)message;
         ESP_LOGI(TAG, "Receive default response callback, command id: 0x%x, status code: 0x%x", 
                  default_resp->resp_to_cmd, default_resp->status_code);
-        break;    
+        break;
+    case ESP_ZB_CORE_CMD_WRITE_ATTR_RESP_CB_ID:
+        esp_zb_zcl_cmd_write_attr_resp_message_t *write_resp = (esp_zb_zcl_cmd_write_attr_resp_message_t *)message;
+        ESP_LOGI(TAG, "Receive write attribute response callback, status code: 0x%x", write_resp->info.command.direction);
+        break;
     default:
         ESP_LOGW(TAG, "Receive Zigbee action(0x%x) callback", callback_id);
         break;
@@ -120,7 +124,8 @@ static esp_err_t zb_action_handler(esp_zb_core_action_callback_id_t callback_id,
     return ret;
 }
 
-static esp_err_t zb_register_device(void){
+static esp_err_t zb_register_device(void)
+{
     
     esp_zb_ep_list_t *ep_list = esp_zb_ep_list_create();
     create_test_endpoint(ep_list);

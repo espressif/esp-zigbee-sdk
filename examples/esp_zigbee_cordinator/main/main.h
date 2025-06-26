@@ -6,6 +6,9 @@
 #define ENDPOINT_ID                       10                                    /* device endpoint */
 #define ESP_ZB_PRIMARY_CHANNEL_MASK       (1l << 13)                            /* Zigbee primary channel mask use in the example */
 
+#define ESP_MANUFACTURER_NAME "\x09""ESPRESSIF"      /* Customized manufacturer name */
+#define ESP_MODEL_IDENTIFIER "\x07"CONFIG_IDF_TARGET /* Customized model identifier */
+
 
 /* Zigbee configuration */
 #define ESP_ZB_ZR_CONFIG()                                                          \

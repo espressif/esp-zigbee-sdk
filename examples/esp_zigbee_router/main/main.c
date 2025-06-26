@@ -84,7 +84,7 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
         break;
     case ESP_ZB_NLME_STATUS_INDICATION:
         nwk_status_params = (esp_zb_zdo_signal_nwk_status_indication_params_t *)esp_zb_app_signal_get_params(p_sg_p);
-        ESP_LOGE(TAG, "Network status indication failed with status: %s, network addr: 0x%04hx, status: %d", esp_err_to_name(err_status), nwk_status_params->network_addr, nwk_status_params->status);
+        ESP_LOGI(TAG, "Network status indication: %s, network addr: 0x%04hx, status: %d", esp_err_to_name(err_status), nwk_status_params->network_addr, nwk_status_params->status);
 
         if (nwk_status_params->status == ESP_ZB_NWK_COMMAND_STATUS_ADDRESS_CONFLICT) {
             ESP_LOGE(TAG, "PAN ID conflict detected, restarting network formation");

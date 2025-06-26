@@ -11,7 +11,11 @@
 #include <memory.h>
 
 static const char *TAG_include = "esp_zigbee_include";
+static bool wait_for_confirmation_flag = false; //flag to get confirmation from the device
 
+//function creatiing 50 bytes payload and sending it to the destination address
+void create_network_load(uint16_t dest_addr);
+void create_network_load_64bit(uint64_t dest_addr);
 //wyświetla sąsiadów
 static void esp_show_neighbor_table(){
     static const char *dev_type_name[] = {
@@ -95,69 +99,42 @@ void esp_zb_aps_data_confirm_handler(esp_zb_apsde_data_confirm_t confirm)
     } else {
         ESP_LOGE("APSDE CONFIRM", "Failed to send APSDE-DATA request, error code: %d", confirm.status);
     }
+    wait_for_confirmation_flag = false; // Set the flag to indicate that confirmation was received
 }
 
 
-void create_network_load(uint16_t dest_addr)
+static bool zb_apsde_data_indication_handler(esp_zb_apsde_data_ind_t ind)
+{
+    bool processed = false;
+    if (ind.status == 0x00) {
+        if (ind.dst_endpoint == 27 && ind.profile_id == ESP_ZB_AF_HA_PROFILE_ID && ind.cluster_id == ESP_ZB_ZCL_CLUSTER_ID_BASIC) {    
+            create_network_load(ind.src_short_addr); // Respond to the received data
+            wait_for_confirmation_flag = true; // Set the flag to wait for confirmation
+            while (wait_for_confirmation_flag) {
+                vTaskDelay(pdMS_TO_TICKS(1)); // Wait for confirmation
+            }
+        }
+    } else {
+        ESP_LOGE("APSDE INDICATION", "Invalid status of APSDE-DATA indication, error code: %d", ind.status);
+        processed = false;
+    }
+    return processed;
+}
+
+void create_ping_64(uint64_t dest_addr)
 {
     uint32_t data_length = 50;
-
-
-    esp_zb_apsde_data_req_t req ={
-        .dst_addr_mode = ESP_ZB_APS_ADDR_MODE_16_ENDP_PRESENT,
-        .dst_addr.addr_short = dest_addr,
-        .dst_endpoint = 10,                          // Example endpoint
-        .profile_id = ESP_ZB_AF_HA_PROFILE_ID,      // Example profile ID
-        .cluster_id = ESP_ZB_ZCL_CLUSTER_ID_BASIC,  // Example cluster ID (On/Off cluster)
-        .src_endpoint = 10,                          // Example source endpoint
-        .asdu_length = data_length,                 // Example payload length
-        .asdu = malloc(data_length * sizeof(uint8_t)), // Allocate memory for ASDU if needed
-        .tx_options = 0,                            // Example transmission options
-        .use_alias = false,
-        .alias_src_addr = 0,
-        .alias_seq_num = 0,
-        .radius = 1,                                 // Example radius
-    };
-
-
-    
-    uint8_t i=0;
-
-    if (req.asdu == NULL) {
-        ESP_LOGE(TAG_include, "Failed to allocate memory for ASDU");
-        return;
-    }else{
-        while (i < data_length) {
-            req.asdu[i] = i % 256; // Fill with some data, e.g., incrementing values
-            i++;
-        }
-    }
-    ESP_LOGI(TAG_include, "Sending APS data request to 0x%04hx with %ld bytes", dest_addr, data_length);
-    esp_zb_lock_acquire(portMAX_DELAY);
-    esp_zb_aps_data_request(&req);
-    esp_zb_lock_release();
-    vTaskDelay(pdMS_TO_TICKS(100)); // Delay to avoid flooding the network
-    
-
-}
-
-void create_network_load_64bit(uint64_t dest_addr)
-{//TODO: modify to use 64-bit address
-    uint32_t data_length = 50;
-    esp_zb_ieee_addr_t ieee_addr ;
+    esp_zb_ieee_addr_t ieee_addr;
     memcpy(ieee_addr, &dest_addr, sizeof(esp_zb_ieee_addr_t)); // Copy the 64-bit address into the ieee_addr variable
-    // ESP_LOGI(TAG_include, "Sending APS data request to 0x%02hx:0x%02hx:0x%02hx:0x%02hx:0x%02hx:0x%02hx:0x%02hx:0x%02hx with %ld bytes",
-    //                          ieee_addr[0], ieee_addr[1], ieee_addr[2], ieee_addr[3], ieee_addr[4], ieee_addr[5], ieee_addr[6], ieee_addr[7], data_length);
-    //                          return;
+
     esp_zb_apsde_data_req_t req = {
         .dst_addr_mode = ESP_ZB_APS_ADDR_MODE_64_ENDP_PRESENT,
-        //Destination address is assingned under strycture definition
         .dst_endpoint = 10,                                 // Example endpoint
         .profile_id = ESP_ZB_AF_HA_PROFILE_ID,              // Example profile ID
         .cluster_id = ESP_ZB_ZCL_CLUSTER_ID_BASIC,          // Example cluster ID (On/Off cluster)
         .src_endpoint = 10,                                 // Example source endpoint
-        .asdu_length = data_length,                         // Example payload length
-        .asdu = malloc(data_length * sizeof(uint8_t)),      // Allocate memory for ASDU if needed
+        .asdu_length = data_length,                         // No payload for ping
+        .asdu = malloc(data_length * sizeof(uint8_t)),      // No payload for ping
         .tx_options = 0,                                    // Example transmission options
         .use_alias = false,
         .alias_src_addr = 0,
@@ -166,33 +143,60 @@ void create_network_load_64bit(uint64_t dest_addr)
     };
     memcpy(req.dst_addr.addr_long, ieee_addr, sizeof(esp_zb_ieee_addr_t)); // Copy the 64-bit address
 
-    
-    uint8_t i=0;
+    for(uint8_t i = 0; i < data_length; i++) {
+        req.asdu[i] = i % 256; 
+    }
+
+    ESP_LOGI(TAG_include, "Sending APS data request to 0x%016" PRIx64 " with %ld bytes", dest_addr, data_length);
+    esp_zb_lock_acquire(portMAX_DELAY);
+    esp_zb_aps_data_request(&req);
+    esp_zb_lock_release();
+    vTaskDelay(pdMS_TO_TICKS(50)); // Delay to avoid flooding the network
+}
+
+
+void create_network_load(uint16_t dest_addr)
+{
+    esp_zb_apsde_data_req_t req = {
+        .dst_addr_mode = ESP_ZB_APS_ADDR_MODE_16_ENDP_PRESENT,
+        .dst_addr.addr_short = dest_addr,
+        .dst_endpoint = 10,                          // Example endpoint
+        .profile_id = ESP_ZB_AF_HA_PROFILE_ID,      // Example profile ID
+        .cluster_id = ESP_ZB_ZCL_CLUSTER_ID_BASIC,  // Example cluster ID (On/Off cluster)
+        .src_endpoint = 10,                          // Example source endpoint
+        .asdu_length = 50,                           // Example payload length
+        .asdu = malloc(50 * sizeof(uint8_t)),       // Allocate memory for ASDU if needed
+        .tx_options = 0,                            // Example transmission options
+        .use_alias = false,
+        .alias_src_addr = 0,
+        .alias_seq_num = 0,
+        .radius = 1,                                 // Example radius
+    };
 
     if (req.asdu == NULL) {
         ESP_LOGE(TAG_include, "Failed to allocate memory for ASDU");
         return;
-    }else{
-        ESP_LOGD(TAG_include, "Filling ASDU with data");
-        while (i < data_length) {
-            req.asdu[i] = (i+0xf) % 256; 
-            i++;
+    } else {
+        for (uint8_t i = 0; i < 50; i++) {
+            req.asdu[i] = i % 256; // Fill with some data, e.g., incrementing values
         }
     }
+    ESP_LOGI(TAG_include, "Sending APS data request to 0x%04hx with %d bytes", dest_addr, 50);
+    esp_zb_lock_acquire(portMAX_DELAY);
+    esp_zb_aps_data_request(&req);
+    esp_zb_lock_release();
+    vTaskDelay(pdMS_TO_TICKS(100)); // Delay to avoid flooding the network
+}
 
-
-    for(uint8_t j=0; j < sizeof(esp_zb_ieee_addr_t); j++) {
-        ESP_LOGI(TAG_include, "Sending APS data request to 0x%016" PRIx64 " %ld bytes" ,
-                    dest_addr, data_length);
-        esp_zb_lock_acquire(portMAX_DELAY);
-        esp_zb_aps_data_request(&req);
-        esp_zb_lock_release();
-        vTaskDelay(pdMS_TO_TICKS(300)); // Delay to avoid flooding the network
-        req.asdu[0]++; // Increment the first byte of ASDU to change the data
+void create_network_load_64bit(uint64_t dest_addr)
+{
+    for(int8_t i = 0; i < 10; i++) {
+        create_ping_64(dest_addr);
 
     }
 
 }
+
 
 
 void button_handler(switch_func_pair_t *button_func_pair)
@@ -216,17 +220,3 @@ static esp_err_t deferred_driver_init(void)
     return is_initialized ? ESP_OK : ESP_FAIL;
 }
 
-
-static bool zb_apsde_data_indication_handler(esp_zb_apsde_data_ind_t ind)
-{
-    bool processed = false;
-    if (ind.status == 0x00) {
-        if (ind.dst_endpoint == 27 && ind.profile_id == ESP_ZB_AF_HA_PROFILE_ID && ind.cluster_id == ESP_ZB_ZCL_CLUSTER_ID_BASIC) {    
-            create_network_load(ind.src_short_addr); // Respond to the received data
-        }
-    } else {
-        ESP_LOGE("APSDE INDICATION", "Invalid status of APSDE-DATA indication, error code: %d", ind.status);
-        processed = false;
-    }
-    return processed;
-}
