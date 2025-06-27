@@ -84,6 +84,14 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
     case ESP_ZB_ZDO_SIGNAL_PRODUCTION_CONFIG_READY:
         ESP_LOGI(TAG, "Production config ready");
         break;
+    // case ESP_ZB_ZDO_DEVICE_UNAVAILABLE:
+    //     if (err_status == ESP_OK) {
+    //         ESP_LOGI(TAG, "Zigbee stack started successfully");
+    //         bdb_start_top_level_commissioning_cb(ESP_ZB_BDB_MODE_NETWORK_STEERING);
+    //     } else {
+    //         ESP_LOGE(TAG, "Zigbee stack start failed with status: %s", esp_err_to_name(err_status));
+    //     }
+    //     break;
     default:
         ESP_LOGI(TAG, "ZDO signal: %s (0x%x), status: %s", esp_zb_zdo_signal_to_string(sig_type), sig_type, esp_err_to_name(err_status));
         break;

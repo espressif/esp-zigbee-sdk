@@ -9,6 +9,7 @@
 #include "esp_zigbee_include.h"
 #include "aps/esp_zigbee_aps.h"
 #include <memory.h>
+#include "esp_err.h"
 
 
 
@@ -137,7 +138,7 @@ static bool zb_apsde_data_indication_handler(esp_zb_apsde_data_ind_t ind)
 
 void create_ping_64(uint64_t dest_addr)
 {
-    uint32_t data_length = 50;
+    uint32_t data_length = 80;
     esp_zb_ieee_addr_t ieee_addr;
     memcpy(ieee_addr, &dest_addr, sizeof(esp_zb_ieee_addr_t)); // Copy the 64-bit address into the ieee_addr variable
 
@@ -223,10 +224,13 @@ void button_handler(switch_func_pair_t *button_func_pair)
 {
     if(button_func_pair->func == SWITCH_ONOFF_TOGGLE_CONTROL) {
         esp_zigbee_include_show_tables();
-        // create_network_load(0x0000);
-        create_network_load_64bit(0x404ccafffe5fae8c, 3);
-        create_network_load_64bit(0x404ccafffe5fb4d4, 100);
-        create_network_load_64bit(0x404ccafffe5de2a8, 3);
+        
+        // create_network_load_64bit(0x404ccafffe5fae8c, 3);
+        // create_network_load_64bit(0x404ccafffe5fb4d4, 3);
+        // create_network_load_64bit(0x404ccafffe5de2a8, 3);
+
+        vTaskDelay(pdMS_TO_TICKS(100));
+        ESP_ERROR_CHECK(esp_zb_bdb_open_network(30));
     }
 }
 
@@ -237,4 +241,3 @@ static esp_err_t deferred_driver_init(void)
     bool is_initialized = switch_driver_init(button_func_pair, button_num, button_handler);
     return is_initialized ? ESP_OK : ESP_FAIL;
 }
-

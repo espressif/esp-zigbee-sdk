@@ -9,6 +9,8 @@
 #include "esp_zigbee_include.h"
 #include "aps/esp_zigbee_aps.h"
 #include <memory.h>
+#include "esp_ieee802154_types.h"
+
 
 
 
@@ -110,9 +112,14 @@ void esp_zb_aps_data_confirm_handler(esp_zb_apsde_data_confirm_t confirm)
         if(confirm.dst_addr_mode == ESP_ZB_APS_ADDR_MODE_64_ENDP_PRESENT || confirm.dst_addr_mode == ESP_ZB_APS_ADDR_MODE_64_PRESENT_ENDP_NOT_PRESENT) {
             ESP_LOGW("APSDE CONFIRM", "Failed to send APSDE-DATA request to 0x%016" PRIx64 ", error code: %d, tx time %d ms",
                      *(uint64_t *)confirm.dst_addr.addr_long, confirm.status, confirm.tx_time);
+            
         } else if(confirm.dst_addr_mode == ESP_ZB_APS_ADDR_MODE_16_ENDP_PRESENT || confirm.dst_addr_mode == ESP_ZB_APS_ADDR_MODE_16_GROUP_ENDP_NOT_PRESENT) {
             ESP_LOGW("APSDE CONFIRM", "Failed to send APSDE-DATA request to 0x%04hx, error code: %d, tx time %d ms",
                      confirm.dst_addr.addr_short, confirm.status, confirm.tx_time);
+            if (confirm.dst_addr.addr_short == 0x0000) {
+                ESP_LOGW("APSDE CONFIRM", "Failed to send APSDE-DATA request to coordinator, trying to rejoin the network");
+                esp_zb_bdb_start_top_level_commissioning(ESP_ZB_BDB_MODE_NETWORK_STEERING); // Rejoin the network if the destination is the coordinator
+            }
         }
     }
     wait_for_confirmation_flag = false; // Set the flag to indicate that confirmation was received
@@ -224,11 +231,19 @@ void create_network_load_64bit(uint64_t dest_addr, uint8_t repetitions)
 void button_handler(switch_func_pair_t *button_func_pair)
 {
     if(button_func_pair->func == SWITCH_ONOFF_TOGGLE_CONTROL) {
+        create_ping(0x0000); 
         esp_zigbee_include_show_tables();
         // create_network_load(0x0000);
+
+        ESP_LOGI(TAG_include, "Network joined: %s", esp_zb_bdb_dev_joined() ? "Yes" : "No");
         create_network_load_64bit(0x404ccafffe5fae8c, 3);
-        create_network_load_64bit(0x404ccafffe5fb4d4, 100);
+        ESP_LOGI("empty line", "");
+        create_network_load_64bit(0x404ccafffe5fb4d4, 3);
+        ESP_LOGI("empty line", "");
         create_network_load_64bit(0x404ccafffe5de2a8, 3);
+        ESP_LOGI("empty line", "");
+        
+        
     }
 }
 
