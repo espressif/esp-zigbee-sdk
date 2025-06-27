@@ -131,11 +131,8 @@ static bool zb_apsde_data_indication_handler(esp_zb_apsde_data_ind_t ind)
     bool processed = false;
     if (ind.status == 0x00) {
         if (ind.dst_endpoint == 27 && ind.profile_id == ESP_ZB_AF_HA_PROFILE_ID && ind.cluster_id == ESP_ZB_ZCL_CLUSTER_ID_BASIC) {    
+            
             create_ping(ind.src_short_addr); // Respond to the received data
-            wait_for_confirmation_flag = true; // Set the flag to wait for confirmation
-            while (wait_for_confirmation_flag) {
-                vTaskDelay(pdMS_TO_TICKS(1)); // Wait for confirmation
-            }
         }
     } else {
         ESP_LOGE("APSDE INDICATION", "Invalid status of APSDE-DATA indication, error code: %d", ind.status);
@@ -146,7 +143,7 @@ static bool zb_apsde_data_indication_handler(esp_zb_apsde_data_ind_t ind)
 
 void create_ping_64(uint64_t dest_addr)
 {
-    uint32_t data_length = 50;
+    uint32_t data_length = 70;
     esp_zb_ieee_addr_t ieee_addr;
     memcpy(ieee_addr, &dest_addr, sizeof(esp_zb_ieee_addr_t)); // Copy the 64-bit address into the ieee_addr variable
 
@@ -223,6 +220,7 @@ void create_network_load_64bit(uint64_t dest_addr, uint8_t repetitions)
 {
     for(int8_t i = 0; i < repetitions; i++) {
         create_ping_64(dest_addr);
+
     }
 }
 
@@ -235,7 +233,6 @@ void button_handler(switch_func_pair_t *button_func_pair)
         esp_zigbee_include_show_tables();
         // create_network_load(0x0000);
 
-        ESP_LOGI(TAG_include, "Network joined: %s", esp_zb_bdb_dev_joined() ? "Yes" : "No");
         create_network_load_64bit(0x404ccafffe5fae8c, 3);
         ESP_LOGI("empty line", "");
         create_network_load_64bit(0x404ccafffe5fb4d4, 3);

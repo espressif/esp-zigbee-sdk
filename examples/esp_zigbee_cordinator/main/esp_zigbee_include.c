@@ -12,15 +12,14 @@
 #include "esp_err.h"
 
 
-
 static const char *TAG_include = "esp_zigbee_include";
-static bool wait_for_confirmation_flag = false; //flag to get confirmation from the device
 
 //function creatiing 68 bytes payload and sending it to the destination address
 void create_ping(uint16_t dest_addr);
 void create_ping_64bit(uint64_t dest_addr);
 void create_network_load(uint16_t dest_addr, uint8_t repetitions);
 void create_network_load_64bit(uint64_t dest_addr, uint8_t repetitions);
+
 //wyświetla sąsiadów
 static void esp_show_neighbor_table()
 {
@@ -123,11 +122,7 @@ static bool zb_apsde_data_indication_handler(esp_zb_apsde_data_ind_t ind)
     bool processed = false;
     if (ind.status == 0x00) {
         if (ind.dst_endpoint == 27 && ind.profile_id == ESP_ZB_AF_HA_PROFILE_ID && ind.cluster_id == ESP_ZB_ZCL_CLUSTER_ID_BASIC) {    
-            create_ping(ind.src_short_addr); // Respond to the received data
-            wait_for_confirmation_flag = true; // Set the flag to wait for confirmation
-            while (wait_for_confirmation_flag) {
-                vTaskDelay(pdMS_TO_TICKS(1)); // Wait for confirmation
-            }
+            ESP_LOG_BUFFER_HEX_LEVEL("APSDE INDICATION", ind.asdu, ind.asdu_length, ESP_LOG_INFO);
         }
     } else {
         ESP_LOGE("APSDE INDICATION", "Invalid status of APSDE-DATA indication, error code: %d", ind.status);
@@ -215,6 +210,8 @@ void create_network_load_64bit(uint64_t dest_addr, uint8_t repetitions)
 {
     for(int8_t i = 0; i < repetitions; i++) {
         create_ping_64(dest_addr);
+        wait_for_confirmation_flag = true; // Set the flag to wait for confirmation
+
     }
 }
 
@@ -241,3 +238,4 @@ static esp_err_t deferred_driver_init(void)
     bool is_initialized = switch_driver_init(button_func_pair, button_num, button_handler);
     return is_initialized ? ESP_OK : ESP_FAIL;
 }
+
