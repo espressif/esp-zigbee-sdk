@@ -97,7 +97,7 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
             } else {
                 ESP_LOGW(TAG, "Network(0x%04hx) closed, devices joining not allowed.", esp_zb_get_pan_id());
             }
-            uint8_t ic_type = ESP_ZB_IC_TYPE_64;
+            //uint8_t ic_type = ESP_ZB_IC_TYPE_64;
             // ESP_LOGI(TAG, "Installed code: 0x%016" PRIx64, (uint64_t )esp_zb_secur_ic_get(&ic_type));
         }
         break;
@@ -164,13 +164,13 @@ static void esp_zb_task(void *pcParameters)
 {
     esp_zb_cfg_t zb_nwk_cfg = ESP_ZB_ZR_CONFIG();
     esp_zb_init(&zb_nwk_cfg);
-    esp_zb_enable_distributed_network(false);//TODO: enable distributed network
-    //esp_zb_nwk_set_link_status_period(1);
-     esp_zb_nvram_erase_at_start(false);
-    esp_zb_set_tx_power(4);
+    // esp_zb_enable_distributed_network(false);//TODO: enable distributed network
+    // //esp_zb_nwk_set_link_status_period(1);
+    esp_zb_nvram_erase_at_start(true);
+    esp_zb_set_tx_power(-10);
     esp_zb_aps_data_indication_handler_register(zb_apsde_data_indication_handler);
     esp_zb_core_action_handler_register(zb_action_handler);
-    esp_zb_set_channel_mask(ESP_ZB_PRIMARY_CHANNEL_MASK);
+    esp_zb_set_primary_network_channel_set(ESP_ZB_PRIMARY_CHANNEL_MASK);
     ESP_ERROR_CHECK(zb_register_device());
     ESP_ERROR_CHECK(esp_zb_start(false));
     esp_zb_stack_main_loop();

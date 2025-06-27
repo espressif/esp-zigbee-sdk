@@ -13,7 +13,8 @@ static switch_func_pair_t button_func_pair[] = {
 };
 
 //wyświetla sąsiadów
-static void esp_show_neighbor_table(){
+static void esp_show_neighbor_table()
+{
     static const char *dev_type_name[] = {
         [ESP_ZB_DEVICE_TYPE_COORDINATOR] = "ZC",
         [ESP_ZB_DEVICE_TYPE_ROUTER]      = "ZR",
@@ -30,7 +31,7 @@ static void esp_show_neighbor_table(){
     };
     esp_zb_nwk_info_iterator_t itor = ESP_ZB_NWK_INFO_ITERATOR_INIT;
     esp_zb_nwk_neighbor_info_t neighbor = {};
-
+    
     ESP_LOGI(TAG_include,"Network Neighbors:");
     while (ESP_OK == esp_zb_nwk_get_next_neighbor(&itor, &neighbor)) {
         ESP_LOGI(TAG_include,"Index: %3d", itor);
@@ -40,15 +41,17 @@ static void esp_show_neighbor_table(){
         ESP_LOGI(TAG_include,"  Type: %3s", dev_type_name[neighbor.device_type]);   
         ESP_LOGI(TAG_include,"  Rel: %c", rel_name[neighbor.relationship]);
         ESP_LOGI(TAG_include,"  Depth: %3d", neighbor.depth);
+        ESP_LOGI(TAG_include,"  RSSI: %3d", neighbor.rssi);
         ESP_LOGI(TAG_include,"  LQI: %3d", neighbor.lqi);
         ESP_LOGI(TAG_include,"  Cost: o:%d", neighbor.outgoing_cost);
-
+        
         ESP_LOGI(TAG_include," ");
     }
 }
 
 //wyswietla trasy
-static void esp_show_route_table(){
+static void esp_show_route_table()
+{
     static const char *route_state_name[] = {
         [ESP_ZB_NWK_ROUTE_STATE_ACTIVE] = "Active",
         [ESP_ZB_NWK_ROUTE_STATE_DISCOVERY_UNDERWAY] = "Disc",
@@ -57,7 +60,7 @@ static void esp_show_route_table(){
     };
     esp_zb_nwk_info_iterator_t itor = ESP_ZB_NWK_INFO_ITERATOR_INIT;
     esp_zb_nwk_route_info_t route = {};
-
+    
     ESP_LOGI(TAG_include, "Zigbee Network Routes:");
     while (ESP_OK == esp_zb_nwk_get_next_route(&itor, &route)) {
         ESP_LOGI(TAG_include,"Index: %3d", itor);
@@ -121,7 +124,6 @@ void esp_zb_send_load_request(uint64_t dest_addr)
     esp_zb_lock_release();
     vTaskDelay(pdMS_TO_TICKS(200)); // Delay to avoid flooding the network
     free(req.asdu); // Free the allocated memory for ASDU
-
 }
 
 

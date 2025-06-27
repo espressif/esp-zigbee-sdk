@@ -115,7 +115,7 @@ static esp_err_t zb_action_handler(esp_zb_core_action_callback_id_t callback_id,
     case ESP_ZB_CORE_CMD_WRITE_ATTR_RESP_CB_ID:
         esp_zb_zcl_cmd_write_attr_resp_message_t *write_resp = (esp_zb_zcl_cmd_write_attr_resp_message_t *)message;
         while(write_resp->variables) {
-            ESP_LOGI(TAG, "Receive write attribute response callback, attribute id: 0x%x, status code: 0x%x",
+            ESP_LOGV(TAG, "Receive write attribute response callback, attribute id: 0x%x, status code: 0x%x",
                      write_resp->variables->attribute_id, write_resp->variables->status);
             write_resp->variables = write_resp->variables->next;
         }
@@ -148,7 +148,7 @@ static void esp_zb_task(void *pcParameters)
     esp_zb_aps_data_confirm_handler_register(esp_zb_aps_data_confirm_handler);
     esp_zb_core_action_handler_register(zb_action_handler);
     esp_zb_nwk_set_link_status_period(10);
-    esp_zb_set_channel_mask(ESP_ZB_PRIMARY_CHANNEL_MASK);
+    esp_zb_set_primary_network_channel_set(ESP_ZB_PRIMARY_CHANNEL_MASK);
     ESP_ERROR_CHECK(zb_register_device());
     ESP_ERROR_CHECK(esp_zb_start(false));
     esp_zb_stack_main_loop();
