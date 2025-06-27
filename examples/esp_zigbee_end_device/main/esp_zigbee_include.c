@@ -169,7 +169,7 @@ void create_ping_64(uint64_t dest_addr)
     esp_zb_lock_release();
     free(req.asdu); // Free the allocated memory for ASDU
 }
-
+//TODO sprawdz większy payload, czy działa
 void create_ping(uint16_t dest_addr)
 {
     uint32_t data_length = 50; // Example payload length
@@ -239,4 +239,3 @@ static esp_err_t deferred_driver_init(void)
     bool is_initialized = switch_driver_init(button_func_pair, button_num, button_handler);
     return is_initialized ? ESP_OK : ESP_FAIL;
 }
-
