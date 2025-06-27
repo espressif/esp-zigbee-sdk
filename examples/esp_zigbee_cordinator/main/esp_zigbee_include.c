@@ -1,17 +1,25 @@
 #include "esp_check.h"
 #include "esp_log.h"
 #include "nwk/esp_zigbee_nwk.h"
-#include "create_endpoints.h"
-#include "esp_zigbee_include.h"
-
-#include <memory.h>
 #include "switch_driver.h"
+#include "switch_driver.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "esp_zigbee_core.h"
+#include "esp_zigbee_include.h"
+#include "aps/esp_zigbee_aps.h"
+#include <memory.h>
 
-static const char *TAG_include = "ESP_ZB_COORDINATOR";
-static switch_func_pair_t button_func_pair[] = {
-        {GPIO_INPUT_IO_TOGGLE_SWITCH, SWITCH_ONOFF_TOGGLE_CONTROL}
-};
 
+
+static const char *TAG_include = "esp_zigbee_include";
+static bool wait_for_confirmation_flag = false; //flag to get confirmation from the device
+
+//function creatiing 68 bytes payload and sending it to the destination address
+void create_ping(uint16_t dest_addr);
+void create_ping_64bit(uint64_t dest_addr);
+void create_network_load(uint16_t dest_addr, uint8_t repetitions);
+void create_network_load_64bit(uint64_t dest_addr, uint8_t repetitions);
 //wyświetla sąsiadów
 static void esp_show_neighbor_table()
 {
@@ -73,93 +81,52 @@ static void esp_show_route_table()
     }
 }
 
-
-
-void esp_zigbee_include_show_tables(void) 
+void esp_zigbee_include_show_tables(void)
 {
     ESP_LOGI(TAG_include, "Zigbee Network Tables:");
     esp_show_neighbor_table();
     esp_show_route_table();
 }
 
-void esp_zb_send_load_request(uint64_t dest_addr)
-{//TODO: modify to use 64-bit address
-    uint32_t data_length = 4;
-    esp_zb_ieee_addr_t ieee_addr;
-    memcpy(ieee_addr, &dest_addr, sizeof(esp_zb_ieee_addr_t)); 
-    esp_zb_apsde_data_req_t req = {
-        .dst_addr_mode = ESP_ZB_APS_ADDR_MODE_64_ENDP_PRESENT,
-        //Destination address is assingned under strycture definition
-        .dst_endpoint = 27,                                 // Example endpoint
-        .profile_id = ESP_ZB_AF_HA_PROFILE_ID,              // Example profile ID
-        .cluster_id = ESP_ZB_ZCL_CLUSTER_ID_BASIC,          // Example cluster ID (On/Off cluster)
-        .src_endpoint = 10,                                 // Example source endpoint
-        .asdu_length = data_length,                         // Example payload length
-        .asdu = malloc(data_length * sizeof(uint8_t)),      // Allocate memory for ASDU if needed
-        .tx_options = 0,                                    // Example transmission options
-        .use_alias = false,
-        .alias_src_addr = 0,
-        .alias_seq_num = 0,
-        .radius = 4,                                        // Example radius
-    };
-    memcpy(req.dst_addr.addr_long, ieee_addr, sizeof(esp_zb_ieee_addr_t)); // Copy the 64-bit address
+static switch_func_pair_t button_func_pair[] = {
+    {GPIO_INPUT_IO_TOGGLE_SWITCH, SWITCH_ONOFF_TOGGLE_CONTROL}
+};
 
-    
-    uint8_t i=0;
 
-    if (req.asdu == NULL) {
-        ESP_LOGE(TAG_include, "Failed to allocate memory for ASDU");
-        return;
-    }else{
-        ESP_LOGD(TAG_include, "Filling ASDU with data");
-        while (i < data_length) {
-            req.asdu[i] = (i+0x05) % 256; 
-            i++;
+
+void esp_zb_aps_data_confirm_handler(esp_zb_apsde_data_confirm_t confirm)
+{
+     if (confirm.status == 0x00) {
+        ESP_LOGI("APSDE CONFIRM",
+                "Sent successfully from endpoint %d, source address 0x%04hx to endpoint %d,"
+                "destination address 0x%04hx, tx_time %d ms",
+                confirm.src_endpoint, esp_zb_get_short_address(), confirm.dst_endpoint, confirm.dst_addr.addr_short,
+            confirm.tx_time);
+        // ESP_LOG_BUFFER_CHAR_LEVEL("APSDE CONFIRM", confirm.asdu, confirm.asdu_length, ESP_LOG_INFO);
+        
+    } else {
+        if(confirm.dst_addr_mode == ESP_ZB_APS_ADDR_MODE_64_ENDP_PRESENT || confirm.dst_addr_mode == ESP_ZB_APS_ADDR_MODE_64_PRESENT_ENDP_NOT_PRESENT) {
+            ESP_LOGW("APSDE CONFIRM", "Failed to send APSDE-DATA request to 0x%016" PRIx64 ", error code: %d, tx time %d ms",
+                     *(uint64_t *)confirm.dst_addr.addr_long, confirm.status, confirm.tx_time);
+        } else if(confirm.dst_addr_mode == ESP_ZB_APS_ADDR_MODE_16_ENDP_PRESENT || confirm.dst_addr_mode == ESP_ZB_APS_ADDR_MODE_16_GROUP_ENDP_NOT_PRESENT) {
+            ESP_LOGW("APSDE CONFIRM", "Failed to send APSDE-DATA request to 0x%04hx, error code: %d, tx time %d ms",
+                     confirm.dst_addr.addr_short, confirm.status, confirm.tx_time);
         }
     }
-    ESP_LOGI(TAG_include, "Sending APS data request to 0x%016" PRIx64 " %ld bytes" ,
-                            dest_addr, data_length);
-    esp_zb_lock_acquire(portMAX_DELAY);
-    ESP_ERROR_CHECK(esp_zb_aps_data_request(&req));
-    esp_zb_lock_release();
-    vTaskDelay(pdMS_TO_TICKS(200)); // Delay to avoid flooding the network
-    free(req.asdu); // Free the allocated memory for ASDU
+    wait_for_confirmation_flag = false; // Set the flag to indicate that confirmation was received
 }
 
 
-void button_handler(switch_func_pair_t *button_func_pair)
-{
-    ESP_LOGI(TAG_include, "Button pressed");
-    if(button_func_pair->func == SWITCH_ONOFF_TOGGLE_CONTROL) {
-        esp_zigbee_include_show_tables();
-        esp_zb_bdb_open_network(30);
-    
-    }
-}
-
-static esp_err_t deferred_driver_init(void)
-{
-    uint8_t button_num = PAIR_SIZE(button_func_pair);
-    ESP_LOGW(TAG_include, "Initializing switch driver with %d buttons", button_num);
-    bool is_initialized = switch_driver_init(button_func_pair, button_num, button_handler);
-    return is_initialized ? ESP_OK : ESP_FAIL;
-}
-
-
-// This function is called when an APSDE-DATA indication is received.
 static bool zb_apsde_data_indication_handler(esp_zb_apsde_data_ind_t ind)
 {
     bool processed = false;
     if (ind.status == 0x00) {
-            if (ind.dst_endpoint == 10 && ind.profile_id == ESP_ZB_AF_HA_PROFILE_ID && ind.cluster_id == ESP_ZB_ZCL_CLUSTER_ID_BASIC) {
-            ESP_LOGI("APSDE INDICATION",
-                    "Received APSDE-DATA %s request with a length of %ld from endpoint %d, source address 0x%04hx to "
-                    "endpoint %d, destination address 0x%04hx",
-                    ind.dst_addr_mode == 0x01 ? "group" : "unicast", ind.asdu_length, ind.src_endpoint,
-                    ind.src_short_addr, ind.dst_endpoint, ind.dst_short_addr);
-            ESP_LOG_BUFFER_HEX_LEVEL("APSDE INDICATION", ind.asdu, ind.asdu_length, ESP_LOG_INFO);
-            processed = true;
-            
+        if (ind.dst_endpoint == 27 && ind.profile_id == ESP_ZB_AF_HA_PROFILE_ID && ind.cluster_id == ESP_ZB_ZCL_CLUSTER_ID_BASIC) {    
+            create_ping(ind.src_short_addr); // Respond to the received data
+            wait_for_confirmation_flag = true; // Set the flag to wait for confirmation
+            while (wait_for_confirmation_flag) {
+                vTaskDelay(pdMS_TO_TICKS(1)); // Wait for confirmation
+            }
         }
     } else {
         ESP_LOGE("APSDE INDICATION", "Invalid status of APSDE-DATA indication, error code: %d", ind.status);
@@ -167,3 +134,107 @@ static bool zb_apsde_data_indication_handler(esp_zb_apsde_data_ind_t ind)
     }
     return processed;
 }
+
+void create_ping_64(uint64_t dest_addr)
+{
+    uint32_t data_length = 50;
+    esp_zb_ieee_addr_t ieee_addr;
+    memcpy(ieee_addr, &dest_addr, sizeof(esp_zb_ieee_addr_t)); // Copy the 64-bit address into the ieee_addr variable
+
+    esp_zb_apsde_data_req_t req = {
+        .dst_addr_mode = ESP_ZB_APS_ADDR_MODE_64_ENDP_PRESENT,
+        .dst_endpoint = 27,                                 // Example endpoint
+        .profile_id = ESP_ZB_AF_HA_PROFILE_ID,              // Example profile ID
+        .cluster_id = ESP_ZB_ZCL_CLUSTER_ID_BASIC,          // Example cluster ID (On/Off cluster)
+        .src_endpoint = 10,                                 // Example source endpoint
+        .asdu_length = data_length,                         // No payload for ping
+        .asdu = malloc(data_length * sizeof(uint8_t)),      // No payload for ping
+        .tx_options = 0,                                    // Example transmission options
+        .use_alias = false,
+        .alias_src_addr = 0,
+        .alias_seq_num = 0,
+        .radius = 3,                                        // Example radius
+    };
+    memcpy(req.dst_addr.addr_long, ieee_addr, sizeof(esp_zb_ieee_addr_t)); // Copy the 64-bit address
+
+    for(uint8_t i = 0; i < data_length; i++) {
+        req.asdu[i] = i % 256; 
+    }
+
+    ESP_LOGI(TAG_include, "Sending APS data request to 0x%016" PRIx64 " with %ld bytes", dest_addr, data_length);
+    esp_zb_lock_acquire(portMAX_DELAY);
+    esp_zb_aps_data_request(&req);
+    esp_zb_lock_release();
+    free(req.asdu); // Free the allocated memory for ASDU
+}
+
+void create_ping(uint16_t dest_addr)
+{
+    uint32_t data_length = 50; // Example payload length
+    esp_zb_apsde_data_req_t req = {
+        .dst_addr_mode = ESP_ZB_APS_ADDR_MODE_16_ENDP_PRESENT,
+        .dst_addr.addr_short = dest_addr,
+        .dst_endpoint = 10,                          // Example endpoint
+        .profile_id = ESP_ZB_AF_HA_PROFILE_ID,      // Example profile ID
+        .cluster_id = ESP_ZB_ZCL_CLUSTER_ID_BASIC,  // Example cluster ID (On/Off cluster)
+        .src_endpoint = 10,                          // Example source endpoint
+        .asdu_length = data_length,                  // No payload for ping
+        .asdu = malloc(data_length * sizeof(uint8_t)), // Allocate memory for ASDU if needed
+        .tx_options = 0,                            // Example transmission options
+        .use_alias = false,
+        .alias_src_addr = 0,
+        .alias_seq_num = 0,
+        .radius = 3,                                 // Example radius
+    };
+
+    if (req.asdu == NULL) {
+        ESP_LOGE(TAG_include, "Failed to allocate memory for ASDU");
+        return;
+    } else {
+        for (uint8_t i = 0; i < data_length; i++) {
+            req.asdu[i] = i % 256; // Fill with some data, e.g., incrementing values
+        }
+    }
+
+    ESP_LOGI(TAG_include, "Sending APS data request to 0x%04hx with %ld bytes", dest_addr, data_length);
+    esp_zb_lock_acquire(portMAX_DELAY);
+    esp_zb_aps_data_request(&req);
+    esp_zb_lock_release();
+    free(req.asdu); // Free the allocated memory for ASDU
+}
+
+void create_network_load(uint16_t dest_addr, uint8_t repetitions)
+{
+    for(int8_t i = 0; i < repetitions; i++) {
+        create_ping(dest_addr);
+    }
+}
+
+void create_network_load_64bit(uint64_t dest_addr, uint8_t repetitions)
+{
+    for(int8_t i = 0; i < repetitions; i++) {
+        create_ping_64(dest_addr);
+    }
+}
+
+
+
+void button_handler(switch_func_pair_t *button_func_pair)
+{
+    if(button_func_pair->func == SWITCH_ONOFF_TOGGLE_CONTROL) {
+        esp_zigbee_include_show_tables();
+        // create_network_load(0x0000);
+        create_network_load_64bit(0x404ccafffe5fae8c, 3);
+        create_network_load_64bit(0x404ccafffe5fb4d4, 100);
+        create_network_load_64bit(0x404ccafffe5de2a8, 3);
+    }
+}
+
+static esp_err_t deferred_driver_init(void)
+{
+    uint8_t button_num = PAIR_SIZE(button_func_pair);
+
+    bool is_initialized = switch_driver_init(button_func_pair, button_num, button_handler);
+    return is_initialized ? ESP_OK : ESP_FAIL;
+}
+
