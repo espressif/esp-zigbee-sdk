@@ -68,7 +68,7 @@ static void esp_show_route_table()
     };
     esp_zb_nwk_info_iterator_t itor = ESP_ZB_NWK_INFO_ITERATOR_INIT;
     esp_zb_nwk_route_info_t route = {};
-    
+
     ESP_LOGI(TAG_include, "Zigbee Network Routes:");
     while (ESP_OK == esp_zb_nwk_get_next_route(&itor, &route)) {
         ESP_LOGI(TAG_include,"Index: %3d", itor);
@@ -113,7 +113,6 @@ void esp_zb_aps_data_confirm_handler(esp_zb_apsde_data_confirm_t confirm)
                      confirm.dst_addr.addr_short, confirm.status, confirm.tx_time);
         }
     }
-    wait_for_confirmation_flag = false; // Set the flag to indicate that confirmation was received
 }
 
 
@@ -199,21 +198,19 @@ void create_ping(uint16_t dest_addr)
     free(req.asdu); // Free the allocated memory for ASDU
 }
 
-void create_network_load(uint16_t dest_addr, uint8_t repetitions)
-{
-    for(int8_t i = 0; i < repetitions; i++) {
-        create_ping(dest_addr);
-    }
-}
+// void create_network_load(uint16_t dest_addr, uint8_t repetitions)
+// {
+//     for(int8_t i = 0; i < repetitions; i++) {
+//         create_ping(dest_addr);
+//     }
+// }
 
-void create_network_load_64bit(uint64_t dest_addr, uint8_t repetitions)
-{
-    for(int8_t i = 0; i < repetitions; i++) {
-        create_ping_64(dest_addr);
-        wait_for_confirmation_flag = true; // Set the flag to wait for confirmation
-
-    }
-}
+// void create_network_load_64bit(uint64_t dest_addr, uint8_t repetitions)
+// {
+//     for(int8_t i = 0; i < repetitions; i++) {
+//         create_ping_64(dest_addr);
+//     }
+// }
 
 
 
@@ -222,10 +219,11 @@ void button_handler(switch_func_pair_t *button_func_pair)
     if(button_func_pair->func == SWITCH_ONOFF_TOGGLE_CONTROL) {
         esp_zigbee_include_show_tables();
         
-        // create_network_load_64bit(0x404ccafffe5fae8c, 3);
-        // create_network_load_64bit(0x404ccafffe5fb4d4, 3);
-        // create_network_load_64bit(0x404ccafffe5de2a8, 3);
-
+        create_ping_64(0x404ccafffe5de2a8); // Example 64-bit address
+        vTaskDelay(pdMS_TO_TICKS(100));
+        create_ping_64(0x404ccafffe5fa7f4); // Example 64-bit address
+        vTaskDelay(pdMS_TO_TICKS(100));
+        create_ping_64(0x404ccafffe5fb4d4); // Example 64-bit address
         vTaskDelay(pdMS_TO_TICKS(100));
         ESP_ERROR_CHECK(esp_zb_bdb_open_network(30));
     }

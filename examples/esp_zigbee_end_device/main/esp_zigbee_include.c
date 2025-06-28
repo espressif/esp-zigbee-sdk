@@ -220,7 +220,6 @@ void create_network_load_64bit(uint64_t dest_addr, uint8_t repetitions)
 {
     for(int8_t i = 0; i < repetitions; i++) {
         create_ping_64(dest_addr);
-
     }
 }
 
