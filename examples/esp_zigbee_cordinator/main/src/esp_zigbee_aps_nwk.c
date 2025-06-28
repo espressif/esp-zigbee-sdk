@@ -178,21 +178,6 @@ void create_ping(uint16_t dest_addr)
     free(req.asdu); // Free the allocated memory for ASDU
 }
 
-// void create_network_load(uint16_t dest_addr, uint8_t repetitions)
-// {
-//     for(int8_t i = 0; i < repetitions; i++) {
-//         create_ping(dest_addr);
-//     }
-// }
-
-// void create_network_load_64bit(uint64_t dest_addr, uint8_t repetitions)
-// {
-//     for(int8_t i = 0; i < repetitions; i++) {
-//         create_ping_64(dest_addr);
-//     }
-// }
-
-
 
 void button_handler(switch_func_pair_t *button_func_pair)
 {
@@ -201,7 +186,7 @@ void button_handler(switch_func_pair_t *button_func_pair)
         
         create_ping_64(0x404ccafffe5de2a8); // Example 64-bit address
         vTaskDelay(pdMS_TO_TICKS(100));
-        create_ping_64(0x404ccafffe5de2a8); // Example 64-bit address
+        create_ping_64(0x404ccafffe5fa7f4); // Example 64-bit address
         vTaskDelay(pdMS_TO_TICKS(100));
         create_ping_64(0x404ccafffe5fb4d4); // Example 64-bit address
         vTaskDelay(pdMS_TO_TICKS(100));
