@@ -4,8 +4,9 @@
 #include "nvs_flash.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-#include "esp_zigbee_include.c"
 #include "platform/esp_zigbee_platform.h"
+#include "create_endpoints.c"
+#include "esp_zigbee_aps_nwk.c"
 
 
 #if !defined CONFIG_ZB_ZCZR

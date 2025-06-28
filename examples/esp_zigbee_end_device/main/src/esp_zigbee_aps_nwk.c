@@ -1,15 +1,14 @@
+#include "esp_zigbee_aps_nwk.h"
 #include "esp_check.h"
 #include "esp_log.h"
 #include "nwk/esp_zigbee_nwk.h"
 #include "switch_driver.h"
-#include "switch_driver.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "esp_zigbee_core.h"
-#include "esp_zigbee_include.h"
 #include "aps/esp_zigbee_aps.h"
+
 #include <memory.h>
-#include "esp_ieee802154_types.h"
 
 
 
@@ -23,20 +22,7 @@ void create_network_load_64bit(uint64_t dest_addr, uint8_t repetitions);
 //wyświetla sąsiadów
 static void esp_show_neighbor_table()
 {
-    // static const char *dev_type_name[] = {
-    //     [ESP_ZB_DEVICE_TYPE_COORDINATOR] = "ZC",
-    //     [ESP_ZB_DEVICE_TYPE_ROUTER]      = "ZR",
-    //     [ESP_ZB_DEVICE_TYPE_ED]          = "ZED",
-    //     [ESP_ZB_DEVICE_TYPE_NONE]        = "UNK",
-    // };
-    // static const char rel_name[] = {
-    //     [ESP_ZB_NWK_RELATIONSHIP_PARENT]                = 'P', /* Parent */
-    //     [ESP_ZB_NWK_RELATIONSHIP_CHILD]                 = 'C', /* Child */
-    //     [ESP_ZB_NWK_RELATIONSHIP_SIBLING]               = 'S', /* Sibling */
-    //     [ESP_ZB_NWK_RELATIONSHIP_NONE_OF_THE_ABOVE]     = 'O', /* Others */
-    //     [ESP_ZB_NWK_RELATIONSHIP_PREVIOUS_CHILD]        = 'c', /* Previous Child */
-    //     [ESP_ZB_NWK_RELATIONSHIP_UNAUTHENTICATED_CHILD] = 'u', /* Unauthenticated Child */
-    // };
+
     esp_zb_nwk_info_iterator_t itor = ESP_ZB_NWK_INFO_ITERATOR_INIT;
     esp_zb_nwk_neighbor_info_t neighbor = {};
     
@@ -60,12 +46,7 @@ static void esp_show_neighbor_table()
 //wyswietla trasy
 static void esp_show_route_table()
 {
-    // static const char *route_state_name[] = {
-    //     [ESP_ZB_NWK_ROUTE_STATE_ACTIVE] = "Active",
-    //     [ESP_ZB_NWK_ROUTE_STATE_DISCOVERY_UNDERWAY] = "Disc",
-    //     [ESP_ZB_NWK_ROUTE_STATE_DISCOVERY_FAILED] = "Fail",
-    //     [ESP_ZB_NWK_ROUTE_STATE_INACTIVE] = "Inactive",
-    // };
+
     esp_zb_nwk_info_iterator_t itor = ESP_ZB_NWK_INFO_ITERATOR_INIT;
     esp_zb_nwk_route_info_t route = {};
     
@@ -118,7 +99,6 @@ void esp_zb_aps_data_confirm_handler(esp_zb_apsde_data_confirm_t confirm)
             }
         }
     }
-    wait_for_confirmation_flag = false; // Set the flag to indicate that confirmation was received
 }
 
 

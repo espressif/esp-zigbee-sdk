@@ -1,12 +1,12 @@
-#include "zcl/esp_zigbee_zcl_common.h"
-#include "nwk/esp_zigbee_nwk.h"
 #include "aps/esp_zigbee_aps.h"
-#include "esp_zigbee_core.h"
+#include "nwk/esp_zigbee_nwk.h"
 
 static bool zb_apsde_data_indication_handler(esp_zb_apsde_data_ind_t ind);
-static esp_err_t deferred_driver_init();
-
+static esp_err_t deferred_driver_init(void);
+static void esp_show_neighbor_table();
+static void esp_show_route_table();
 void esp_zigbee_include_show_tables(void);
+
 
 static const char *dev_type_name[] = {
     [ESP_ZB_DEVICE_TYPE_COORDINATOR] = "ZC",

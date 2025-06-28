@@ -1,6 +1,5 @@
 #include "esp_zigbee_core.h"
 #include "zcl_utility.h"
-#include "esp_zigbee_aps_nwk.h"
 
 #define MAX_CHILDREN                      2                                    /* the max amount of connected devices */
 #define INSTALLCODE_POLICY_ENABLE         false                                 /* enable the install code policy for security */

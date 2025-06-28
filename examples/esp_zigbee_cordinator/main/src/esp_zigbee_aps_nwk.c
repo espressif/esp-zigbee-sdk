@@ -13,7 +13,7 @@
 
 static const char *TAG_include = "esp_zigbee_include";
 
-//function creatiing 68 bytes payload and sending it to the destination address
+//function creating payload and sending it to the destination address
 void create_ping(uint16_t dest_addr);
 void create_ping_64bit(uint64_t dest_addr);
 void create_network_load(uint16_t dest_addr, uint8_t repetitions);
@@ -22,20 +22,7 @@ void create_network_load_64bit(uint64_t dest_addr, uint8_t repetitions);
 //wyświetla sąsiadów
 static void esp_show_neighbor_table()
 {
-    static const char *dev_type_name[] = {
-        [ESP_ZB_DEVICE_TYPE_COORDINATOR] = "ZC",
-        [ESP_ZB_DEVICE_TYPE_ROUTER]      = "ZR",
-        [ESP_ZB_DEVICE_TYPE_ED]          = "ZED",
-        [ESP_ZB_DEVICE_TYPE_NONE]        = "UNK",
-    };
-    static const char rel_name[] = {
-        [ESP_ZB_NWK_RELATIONSHIP_PARENT]                = 'P', /* Parent */
-        [ESP_ZB_NWK_RELATIONSHIP_CHILD]                 = 'C', /* Child */
-        [ESP_ZB_NWK_RELATIONSHIP_SIBLING]               = 'S', /* Sibling */
-        [ESP_ZB_NWK_RELATIONSHIP_NONE_OF_THE_ABOVE]     = 'O', /* Others */
-        [ESP_ZB_NWK_RELATIONSHIP_PREVIOUS_CHILD]        = 'c', /* Previous Child */
-        [ESP_ZB_NWK_RELATIONSHIP_UNAUTHENTICATED_CHILD] = 'u', /* Unauthenticated Child */
-    };
+
     esp_zb_nwk_info_iterator_t itor = ESP_ZB_NWK_INFO_ITERATOR_INIT;
     esp_zb_nwk_neighbor_info_t neighbor = {};
     
@@ -59,12 +46,6 @@ static void esp_show_neighbor_table()
 //wyswietla trasy
 static void esp_show_route_table()
 {
-    static const char *route_state_name[] = {
-        [ESP_ZB_NWK_ROUTE_STATE_ACTIVE] = "Active",
-        [ESP_ZB_NWK_ROUTE_STATE_DISCOVERY_UNDERWAY] = "Disc",
-        [ESP_ZB_NWK_ROUTE_STATE_DISCOVERY_FAILED] = "Fail",
-        [ESP_ZB_NWK_ROUTE_STATE_INACTIVE] = "Inactive",
-    };
     esp_zb_nwk_info_iterator_t itor = ESP_ZB_NWK_INFO_ITERATOR_INIT;
     esp_zb_nwk_route_info_t route = {};
 
@@ -228,11 +209,11 @@ void button_handler(switch_func_pair_t *button_func_pair)
     }
 }
 
-static bool deferred_driver_init(void)
+static esp_err_t deferred_driver_init(void)
 {
     uint8_t button_num = PAIR_SIZE(button_func_pair);
 
     bool is_initialized = switch_driver_init(button_func_pair, button_num, button_handler);
-    return is_initialized;
+    return is_initialized ? ESP_OK : ESP_FAIL;
 }
 
