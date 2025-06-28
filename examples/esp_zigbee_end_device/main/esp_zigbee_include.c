@@ -13,11 +13,7 @@
 
 
 
-
-
-
 static const char *TAG_include = "esp_zigbee_include";
-static bool wait_for_confirmation_flag = false; //flag to get confirmation from the device
 
 //function creatiing 68 bytes payload and sending it to the destination address
 void create_ping(uint16_t dest_addr);
@@ -27,20 +23,20 @@ void create_network_load_64bit(uint64_t dest_addr, uint8_t repetitions);
 //wyświetla sąsiadów
 static void esp_show_neighbor_table()
 {
-    static const char *dev_type_name[] = {
-        [ESP_ZB_DEVICE_TYPE_COORDINATOR] = "ZC",
-        [ESP_ZB_DEVICE_TYPE_ROUTER]      = "ZR",
-        [ESP_ZB_DEVICE_TYPE_ED]          = "ZED",
-        [ESP_ZB_DEVICE_TYPE_NONE]        = "UNK",
-    };
-    static const char rel_name[] = {
-        [ESP_ZB_NWK_RELATIONSHIP_PARENT]                = 'P', /* Parent */
-        [ESP_ZB_NWK_RELATIONSHIP_CHILD]                 = 'C', /* Child */
-        [ESP_ZB_NWK_RELATIONSHIP_SIBLING]               = 'S', /* Sibling */
-        [ESP_ZB_NWK_RELATIONSHIP_NONE_OF_THE_ABOVE]     = 'O', /* Others */
-        [ESP_ZB_NWK_RELATIONSHIP_PREVIOUS_CHILD]        = 'c', /* Previous Child */
-        [ESP_ZB_NWK_RELATIONSHIP_UNAUTHENTICATED_CHILD] = 'u', /* Unauthenticated Child */
-    };
+    // static const char *dev_type_name[] = {
+    //     [ESP_ZB_DEVICE_TYPE_COORDINATOR] = "ZC",
+    //     [ESP_ZB_DEVICE_TYPE_ROUTER]      = "ZR",
+    //     [ESP_ZB_DEVICE_TYPE_ED]          = "ZED",
+    //     [ESP_ZB_DEVICE_TYPE_NONE]        = "UNK",
+    // };
+    // static const char rel_name[] = {
+    //     [ESP_ZB_NWK_RELATIONSHIP_PARENT]                = 'P', /* Parent */
+    //     [ESP_ZB_NWK_RELATIONSHIP_CHILD]                 = 'C', /* Child */
+    //     [ESP_ZB_NWK_RELATIONSHIP_SIBLING]               = 'S', /* Sibling */
+    //     [ESP_ZB_NWK_RELATIONSHIP_NONE_OF_THE_ABOVE]     = 'O', /* Others */
+    //     [ESP_ZB_NWK_RELATIONSHIP_PREVIOUS_CHILD]        = 'c', /* Previous Child */
+    //     [ESP_ZB_NWK_RELATIONSHIP_UNAUTHENTICATED_CHILD] = 'u', /* Unauthenticated Child */
+    // };
     esp_zb_nwk_info_iterator_t itor = ESP_ZB_NWK_INFO_ITERATOR_INIT;
     esp_zb_nwk_neighbor_info_t neighbor = {};
     
@@ -64,12 +60,12 @@ static void esp_show_neighbor_table()
 //wyswietla trasy
 static void esp_show_route_table()
 {
-    static const char *route_state_name[] = {
-        [ESP_ZB_NWK_ROUTE_STATE_ACTIVE] = "Active",
-        [ESP_ZB_NWK_ROUTE_STATE_DISCOVERY_UNDERWAY] = "Disc",
-        [ESP_ZB_NWK_ROUTE_STATE_DISCOVERY_FAILED] = "Fail",
-        [ESP_ZB_NWK_ROUTE_STATE_INACTIVE] = "Inactive",
-    };
+    // static const char *route_state_name[] = {
+    //     [ESP_ZB_NWK_ROUTE_STATE_ACTIVE] = "Active",
+    //     [ESP_ZB_NWK_ROUTE_STATE_DISCOVERY_UNDERWAY] = "Disc",
+    //     [ESP_ZB_NWK_ROUTE_STATE_DISCOVERY_FAILED] = "Fail",
+    //     [ESP_ZB_NWK_ROUTE_STATE_INACTIVE] = "Inactive",
+    // };
     esp_zb_nwk_info_iterator_t itor = ESP_ZB_NWK_INFO_ITERATOR_INIT;
     esp_zb_nwk_route_info_t route = {};
     
@@ -131,7 +127,7 @@ static bool zb_apsde_data_indication_handler(esp_zb_apsde_data_ind_t ind)
     bool processed = false;
     if (ind.status == 0x00) {
         if (ind.dst_endpoint == 27 && ind.profile_id == ESP_ZB_AF_HA_PROFILE_ID && ind.cluster_id == ESP_ZB_ZCL_CLUSTER_ID_BASIC) {    
-            
+       
             create_ping(ind.src_short_addr); // Respond to the received data
         }
     } else {

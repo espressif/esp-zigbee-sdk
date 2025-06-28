@@ -2,11 +2,10 @@
 #include "esp_log.h"
 #include "nwk/esp_zigbee_nwk.h"
 #include "switch_driver.h"
-#include "switch_driver.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "esp_zigbee_core.h"
-#include "esp_zigbee_include.h"
+#include "esp_zigbee_aps_nwk.h"
 #include "aps/esp_zigbee_aps.h"
 #include <memory.h>
 #include "esp_err.h"
@@ -221,7 +220,7 @@ void button_handler(switch_func_pair_t *button_func_pair)
         
         create_ping_64(0x404ccafffe5de2a8); // Example 64-bit address
         vTaskDelay(pdMS_TO_TICKS(100));
-        create_ping_64(0x404ccafffe5fa7f4); // Example 64-bit address
+        create_ping_64(0x404ccafffe5de2a8); // Example 64-bit address
         vTaskDelay(pdMS_TO_TICKS(100));
         create_ping_64(0x404ccafffe5fb4d4); // Example 64-bit address
         vTaskDelay(pdMS_TO_TICKS(100));
@@ -229,11 +228,11 @@ void button_handler(switch_func_pair_t *button_func_pair)
     }
 }
 
-static esp_err_t deferred_driver_init(void)
+static bool deferred_driver_init(void)
 {
     uint8_t button_num = PAIR_SIZE(button_func_pair);
 
     bool is_initialized = switch_driver_init(button_func_pair, button_num, button_handler);
-    return is_initialized ? ESP_OK : ESP_FAIL;
+    return is_initialized;
 }
 

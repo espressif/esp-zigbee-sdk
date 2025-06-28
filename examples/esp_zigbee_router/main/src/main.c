@@ -4,8 +4,8 @@
 #include "nvs_flash.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-#include "esp_zigbee_include.c"
 #include "platform/esp_zigbee_platform.h"
+#include "esp_zigbee_aps_nwk.c"
 
 #if !defined CONFIG_ZB_ZCZR
 #error Define ZB_ZCZR in idf.py menuconfig to compile light (Router) source code.
@@ -67,9 +67,6 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
                          esp_zb_get_pan_id(), esp_zb_get_current_channel(), esp_zb_get_short_address());
         } else {
             ESP_LOGI(TAG, "Network steering was not successful (status: %s)", esp_err_to_name(err_status));
-            // ESP_LOGI(TAG, "Current channel:  %d.", esp_zb_get_current_channel());
-            // ESP_LOGI(TAG, "Current channel mask:  %ld.", esp_zb_get_channel_mask());
-            // ESP_LOGI(TAG, "Primary chanel channel:  %ld.", ESP_ZB_PRIMARY_CHANNEL_MASK);
             esp_zb_scheduler_alarm((esp_zb_callback_t)bdb_start_top_level_commissioning_cb, ESP_ZB_BDB_MODE_NETWORK_STEERING, 1000);
         }
         break;
@@ -117,6 +114,16 @@ static esp_err_t zb_action_handler(esp_zb_core_action_callback_id_t callback_id,
         ESP_LOGI(TAG, "Receive report attribute callback");
         ret = ESP_FAIL;
         break;
+
+    case ESP_ZB_CORE_CMD_WRITE_ATTR_RESP_CB_ID:
+        esp_zb_zcl_cmd_write_attr_resp_message_t *write_resp = (esp_zb_zcl_cmd_write_attr_resp_message_t *)message;
+        esp_zb_zcl_write_attr_resp_variable_t *variables = write_resp->variables;
+        while(write_resp->variables) {    
+            ESP_LOGI(TAG, "Receive write attribute response callback, attribute id: 0x%x, status code: 0x%x",
+                    write_resp->variables->attribute_id, write_resp->variables->status);
+            variables = variables->next;
+        }
+        break;
     default:
         ESP_LOGW(TAG, "Receive Zigbee action(0x%x) callback", callback_id);
         break;
@@ -157,11 +164,11 @@ static void esp_zb_task(void *pcParameters)
 
     esp_zb_set_tx_power(20);
     esp_zb_core_action_handler_register(zb_action_handler);
-    //esp_zb_nwk_set_link_status_period(10);
     esp_zb_set_channel_mask(ESP_ZB_PRIMARY_CHANNEL_MASK);
     esp_zb_aps_data_indication_handler_register(zb_apsde_data_indication_handler);
     ESP_ERROR_CHECK(zb_register_device());
     esp_zb_secur_link_key_exchange_required_set(true);
+
     ESP_ERROR_CHECK(esp_zb_start(false));
     esp_zb_stack_main_loop();
 }

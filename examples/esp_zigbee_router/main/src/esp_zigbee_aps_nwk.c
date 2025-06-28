@@ -1,8 +1,7 @@
+#include "esp_zigbee_aps_nwk.h"
 #include "esp_check.h"
 #include "esp_log.h"
-#include "nwk/esp_zigbee_nwk.h"
-#include "aps/esp_zigbee_aps.h"
-#include "esp_zigbee_core.h"
+
 #include "zcl/esp_zigbee_zcl_common.h"
 #include "switch_driver.h"
 
@@ -33,20 +32,7 @@ static bool zb_apsde_data_indication_handler(esp_zb_apsde_data_ind_t ind)
 //wyświetla sąsiadów
 static void esp_show_neighbor_table()
 {
-    static const char *dev_type_name[] = {
-        [ESP_ZB_DEVICE_TYPE_COORDINATOR] = "ZC",
-        [ESP_ZB_DEVICE_TYPE_ROUTER]      = "ZR",
-        [ESP_ZB_DEVICE_TYPE_ED]          = "ZED",
-        [ESP_ZB_DEVICE_TYPE_NONE]        = "UNK",
-    };
-    static const char rel_name[] = {
-        [ESP_ZB_NWK_RELATIONSHIP_PARENT]                = 'P',  /* Parent */
-        [ESP_ZB_NWK_RELATIONSHIP_CHILD]                 = 'C',  /* Child */
-        [ESP_ZB_NWK_RELATIONSHIP_SIBLING]               = 'S',  /* Sibling */
-        [ESP_ZB_NWK_RELATIONSHIP_NONE_OF_THE_ABOVE]     = 'O',  /* Others */
-        [ESP_ZB_NWK_RELATIONSHIP_PREVIOUS_CHILD]        = 'c', /* Previous Child */
-        [ESP_ZB_NWK_RELATIONSHIP_UNAUTHENTICATED_CHILD] = 'U', /* Unauthenticated Child */
-    };
+
     esp_zb_nwk_info_iterator_t itor = ESP_ZB_NWK_INFO_ITERATOR_INIT;
     esp_zb_nwk_neighbor_info_t neighbor = {};
 
@@ -69,12 +55,7 @@ static void esp_show_neighbor_table()
 //wyswietla trasy
 static void esp_show_route_table()
 {
-    static const char *route_state_name[] = {
-        [ESP_ZB_NWK_ROUTE_STATE_ACTIVE] = "Active",
-        [ESP_ZB_NWK_ROUTE_STATE_DISCOVERY_UNDERWAY] = "Disc",
-        [ESP_ZB_NWK_ROUTE_STATE_DISCOVERY_FAILED] = "Fail",
-        [ESP_ZB_NWK_ROUTE_STATE_INACTIVE] = "Inactive",
-    };
+
     esp_zb_nwk_info_iterator_t itor = ESP_ZB_NWK_INFO_ITERATOR_INIT;
     esp_zb_nwk_route_info_t route = {};
 
@@ -90,7 +71,7 @@ static void esp_show_route_table()
     ESP_LOGI(TAG_include," ");
 
 }
-    //TODO trace
+
 void esp_zigbee_include_show_tables(void) 
 {
     ESP_LOGI(TAG_include, "Zigbee Network Tables:");
@@ -108,13 +89,12 @@ void button_handler(switch_func_pair_t *button_func_pair)
         esp_zigbee_include_show_tables();
         esp_zb_bdb_open_network(30);
     }
-    
 }
 
-static esp_err_t deferred_driver_init(void)
+static bool deferred_driver_init(void)
 {
     uint8_t button_num = PAIR_SIZE(button_func_pair);
 
     bool is_initialized = switch_driver_init(button_func_pair, button_num, button_handler);
-    return is_initialized ? ESP_OK : ESP_FAIL;
+    return is_initialized;
 }
