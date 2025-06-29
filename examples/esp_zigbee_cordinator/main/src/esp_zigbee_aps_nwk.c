@@ -13,6 +13,21 @@
 
 static const char *TAG_include = "esp_zigbee_include";
 
+static uint32_t byte_counter = 0;
+static uint32_t byte_count = 0;
+
+void traffic_reporter_init(){
+    byte_counter = 0;
+    byte_count = 0;
+    while (1) {
+        ESP_LOGI(TAG_include, "Byte count in last 10 seconds: %ld", byte_count);
+        vTaskDelay(pdMS_TO_TICKS(10000)); // Wait for 10 seconds
+        byte_count = byte_counter; // Store the current byte count
+        byte_counter = 0; // Reset the counter after sending the report
+        send_traffic_report();
+    }    
+}
+
 
 static switch_func_pair_t button_func_pair[] = {
     {GPIO_INPUT_IO_TOGGLE_SWITCH, SWITCH_ONOFF_TOGGLE_CONTROL}
@@ -127,6 +142,7 @@ static bool zb_apsde_data_indication_handler(esp_zb_apsde_data_ind_t ind)
     if (ind.status == 0x00) {
         if (ind.dst_endpoint == 27 && ind.profile_id == ESP_ZB_AF_HA_PROFILE_ID && ind.cluster_id == ESP_ZB_ZCL_CLUSTER_ID_BASIC) {    
             ESP_LOG_BUFFER_HEX_LEVEL("APSDE INDICATION", ind.asdu, ind.asdu_length, ESP_LOG_INFO);
+            byte_counter += ind.asdu_length + sizeof(esp_zb_apsde_data_ind_t);
         }
     } else {
         ESP_LOGE("APSDE INDICATION", "Invalid status of APSDE-DATA indication, error code: %d", ind.status);

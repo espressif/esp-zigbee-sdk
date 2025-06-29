@@ -97,8 +97,6 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
             } else {
                 ESP_LOGW(TAG, "Network(0x%04hx) closed, devices joining not allowed.", esp_zb_get_pan_id());
             }
-            //uint8_t ic_type = ESP_ZB_IC_TYPE_64;
-            // ESP_LOGI(TAG, "Installed code: 0x%016" PRIx64, (uint64_t )esp_zb_secur_ic_get(&ic_type));
         }
         break;
     case ESP_ZB_ZDO_SIGNAL_PRODUCTION_CONFIG_READY:
@@ -187,4 +185,5 @@ void app_main(void)
     ESP_ERROR_CHECK(nvs_flash_init());
     ESP_ERROR_CHECK(esp_zb_platform_config(&config));
     xTaskCreate(esp_zb_task, "Zigbee_main", 4096, NULL, 5, NULL);
+    xTaskCreate(traffic_reporter_init, "zigbee_traffic_reporter", 4096, NULL, 5, NULL);
 }

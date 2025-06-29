@@ -34,6 +34,8 @@ typedef struct {
     //esp_zb_ieee_addr_t priority_node
 } esp_zb_network_traffic_report_t;
 
+
+
 void send_traffic_report(void);
 void refresh_routes(void);
 
