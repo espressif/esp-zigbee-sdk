@@ -235,10 +235,10 @@ void button_handler(switch_func_pair_t *button_func_pair)
     }
 }
 
-static esp_err_t deferred_driver_init(void)
+static bool deferred_driver_init(void)
 {
     uint8_t button_num = PAIR_SIZE(button_func_pair);
 
     bool is_initialized = switch_driver_init(button_func_pair, button_num, button_handler);
-    return is_initialized ? ESP_OK : ESP_FAIL;
+    return is_initialized;
 }
