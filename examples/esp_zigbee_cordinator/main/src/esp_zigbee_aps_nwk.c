@@ -16,9 +16,12 @@ static const char *TAG_include = "esp_zigbee_include";
 static uint32_t byte_counter = 0;
 static uint32_t byte_count = 0;
 
+QueueHandle_t apsde_data_requests_queue = NULL;
+
 void traffic_reporter_init(){
     byte_counter = 0;
     byte_count = 0;
+    apsde_data_requests_queue = xQueueCreate(20, sizeof(esp_zb_apsde_data_ind_t));
     while (1) {
         ESP_LOGI(TAG_include, "Byte count in last 10 seconds: %ld", byte_count);
         vTaskDelay(pdMS_TO_TICKS(10000)); // Wait for 10 seconds
@@ -152,6 +155,12 @@ static bool zb_apsde_data_indication_handler(esp_zb_apsde_data_ind_t ind)
     return processed;
 }
 
+bool isCongest(uint64_t dest_addr)
+{
+    
+    return (dest_addr == 0x0000);
+}
+
 void create_ping_64(uint64_t dest_addr)
 {
     uint32_t data_length = 100; // Example payload length
@@ -214,6 +223,13 @@ void create_ping(uint16_t dest_addr)
     }
 
     ESP_LOGI(TAG_include, "Sending APS data request to 0x%04hx with %ld bytes", dest_addr, data_length);
+
+    if (isCongest(dest_addr)) {
+        xQueueAddToSet(apsde_data_requests_queue, &req);
+         return;
+    }
+        
+
     esp_zb_lock_acquire(portMAX_DELAY);
     esp_zb_aps_data_request(&req);
     esp_zb_lock_release();
