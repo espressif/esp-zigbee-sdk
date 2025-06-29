@@ -3,6 +3,7 @@
 #include "aps/esp_zigbee_aps.h"
 #include "esp_zigbee_core.h"
 #include "esp_zigbee_type.h"
+#include <freertos/queue.h>
 
 static bool zb_apsde_data_indication_handler(esp_zb_apsde_data_ind_t ind);
 static bool deferred_driver_init();
@@ -29,7 +30,7 @@ static const char *route_state_name[] = {
     [ESP_ZB_NWK_ROUTE_STATE_INACTIVE] = "Inactive",
 };
 
-typedef struct {
+typedef struct esp_zb_network_traffic_report_s {
     uint32_t traffic_count; //Bites recieved in last 10 seconds
     //esp_zb_ieee_addr_t priority_node
 } esp_zb_network_traffic_report_t;

@@ -14,6 +14,22 @@
 
 static const char *TAG_include = "esp_zigbee_include";
 
+
+static uint32_t byte_counter = 0;
+static uint32_t byte_count = 0;
+
+void traffic_reporter_init(){
+    byte_counter = 0;
+    byte_count = 0;
+    while (1) {
+        ESP_LOGI(TAG_include, "Byte count in last 10 seconds: %ld", byte_count);
+        vTaskDelay(pdMS_TO_TICKS(10000)); // Wait for 10 seconds
+        byte_count = byte_counter; // Store the current byte count
+        byte_counter = 0; // Reset the counter after sending the report
+        send_traffic_report();
+    }    
+}
+
 //function creatiing 68 bytes payload and sending it to the destination address
 void create_ping(uint16_t dest_addr);
 void create_ping_64bit(uint64_t dest_addr);

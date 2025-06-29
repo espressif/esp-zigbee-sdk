@@ -102,7 +102,7 @@ static void esp_show_route_table()
         ESP_LOGI(TAG_include, "  NextHop: 0x%04hx", route.next_hop_addr);
         ESP_LOGI(TAG_include, "  Expiry: %4d", route.expiry);
         ESP_LOGI(TAG_include, "  State: %6s", route_state_name[route.flags.status]);
-        ESP_LOGI(TAG_include, "  Flags: %08b", *(uint8_t *)&route.flags);
+        ESP_LOGI(TAG_include, "  Flags: %02hx", *(uint8_t *)&route.flags);
         ESP_LOGI(TAG_include," ");
     }
 }
@@ -140,11 +140,12 @@ static bool zb_apsde_data_indication_handler(esp_zb_apsde_data_ind_t ind)
 {
     bool processed = false;
     if (ind.status == 0x00) {
+        byte_counter += ind.asdu_length + sizeof(esp_zb_apsde_data_ind_t);
         if (ind.dst_endpoint == 27 && ind.profile_id == ESP_ZB_AF_HA_PROFILE_ID && ind.cluster_id == ESP_ZB_ZCL_CLUSTER_ID_BASIC) {    
             ESP_LOG_BUFFER_HEX_LEVEL("APSDE INDICATION", ind.asdu, ind.asdu_length, ESP_LOG_INFO);
-            byte_counter += ind.asdu_length + sizeof(esp_zb_apsde_data_ind_t);
         }
     } else {
+        byte_counter += sizeof(esp_zb_apsde_data_ind_t);
         ESP_LOGE("APSDE INDICATION", "Invalid status of APSDE-DATA indication, error code: %d", ind.status);
         processed = false;
     }
