@@ -77,7 +77,7 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
                 extended_pan_id[7], extended_pan_id[6], extended_pan_id[5], extended_pan_id[4],
                 extended_pan_id[3], extended_pan_id[2], extended_pan_id[1], extended_pan_id[0],
                 esp_zb_get_pan_id(), esp_zb_get_current_channel(), esp_zb_get_short_address());
-                ESP_ERROR_CHECK(deferred_driver_init());
+                ESP_LOGI(TAG, "Deferred driver init: %s", deferred_driver_init() ? "successful" : "failed");
             } else {
                 ESP_LOGI(TAG, "Network steering was not successful (status: %s)", esp_err_to_name(err_status));
                 esp_zb_scheduler_alarm((esp_zb_callback_t)bdb_start_top_level_commissioning_cb, ESP_ZB_BDB_MODE_NETWORK_STEERING, 1000);

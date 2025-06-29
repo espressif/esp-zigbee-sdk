@@ -2,10 +2,10 @@
 #include "nwk/esp_zigbee_nwk.h"
 #include "aps/esp_zigbee_aps.h"
 #include "esp_zigbee_core.h"
+#include "esp_zigbee_type.h"
 
 static bool zb_apsde_data_indication_handler(esp_zb_apsde_data_ind_t ind);
-static esp_err_t deferred_driver_init();
-
+static bool deferred_driver_init();
 void esp_zigbee_include_show_tables(void);
 
 static const char *dev_type_name[] = {
@@ -28,3 +28,12 @@ static const char *route_state_name[] = {
     [ESP_ZB_NWK_ROUTE_STATE_DISCOVERY_FAILED] = "Fail",
     [ESP_ZB_NWK_ROUTE_STATE_INACTIVE] = "Inactive",
 };
+
+typedef struct {
+    uint32_t traffic_count; //Bites recieved in last 10 seconds
+    //esp_zb_ieee_addr_t priority_node
+} esp_zb_network_traffic_report_t;
+
+void send_traffic_report(void);
+void refresh_routes(void);
+

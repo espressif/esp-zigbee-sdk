@@ -13,11 +13,42 @@
 
 static const char *TAG_include = "esp_zigbee_include";
 
+
+static switch_func_pair_t button_func_pair[] = {
+    {GPIO_INPUT_IO_TOGGLE_SWITCH, SWITCH_ONOFF_TOGGLE_CONTROL}
+};
+
+
+
 //function creating payload and sending it to the destination address
 void create_ping(uint16_t dest_addr);
 void create_ping_64bit(uint64_t dest_addr);
 void create_network_load(uint16_t dest_addr, uint8_t repetitions);
 void create_network_load_64bit(uint64_t dest_addr, uint8_t repetitions);
+
+esp_zb_apsde_data_req_t create_aps_request(uint16_t dest_addr, uint8_t dst_endpoint, uint8_t src_endpoint,
+                                           uint16_t profile_id, uint16_t cluster_id, uint8_t *asdu, uint32_t asdu_length,
+                                           uint8_t tx_options, bool use_alias, uint16_t alias_src_addr, int alias_seq_num,
+                                           uint8_t radius)
+{
+    esp_zb_apsde_data_req_t req = {
+        .dst_addr_mode = ESP_ZB_APS_ADDR_MODE_16_ENDP_PRESENT,
+        .dst_addr.addr_short = dest_addr,
+        .dst_endpoint = dst_endpoint,
+        .profile_id = profile_id,
+        .cluster_id = cluster_id,
+        .src_endpoint = src_endpoint,
+        .asdu_length = asdu_length,
+        .asdu = asdu,
+        .tx_options = tx_options,
+        .use_alias = use_alias,
+        .alias_src_addr = alias_src_addr,
+        .alias_seq_num = alias_seq_num,
+        .radius = radius
+    };
+    return req;
+}
+
 
 //wyświetla sąsiadów
 static void esp_show_neighbor_table()
@@ -56,7 +87,7 @@ static void esp_show_route_table()
         ESP_LOGI(TAG_include, "  NextHop: 0x%04hx", route.next_hop_addr);
         ESP_LOGI(TAG_include, "  Expiry: %4d", route.expiry);
         ESP_LOGI(TAG_include, "  State: %6s", route_state_name[route.flags.status]);
-        ESP_LOGI(TAG_include, "  Flags: 0x%02x", *(uint8_t *)&route.flags);
+        ESP_LOGI(TAG_include, "  Flags: %08b", *(uint8_t *)&route.flags);
         ESP_LOGI(TAG_include," ");
     }
 }
@@ -68,11 +99,6 @@ void esp_zigbee_include_show_tables(void)
     esp_show_route_table();
 }
 
-static switch_func_pair_t button_func_pair[] = {
-    {GPIO_INPUT_IO_TOGGLE_SWITCH, SWITCH_ONOFF_TOGGLE_CONTROL}
-};
-
-
 
 void esp_zb_aps_data_confirm_handler(esp_zb_apsde_data_confirm_t confirm)
 {
@@ -83,7 +109,6 @@ void esp_zb_aps_data_confirm_handler(esp_zb_apsde_data_confirm_t confirm)
                 confirm.src_endpoint, esp_zb_get_short_address(), confirm.dst_endpoint, confirm.dst_addr.addr_short,
             confirm.tx_time);
         // ESP_LOG_BUFFER_CHAR_LEVEL("APSDE CONFIRM", confirm.asdu, confirm.asdu_length, ESP_LOG_INFO);
-        
     } else {
         if(confirm.dst_addr_mode == ESP_ZB_APS_ADDR_MODE_64_ENDP_PRESENT || confirm.dst_addr_mode == ESP_ZB_APS_ADDR_MODE_64_PRESENT_ENDP_NOT_PRESENT) {
             ESP_LOGW("APSDE CONFIRM", "Failed to send APSDE-DATA request to 0x%016" PRIx64 ", error code: %d, tx time %d ms",
@@ -112,7 +137,7 @@ static bool zb_apsde_data_indication_handler(esp_zb_apsde_data_ind_t ind)
 
 void create_ping_64(uint64_t dest_addr)
 {
-    uint32_t data_length = 80;
+    uint32_t data_length = 100; // Example payload length
     esp_zb_ieee_addr_t ieee_addr;
     memcpy(ieee_addr, &dest_addr, sizeof(esp_zb_ieee_addr_t)); // Copy the 64-bit address into the ieee_addr variable
 
@@ -194,11 +219,48 @@ void button_handler(switch_func_pair_t *button_func_pair)
     }
 }
 
-static esp_err_t deferred_driver_init(void)
+static bool deferred_driver_init(void)
 {
     uint8_t button_num = PAIR_SIZE(button_func_pair);
-
     bool is_initialized = switch_driver_init(button_func_pair, button_num, button_handler);
-    return is_initialized ? ESP_OK : ESP_FAIL;
+    return is_initialized ;
 }
 
+
+void refresh_routes(void)
+{
+    esp_zb_nwk_info_iterator_t itor = ESP_ZB_NWK_INFO_ITERATOR_INIT;
+    esp_zb_nwk_route_info_t route = {};
+
+    ESP_LOGI(TAG_include, "Refreshing Zigbee Network Routes:");
+    while (ESP_OK == esp_zb_nwk_get_next_route(&itor, &route)) {
+        create_ping(route.dest_addr);
+    }
+}
+
+
+
+void send_traffic_report(void)
+{
+    esp_zb_network_traffic_report_t traffic_report = {
+        .traffic_count = 0, // Initialize traffic count
+    };
+
+    esp_zb_nwk_info_iterator_t itor = ESP_ZB_NWK_INFO_ITERATOR_INIT;
+    esp_zb_nwk_neighbor_info_t neighbor = {};
+    
+    const uint8_t traffic_report_endpoint = 70;
+
+
+    while (ESP_OK == esp_zb_nwk_get_next_neighbor(&itor, &neighbor)) {
+        if( neighbor.relationship == ESP_ZB_NWK_RELATIONSHIP_CHILD){
+            esp_zb_apsde_data_req_t req = create_aps_request(neighbor.short_addr, traffic_report_endpoint, traffic_report_endpoint, ESP_ZB_AF_HA_PROFILE_ID,
+                               ESP_ZB_ZCL_CLUSTER_ID_BASIC, (uint8_t *)&traffic_report, sizeof(esp_zb_network_traffic_report_t),
+                               0, false, 0, 0, 3);
+            esp_zb_lock_acquire(portMAX_DELAY);
+            esp_zb_aps_data_request(&req);
+            esp_zb_lock_release();
+        }
+    }
+
+}
