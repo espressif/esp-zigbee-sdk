@@ -18,11 +18,36 @@ static const char *TAG_include = "esp_zigbee_include";
 static uint32_t byte_counter = 0;
 static uint32_t byte_count = 0;
 
+esp_zb_apsde_data_req_t create_aps_request(uint16_t dest_addr, uint8_t dst_endpoint, uint8_t src_endpoint,
+                                           uint16_t profile_id, uint16_t cluster_id, uint8_t *asdu, uint32_t asdu_length,
+                                           uint8_t tx_options, bool use_alias, uint16_t alias_src_addr, int alias_seq_num,
+                                           uint8_t radius)
+{
+    esp_zb_apsde_data_req_t req = {
+        .dst_addr_mode = ESP_ZB_APS_ADDR_MODE_16_ENDP_PRESENT,
+        .dst_addr.addr_short = dest_addr,
+        .dst_endpoint = dst_endpoint,
+        .profile_id = profile_id,
+        .cluster_id = cluster_id,
+        .src_endpoint = src_endpoint,
+        .asdu_length = asdu_length,
+        .asdu = asdu,
+        .tx_options = tx_options,
+        .use_alias = use_alias,
+        .alias_src_addr = alias_src_addr,
+        .alias_seq_num = alias_seq_num,
+        .radius = radius
+    };
+    return req;
+}
+
+
 void traffic_reporter_init(){
     byte_counter = 0;
     byte_count = 0;
     while (1) {
         ESP_LOGI(TAG_include, "Byte count in last 10 seconds: %ld", byte_count);
+        ESP_LOGI(TAG_include, "Frame counter: %ld", esp_zb_nwk_get_frame_counter());
         vTaskDelay(pdMS_TO_TICKS(10000)); // Wait for 10 seconds
         byte_count = byte_counter; // Store the current byte count
         byte_counter = 0; // Reset the counter after sending the report
@@ -241,4 +266,44 @@ static bool deferred_driver_init(void)
 
     bool is_initialized = switch_driver_init(button_func_pair, button_num, button_handler);
     return is_initialized;
+}
+
+
+void send_traffic_report(void)
+{
+    esp_zb_network_traffic_report_t traffic_report = {
+        .traffic_count = 0, // Initialize traffic count
+    };
+
+    esp_zb_nwk_info_iterator_t itor = ESP_ZB_NWK_INFO_ITERATOR_INIT;
+    esp_zb_nwk_neighbor_info_t neighbor = {};
+    
+    const uint8_t traffic_report_endpoint = 70;
+
+
+    while (ESP_OK == esp_zb_nwk_get_next_neighbor(&itor, &neighbor)) {
+        if( neighbor.relationship == ESP_ZB_NWK_RELATIONSHIP_CHILD){
+            esp_zb_apsde_data_req_t req = create_aps_request(neighbor.short_addr, traffic_report_endpoint, traffic_report_endpoint, ESP_ZB_AF_HA_PROFILE_ID,
+                               ESP_ZB_ZCL_CLUSTER_ID_BASIC, (uint8_t *)&traffic_report, sizeof(esp_zb_network_traffic_report_t),
+                               0, false, 0, 0, 3);
+            esp_zb_lock_acquire(portMAX_DELAY);
+            esp_zb_aps_data_request(&req);
+            esp_zb_lock_release();
+        }
+    }
+
+}
+
+
+
+
+void refresh_routes(void)
+{
+    esp_zb_nwk_info_iterator_t itor = ESP_ZB_NWK_INFO_ITERATOR_INIT;
+    esp_zb_nwk_route_info_t route = {};
+
+    ESP_LOGI(TAG_include, "Refreshing Zigbee Network Routes:");
+    while (ESP_OK == esp_zb_nwk_get_next_route(&itor, &route)) {
+        create_ping(route.dest_addr);
+    }
 }

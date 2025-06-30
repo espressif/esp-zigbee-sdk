@@ -1,4 +1,0 @@
-dependencies:
-  espressif/esp_delta_ota:
-    version: "*"
-    override_path: "../.."
