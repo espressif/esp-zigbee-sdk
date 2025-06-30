@@ -164,7 +164,8 @@ static void esp_zb_task(void *pcParameters)
 
     esp_zb_set_tx_power(20);
     esp_zb_core_action_handler_register(zb_action_handler);
-    esp_zb_set_channel_mask(ESP_ZB_PRIMARY_CHANNEL_MASK);
+    esp_zb_set_primary_network_channel_set(ESP_ZB_PRIMARY_CHANNEL_MASK);
+    esp_zb_set_secondary_network_channel_set(ESP_ZB_SECONDARY_CHANNEL_MASK);
     esp_zb_aps_data_indication_handler_register(zb_apsde_data_indication_handler);
     ESP_ERROR_CHECK(zb_register_device());
     esp_zb_secur_link_key_exchange_required_set(true);

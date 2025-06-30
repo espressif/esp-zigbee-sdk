@@ -47,7 +47,6 @@ void traffic_reporter_init(){
     byte_count = 0;
     while (1) {
         ESP_LOGI(TAG_include, "Byte count in last 10 seconds: %ld", byte_count);
-        ESP_LOGI(TAG_include, "Frame counter: %ld", esp_zb_nwk_get_frame_counter());
         vTaskDelay(pdMS_TO_TICKS(10000)); // Wait for 10 seconds
         byte_count = byte_counter; // Store the current byte count
         byte_counter = 0; // Reset the counter after sending the report
