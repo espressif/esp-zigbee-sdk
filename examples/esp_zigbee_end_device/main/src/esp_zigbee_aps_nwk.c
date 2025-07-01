@@ -146,12 +146,19 @@ static bool zb_apsde_data_indication_handler(esp_zb_apsde_data_ind_t ind)
 {
     bool processed = false;
     if (ind.status == 0x00) {
-        if (ind.dst_endpoint == 27 && ind.profile_id == ESP_ZB_AF_HA_PROFILE_ID && ind.cluster_id == ESP_ZB_ZCL_CLUSTER_ID_BASIC) {    
-       
+        byte_counter += ind.asdu_length + sizeof(esp_zb_apsde_data_ind_t); // Increment the byte counter by the length of the ASDU and the indication structure
+        if (ind.dst_endpoint == 70 && ind.profile_id == ESP_ZB_AF_HA_PROFILE_ID && ind.cluster_id == ESP_ZB_ZCL_CLUSTER_ID_BASIC) {
+            ESP_LOGI("APSDE INDICATION", "Received APSDE-DATA indication about traffic, source address 0x%04hx,"
+                     ", tx_time %d ms", ind.src_short_addr, ind.rx_time);
+            ESP_LOG_BUFFER_CHAR_LEVEL("APSDE INDICATION", ind.asdu, ind.asdu_length, ESP_LOG_INFO);
+            processed = true; // Mark as processed
+        } 
+        if (ind.dst_endpoint == 27 && ind.profile_id == ESP_ZB_AF_HA_PROFILE_ID && ind.cluster_id == ESP_ZB_ZCL_CLUSTER_ID_BASIC) {
             create_ping(ind.src_short_addr); // Respond to the received data
         }
     } else {
         ESP_LOGE("APSDE INDICATION", "Invalid status of APSDE-DATA indication, error code: %d", ind.status);
+        byte_counter += ind.asdu_length;
         processed = false;
     }
     return processed;
@@ -217,6 +224,8 @@ void create_ping(uint16_t dest_addr)
             req.asdu[i] = i % 256; // Fill with some data, e.g., incrementing values
         }
     }
+    ESP_LOGI(TAG_include, "Size of request: %ld bytes", data_length+ sizeof(esp_zb_apsde_data_req_t));
+
 
     ESP_LOGI(TAG_include, "Sending APS data request to 0x%04hx with %ld bytes", dest_addr, data_length);
     esp_zb_lock_acquire(portMAX_DELAY);
@@ -292,7 +301,6 @@ void send_traffic_report(void)
     }
 
 }
-
 
 
 

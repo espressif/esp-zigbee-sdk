@@ -15,7 +15,6 @@
 
 static const char *TAG= "ESP_ZB_END_DEVICE";
 
-
 static void bdb_start_top_level_commissioning_cb(uint8_t mode_mask)
 {
     ESP_RETURN_ON_FALSE(esp_zb_bdb_start_top_level_commissioning(mode_mask) == ESP_OK , , TAG, "Failed to start Zigbee commissioning");
@@ -132,8 +131,15 @@ static esp_err_t zb_register_device(void)
 {
     
     esp_zb_ep_list_t *ep_list = esp_zb_ep_list_create();
-    create_test_endpoint(ep_list);
 
+    esp_zb_cluster_list_t *cluster_list = esp_zb_zcl_cluster_list_create();
+    esp_zb_attribute_list_t *basic_cluster = esp_zb_basic_cluster_create(NULL);
+
+
+    ESP_ERROR_CHECK(esp_zb_cluster_list_add_basic_cluster(cluster_list, basic_cluster, ESP_ZB_ZCL_CLUSTER_SERVER_ROLE));
+
+    create_test_endpoint(ep_list, basic_cluster, cluster_list);
+    // create_traffic_manager_endpoint(ep_list, basic_cluster, cluster_list);
     /* Register device */
     return esp_zb_device_register(ep_list);
 }
@@ -150,6 +156,7 @@ static void esp_zb_task(void *pcParameters)
     esp_zb_aps_data_confirm_handler_register(esp_zb_aps_data_confirm_handler);
     esp_zb_core_action_handler_register(zb_action_handler);
     
+
     esp_zb_set_primary_network_channel_set(ESP_ZB_PRIMARY_CHANNEL_MASK);
     ESP_ERROR_CHECK(zb_register_device());
     ESP_ERROR_CHECK(esp_zb_start(false));
