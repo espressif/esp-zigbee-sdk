@@ -162,8 +162,8 @@ static void esp_zb_task(void *pcParameters)
 {
     esp_zb_cfg_t zb_nwk_cfg = ESP_ZB_ZR_CONFIG();
     esp_zb_init(&zb_nwk_cfg);
-    // esp_zb_enable_distributed_network(false);//TODO: enable distributed network
-    // //esp_zb_nwk_set_link_status_period(1);
+
+    esp_zb_nwk_set_link_status_period(ESP_ZB_NWK_LINK_STATUS_PERIOD_DEFAULT);
     esp_zb_nvram_erase_at_start(true);
     esp_zb_set_tx_power(4);
     esp_zb_aps_data_confirm_handler_register(esp_zb_aps_data_confirm_handler);
