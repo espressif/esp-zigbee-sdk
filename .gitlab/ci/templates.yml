@@ -8,7 +8,7 @@ include:
   - bash tools/ci/update_cmake_files.sh
   - pip install -r tools/ci/requirements-build.txt
 
-.build_pytest_example_template:
+.build_pytest_template_base:
   stage: build
   before_script:
     - *common_before_scripts
@@ -25,13 +25,28 @@ include:
       - "**/build*/partition_table/*.bin"
     when: always
     expire_in: 4 days
-  parallel: 2
+  tags:
+    - build
+
+.build_pytest_template_idf_example:
+  extends:
+    - .build_pytest_template_base
   script:
+    - build_example ${CI_PROJECT_DIR}/examples/esp_zigbee_all_device_types_app esp32h2 esp32c6
+    - update_idf_cmake_list_for_master
+    - update_gateway_wifi_config ${IDF_PATH}/examples/zigbee/esp_zigbee_gateway
+    - cd ${IDF_PATH}
+    - python ${CI_PROJECT_DIR}/tools/ci/build_apps.py ./examples/zigbee
+
+.build_pytest_template_sdk_example:
+  extends:
+    - .build_pytest_template_base
+  parallel: 4
+  script:
+    - update_gateway_wifi_config ${CI_PROJECT_DIR}/examples/esp_zigbee_gateway
     - python tools/ci/build_apps.py ./examples --pytest
-  tags:
-    - build
 
-.build_pytest_gateway_template:
+.build_pytest_gateway_template_base:
   stage: build
   before_script:
     - *common_before_scripts
@@ -48,13 +63,27 @@ include:
       - "**/build*/partition_table/*.bin"
     when: always
     expire_in: 4 days
-  script:
-    - python tools/ci/build_apps.py ./examples --rcp_gateway
-    - build_rcp_gateway
   tags:
     - build
 
-.build_non_pytest_example_template:
+.build_pytest_gateway_template_sdk_example:
+  extends:
+    - .build_pytest_gateway_template_base
+  script:
+    - build_example ${CI_PROJECT_DIR}/examples/esp_zigbee_all_device_types_app esp32h2
+    # true means enable rcp update
+    - build_rcp_gateway ${CI_PROJECT_DIR}/examples/esp_zigbee_gateway true
+
+.build_pytest_gateway_template_idf_example:
+  extends:
+    - .build_pytest_gateway_template_base
+  script:
+    - build_example ${CI_PROJECT_DIR}/examples/esp_zigbee_all_device_types_app esp32h2
+    - update_idf_cmake_list_for_master
+    # false means not enable rcp update
+    - build_rcp_gateway ${IDF_PATH}/examples/zigbee/esp_zigbee_gateway false
+
+.build_non_pytest_template_sdk_example:
   stage: build
   before_script:
     - *common_before_scripts
@@ -68,7 +97,7 @@ include:
       - "**/build*/partition_table/*.bin"
     when: always
     expire_in: 4 days
-  parallel: 2
+  parallel: 4
   script:
     - python tools/ci/build_apps.py ./examples --no_pytest
       --parallel-count ${CI_NODE_TOTAL:-1}
@@ -76,7 +105,7 @@ include:
   tags:
     - build
 
-.pytest_template:
+.pytest_template_base:
   stage: target_test
   image: ${CI_DOCKER_REGISTRY}/target-test-env-${DOCKER_ENV_VERSION}
   artifacts:
@@ -84,9 +113,21 @@ include:
       - "pytest_embedded_log/"
     when: always
     expire_in: 4 days
-  script:
-    - pip install -r tools/ci/requirements-pytest.txt
-    - find examples/ -name "pytest_*.py" | xargs pytest --target ${CHIP} -m zigbee_multi_dut
   tags:
     - ${CHIP}
     - zigbee_multi_dut
+
+.pytest_template_idf_example:
+  extends:
+    - .pytest_template_base
+  script:
+    - export IDF_PATH=${CI_PROJECT_DIR}/esp-idf
+    - pip install -r tools/ci/requirements-pytest.txt
+    - find examples/ -name "pytest_*.py" | xargs pytest --target ${CHIP} -m idf_example
+
+.pytest_template_sdk_example:
+  extends:
+    - .pytest_template_base
+  script:
+    - pip install -r tools/ci/requirements-pytest.txt
+    - find examples/ -name "pytest_*.py" | xargs pytest --target ${CHIP} -m zigbee_multi_dut

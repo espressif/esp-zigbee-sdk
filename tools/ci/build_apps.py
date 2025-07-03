@@ -33,6 +33,7 @@ PYTEST_APPS = [
     {"target": "esp32c6", "name": "deep_sleep"},
     {"target": "esp32c6", "name": "touchlink_switch"},
     {"target": "esp32c6", "name": "touchlink_light"},
+    {"target": "esp32c6", "name": "esp_zigbee_gateway"},
 ]
 
 GATEWAY_APPS = [{"target": "esp32h2", "name": "esp_zigbee_all_device_types_app"}, ]
