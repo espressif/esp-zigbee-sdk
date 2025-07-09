@@ -45,6 +45,7 @@ For specific type of argument, correct format should be provided so that it can 
 - [`aps`](#aps): Zigbee Application Support management.
 - [`bdb_comm`](#bdb_comm): Perform BDB Commissioning.
 - [`channel`](#channel): Get/Set 802.15.4 channels for network
+- [`descriptors`](#descriptors): Device descriptors configuration.
 - [`dm`](#dm): Zigbee Cluster Library data model management.
 - [`factoryreset`](#factoryreset): Reset the device to factory new.
 - [`ic`](#ic): Install code configuration.
@@ -227,6 +228,24 @@ Use `-m` to indicate the channels are provided as channel mask:
 
 ```bash
 esp> channel -m 0x06ef0000
+```
+
+
+### descriptors
+Device descriptors configuration.
+
+#### `descriptors power [<u16:DESC>]`
+Get/Set node power descriptor
+
+Set the node power descriptor
+```bash
+esp> descriptors power 0x1234
+```
+
+Request the node power descriptor from a remote device
+```bash
+esp> zdo request power_desc -d 0x0000
+I (110059) : 0x4081ddcc   34 12                                             |.!|
 ```
 
 

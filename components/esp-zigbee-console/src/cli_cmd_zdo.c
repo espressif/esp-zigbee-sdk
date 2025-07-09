@@ -552,6 +552,38 @@ exit:
     return ret;
 }
 
+static esp_err_t cli_power_desc(esp_zb_cli_cmd_t *self, int argc, char **argv)
+{
+    struct {
+        arg_u16_t *power_desc;
+        arg_lit_t *help;
+        arg_end_t *end;
+    } argtable = {
+        .power_desc = arg_u16n(NULL, NULL, "<u16:DESC>", 0, 1, "Power descriptor of the device"),
+        .help = arg_lit0(NULL, "help", "Print this help message"),
+        .end = arg_end(2),
+    };
+
+    esp_err_t ret = ESP_OK;
+
+    /* Parse command line arguments */
+    int nerrors = arg_parse(argc, argv, (void**)&argtable);
+    EXIT_ON_FALSE(argtable.help->count == 0, ESP_OK, arg_print_help((void**)&argtable, argv[0]));
+    EXIT_ON_FALSE(nerrors == 0, ESP_ERR_INVALID_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
+
+
+    if (argtable.power_desc->count > 0) {
+        esp_zb_af_node_power_desc_t power_desc;
+        memcpy(&power_desc, &argtable.power_desc->val[0], sizeof(power_desc));
+        esp_zb_set_node_power_descriptor(power_desc);
+    } else {
+        EXIT_ON_ERROR(ESP_ERR_NOT_SUPPORTED, cli_output_line("Get value is not supported."));
+    }
+
+exit:
+    return ret;
+}
+
 DECLARE_ESP_ZB_CLI_CMD_WITH_SUB(zdo, "Zigbee Device Object management",
     ESP_ZB_CLI_SUBCMD(request,   cli_zdo_request,   "Request information from node"),
     ESP_ZB_CLI_SUBCMD(annce,     cli_zdo_annce,     "Announce current node"),
@@ -559,4 +591,8 @@ DECLARE_ESP_ZB_CLI_CMD_WITH_SUB(zdo, "Zigbee Device Object management",
     ESP_ZB_CLI_SUBCMD(bind,      cli_zdo_bind,      "Request the node to bind to device"),
     ESP_ZB_CLI_SUBCMD(nwk_open,  cli_zdo_nwk_open,  "Request the node to open the network"),
     ESP_ZB_CLI_SUBCMD(nwk_leave, cli_zdo_nwk_leave, "Request the node to leave the network"),
+);
+
+DECLARE_ESP_ZB_CLI_CMD_WITH_SUB(descriptors, "Configure Device descriptors",
+    ESP_ZB_CLI_SUBCMD(power,   cli_power_desc,   "Get/Set node power descriptor"),
 );
