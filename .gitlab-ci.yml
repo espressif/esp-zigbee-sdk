@@ -2,3 +2,4 @@ include:
   - '.gitlab/ci/common.yml'
   - '.gitlab/ci/generate_build_test_jobs.yml'
   - '.gitlab/ci/docs.yml'
+  - '.gitlab/ci/check_typos.yml'

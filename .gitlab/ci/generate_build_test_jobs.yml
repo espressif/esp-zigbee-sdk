@@ -1,5 +1,5 @@
 generate_child_pipeline:
-  stage: generate
+  stage: pre_build
   image: ${CI_DOCKER_REGISTRY}/esp-env-${DOCKER_ENV_FOR_GENERATE}
   artifacts:
     paths:

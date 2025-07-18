@@ -1,0 +1,14 @@
+check_typos:
+  image: ${CI_DOCKER_REGISTRY}/esp-env-${DOCKER_ENV_FOR_GENERATE}
+  stage: pre_build
+  script:
+    - pip install codespell
+    - git fetch origin main
+    - |
+      FILES=$(git diff --name-only origin/main...HEAD)
+      echo "change files: $FILES"
+      if [ -n "$FILES" ]; then
+        ./tools/check_typos.sh $FILES
+      fi
+  tags:
+    - build
