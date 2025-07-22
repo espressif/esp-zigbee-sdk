@@ -109,7 +109,7 @@ static void cli_zdo_ieee_addr_cb(esp_zb_zdp_status_t zdo_status, esp_zb_zdo_ieee
     free(req);
 }
 
-static void cli_output_neigbor_table(const esp_zb_zdo_mgmt_lqi_rsp_t *table_info)
+static void cli_output_neighbor_table(const esp_zb_zdo_mgmt_lqi_rsp_t *table_info)
 {
     static const char *titles[] = {"Index", "ExtPanID", "NwkAddr", "MacAddr", "Type", "Rel", "Depth", "LQI"};
     static const uint8_t widths[] = {5, 20, 8, 20, 5, 3, 5, 5};
@@ -143,7 +143,7 @@ static void cli_output_neigbor_table(const esp_zb_zdo_mgmt_lqi_rsp_t *table_info
     }
 }
 
-static void cli_zdo_neigbor_table_cb(const esp_zb_zdo_mgmt_lqi_rsp_t *table_info, void *user_ctx)
+static void cli_zdo_neighbor_table_cb(const esp_zb_zdo_mgmt_lqi_rsp_t *table_info, void *user_ctx)
 {
     static const char *request_name = "neighbors";
     bool done = true;
@@ -151,12 +151,12 @@ static void cli_zdo_neigbor_table_cb(const esp_zb_zdo_mgmt_lqi_rsp_t *table_info
     esp_zb_zdp_status_t zdo_status = table_info->status;
     cli_output_request_status(request_name, req->dst_addr, zdo_status);
     if (zdo_status == ESP_ZB_ZDP_STATUS_SUCCESS) {
-        cli_output_neigbor_table(table_info);
+        cli_output_neighbor_table(table_info);
 
         if (table_info->start_index + table_info->neighbor_table_list_count < table_info->neighbor_table_entries) {
             /* There are unreported neighbor table entries, request for them. */
             req->start_index = table_info->start_index + table_info->neighbor_table_list_count;
-            esp_zb_zdo_mgmt_lqi_req(req, cli_zdo_neigbor_table_cb, req);
+            esp_zb_zdo_mgmt_lqi_req(req, cli_zdo_neighbor_table_cb, req);
             done = false;
         }
     }
@@ -284,7 +284,7 @@ static esp_err_t cli_zdo_request(esp_zb_cli_cmd_t *self, int argc, char **argv)
         esp_zb_zdo_mgmt_lqi_req_param_t *ml_req = malloc(sizeof(esp_zb_zdo_mgmt_lqi_req_param_t));
         ml_req->dst_addr = argtable.address->addr[0].u.short_addr;
         ml_req->start_index = 0;
-        esp_zb_zdo_mgmt_lqi_req(ml_req, cli_zdo_neigbor_table_cb, ml_req);
+        esp_zb_zdo_mgmt_lqi_req(ml_req, cli_zdo_neighbor_table_cb, ml_req);
     } else if (!strcmp(argtable.request->sval[0], "routes")) {
         ret = ESP_ERR_NOT_SUPPORTED;
     } else if (!strcmp(argtable.request->sval[0], "bindings")) {

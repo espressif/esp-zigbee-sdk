@@ -279,7 +279,7 @@
 - Updated esp-zboss-lib to v1.3.0
 - Updated esp-zigbee-lib to v1.3.0
 - Supported ZCL commissioning cluster
-- Supported devive sleep before join network
+- Supported device sleep before join network
 - Supported the parameter of pointer type for scheduler_alarm
 - Supported event fd setting in application
 
@@ -669,7 +669,7 @@
 
 ### Features
 - Update esp-zboss-lib to v0.7.0
-- Add zigbee discover attribtues support
+- Add zigbee discover attributes support
 
 ### Bug Fixes
 - Closes: https://github.com/espressif/esp-zigbee-sdk/issues/91

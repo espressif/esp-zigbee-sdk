@@ -129,7 +129,7 @@ void esp_zb_zdo_find_on_off_light(esp_zb_zdo_match_desc_req_param_t *cmd_req, es
  * @param[in] user_ctx A void pointer that contains the user defines additional information when callback trigger
  * @return
  *          - ESP_OK: Success in send match desc request
- *          - ESP_ERR_NO_MEM: Failed to allocate the memory for the reqeust
+ *          - ESP_ERR_NO_MEM: Failed to allocate the memory for the request
  *          - ESP_ERR_INVALID_SIZE: The size of cluster list is wrong in @p param
  */
 esp_err_t esp_zb_zdo_match_cluster(esp_zb_zdo_match_desc_req_param_t *param, esp_zb_zdo_match_desc_callback_t user_cb,

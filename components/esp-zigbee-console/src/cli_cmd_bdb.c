@@ -610,7 +610,7 @@ static esp_err_t cli_ic_policy(esp_zb_cli_cmd_t *self, int argc, char **argv)
             EXIT_ON_ERROR(esp_zb_secur_ic_only_enable(true));
             break;
         default:
-            EXIT_NOW(ret = ESP_ERR_INVALID_ARG; cli_output("Unknow policy value: %d\n", argtable.ic_policy->ival[0]));
+            EXIT_NOW(ret = ESP_ERR_INVALID_ARG; cli_output("Unknown policy value: %d\n", argtable.ic_policy->ival[0]));
             break;
     }
 
@@ -1001,7 +1001,7 @@ static esp_err_t cli_tl_keymask(esp_zb_cli_cmd_t *self, int argc, char **argv)
     } argtable = {
         .keymask = arg_u16n(NULL, NULL,   "<u16:mask>", 1, 1, "Touchlink key mask\n"
                                                               "1 << 4  - master key\n"
-                                                              "1 << 15 - cetification key\n"),
+                                                              "1 << 15 - certification key\n"),
         .help    = arg_lit0(NULL, "help", "Print this help message"),
         .end = arg_end(2),
     };

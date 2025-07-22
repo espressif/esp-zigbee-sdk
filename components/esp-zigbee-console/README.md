@@ -25,7 +25,7 @@ esp> zdo match
 Usage: zdo match [-i <u16:CID>]... [-o <u16:CID>]... [-p <u16:PID>] -d <addr:ADDR>
   -i, --in=<u16:CID>        in cluster ID
   -o, --out=<u16:CID>       out cluster ID
-  -p, --profile=<u16:PID>   profile id (PID) to match, defaule: HA
+  -p, --profile=<u16:PID>   profile id (PID) to match, default: HA
   -d, --dst-addr=<addr:ADDR> network address this request is to
 ```
 
@@ -36,7 +36,7 @@ For specific type of argument, correct format should be provided so that it can 
 - `u8`: HEX or NUMBER allowed, in range 0 - 0xFF.
 - `u16`: HEX or NUMBER allowed, in range 0 - 0xFFFF.
 - `u32`: HEX or NUMBER allowed, in range 0 - 0xFFFFFFFF.
-- `eui64`: IEEE address in HEX format, MUST be extactly 64-bit data.
+- `eui64`: IEEE address in HEX format, MUST be exactly 64-bit data.
 - `addr`: Equivalent to `u16|eui64`, short address or IEEE address determined by the data length.
 
 ## ESP-Zigbee-Console Command List
@@ -806,12 +806,12 @@ Enable master key
 tl keymask 0x10
 ```
 
-Enable cetification key
+Enable certification key
 ```bash
 tl keymask 0x8000
 ```
 
-Enable both master key and cetification key
+Enable both master key and certification key
 ```bash
 tl keymask 0x8010
 ```

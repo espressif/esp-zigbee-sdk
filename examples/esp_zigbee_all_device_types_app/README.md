@@ -156,7 +156,7 @@ esp> zdo match
 Usage: zdo match [-i <u16:CID>]... [-o <u16:CID>]... [-p <u16:PID>] -d <hex:ADDR>
   -i, --in=<u16:CID>        in cluster ID
   -o, --out=<u16:CID>       out cluster ID
-  -p, --profile=<u16:PID>   profile id (PID) to match, defaule: HA
+  -p, --profile=<u16:PID>   profile id (PID) to match, default: HA
   -d, --dst-addr=<hex:ADDR> network address this request is to
 ```
 

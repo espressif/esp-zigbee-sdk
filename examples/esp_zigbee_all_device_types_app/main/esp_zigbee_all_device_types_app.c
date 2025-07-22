@@ -119,7 +119,7 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
 
 void zb_stack_init(void)
 {
-    /* Initialize Zigbee stack with default configuraion */
+    /* Initialize Zigbee stack with default configuration */
     esp_zb_cfg_t zb_nwk_cfg = ESP_ZB_ZR_CONFIG();
     esp_zb_init(&zb_nwk_cfg);
 
@@ -140,7 +140,7 @@ static void zb_stack_main_task(void *pvParameters)
 
     /* Do not call `esp_zb_start()`.
      *
-     * We want the timing of starting the stack to be mananged by CLI,
+     * We want the timing of starting the stack to be managed by CLI,
      * so that we have a chance to do configurations on the stack.
      *
      */

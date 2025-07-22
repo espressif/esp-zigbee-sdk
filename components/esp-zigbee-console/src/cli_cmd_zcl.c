@@ -92,7 +92,7 @@ static esp_err_t zcl_read_report_cfg_resp_handler(const esp_zb_zcl_cmd_read_repo
         ESP_LOGI(TAG, "- attribute(0x%04x), status(0x%x)", variables->attribute_id, variables->status);
         if (variables->status == ESP_ZB_ZCL_STATUS_SUCCESS) {
             if (variables->report_direction == ESP_ZB_ZCL_REPORT_DIRECTION_SEND) {
-                /* TODO: support printing varible length of delta */
+                /* TODO: support printing variable length of delta */
                 ESP_LOGI(TAG, "  min(%d), max(%d), delta(%d)", variables->client.min_interval, variables->client.max_interval, variables->client.delta[0]);
             } else {
                 ESP_LOGI(TAG, "  timeout(%d)", variables->server.timeout);
@@ -745,7 +745,7 @@ static esp_err_t cli_zcl_attr_cmd(esp_zb_cli_cmd_t *self, int argc, char **argv)
             struct {
                 uint8_t manuf_specific   : 2;
                 uint8_t direction        : 1;
-                uint8_t dis_defalut_resp : 1;
+                uint8_t dis_default_resp : 1;
             };
             uint16_t manuf_code;
         };
@@ -922,7 +922,7 @@ static esp_err_t cli_zcl_send_raw(esp_zb_cli_cmd_t *self, int argc, char **argv)
     if (argtable.payload->count > 0) {
         req_params.data.value = argtable.payload->hval[0];
         req_params.data.size = argtable.payload->hsize[0];
-        req_params.data.type = ESP_ZB_ZCL_ATTR_TYPE_SET; /* A workarround to send arbitrary data */
+        req_params.data.type = ESP_ZB_ZCL_ATTR_TYPE_SET; /* A workaround to send arbitrary data */
     }
 
     /* DO NOT need a check, this option is mandatory */

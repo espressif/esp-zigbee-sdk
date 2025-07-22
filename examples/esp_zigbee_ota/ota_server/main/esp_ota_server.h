@@ -55,10 +55,10 @@ extern const uint8_t ota_file_end[]   asm("_binary_ota_file_bin_end");          
         .host_connection_mode = ZB_HOST_CONNECTION_MODE_NONE,               \
     }
 
-#define ZB_OTA_FILE_HEADER_OPTIONAL(fileds, key, offset)                    \
+#define ZB_OTA_FILE_HEADER_OPTIONAL(fields, key, offset)                    \
 {                                                                           \
-    memcpy(&fileds.key, image_info, sizeof(fileds.key));                    \
-    offset += sizeof(fileds.key);                                           \
+    memcpy(&fields.key, image_info, sizeof(fields.key));                    \
+    offset += sizeof(fields.key);                                           \
 }
 
 #define OTA_UPGRADE_FILE_MAGIC_VALUE    0x0BEEF11E

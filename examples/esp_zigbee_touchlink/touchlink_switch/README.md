@@ -26,7 +26,7 @@ Build the project, flash it to the board, and start the monitor tool to view the
 
 ## Application Functions
 
-- When the program starts,tThe board, acting as the `Touchlink initiator`, will have the capability to scan nearby `Touchlink targets`.
+- When the program starts,the board, acting as the `Touchlink initiator`, will have the capability to scan nearby `Touchlink targets`.
 ```
 I (357) main_task: Started on CPU0
 I (367) main_task: Calling app_main()

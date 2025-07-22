@@ -129,7 +129,7 @@ esp_err_t esp_zb_ping_iperf_test_cluster_ping_req(const esp_zb_ping_req_info_t *
         .address_mode     = ESP_ZB_APS_ADDR_MODE_16_ENDP_PRESENT,
         .profile_id       = ESP_ZB_AF_HA_PROFILE_ID,
         .cluster_id       = ESP_ZB_ZCL_CLUSTER_ID_PING_IPERF_TEST,
-        .dis_defalut_resp = 1,
+        .dis_default_resp = 1,
         .custom_cmd_id    = ESP_ZB_ZCL_CMD_PING_IPERF_TEST_ECHO,
         .direction        = ESP_ZB_ZCL_CMD_DIRECTION_TO_SRV,
     };
@@ -172,7 +172,7 @@ static esp_err_t zb_ping_iperf_test_cluster_ping_test_request_handler(const esp_
     resp.cluster_id = ESP_ZB_ZCL_CLUSTER_ID_PING_IPERF_TEST;
     resp.direction = 1 - message->info.command.direction;
     resp.custom_cmd_id = ESP_ZB_ZCL_CMD_PING_IPERF_TEST_ECHO;
-    resp.dis_defalut_resp = 1;
+    resp.dis_default_resp = 1;
     resp.data.type = ESP_ZB_ZCL_ATTR_TYPE_SET;
     resp.data.size = message->data.size;
     resp.data.value = message->data.value;
@@ -331,7 +331,7 @@ static esp_err_t iperf_message_set(const esp_zb_iperf_req_info_t *info)
     iperf_ctx.message_to_iperf->profile_id = ESP_ZB_AF_HA_PROFILE_ID;
     iperf_ctx.message_to_iperf->cluster_id = ESP_ZB_ZCL_CLUSTER_ID_PING_IPERF_TEST;
     iperf_ctx.message_to_iperf->direction = info->direction;
-    iperf_ctx.message_to_iperf->dis_defalut_resp = 1;
+    iperf_ctx.message_to_iperf->dis_default_resp = 1;
 
     esp_zb_zcl_attr_t *attr = zb_ping_iperf_get_iperf_attribute_val(info->src_endpoint,
                                                                     ESP_ZB_ZCL_CLUSTER_CLIENT_ROLE,
