@@ -1,5 +1,26 @@
 # Espressif Zigbee SDK Release Notes
 
+## 25-Jul-2025
+1.6.6 version release of ESP-ZIGBEE-SDK is based on esp-idf v5.3.2
+
+### Features
+- Added support for ZCL Poll Control Cluster
+- Added support for ZCL Binary Output Cluster
+- Added support for ZCL Binary Value Cluster
+- Added support for ZCL Multistate Input Cluster
+- Added support for ZCL Multistate Output Cluster
+- Added test-specific API support for Zigbee platform certification
+- Added `esp_zb_aps_set_fragment_max_window_size()` and `esp_zb_aps_get_fragment_max_window_size()` to configure APS fragment maximum window size
+- Added `esp_zb_aps_set_fragment_interframe_delay()` and `esp_zb_aps_get_fragment_interframe_delay()` to configure APS fragment interframe delay
+- Added `esp_zb_mac_set_transaction_persistence_time()` and `esp_zb_mac_get_transaction_persistence_time()` to configure MAC transaction persistence time
+- Added `esp_zb_set_node_descriptor_transfer_size()` to set the node descriptor transfer size
+- Added `esp_zb_zdo_mgmt_nwk_update_req()` to request a network update for the destination device
+
+### Changes
+- Updated esp-zigbee-lib to v1.6.6
+- Fixed typos in the SDK
+
+
 ## 21-May-2025
 1.6.5 version release of ESP-ZIGBEE-SDK is based on esp-idf v5.3.2
 
