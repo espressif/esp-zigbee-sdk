@@ -99,7 +99,7 @@ typedef struct esp_zb_app_signal_s {
 /**
  * @brief Set the maximum number of devices in a Zigbee network
  *
- * @note The function will only take effect when called before esp_zb_init(), it determins
+ * @note The function will only take effect when called before esp_zb_init(), it determines
  *       several table size such as the neighbor table and routing table, 64 by default
  * @param[in] size The overall network size is expected to be set
  * @return
@@ -627,6 +627,19 @@ void esp_zb_set_node_descriptor_manufacturer_code(uint16_t manufacturer_code);
  * @param[in] is_main_power  Indicates whether the current power source is mains power (true) or not (false).
  */
 void esp_zb_set_node_descriptor_power_source(bool is_main_power);
+
+/**
+ * @brief Set the maximum incoming transfer size and maximum outgoing transfer size for the Zigbee node descriptor
+ *
+ * @param[in] max_incoming_size The APS Service Data Unit (ASDU) that can be transferred to this node in one
+ * single message transfer
+ * @param[in] max_outgoing_size The APS Service Data Unit (ASDU) that can be transferred from this node in one
+ * single message transfer
+ * @return
+ *      - ESP_OK: on success
+ *      - ESP_ERR_INVALID_ARG @p max_incoming_size or @p max_outgoing_size is out of valid range
+ */
+esp_err_t esp_zb_set_node_descriptor_transfer_size(uint16_t max_incoming_size, uint16_t max_outgoing_size);
 
 /**
  * @brief Set the node power descriptor

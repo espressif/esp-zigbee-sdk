@@ -264,7 +264,7 @@ typedef struct esp_zb_zcl_cvc_alarm_variables_s {
 esp_zb_zcl_cvc_alarm_variables_t;
 
 /**
-* @brief Struture of Node descriptor request of ZDO response
+* @brief Structure of Node descriptor request of ZDO response
 */
 typedef struct esp_zb_af_node_desc_s {
     uint16_t          node_desc_flags;            /*!< node description */
@@ -310,7 +310,7 @@ typedef enum {
 } esp_zb_af_node_power_source_level_t;
 
 /**
- * @brief Struture of Node Power descriptor request of ZDO response
+ * @brief Structure of Node Power descriptor request of ZDO response
  *
  * Field Name:                 Length (bits):
  * Current power mode:            4
@@ -510,6 +510,26 @@ typedef struct esp_zb_binary_input_cluster_cfg_s {
 } esp_zb_binary_input_cluster_cfg_t;
 
 /**
+ * @brief Zigbee standard mandatory attribute for binary output (basic) cluster.
+ *
+ */
+typedef struct esp_zb_binary_output_cluster_cfg_s {
+    bool  out_of_service;                              /*!< Out of Service */
+    uint8_t  status_flags;                             /*!< Status flags */
+    bool present_value;                                /*!< Present value */
+} esp_zb_binary_output_cluster_cfg_t;
+
+/**
+ * @brief Zigbee standard mandatory attribute for binary value (basic) cluster
+ *
+ */
+typedef struct esp_zb_binary_value_cluster_cfg_s {
+    bool  out_of_service;                              /*!< Out of Service */
+    uint8_t  status_flags;                             /*!< Status flags */
+    bool present_value;                                /*!< Present value */
+} esp_zb_binary_value_cluster_cfg_t;
+
+/**
  * @brief Zigbee default attribute for Commissioning cluster.
  *
  */
@@ -656,7 +676,7 @@ typedef struct esp_zb_flow_meas_cluster_cfg_s {
  *
  */
 typedef struct esp_zb_electrical_meas_cluster_cfg_s {
-    uint32_t measured_type;                     /*!<  This attribute indicates a device’s measurement type */
+    uint32_t measured_type;                     /*!<  This attribute indicates a device's measurement type */
 } esp_zb_electrical_meas_cluster_cfg_t;
 
 /**
@@ -705,7 +725,7 @@ typedef struct esp_zb_fan_control_cluster_cfg_s {
  *
  */
 typedef struct esp_zb_thermostat_ui_config_cluster_cfg_s {
-    uint8_t temperature_display_mode; /*!< This attribute specifies the units of the temperature displayed on the thermostat sceen */
+    uint8_t temperature_display_mode; /*!< This attribute specifies the units of the temperature displayed on the thermostat screen */
     uint8_t keypad_lockout;           /*!< This attribute specifies the level of functionality that is available to the user via the keypad */
 } esp_zb_thermostat_ui_config_cluster_cfg_t;
 
@@ -716,7 +736,7 @@ typedef struct esp_zb_thermostat_ui_config_cluster_cfg_s {
 typedef struct esp_zb_analog_input_cluster_cfg_s {
     bool out_of_service;   /*!< This attribute indicates whether or not the physical input that the cluster represents is in service */
     float_t present_value; /*!< This attribute indicates the current value of the input as appropriate for the cluster */
-    uint8_t status_flags;  /*!< This attribute indicates the general “health” of the analog sensor */
+    uint8_t status_flags;  /*!< This attribute indicates the general "health" of the analog sensor */
 } esp_zb_analog_input_cluster_cfg_t;
 
 /**
@@ -726,7 +746,7 @@ typedef struct esp_zb_analog_input_cluster_cfg_s {
 typedef struct esp_zb_analog_output_cluster_cfg_s {
     bool out_of_service;   /*!< This attribute indicates whether or not the physical output that the cluster represents is in service */
     float_t present_value; /*!< This attribute indicates the current value of the output as appropriate for the cluster */
-    uint8_t status_flags;  /*!< This attribute indicates the general “health” of the analog sensor */
+    uint8_t status_flags;  /*!< This attribute indicates the general "health" of the analog sensor */
 } esp_zb_analog_output_cluster_cfg_t;
 
 /**
@@ -736,7 +756,7 @@ typedef struct esp_zb_analog_output_cluster_cfg_s {
 typedef struct esp_zb_analog_value_cluster_cfg_s {
     bool out_of_service;   /*!< This attribute indicates whether or not the physical value that the cluster represents is in service */
     float_t present_value; /*!< This attribute indicates the current value as appropriate for the cluster */
-    uint8_t status_flags;  /*!< This attribute indicates the general “health” of the analog sensor */
+    uint8_t status_flags;  /*!< This attribute indicates the general "health" of the analog sensor */
 } esp_zb_analog_value_cluster_cfg_t;
 
 /**
@@ -793,11 +813,33 @@ typedef struct esp_zb_pm2_5_measurement_cluster_cfg_s {
  * @brief Zigbee standard mandatory attribute for multistate value cluster
  *
  */
+typedef struct esp_zb_multistate_input_cluster_cfg_s {
+    uint16_t number_of_states;  /*!< This attribute defines the number of states that a multistate PresentValue MAY have */
+    bool out_of_service;        /*!< This attribute indicates whether or not the physical input that the cluster represents is in service */
+    float_t present_value;      /*!< This attribute indicates the current value of the input as appropriate for the cluster */
+    uint8_t status_flags;       /*!< This attribute indicates the general "health" of the analog sensor */
+} esp_zb_multistate_input_cluster_cfg_t;
+
+/**
+ * @brief Zigbee standard mandatory attribute for multistate value cluster
+ *
+ */
+typedef struct esp_zb_multistate_output_cluster_cfg_s {
+    uint16_t number_of_states;  /*!< This attribute defines the number of states that a multistate PresentValue MAY have */
+    bool out_of_service;        /*!< This attribute indicates whether or not the physical input that the cluster represents is in service */
+    float_t present_value;      /*!< This attribute indicates the current value of the input as appropriate for the cluster */
+    uint8_t status_flags;       /*!< This attribute indicates the general "health" of the analog sensor */
+} esp_zb_multistate_output_cluster_cfg_t;
+
+/**
+ * @brief Zigbee standard mandatory attribute for multistate value cluster
+ *
+ */
 typedef struct esp_zb_multistate_value_cluster_cfg_s {
     uint16_t number_of_states; /*!< This attribute defines the number of states that a multistate PresentValue MAY have */
     bool out_of_service;       /*!< This attribute indicates whether or not the physical value that the cluster represents is in service */
     uint16_t present_value;    /*!< This attribute indicates the current value as appropriate for the cluster */
-    uint8_t status_flags;      /*!< This attribute indicates the general “health” of the analog sensor */
+    uint8_t status_flags;      /*!< This attribute indicates the general "health" of the analog sensor */
 } esp_zb_multistate_value_cluster_cfg_t;
 
 /**
@@ -870,6 +912,20 @@ typedef struct esp_zb_dehumidification_control_cluster_cfg_s {
 typedef struct esp_zb_touchlink_commissioning_cfg_s {
     /* no member */
 } esp_zb_touchlink_commissioning_cfg_t;
+
+/**
+ * @brief Zigbee standard mandatory and server optional attributes for poll control cluster
+ *
+ */
+typedef struct esp_zb_poll_control_cluster_cfg_s {
+    uint32_t check_in_interval;     /*!< This attribute represents the default amount of time between check-ins by the poll control server with the poll control client. */
+    uint32_t long_poll_interval;    /*!< This attribute defines the frequency of polling that an end device does when it is NOT in fast poll mode. */
+    uint16_t short_poll_interval;   /*!< This attribute represents the number of quarter-seconds that an end device waits between MAC Data Requests to its parent when it is expecting data */
+    uint16_t fast_poll_timeout;     /*!< This attribute represents the number of quarter-seconds that an end device will stay in fast poll mode by default. */
+    uint32_t check_in_interval_min; /*!< The Poll Control Server MAY optionally provide its own minimum value for the Check-inInterval */
+    uint32_t long_poll_interval_min;/*!< The Poll Control Server MAY optionally provide its own minimum value for the LongPollInterval */
+    uint16_t fast_poll_timeout_max; /*!< The Poll Control Server MAY optionally provide its own maximum value for the FastPollTimeout*/
+} esp_zb_poll_control_cluster_cfg_t;
 
 /****************** standard device config *********************/
 /**

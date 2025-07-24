@@ -18,7 +18,7 @@ typedef enum {
     ESP_ZB_ZCL_ATTR_ILLUMINANCE_MEASUREMENT_MIN_MEASURED_VALUE_ID   = 0x0001,  /*!< MinMeasuredValue Attribute */
     ESP_ZB_ZCL_ATTR_ILLUMINANCE_MEASUREMENT_MAX_MEASURED_VALUE_ID   = 0x0002,  /*!< MaxMeasuredValue Attribute */
     ESP_ZB_ZCL_ATTR_ILLUMINANCE_MEASUREMENT_TOLERANCE_ID            = 0x0003,  /*!< The Tolerance attribute SHALL indicate the magnitude of the possible error that is associated with MeasuredValue, using the same units and resolution.*/
-    ESP_ZB_ZCL_ATTR_ILLUMINANCE_MEASUREMENT_LIGHT_SENSOR_TYPE_ID    = 0x0004   /*!< The LightSensorType attribute specifies the electronic type ofthe light sensor. */
+    ESP_ZB_ZCL_ATTR_ILLUMINANCE_MEASUREMENT_LIGHT_SENSOR_TYPE_ID    = 0x0004   /*!< The LightSensorType attribute specifies the electronic type of the light sensor. */
 } esp_zb_zcl_illuminance_measurement_attr_t;
 
 /** @brief Default value for Illuminance Measurement cluster revision global attribute */

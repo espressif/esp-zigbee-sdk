@@ -54,7 +54,7 @@ typedef enum {
 #define ESP_ZB_NWK_MAX_SOURCE_ROUTE 5
 
 /**
- * @brief Iterator used to iterate through the tables of network informations.
+ * @brief Iterator used to iterate through the tables of network information.
  *
  */
 typedef uint16_t esp_zb_nwk_info_iterator_t;
@@ -330,7 +330,7 @@ esp_zb_nwk_device_type_t esp_zb_get_network_device_role(void);
  *
  * @return - ESP_OK on success
  *         - ESP_ERR_NOT_FOUND on finish iteration
- *         - ESP_ERR_INVALID_ARG if arguements are invalid
+ *         - ESP_ERR_INVALID_ARG if arguments are invalid
  *
  */
 esp_err_t esp_zb_nwk_get_next_neighbor(esp_zb_nwk_info_iterator_t *iterator, esp_zb_nwk_neighbor_info_t *nbr_info);
@@ -343,7 +343,7 @@ esp_err_t esp_zb_nwk_get_next_neighbor(esp_zb_nwk_info_iterator_t *iterator, esp
  *
  * @return - ESP_OK on success
  *         - ESP_ERR_NOT_FOUND on finish iteration
- *         - ESP_ERR_INVALID_ARG if arguements are invalid
+ *         - ESP_ERR_INVALID_ARG if arguments are invalid
  *
  */
 esp_err_t esp_zb_nwk_get_next_route(esp_zb_nwk_info_iterator_t *iterator, esp_zb_nwk_route_info_t *route_info);
@@ -356,7 +356,7 @@ esp_err_t esp_zb_nwk_get_next_route(esp_zb_nwk_info_iterator_t *iterator, esp_zb
  *
  * @return - ESP_OK on success
  *         - ESP_ERR_NOT_FOUND on finish iteration
- *         - ESP_ERR_INVALID_ARG if arguements are invalid
+ *         - ESP_ERR_INVALID_ARG if arguments are invalid
  *
  */
 esp_err_t esp_zb_nwk_get_next_route_record(esp_zb_nwk_info_iterator_t *iterator, esp_zb_nwk_route_record_info_t *route_record_info);

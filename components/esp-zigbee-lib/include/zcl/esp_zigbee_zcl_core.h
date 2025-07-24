@@ -53,6 +53,11 @@
 #include "esp_zigbee_zcl_wind_speed_measurement.h"
 #include "esp_zigbee_zcl_drlc.h"
 #include "esp_zigbee_zcl_dehumidification_control.h"
+#include "esp_zigbee_zcl_binary_output.h"
+#include "esp_zigbee_zcl_binary_value.h"
+#include "esp_zigbee_zcl_multistate_input.h"
+#include "esp_zigbee_zcl_multistate_output.h"
+#include "esp_zigbee_zcl_poll_control.h"
 #include "esp_zigbee_zcl_command.h"
 
 #ifdef __cplusplus
@@ -134,11 +139,12 @@ extern "C" {
     ESP_ZB_CORE_WINDOW_COVERING_MOVEMENT_CB_ID          = 0x0030,   /*!< Window covering movement command, refer to esp_zb_zcl_window_covering_movement_message_t */
     ESP_ZB_CORE_OTA_UPGRADE_QUERY_IMAGE_RESP_CB_ID      = 0x0031,   /*!< OTA upgrade query image response message, refer to esp_zb_zcl_ota_upgrade_query_image_resp_message_t */
     ESP_ZB_CORE_THERMOSTAT_WEEKLY_SCHEDULE_SET_CB_ID    = 0x0032,   /*!< Thermostat weekly schedule stable set, refer to esp_zb_zcl_thermostat_weekly_schedule_set_message_t */
-    ESP_ZB_CORE_DRLC_LOAD_CONTORL_EVENT_CB_ID           = 0x0040,   /*!< Demand response and load control cluster LoadControlEvent message, refer to esp_zb_zcl_drlc_load_control_event_message_t */
+    ESP_ZB_CORE_DRLC_LOAD_CONTROL_EVENT_CB_ID           = 0x0040,   /*!< Demand response and load control cluster LoadControlEvent message, refer to esp_zb_zcl_drlc_load_control_event_message_t */
     ESP_ZB_CORE_DRLC_CANCEL_LOAD_CONTROL_EVENT_CB_ID    = 0x0041,   /*!< Demand response and load control cluster CancelLoadControlEvent message, refer to esp_zb_zcl_drlc_cancel_load_control_event_message_t */
     ESP_ZB_CORE_DRLC_CANCEL_ALL_LOAD_CONTROL_EVENTS_CB_ID = 0x0042, /*!< Demand response and load control cluster CancelAllLoadControlEvents message, refer to esp_zb_zcl_drlc_cancel_all_load_control_events_message_t */
     ESP_ZB_CORE_DRLC_REPORT_EVENT_STATUS_CB_ID          = 0x0043,   /*!< Demand response and load control cluster ReportEventStatus message, refer to esp_zb_zcl_drlc_report_event_status_message_t */
     ESP_ZB_CORE_DRLC_GET_SCHEDULED_EVENTS_CB_ID         = 0x0044,   /*!< Demand response and load control cluster GetScheduledEvents message, refer to esp_zb_zcl_drlc_get_scheduled_events_message_t */
+    ESP_ZB_CORE_POLL_CONTROL_CHECK_IN_REQ_CB_ID         = 0x0045,   /*!< Poll control cluster CheckInRequest message, refer to esp_zb_zcl_poll_control_check_in_req_message_t */
     ESP_ZB_CORE_CMD_READ_ATTR_RESP_CB_ID                = 0x1000,   /*!< Read attribute response, refer to esp_zb_zcl_cmd_read_attr_resp_message_t */
     ESP_ZB_CORE_CMD_WRITE_ATTR_RESP_CB_ID               = 0x1001,   /*!< Write attribute response, refer to esp_zb_zcl_cmd_write_attr_resp_message_t */
     ESP_ZB_CORE_CMD_REPORT_CONFIG_RESP_CB_ID            = 0x1002,   /*!< Configure report response, refer to esp_zb_zcl_cmd_config_report_resp_message_t */
@@ -190,7 +196,7 @@ typedef bool (*esp_zb_zcl_raw_command_callback_t)(uint8_t bufid);
  *
  */
 typedef void (*esp_zb_identify_notify_callback_t)(uint8_t identify_on);
- 
+
 /**
  * @brief ZCL reset default attribute callback
  *
@@ -228,7 +234,7 @@ typedef void *(*esp_zb_zcl_reset_default_attr_callback_t)(uint8_t endpoint, uint
  *
  */
 void esp_zb_device_cb_id_handler_register(esp_zb_zcl_device_cb_id_callback_t cb);
- 
+
 /**
  * @brief Register the raw Zigbee command handler
  *
@@ -243,7 +249,7 @@ void esp_zb_raw_command_handler_register(esp_zb_zcl_raw_command_callback_t cb);
  * @param[in] cb The ZCL command send status callback, refer to esp_zb_zcl_command_send_status_callback_t
  */
 void esp_zb_zcl_command_send_status_handler_register(esp_zb_zcl_command_send_status_callback_t cb);
- 
+
 /**
  * @brief   Set the ZCL identify notify callback for specific endpoint.
  *
@@ -254,7 +260,7 @@ void esp_zb_zcl_command_send_status_handler_register(esp_zb_zcl_command_send_sta
  *
  */
 void esp_zb_identify_notify_handler_register(uint8_t endpoint, esp_zb_identify_notify_callback_t cb);
- 
+
 /**
  * @brief Add a callback and the privilege command the Zigbee cluster in endpoint.
  *
@@ -269,7 +275,7 @@ void esp_zb_identify_notify_handler_register(uint8_t endpoint, esp_zb_identify_n
  *      - ESP_FAIL: on failure
  */
 esp_err_t esp_zb_zcl_add_privilege_command(uint8_t endpoint, uint16_t cluster, uint16_t command);
- 
+
 /**
  * @brief Delete the privilege command from the @p cluster of @p endpoint
  *
@@ -308,7 +314,7 @@ esp_err_t esp_zb_zcl_reset_all_endpoints_to_factory_default(bool reset_report, e
  *      - ESP_FAIL: on failed
  */
 esp_err_t esp_zb_zcl_reset_endpoint_to_factory_default(uint8_t endpoint, bool reset_report, esp_zb_zcl_reset_default_attr_callback_t cb);
- 
+
 /**
  * @brief Reset the NVRAM and ZCL data to factory default
  *

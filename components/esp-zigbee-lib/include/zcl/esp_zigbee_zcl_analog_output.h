@@ -120,7 +120,7 @@ typedef enum {
 typedef enum {
     ESP_ZB_ZCL_AO_PERCENTAGE_FACE_BYPASS_DAMPER = ESP_ZB_ZCL_AO_SET_APP_TYPE_WITH_ID(ESP_ZB_ZCL_AO_APP_TYPE_PERCENTAGE, 0x0000), /*!< Face bypass damper */
     ESP_ZB_ZCL_AO_PERCENTAGE_HEAT_RECOVERY_VALVE,                                                                                /*!< Heat recovery valve */
-    ESP_ZB_ZCL_AO_PERCENTAGE_HEAT_RECOVERY_WHELL,                                                                                /*!< Heat recovery whell */
+    ESP_ZB_ZCL_AO_PERCENTAGE_HEAT_RECOVERY_WHEEL,                                                                                /*!< Heat recovery wheel */
     ESP_ZB_ZCL_AO_PERCENTAGE_HEATING_VALVE,                                                                                      /*!< Heating valve */
     ESP_ZB_ZCL_AO_PERCENTAGE_HOT_DECK_DAMPER,                                                                                    /*!< Hot deck damper */
     ESP_ZB_ZCL_AO_PERCENTAGE_2_PIPE_DAMPER,                                                                                      /*!< 2 pipe damper */
@@ -217,6 +217,7 @@ typedef enum {
 
 void esp_zb_zcl_analog_output_init_server(void);
 void esp_zb_zcl_analog_output_init_client(void);
+
 #define ESP_ZB_ZCL_CLUSTER_ID_ANALOG_OUTPUT_SERVER_ROLE_INIT esp_zb_zcl_analog_output_init_server
 #define ESP_ZB_ZCL_CLUSTER_ID_ANALOG_OUTPUT_CLIENT_ROLE_INIT esp_zb_zcl_analog_output_init_client
 

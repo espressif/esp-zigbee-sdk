@@ -58,7 +58,7 @@ typedef struct esp_zb_zcl_read_attr_cmd_s {
     struct {
         uint8_t manuf_specific   : 2;               /*!< Sent as manufacturer extension with code. */
         uint8_t direction        : 1;               /*!< The command direction, refer to esp_zb_zcl_cmd_direction_t */
-        uint8_t dis_defalut_resp : 1;               /*!< Disable default response for this command. */
+        uint8_t dis_default_resp : 1;               /*!< Disable default response for this command. */
     };
     uint16_t manuf_code;                            /*!< The manufacturer code sent with the command. */
     uint8_t attr_number;                            /*!< Number of attribute in the attr_field */
@@ -76,11 +76,11 @@ typedef struct esp_zb_zcl_write_attr_cmd_s {
     struct {
         uint8_t manuf_specific   : 2;               /*!< Sent as manufacturer extension with code. */
         uint8_t direction        : 1;               /*!< The command direction, refer to esp_zb_zcl_cmd_direction_t */
-        uint8_t dis_defalut_resp : 1;               /*!< Disable default response for this command. */
+        uint8_t dis_default_resp : 1;               /*!< Disable default response for this command. */
     };
     uint16_t manuf_code;                            /*!< The manufacturer code sent with the command. */
     uint8_t attr_number;                            /*!< Number of attribute in the attr_field  */
-    esp_zb_zcl_attribute_t *attr_field;             /*!< Attributes which will be writed, @ref esp_zb_zcl_attribute_s */
+    esp_zb_zcl_attribute_t *attr_field;             /*!< Attributes which will be written, @ref esp_zb_zcl_attribute_s */
 } esp_zb_zcl_write_attr_cmd_t;
 
 /**
@@ -119,7 +119,7 @@ typedef struct esp_zb_zcl_config_report_cmd_s {
     struct {
         uint8_t manuf_specific   : 2;                   /*!< Sent as manufacturer extension with code. */
         uint8_t direction        : 1;                   /*!< The command direction, refer to esp_zb_zcl_cmd_direction_t */
-        uint8_t dis_defalut_resp : 1;                   /*!< Disable default response for this command. */
+        uint8_t dis_default_resp : 1;                   /*!< Disable default response for this command. */
     };
     uint16_t manuf_code;                                /*!< The manufacturer code sent with the command. */
     uint16_t record_number;                             /*!< Number of report configuration record in the record_field */
@@ -146,7 +146,7 @@ typedef struct esp_zb_zcl_read_report_config_cmd_s {
     struct {
         uint8_t manuf_specific   : 2;                   /*!< Sent as manufacturer extension with code. */
         uint8_t direction        : 1;                   /*!< The command direction, refer to esp_zb_zcl_cmd_direction_t */
-        uint8_t dis_defalut_resp : 1;                   /*!< Disable default response for this command. */
+        uint8_t dis_default_resp : 1;                   /*!< Disable default response for this command. */
     };
     uint16_t manuf_code;                                /*!< The manufacturer code sent with the command. */
     uint16_t record_number;                             /*!< Number of attribute records in the record_field */
@@ -164,7 +164,7 @@ typedef struct esp_zb_zcl_report_attr_cmd_s {
     struct {
         uint8_t manuf_specific   : 2;               /*!< Sent as manufacturer extension with code. */
         uint8_t direction        : 1;               /*!< The command direction, refer to esp_zb_zcl_cmd_direction_t */
-        uint8_t dis_defalut_resp : 1;               /*!< Disable default response for this command. */
+        uint8_t dis_default_resp : 1;               /*!< Disable default response for this command. */
     };
     uint16_t manuf_code;                            /*!< The manufacturer code of the attribute to report */
     uint16_t attributeID;                           /*!< Attribute ID to report */
@@ -183,7 +183,7 @@ typedef struct esp_zb_zcl_disc_attr_cmd_s {
     struct {
         uint8_t manuf_specific   : 2;       /*!< Sent as manufacturer extension with code. */
         uint8_t direction        : 1;       /*!< The command direction, refer to esp_zb_zcl_cmd_direction_t */
-        uint8_t dis_defalut_resp : 1;       /*!< Disable default response for this command. */
+        uint8_t dis_default_resp : 1;       /*!< Disable default response for this command. */
     };
     uint16_t manuf_code;                    /*!< The manufacturer code sent with the command. */
     uint16_t start_attr_id;                 /*!< The attribute identifier at which to begin the attribute discover */
@@ -278,10 +278,10 @@ typedef struct esp_zb_zcl_identify_query_cmd_s {
     esp_zb_zcl_address_mode_t address_mode;         /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
 } esp_zb_zcl_identify_query_cmd_t;
 
-/* ZCL commisssioning cluster */
+/* ZCL commissioning cluster */
 
 /**
- * @brief The Zigbee ZCL commisssioning restart device command struct
+ * @brief The Zigbee ZCL commissioning restart device command struct
  *
  */
 typedef struct esp_zb_zcl_comm_restart_device_cmd_s {
@@ -293,7 +293,7 @@ typedef struct esp_zb_zcl_comm_restart_device_cmd_s {
 } esp_zb_zcl_comm_restart_device_cmd_t;
 
 /**
- * @brief The Zigbee ZCL commisssioning save startup parameters command struct
+ * @brief The Zigbee ZCL commissioning save startup parameters command struct
  *
  */
 typedef struct esp_zb_zcl_comm_save_startup_params_cmd_s {
@@ -303,7 +303,7 @@ typedef struct esp_zb_zcl_comm_save_startup_params_cmd_s {
 } esp_zb_zcl_comm_save_startup_params_cmd_t;
 
 /**
- * @brief The Zigbee ZCL commisssioning restore startup parameters command struct
+ * @brief The Zigbee ZCL commissioning restore startup parameters command struct
  *
  */
 typedef struct esp_zb_zcl_comm_restore_startup_params_cmd_s {
@@ -313,7 +313,7 @@ typedef struct esp_zb_zcl_comm_restore_startup_params_cmd_s {
 } esp_zb_zcl_comm_restore_startup_params_cmd_t;
 
 /**
- * @brief The Zigbee ZCL commisssioning reset startup parameters command struct
+ * @brief The Zigbee ZCL commissioning reset startup parameters command struct
  *
  */
 typedef struct esp_zb_zcl_comm_reset_startup_params_cmd_s {
@@ -994,7 +994,7 @@ typedef struct esp_zb_metering_get_sampled_data_cmd_s {
 typedef struct esp_zb_zcl_price_get_current_price_cmd_s {
     esp_zb_zcl_basic_cmd_t zcl_basic_cmd;     /*!< Basic command info */
     esp_zb_zcl_address_mode_t address_mode;   /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
-    uint8_t command_options;                  /*!< Zero bit is Requestor Rx On When Idle, others are reserved. */
+    uint8_t command_options;                  /*!< Zero bit is Requester Rx On When Idle, others are reserved. */
 } esp_zb_zcl_price_get_current_price_cmd_t;
 
 /**
@@ -1069,6 +1069,42 @@ typedef struct esp_zb_zcl_drlc_get_scheduled_events_req_s {
 } esp_zb_zcl_drlc_get_scheduled_events_req_t;
 
 /**
+ * @brief The Zigbee ZCL Poll Control CheckIn command struct
+ */
+typedef struct esp_zb_zcl_poll_control_check_in_cmd_req_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;                   /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode;                 /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+    /* No payload */
+} esp_zb_zcl_poll_control_check_in_cmd_req_t;
+
+/**
+ * @brief The Zigbee ZCL Poll Control FastPollStop command struct
+ */
+typedef struct esp_zb_zcl_poll_control_fast_poll_stop_cmd_req_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;                   /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode;                 /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+    /* No payload */
+} esp_zb_zcl_poll_control_fast_poll_stop_cmd_req_t;
+
+/**
+ * @brief The Zigbee ZCL Poll Control SetLongPollInterval command struct
+ */
+typedef struct esp_zb_zcl_poll_control_set_long_poll_interval_cmd_req_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;                   /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode;                 /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+    uint32_t new_long_poll_interval;                        /*!< The interval of the new long poll in quarter-second. */
+} esp_zb_zcl_poll_control_set_long_poll_interval_cmd_req_t;
+
+/**
+ * @brief The Zigbee ZCL Poll Control SetShortPollInterval command struct
+ */
+typedef struct esp_zb_zcl_poll_control_set_short_poll_interval_cmd_req_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;                   /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode;                 /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+    uint16_t new_short_poll_interval;                       /*!< The interval of the new short poll in quarter-second */
+} esp_zb_zcl_poll_control_set_short_poll_interval_cmd_req_t;
+
+/**
  * @brief The Zigbee ZCL custom cluster command struct
  *
  * @note For string data type, the first byte should be the length of string.
@@ -1084,7 +1120,7 @@ typedef struct esp_zb_zcl_custom_cluster_cmd_s {
     struct {
         uint8_t manuf_specific   : 2;                       /*!< Sent as manufacturer extension with code. */
         uint8_t direction        : 1;                       /*!< The command direction, refer to esp_zb_zcl_cmd_direction_t */
-        uint8_t dis_defalut_resp : 1;                       /*!< Disable default response for this command. */
+        uint8_t dis_default_resp : 1;                       /*!< Disable default response for this command. */
     };
     uint16_t manuf_code;                                    /*!< The manufacturer code sent with the command. */
     uint16_t custom_cmd_id;                                 /*!< Custom command id */
@@ -1162,7 +1198,7 @@ typedef struct esp_zgp_zcl_pairing_configuration_req_s {
     uint8_t actions;                                /*!< The configuration action, refer to esp_zgp_pairing_config_action_t */
     uint8_t num_paired_endpoints;                   /*!< The number of endpoints listed in the Paired endpoints field */
     uint8_t *paired_endpoints;                      /*!< The paired endpoints */
-    uint8_t app_info;                               /*!< Application infomation */
+    uint8_t app_info;                               /*!< Application information */
     uint8_t num_gpd_commands;                       /*!< The number of gpd command listed in the gpd_command field */
     uint8_t *gpd_commands;                          /*!< The green power command list */
 } esp_zgp_zcl_pairing_configuration_req_t;
@@ -1550,6 +1586,17 @@ typedef struct esp_zb_zcl_metering_request_fast_poll_mode_resp_message_s {
 } esp_zb_zcl_metering_request_fast_poll_mode_resp_message_t;
 
 /**
+ * @brief The Zigbee ZCL poll control check in request message struct
+ *
+ */
+typedef struct esp_zb_zcl_poll_control_check_in_req_message_s {
+    esp_zb_device_cb_common_info_t info;    /*!< The common information for Zigbee device callback, refer to esp_zb_device_cb_common_info_t */
+    uint16_t src_short_addr;                /*!< The source address of the check-in request */
+    uint8_t src_ep_id;                      /*!< The source endpoint of the check-in request */
+    uint16_t fast_poll_timeout;             /*!< The fast poll timeout of the check-in request */
+} esp_zb_zcl_poll_control_check_in_req_message_t;
+
+/**
  * @brief The Zigbee zcl metering snapshot tou delivered sub-payload struct
  *
  */
@@ -1811,7 +1858,7 @@ typedef struct esp_zb_zcl_price_publish_price_s {
  */
 typedef struct esp_zb_zcl_price_get_current_price_message_s {
     esp_zb_device_cb_common_info_t info;                    /*!< The common information for Zigbee device callback */
-    uint8_t command_options;                                /*!< Zero bit is Requestor Rx On When Idle, others are reserved. */
+    uint8_t command_options;                                /*!< Zero bit is Requester Rx On When Idle, others are reserved. */
     uint8_t resp_count;                                     /*!< Number of prices in `resp_info_offered` to be responded. */
     esp_zb_zcl_price_publish_price_t *resp_info_offered;    /*!< The info used for 'PublishPrice' command, to response 'GetCurrent' command.
                                                              *   The info SHOULD be offered by user, otherwise, the response has no sense */
@@ -1839,7 +1886,7 @@ typedef struct esp_zb_zcl_price_get_scheduled_prices_message_s {
  */
 typedef struct esp_zb_zcl_price_publish_price_message_s {
     esp_zb_device_cb_common_info_t info;                    /*!< The common information for Zigbee device callback */
-    esp_zb_zcl_price_publish_price_t price;                 /*!< Recived publish price information */
+    esp_zb_zcl_price_publish_price_t price;                 /*!< Received publish price information */
 } esp_zb_zcl_price_publish_price_message_t;
 
 /**
@@ -2307,7 +2354,7 @@ typedef struct esp_zb_touchlink_get_group_info_record_s {
  *
  */
 typedef struct esp_zb_zcl_touchlink_get_group_identifiers_resp_message_s {
-    esp_zb_zcl_cmd_info_t info; /*!< The basic information of touclink get group identifiers response that refers to esp_zb_zcl_cmd_info_t */
+    esp_zb_zcl_cmd_info_t info; /*!< The basic information of touchlink get group identifiers response that refers to esp_zb_zcl_cmd_info_t */
     uint8_t total;           /*!< The total number of group identifiers supported by the device */
     uint8_t start_idx;       /*!< The internal starting index from which the following group identifiers are taken */
     uint8_t count;           /*!< The number of entries in the group information record list field */
@@ -3326,6 +3373,42 @@ uint8_t esp_zb_zcl_drlc_report_event_status_req(esp_zb_zcl_drlc_report_event_sta
  * @return The transaction sequence number
  */
 uint8_t esp_zb_zcl_drlc_get_scheduled_events_req(esp_zb_zcl_drlc_get_scheduled_events_req_t *cmd_req);
+
+/**
+ * @brief   Send Poll Control CheckIn command request
+ *
+ * @param[in]  cmd_req  pointer to the CheckIn command @ref esp_zb_zcl_poll_control_check_in_cmd_req_s
+ *
+ * @return The transaction sequence number
+ */
+uint8_t esp_zb_zcl_poll_control_check_in_cmd_req(esp_zb_zcl_poll_control_check_in_cmd_req_t *cmd_req);
+
+/**
+ * @brief   Send Poll Control FastPollStop command request
+ *
+ * @param[in]  cmd_req  pointer to the FastPollStop command @ref esp_zb_zcl_poll_control_fast_poll_stop_cmd_req_s
+ *
+ * @return The transaction sequence number
+ */
+uint8_t esp_zb_zcl_poll_control_fast_poll_stop_cmd_req(esp_zb_zcl_poll_control_fast_poll_stop_cmd_req_t *cmd_req);
+
+/**
+ * @brief   Send Poll Control SetLongPollInterval command request
+ *
+ * @param[in]  cmd_req  pointer to the SetLongPollInterval command @ref esp_zb_zcl_poll_control_set_long_poll_interval_cmd_req_s
+ *
+ * @return The transaction sequence number
+ */
+uint8_t esp_zb_zcl_poll_control_set_long_poll_interval_cmd_req(esp_zb_zcl_poll_control_set_long_poll_interval_cmd_req_t *cmd_req);
+
+/**
+ * @brief   Send Poll Control SetShortPollInterval command request
+ *
+ * @param[in]  cmd_req  pointer to the SetShortPollInterval command @ref esp_zb_zcl_poll_control_set_short_poll_interval_cmd_req_s
+ *
+ * @return The transaction sequence number
+ */
+uint8_t esp_zb_zcl_poll_control_set_short_poll_interval_cmd_req(esp_zb_zcl_poll_control_set_short_poll_interval_cmd_req_t *cmd_req);
 
 #ifdef CONFIG_ZB_GP_ENABLED
 /**

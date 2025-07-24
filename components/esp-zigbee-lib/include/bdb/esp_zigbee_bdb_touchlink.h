@@ -131,7 +131,7 @@ esp_err_t esp_zb_bdb_cancel_touchlink_target(void);
 /**
  * @brief Register ZLL identify request handler
  *
- * @param[in] cb A callback for zll identify notificaion, refer to esp_zb_zll_identify_req_callback_t
+ * @param[in] cb A callback for zll identify notification, refer to esp_zb_zll_identify_req_callback_t
  */
 void esp_zb_zll_identify_req_handler_register(esp_zb_zll_identify_req_callback_t cb);
 

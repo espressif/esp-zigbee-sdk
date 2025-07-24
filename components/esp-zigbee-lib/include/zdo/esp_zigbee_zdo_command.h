@@ -27,8 +27,9 @@ extern "C" {
 #define ESP_ZB_DEVICE_BIND_TABLE_REQ_TIMEOUT        (5 * ESP_ZB_TIME_ONE_SECOND)            /* timeout for device bind table request */
 #define ESP_ZB_DEVICE_MGMT_LQI_REQ_TIMEOUT          (5 * ESP_ZB_TIME_ONE_SECOND)            /* timeout for zdo mgmt lqi request */
 #define ESP_ZB_POWER_DESC_REQ_TIMEOUT               (5 * ESP_ZB_TIME_ONE_SECOND)            /* timeout for zdo power descriptor request */
+#define ESP_ZB_NWK_UPDATE_REQ_TIMEOUT               (5 * ESP_ZB_TIME_ONE_SECOND)            /* timeout for zdo network update request */
 /**
- * @brief The network address list of assocaited devices.
+ * @brief The network address list of associated devices.
  *
  */
 typedef struct esp_zb_zdo_nwk_addr_list_s {
@@ -45,7 +46,7 @@ typedef struct esp_zb_zdo_nwk_addr_list_s {
 typedef struct esp_zb_zdo_nwk_addr_rsp_s {
     esp_zb_ieee_addr_t ieee_addr;           /*!< 64-bit address for the Remote Device. */
     uint16_t nwk_addr;                      /*!< 16-bit address for the Remote Device. */
-    esp_zb_zdo_nwk_addr_list_t *ext_resp;   /*!< Extended response: network address of assosicated devices.
+    esp_zb_zdo_nwk_addr_list_t *ext_resp;   /*!< Extended response: network address of associated devices.
                                                  This field only existed when the request was sent with RequestType = 1. */
 } esp_zb_zdo_nwk_addr_rsp_t;
 
@@ -352,7 +353,7 @@ typedef struct esp_zb_zdo_binding_table_info_s {
 } esp_zb_zdo_binding_table_info_t;
 
 /**
-* @brief Struture of network descriptor request of active scan response
+* @brief Structure of network descriptor request of active scan response
 */
 typedef struct esp_zb_network_descriptor_s{
     uint16_t short_pan_id;                      /*!< PAN id */
@@ -382,6 +383,22 @@ typedef struct esp_zb_zdo_mgmt_lqi_req_param_s {
     uint8_t start_index;                /*!< Starting Index for the requested elements of the Neighbor Table */
     uint16_t dst_addr;                  /*!< The destination network short address of request */
 } esp_zb_zdo_mgmt_lqi_req_param_t;
+
+/**
+ * @brief Structure of Zigbee ZDO Mgmt_NWK_Update_req command
+ *
+ */
+typedef struct esp_zb_zdo_mgmt_nwk_update_req_param_s {
+    uint32_t scan_channels;             /*!< Indicate which channels are to be scanned */
+    uint8_t scan_duration;              /*!< A value used to calculate the length of time to spend scanning each channel. This field is within the range of 0x00 to 0x05 or 0xfe or 0xff.
+                                             If it has a value of 0xfe this is a request for channel change.
+                                             If it has a value of 0xff this is a request to change the apsChannelMaskList and nwkManagerAddr attributes. */
+    uint8_t scan_count;                 /*!< This field represents the number of energy scans to be conducted and reported.
+                                             This field shall be present only if the scan_duration is within the range of 0x00 to 0x05. */
+    uint16_t nwk_manager_addr;          /*!< This field shall be present only if the scan_duration is set to 0xff, and, where present,
+                                             indicates the NWK address for the device with the Network Manager bit set in its Node Descriptor.*/
+    uint16_t dst_addr;                  /*!< The destination network short address of request */
+} esp_zb_zdo_mgmt_nwk_update_req_param_t;
 
 /**
  * @brief Structure of neighbor table list record for Zigbee ZDO Mgmt_Lqi_rsp
@@ -419,6 +436,20 @@ typedef struct esp_zb_zdo_mgmt_lqi_rsp_s {
                                                                        continuing for neighbor_table_list_count, of the elements in the
                                                                        Remote Device's Neighbor Table */
 } esp_zb_zdo_mgmt_lqi_rsp_t;
+
+/**
+ * @brief Structure of Zigbee ZDO Mgmt_Update_notify
+ *
+ */
+typedef struct esp_zb_zdo_mgmt_update_notify_s {
+    uint8_t status;                                     /*!< The status of the Mgmt_NWK_Update_notify command, refer to esp_zb_zdp_status_t */
+    uint32_t scanned_channels;                          /*!< The (b27,...,b31) represent the binary encoded Channel Page, (b0, b1,... b26) indicate
+                                                             which channels were scanned (1 = scan, 0 = do not scan) for each of the 27 valid channels. */
+    uint16_t total_transmission;                        /*!< Count of the total transmissions reported by the device. */
+    uint16_t transmission_failures;                     /*!< Sum of the total transmission failures reported by the device. */
+    uint8_t scanned_channels_list_count;                /*!< The list shall contain the number of records contained in the EnergyValues parameter. */
+    uint8_t energy_values[27];                          /*!< The result of an energy measurement made on these channels */
+} esp_zb_zdo_mgmt_update_notify_t;
 
 /** Active scan network callback
  *
@@ -463,6 +494,15 @@ typedef void (*esp_zb_zdo_binding_table_callback_t)(const esp_zb_zdo_binding_tab
  * @param[in] user_ctx User information context, set in esp_zb_zdo_mgmt_lqi_req()
  */
 typedef void (*esp_zb_zdo_mgmt_lqi_rsp_callback_t)(const esp_zb_zdo_mgmt_lqi_rsp_t *rsp, void *user_ctx);
+
+/** NWK update notify callback
+ *
+ * @brief A ZDO  Mgmt_NWK_Update_req callback for user to get status of request.
+ *
+ * @param[in] zdo_status    The ZDO response status, refer to `esp_zb_zdp_status`
+ *
+ */
+typedef void (*esp_zb_zdo_mgmt_nwk_update_notify_callback_t)(const esp_zb_zdo_mgmt_update_notify_t *notify, void *user_ctx);
 
 /********************* Declare functions **************************/
 /* ZDO command list, more ZDO command will be supported later like node_desc, power_desc */
@@ -535,7 +575,7 @@ void esp_zb_zdo_find_color_dimmable_light(esp_zb_zdo_match_desc_req_param_t *cmd
  * @param[in] user_ctx A void pointer that contains the user defines additional information when callback trigger
  * @return
  *          - ESP_OK: Success in send match desc request
- *          - ESP_ERR_NO_MEM: Failed to allocate the memory for the reqeust
+ *          - ESP_ERR_NO_MEM: Failed to allocate the memory for the request
  *          - ESP_ERR_INVALID_SIZE: The size of cluster list is wrong in @p param
  */
 esp_err_t esp_zb_zdo_match_cluster(esp_zb_zdo_match_desc_req_param_t *param, esp_zb_zdo_match_desc_callback_t user_cb,
@@ -645,6 +685,18 @@ void esp_zb_zdo_device_announcement_req(void);
  * @param[in] user_ctx A void pointer that contains the user defines additional information when user_cb is triggered
  */
 void esp_zb_zdo_mgmt_lqi_req(esp_zb_zdo_mgmt_lqi_req_param_t *cmd_req, esp_zb_zdo_mgmt_lqi_rsp_callback_t user_cb, void* user_ctx);
+
+/**
+ * @brief Send ZDO Mgmt_NWK_Update_req command
+ *
+ * If the request is broadcast with a scan_duration of 0xFE or 0xFF, no response will be received. As a result, the user_cb will be
+ * triggered with ESP_ZB_ZDP_STATUS_TIMEOUT after ESP_ZB_NWK_UPDATE_REQ_TIMEOUT seconds.
+ *
+ * @param[in] cmd_req A pointer indicates the fields of the Mgmt_NWK_Update_req command, @ref esp_zb_zdo_mgmt_nwk_update_req_param_s
+ * @param[in] user_cb  A user callback that will be called if received Mgmt_NWK_Update_notify refer to esp_zb_zdo_binding_table_callback_t
+ * @param[in] user_ctx A void pointer that contains the user defines additional information when callback trigger
+ */
+void esp_zb_zdo_mgmt_nwk_update_req(esp_zb_zdo_mgmt_nwk_update_req_param_t *cmd_req, esp_zb_zdo_mgmt_nwk_update_notify_callback_t user_cb, void* user_ctx);
 
 /**
  * @brief Stringify the Zigbee Device Object signal
