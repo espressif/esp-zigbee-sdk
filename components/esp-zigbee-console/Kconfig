@@ -1,0 +1,18 @@
+menu "Zigbee Console"
+    depends on ZB_ENABLED
+
+    config ZB_CONSOLE_ENABLED
+        bool "Enable Zigbee Console"
+        depends on ZB_ENABLED
+        default y
+        help
+            Select this option to enable Zigbee Console
+
+    config ZB_CONSOLE_MAX_LINE_LENGTH
+        int "Set max line length of Zigbee Console"
+        depends on ZB_CONSOLE_ENABLED
+        default 0
+        help
+            The max line length of Zigbee Console, "0" means system default
+
+endmenu

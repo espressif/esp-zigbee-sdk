@@ -148,6 +148,8 @@ static esp_err_t esp_zb_console_repl_init(void)
     esp_err_t ret = ESP_OK;
     esp_console_repl_config_t repl_config = ESP_CONSOLE_REPL_CONFIG_DEFAULT();
 
+    repl_config.max_cmdline_length = CONFIG_ZB_CONSOLE_MAX_LINE_LENGTH;
+
     /* Install console REPL environment */
 #if defined(CONFIG_ESP_CONSOLE_UART_DEFAULT) || defined(CONFIG_ESP_CONSOLE_UART_CUSTOM)
     esp_console_dev_uart_config_t hw_config = ESP_CONSOLE_DEV_UART_CONFIG_DEFAULT();
