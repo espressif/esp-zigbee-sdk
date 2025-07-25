@@ -1,0 +1,4 @@
+[codespell]
+skip = managed_components, *build*, pytest_embedded_log, tools, sdkconfig*
+ignore-regex = _
+ignore-words-list = secur, unsecure, inout, nd, ot

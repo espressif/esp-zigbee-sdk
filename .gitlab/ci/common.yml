@@ -1,5 +1,5 @@
 stages:
-  - generate
+  - pre_build
   - build
   - target_test
   - docs
