@@ -85,7 +85,7 @@ typedef enum {
     ESP_ZB_ZCL_CMD_IAS_ZONE_ZONE_ENROLL_REQUEST_ID    = 0x01   /*!< "Zone Enroll Request" command. */
 } esp_zb_zcl_ias_zone_resp_cmd_t;
 
-/** @brief Values of the Enroll Response Code defintion
+/** @brief Values of the Enroll Response Code definition
 */
 typedef enum {
     ESP_ZB_ZCL_IAS_ZONE_ENROLL_RESPONSE_CODE_SUCCESS          = 0x00,  /*!< Success */

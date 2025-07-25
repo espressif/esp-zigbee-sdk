@@ -37,18 +37,18 @@ typedef struct esp_zb_cli_cmd_s {
 /* Expand `_macro` when `VA_ARG` is not empty. */
 #define _expand_or_non(_macro, ...) __VA_OPT__(_macro(__VA_ARGS__))
 
-#define ESP_ZB_CLI_CMD_SUBCMD_FEILDS(_sub)                                                      \
+#define ESP_ZB_CLI_CMD_SUBCMD_FIELDS(_sub)                                                      \
     .sub_cmds = _sub, .sub_cmd_count = ARRAY_SIZE(_sub),
 
-#define ESP_ZB_CLI_CMD_OP_FEILDS(_op)                                                           \
+#define ESP_ZB_CLI_CMD_OP_FIELDS(_op)                                                           \
     .operation = _op,
 
 #define ESP_ZB_CLI_CMD(_name, _op, _sub, _help)                                                 \
     {                                                                                           \
         .name = #_name,                                                                         \
         .help = _help,                                                                          \
-        _expand_or_non(ESP_ZB_CLI_CMD_OP_FEILDS, _op)                                           \
-        _expand_or_non(ESP_ZB_CLI_CMD_SUBCMD_FEILDS, _sub)                                      \
+        _expand_or_non(ESP_ZB_CLI_CMD_OP_FIELDS, _op)                                           \
+        _expand_or_non(ESP_ZB_CLI_CMD_SUBCMD_FIELDS, _sub)                                      \
     }
 
 #define ESP_ZB_CLI_CMD_WITH_SUB(_name, _sub, _help) ESP_ZB_CLI_CMD(_name,, _subcmd_list_name(_sub), _help)
@@ -59,7 +59,7 @@ typedef struct esp_zb_cli_cmd_s {
  * @brief Declare sub-command list of parent command.
  *
  * @param _parent Name of the parent command.
- * @param ...     Sub-command definations (should be valid initiallizer of `esp_zb_cli_cmd_t`).
+ * @param ...     Sub-command definitions (should be valid initializer of `esp_zb_cli_cmd_t`).
  *
  */
 #define DECLARE_ESP_ZB_CLI_SUBCMD_LIST(_parent, ...)                                            \
@@ -90,7 +90,7 @@ typedef struct esp_zb_cli_cmd_s {
  *
  * @param _name Name of the main command.
  * @param _help Help string of the main command.
- * @param ...   Sub-command definations (should be valid initiallizer of `esp_zb_cli_cmd_t`).
+ * @param ...   Sub-command definitions (should be valid initializer of `esp_zb_cli_cmd_t`).
  *
  */
 #define DECLARE_ESP_ZB_CLI_CMD_WITH_SUB(_name, _help, ...)                                      \

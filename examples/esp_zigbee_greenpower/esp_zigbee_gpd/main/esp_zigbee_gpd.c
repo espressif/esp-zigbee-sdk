@@ -22,7 +22,7 @@
 #include "esp_zigbee_gpd.h"
 
 #if !CONFIG_ZB_ZGPD
-#error define CONFIG_ZB_ZGPD to compile ZGPD exmaple
+#error define CONFIG_ZB_ZGPD to compile ZGPD example
 #endif
 
 static const char *TAG = "ESP_ZGP_DEVICE";

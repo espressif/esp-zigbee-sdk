@@ -143,6 +143,12 @@ typedef enum {
 /** @brief StatusFlags attribute maximum value */
 #define ESP_ZB_ZCL_ANALOG_VALUE_STATUS_FLAGS_MAX_VALUE 0x0f
 
+void esp_zb_zcl_analog_value_init_server(void);
+void esp_zb_zcl_analog_value_init_client(void);
+
+#define ESP_ZB_ZCL_CLUSTER_ID_ANALOG_VALUE_SERVER_ROLE_INIT esp_zb_zcl_analog_value_init_server
+#define ESP_ZB_ZCL_CLUSTER_ID_ANALOG_VALUE_CLIENT_ROLE_INIT esp_zb_zcl_analog_value_init_client
+
 #ifdef __cplusplus
 }
 #endif

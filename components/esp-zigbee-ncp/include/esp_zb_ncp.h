@@ -38,8 +38,8 @@ typedef enum {
  */
 typedef enum {
     ESP_NCP_OFFLINES = 0x00,                     /*!< The network is offline */
-    ESP_NCP_JOINING = 0x01,                      /*!< Joinging the network */
-    ESP_NCP_CONNECTED = 0x02,                    /*!< Conneted with the network */
+    ESP_NCP_JOINING = 0x01,                      /*!< Joining the network */
+    ESP_NCP_CONNECTED = 0x02,                    /*!< Cnoneted with the network */
     ESP_NCP_LEAVING = 0x03,                      /*!< Leaving the network */
     ESP_NCP_CONFIRM = 0x04,                      /*!< Confirm the APS */
     ESP_NCP_INDICATION = 0x05,                   /*!< Indication the APS */

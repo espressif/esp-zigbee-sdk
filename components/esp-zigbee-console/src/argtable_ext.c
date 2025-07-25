@@ -16,7 +16,7 @@
 
 #include "argtable_ext.h"
 
-static void arg_commom_resetfn(struct arg_lit* parent)
+static void arg_common_resetfn(struct arg_lit* parent)
 {
     parent->count = 0;
 }
@@ -101,7 +101,7 @@ arg_u8_t *arg_u8n(const char* shortopts, const char* longopts, const char* datat
     result->hdr.mincount = mincount;
     result->hdr.maxcount = maxcount;
     result->hdr.parent = result;
-    result->hdr.resetfn = (arg_resetfn*)arg_commom_resetfn;
+    result->hdr.resetfn = (arg_resetfn*)arg_common_resetfn;
     result->hdr.scanfn = (arg_scanfn*)arg_u8_scanfn;
     result->hdr.checkfn = (arg_checkfn*)arg_common_checkfn;
     result->hdr.errorfn = (arg_errorfn*)arg_common_errorfn;
@@ -152,7 +152,7 @@ arg_u16_t *arg_u16n(const char* shortopts, const char* longopts, const char* dat
     result->hdr.mincount = mincount;
     result->hdr.maxcount = maxcount;
     result->hdr.parent = result;
-    result->hdr.resetfn = (arg_resetfn*)arg_commom_resetfn;
+    result->hdr.resetfn = (arg_resetfn*)arg_common_resetfn;
     result->hdr.scanfn = (arg_scanfn*)arg_u16_scanfn;
     result->hdr.checkfn = (arg_checkfn*)arg_common_checkfn;
     result->hdr.errorfn = (arg_errorfn*)arg_common_errorfn;
@@ -203,7 +203,7 @@ arg_u32_t *arg_u32n(const char* shortopts, const char* longopts, const char* dat
     result->hdr.mincount = mincount;
     result->hdr.maxcount = maxcount;
     result->hdr.parent = result;
-    result->hdr.resetfn = (arg_resetfn*)arg_commom_resetfn;
+    result->hdr.resetfn = (arg_resetfn*)arg_common_resetfn;
     result->hdr.scanfn = (arg_scanfn*)arg_u32_scanfn;
     result->hdr.checkfn = (arg_checkfn*)arg_common_checkfn;
     result->hdr.errorfn = (arg_errorfn*)arg_common_errorfn;
@@ -266,7 +266,7 @@ arg_hex_t *arg_hexn(const char* shortopts, const char* longopts, const char* dat
     result->hdr.mincount = mincount;
     result->hdr.maxcount = maxcount;
     result->hdr.parent = result;
-    result->hdr.resetfn = (arg_resetfn*)arg_commom_resetfn;
+    result->hdr.resetfn = (arg_resetfn*)arg_common_resetfn;
     result->hdr.scanfn = (arg_scanfn*)arg_hex_scanfn;
     result->hdr.checkfn = (arg_checkfn*)arg_common_checkfn;
     result->hdr.errorfn = (arg_errorfn*)arg_common_errorfn;
@@ -351,7 +351,7 @@ arg_addr_t* arg_addrn(const char* shortopts, const char* longopts, const char* d
     result->hdr.mincount = mincount;
     result->hdr.maxcount = maxcount;
     result->hdr.parent = result;
-    result->hdr.resetfn = (arg_resetfn*)arg_commom_resetfn;
+    result->hdr.resetfn = (arg_resetfn*)arg_common_resetfn;
     result->hdr.scanfn = (arg_scanfn*)arg_addr_scanfn;
     result->hdr.checkfn = (arg_checkfn*)arg_common_checkfn;
     result->hdr.errorfn = (arg_errorfn*)arg_common_errorfn;

@@ -12,6 +12,8 @@ This section provides the ESP Zigbee SDK's APIs that support different kind of Z
    esp_zigbee_zcl_analog_value
    esp_zigbee_zcl_basic
    esp_zigbee_zcl_binary_input
+   esp_zigbee_zcl_binary_output
+   esp_zigbee_zcl_binary_value
    esp_zigbee_zcl_carbon_dioxide_measurement
    esp_zigbee_zcl_color_control
    esp_zigbee_zcl_command
@@ -26,6 +28,8 @@ This section provides the ESP Zigbee SDK's APIs that support different kind of Z
    esp_zigbee_zcl_illuminance_meas
    esp_zigbee_zcl_level
    esp_zigbee_zcl_metering
+   esp_zigbee_zcl_multistate_input
+   esp_zigbee_zcl_multistate_output
    esp_zigbee_zcl_multistate_value
    esp_zigbee_zcl_occupancy_sensing
    esp_zigbee_zcl_on_off
@@ -54,3 +58,4 @@ This section provides the ESP Zigbee SDK's APIs that support different kind of Z
    esp_zigbee_zcl_wind_speed_measurement
    esp_zigbee_zcl_drlc
    esp_zigbee_zcl_dehumidification_control
+   esp_zigbee_zcl_poll_control

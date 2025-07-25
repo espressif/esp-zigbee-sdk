@@ -103,7 +103,7 @@ static esp_err_t zb_ota_upgrade_srv_send_notify_image(bool notify_on)
     };
 
     esp_err_t ret = zb_populate_ota_file_header(&req.ota_file_header);
-    ESP_RETURN_ON_ERROR(ret, TAG, "Failed to initialize OTA file header fileds, status: %s", esp_err_to_name(ret));
+    ESP_RETURN_ON_ERROR(ret, TAG, "Failed to initialize OTA file header fields, status: %s", esp_err_to_name(ret));
 
     return esp_zb_ota_upgrade_server_notify_req(&req);
 }

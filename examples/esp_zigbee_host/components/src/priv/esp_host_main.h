@@ -44,7 +44,7 @@ typedef struct {
 } esp_host_ctx_t;
 
 /**
- * @brief Type to represent the device infomation for the HOST.
+ * @brief Type to represent the device information for the HOST.
  *
  */
 typedef struct esp_host_dev_t {

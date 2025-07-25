@@ -201,7 +201,7 @@ typedef struct esp_zb_zcl_cvc_alarm_variables_s {
 esp_zb_zcl_cvc_alarm_variables_t;
 
 /**
-* @brief Struture of Node descriptor request of ZDO response
+* @brief Structure of Node descriptor request of ZDO response
 */
 typedef struct esp_zb_af_node_desc_s {
     uint16_t          node_desc_flags;            /*!< node description */
@@ -216,7 +216,7 @@ typedef struct esp_zb_af_node_desc_s {
 esp_zb_af_node_desc_t;
 
 /**
-* @brief Struture of network descriptor request of active scan response
+* @brief Structure of network descriptor request of active scan response
 */
 typedef struct esp_zb_network_descriptor_s{
     uint16_t short_pan_id;                      /*!< PAN id */
@@ -563,7 +563,7 @@ typedef struct esp_zb_fan_control_cluster_cfg_s {
  *
  */
 typedef struct esp_zb_thermostat_ui_config_cluster_cfg_s {
-    uint8_t temperature_display_mode; /*!< This attribute specifies the units of the temperature displayed on the thermostat sceen */
+    uint8_t temperature_display_mode; /*!< This attribute specifies the units of the temperature displayed on the thermostat screen */
     uint8_t keypad_lockout;           /*!< This attribute specifies the level of functionality that is available to the user via the keypad */
 } esp_zb_thermostat_ui_config_cluster_cfg_t;
 

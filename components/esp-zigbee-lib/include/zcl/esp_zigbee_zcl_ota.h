@@ -58,7 +58,7 @@ typedef enum {
 /** @brief Default value for ImageType attribute */
 #define ESP_ZB_OTA_UPGRADE_IMAGE_TYPE_DEF_VALUE                                 0xffbf
 
-/** @brief Manufacturer Specific minimun value for ImageType attribute */
+/** @brief Manufacturer Specific minimum value for ImageType attribute */
 #define ESP_ZB_OTA_UPGRADE_MANUFACTURER_SPECIFIC_IMAGE_TYPE_MIN_VALUE           0x0000
 
 /** @brief Manufacturer Specific maximum value for ImageType attribute */

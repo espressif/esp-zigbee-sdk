@@ -42,7 +42,7 @@ typedef enum {
  *
  */
 typedef enum esp_zb_zcl_basic_power_source_e {
-    ESP_ZB_ZCL_BASIC_POWER_SOURCE_UNKNOWN                = 0x00,  /*!< Uknown power source */
+    ESP_ZB_ZCL_BASIC_POWER_SOURCE_UNKNOWN                = 0x00,  /*!< Unknown power source */
     ESP_ZB_ZCL_BASIC_POWER_SOURCE_MAINS_SINGLE_PHASE     = 0x01,  /*!< Single-phase mains. */
     ESP_ZB_ZCL_BASIC_POWER_SOURCE_MAINS_THREE_PHASE      = 0x02,  /*!< 3-phase mains. */
     ESP_ZB_ZCL_BASIC_POWER_SOURCE_BATTERY                = 0x03,  /*!< Battery source. */

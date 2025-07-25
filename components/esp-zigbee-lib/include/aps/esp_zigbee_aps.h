@@ -232,6 +232,45 @@ esp_err_t esp_zb_apsme_transport_key_request(const esp_zb_apsme_transport_key_re
  */
 esp_err_t esp_zb_apsme_switch_key_request(const esp_zb_apsme_switch_key_req_t *req);
 
+/**
+ * @brief Set the maximum window size for APS fragmentation.
+ *
+ * @note The window size must be configured with the same value on both the source and destination nodes.
+ *
+ * @param[in] max_window_size The maximum number of fragments in a window, ranging from 1 to 8 (default: 8),
+ *                            that can be sent before requiring an acknowledgment.
+ *
+ * @return
+ *      - ESP_OK: Operation successful
+ *      - ESP_ERR_INVALID_ARG: @p max_window_size is out of the valid range
+ */
+esp_err_t esp_zb_aps_set_fragment_max_window_size(uint8_t max_window_size);
+
+/**
+ * @brief Get the current maximum window size used for APS fragmentation.
+ *
+ * @return The configured APS fragment window size.
+ */
+uint8_t esp_zb_aps_get_fragment_max_window_size(void);
+
+/**
+ * @brief Set the delay, in milliseconds, between sending two blocks of a fragmented transmission
+ *
+ * @param[in] delay_ms Delay in milliseconds between sending consecutive APS fragment blocks, default is 0.
+ *
+ * @return
+ *      - ESP_OK: Operation successful
+ *      - Others: Operation failed
+ */
+esp_err_t esp_zb_aps_set_fragment_interframe_delay(uint8_t delay_ms);
+
+/**
+ * @brief Get the current interframe delay for APS fragmentation.
+ *
+ * @return The interframe delay in milliseconds.
+ */
+uint8_t esp_zb_aps_get_fragment_interframe_delay(void);
+
 #ifdef __cplusplus
 }
 #endif

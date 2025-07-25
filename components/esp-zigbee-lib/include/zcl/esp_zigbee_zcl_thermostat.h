@@ -481,25 +481,25 @@ typedef enum {
 #define ESP_ZB_ZCL_THERMOSTAT_PROGRAMMING_OPERATION_MODE_ECONOMY_ENERGY_STAR_MODE_BIT (1 << 2)
 
 /** @brief Heat State On bit of Thermostat Running State attribute  */
-#define ESP_ZB_ZCL_THERMOSTAT_RUNNNING_STATE_HEAT_STATE_ON_BIT (1 << 0)
+#define ESP_ZB_ZCL_THERMOSTAT_RUNNING_STATE_HEAT_STATE_ON_BIT (1 << 0)
 
 /** @brief Cool State On bit of Thermostat Running State attribute  */
-#define ESP_ZB_ZCL_THERMOSTAT_RUNNNING_STATE_COOL_STATE_ON_BIT (1 << 1)
+#define ESP_ZB_ZCL_THERMOSTAT_RUNNING_STATE_COOL_STATE_ON_BIT (1 << 1)
 
 /** @brief Fan State On bit of Thermostat Running State attribute  */
-#define ESP_ZB_ZCL_THERMOSTAT_RUNNNING_STATE_FAN_STATE_ON_BIT (1 << 2)
+#define ESP_ZB_ZCL_THERMOSTAT_RUNNING_STATE_FAN_STATE_ON_BIT (1 << 2)
 
 /** @brief Heat 2nd Stage State On bit of Thermostat Running State attribute  */
-#define ESP_ZB_ZCL_THERMOSTAT_RUNNNING_STATE_HEAT_2ND_STAGE_STATE_ON_BIT (1 << 3)
+#define ESP_ZB_ZCL_THERMOSTAT_RUNNING_STATE_HEAT_2ND_STAGE_STATE_ON_BIT (1 << 3)
 
 /** @brief Cool 2nd Stage State On bit of Thermostat Running State attribute  */
-#define ESP_ZB_ZCL_THERMOSTAT_RUNNNING_STATE_COOL_2ND_STAGE_STATE_ON_BIT (1 << 4)
+#define ESP_ZB_ZCL_THERMOSTAT_RUNNING_STATE_COOL_2ND_STAGE_STATE_ON_BIT (1 << 4)
 
 /** @brief Fan 2nd Stage State On bit of Thermostat Running State attribute  */
-#define ESP_ZB_ZCL_THERMOSTAT_RUNNNING_STATE_FAN_2ND_STAGE_STATE_ON_BIT (1 << 5)
+#define ESP_ZB_ZCL_THERMOSTAT_RUNNING_STATE_FAN_2ND_STAGE_STATE_ON_BIT (1 << 5)
 
 /** @brief Fan 3rd Stage State On bit of Thermostat Running State attribute  */
-#define ESP_ZB_ZCL_THERMOSTAT_RUNNNING_STATE_FAN_3RD_STAGE_STATE_ON_BIT (1 << 6)
+#define ESP_ZB_ZCL_THERMOSTAT_RUNNING_STATE_FAN_3RD_STAGE_STATE_ON_BIT (1 << 6)
 
 /**
  * @brief Structure for Thermostat Weekly Schedule Transition field

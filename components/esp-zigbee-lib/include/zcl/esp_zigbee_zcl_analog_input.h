@@ -79,7 +79,7 @@ typedef enum {
     ESP_ZB_ZCL_AI_APP_TYPE_PPM,                /*!< Ppm */
     ESP_ZB_ZCL_AI_APP_TYPE_RPM,                /*!< Rpm */
     ESP_ZB_ZCL_AI_APP_TYPE_CURRENT_IN_AMPS,    /*!< Current In AMPS */
-    ESP_ZB_ZCL_AI_APP_TYPE_FREQUENCY,          /*!< Frequence */
+    ESP_ZB_ZCL_AI_APP_TYPE_FREQUENCY,          /*!< Frequency */
     ESP_ZB_ZCL_AI_APP_TYPE_POWER_IN_WATTS,     /*!< Power In Watts */
     ESP_ZB_ZCL_AI_APP_TYPE_POWER_IN_KILOWATTS, /*!< Power In Kilowatts */
     ESP_ZB_ZCL_AI_APP_TYPE_ENERGY,             /*!< Energy */
@@ -114,7 +114,7 @@ typedef enum {
     ESP_ZB_ZCL_AI_TEMPERATURE_DISCHARGE_AIR,          /*!< Discharge air */
     ESP_ZB_ZCL_AI_TEMPERATURE_DISCHARGE,              /*!< Discharge */
 
-    ESP_ZB_ZCL_AI_TEMPERATURE_EXHAUST_AIR_AFTER_HEAT_RECOVERY, /*!< Exhaust air afer heat recovery */
+    ESP_ZB_ZCL_AI_TEMPERATURE_EXHAUST_AIR_AFTER_HEAT_RECOVERY, /*!< Exhaust air after heat recovery */
     ESP_ZB_ZCL_AI_TEMPERATURE_EXHAUST_AIR,                     /*!< Exhaust air */
     ESP_ZB_ZCL_AI_TEMPERATURE_GLYCOL,                          /*!< Glycol */
     ESP_ZB_ZCL_AI_TEMPERATURE_HEAT_RECOVERY_AIR,               /*!< Heat recovery air */
@@ -327,7 +327,7 @@ typedef enum {
     ESP_ZB_ZCL_AI_ENTHALPY_SPACE,                                                                                     /*!< Space */
     /* 0x0200 to 0xfffe are Vendor defined */
     ESP_ZB_ZCL_AI_ENTHALPY_OTHER = ESP_ZB_ZCL_AI_SET_APP_TYPE_WITH_ID(ESP_ZB_ZCL_AI_APP_TYPE_ENTHALPY, 0xffff), /*!< Other */
-} esp_zb_zcl_ai_enthaply_t;
+} esp_zb_zcl_ai_enthalpy_t;
 
 /** @brief Values for 'Time in Seconds' type of Analog Input cluster */
 typedef enum {
@@ -356,6 +356,13 @@ typedef enum {
 
 /** Number of attributes mandatory for reporting in Analog Input cluster */
 #define ESP_ZB_ZCL_ANALOG_INPUT_REPORT_ATTR_COUNT 2
+
+void esp_zb_zcl_analog_input_init_server(void);
+void esp_zb_zcl_analog_input_init_client(void);
+
+#define ESP_ZB_ZCL_CLUSTER_ID_ANALOG_INPUT_SERVER_ROLE_INIT esp_zb_zcl_analog_input_init_server
+#define ESP_ZB_ZCL_CLUSTER_ID_ANALOG_INPUT_CLIENT_ROLE_INIT esp_zb_zcl_analog_input_init_client
+
 
 #ifdef __cplusplus
 }

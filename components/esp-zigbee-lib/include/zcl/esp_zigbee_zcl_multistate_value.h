@@ -13,13 +13,11 @@ extern "C" {
 
 /** @brief Multistate Value cluster attribute identifiers */
 typedef enum {
-    // TODO: Support Text attribute
-    // ESP_ZB_ZCL_ATTR_MULTI_VALUE_STATE_TEXT_ID = 0x000e, /*!< Text attribute */
-    ESP_ZB_ZCL_ATTR_MULTI_VALUE_DESCRIPTION_ID = 0x001c, /*!< Description attribute */
-    // TODO: Support NumberOfStates attribute
-    // ESP_ZB_ZCL_ATTR_MULTI_VALUE_NUMBER_OF_STATES_ID = 0x004a, /*!< NumberOfStates attribute */
-    ESP_ZB_ZCL_ATTR_MULTI_VALUE_OUT_OF_SERVICE_ID = 0x0051, /*!< OutOfService attribute */
-    ESP_ZB_ZCL_ATTR_MULTI_VALUE_PRESENT_VALUE_ID  = 0x0055, /*!< PresentValue attribute */
+    ESP_ZB_ZCL_ATTR_MULTI_VALUE_STATE_TEXT_ID       = 0x000e, /*!< Text attribute */
+    ESP_ZB_ZCL_ATTR_MULTI_VALUE_DESCRIPTION_ID      = 0x001c, /*!< Description attribute */
+    ESP_ZB_ZCL_ATTR_MULTI_VALUE_NUMBER_OF_STATES_ID = 0x004a, /*!< NumberOfStates attribute */
+    ESP_ZB_ZCL_ATTR_MULTI_VALUE_OUT_OF_SERVICE_ID   = 0x0051, /*!< OutOfService attribute */
+    ESP_ZB_ZCL_ATTR_MULTI_VALUE_PRESENT_VALUE_ID    = 0x0055, /*!< PresentValue attribute */
     // TODO: Support PriorityArray attribute
     // ESP_ZB_ZCL_ATTR_MULTI_VALUE_PRIORITY_ARRAY_ID  = 0x0057, /*!< PriorityArray attribute */
     ESP_ZB_ZCL_ATTR_MULTI_VALUE_RELIABILITY_ID        = 0x0067, /*!< Reliability attribute */
@@ -116,6 +114,12 @@ typedef enum {
 
 /*! Maximum length of Description string field */
 #define ESP_ZB_ZCL_MULTI_VALUE_DESCRIPTION_MAX_LEN 16
+
+void esp_zb_zcl_multi_value_init_server(void);
+void esp_zb_zcl_multi_value_init_client(void);
+
+#define ESP_ZB_ZCL_CLUSTER_ID_MULTI_VALUE_SERVER_ROLE_INIT esp_zb_zcl_multi_value_init_server
+#define ESP_ZB_ZCL_CLUSTER_ID_MULTI_VALUE_CLIENT_ROLE_INIT esp_zb_zcl_multi_value_init_client
 
 #ifdef __cplusplus
 }

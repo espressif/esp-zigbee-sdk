@@ -306,7 +306,7 @@ typedef enum {
  */
 typedef struct esp_zb_zcl_attribute_s {
     uint16_t id;                      /*!< The identify of attribute */
-    esp_zb_zcl_attribute_data_t data; /*!< The data fo attribute */
+    esp_zb_zcl_attribute_data_t data; /*!< The data of attribute */
 } esp_zb_zcl_attribute_t;
 
 /**

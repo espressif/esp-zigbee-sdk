@@ -90,9 +90,14 @@ The supported features in current ESP Zigbee SDK are listed below:
      analog_output                          0x000d
      analog_value                           0x000e
      binary_input                           0x000f
+     binary_output                          0x0010
+     binary_value                           0x0011
+     multistate_input                       0x0012
+     multistate_output                      0x0013
      multistate_value                       0x0014
      commissioning                          0x0015
      ota                                    0x0019
+     poll_control                           0x0020
      green_power                            0x0021
      shade_config                           0x0100
      door_lock                              0x0101

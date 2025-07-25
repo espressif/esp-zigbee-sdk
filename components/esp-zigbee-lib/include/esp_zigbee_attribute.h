@@ -545,6 +545,20 @@ esp_err_t esp_zb_analog_input_cluster_add_attr(esp_zb_attribute_list_t *attr_lis
 esp_err_t esp_zb_analog_output_cluster_add_attr(esp_zb_attribute_list_t *attr_list, uint16_t attr_id, void *value_p);
 
 /**
+ * @brief Add an attribute in binary output cluster.
+ *
+ * @param[in] attr_list A pointer to attribute list @ref esp_zb_attribute_list_s
+ * @param[in] attr_id  An attribute id to be added
+ * @param[in] value_p A pointer to attribute value wants to add
+ *
+ * @return
+ *      - ESP_OK on success
+ *      - ESP_ERR_INVALID_ARG if attribute is existed or unsupported
+ *
+ */
+esp_err_t esp_zb_binary_output_cluster_add_attr(esp_zb_attribute_list_t *attr_list, uint16_t attr_id, void *value_p);
+
+/**
  * @brief Add an attribute in analog value cluster.
  *
  * @param[in] attr_list A pointer to attribute list @ref esp_zb_attribute_list_s
@@ -627,6 +641,34 @@ esp_err_t esp_zb_carbon_dioxide_measurement_cluster_add_attr(esp_zb_attribute_li
  *
  */
 esp_err_t esp_zb_pm2_5_measurement_cluster_add_attr(esp_zb_attribute_list_t *attr_list, uint16_t attr_id, void *value_p);
+
+/**
+ * @brief Add an attribute in multistate input cluster.
+ *
+ * @param[in] attr_list A pointer to attribute list @ref esp_zb_attribute_list_s
+ * @param[in] attr_id  An attribute id to be added
+ * @param[in] value_p A pointer to attribute value wants to add
+ *
+ * @return
+ *      - ESP_OK on success
+ *      - ESP_ERR_INVALID_ARG if attribute is existed or unsupported
+ *
+ */
+esp_err_t esp_zb_multistate_input_cluster_add_attr(esp_zb_attribute_list_t *attr_list, uint16_t attr_id, void *value_p);
+
+/**
+ * @brief Add an attribute in multistate output cluster.
+ *
+ * @param[in] attr_list A pointer to attribute list @ref esp_zb_attribute_list_s
+ * @param[in] attr_id  An attribute id to be added
+ * @param[in] value_p A pointer to attribute value wants to add
+ *
+ * @return
+ *      - ESP_OK on success
+ *      - ESP_ERR_INVALID_ARG if attribute is existed or unsupported
+ *
+ */
+esp_err_t esp_zb_multistate_output_cluster_add_attr(esp_zb_attribute_list_t *attr_list, uint16_t attr_id, void *value_p);
 
 /**
  * @brief Add an attribute in multistate value cluster.
@@ -763,6 +805,34 @@ esp_err_t esp_zb_custom_cluster_add_custom_attr(esp_zb_attribute_list_t *attr_li
  *
  */
 esp_err_t esp_zb_cluster_update_attr(esp_zb_attribute_list_t *attr_list, uint16_t attr_id, void *value_p);
+
+/**
+ * @brief Add an attribute in binary value cluster.
+ *
+ * @param[in] attr_list A pointer to attribute list @ref esp_zb_attribute_list_s
+ * @param[in] attr_id  An attribute id to be added
+ * @param[in] value_p A pointer to attribute value wants to add
+ *
+ * @return
+ *      - ESP_OK on success
+ *      - ESP_ERR_INVALID_ARG if attribute is existed or unsupported
+ *
+ */
+esp_err_t esp_zb_binary_value_cluster_add_attr(esp_zb_attribute_list_t *attr_list, uint16_t attr_id, void *value_p);
+
+/**
+ * @brief Add an attribute in poll control cluster.
+ *
+ * @param[in] attr_list A pointer to attribute list @ref esp_zb_attribute_list_s
+ * @param[in] attr_id  An attribute id to be added
+ * @param[in] value_p A pointer to attribute value wants to add
+ *
+ * @return
+ *      - ESP_OK on success
+ *      - ESP_ERR_INVALID_ARG if attribute is existed or unsupported
+ *
+ */
+esp_err_t esp_zb_poll_control_cluster_add_attr(esp_zb_attribute_list_t *attr_list, uint16_t attr_id, void *value_p);
 
 #ifdef __cplusplus
 }

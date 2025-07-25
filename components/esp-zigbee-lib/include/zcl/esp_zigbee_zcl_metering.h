@@ -1181,7 +1181,7 @@ typedef enum {
                                                                                         *   in the BillToDateDelivered and ProjectedBillDelivered attributes
                                                                                         */
     /* 0x0A05 to 0x0A0F reserved */
-    
+
     ESP_ZB_ZCL_ATTR_METERING_BILL_TO_DATE_RECEIVED =
         ESP_ZB_ZCL_ATTR_SET_WITH_ATTR_ID(ESP_ZB_ZCL_METERING_SET_METER_BILLING, 0x10), /*!< BillToDateReceived provides a value for the costs in the current billing period.
                                                                                         *   This attribute is measured in a base unit of Currency with the decimal point located
@@ -1335,7 +1335,7 @@ typedef enum {
     ESP_ZB_ZCL_ATTR_METERING_PREVIOUS_WEEK5_ALT_CONSUMPTION_RECEIVED,  /*!< ESP_ZB_ZCL_ATTR_METERING_PREVIOUS_WEEK5_ALT_CONSUMPTION_RECEIVED */
 
     /* 0x0C3C to 0x0C3F reserved */
-    
+
     ESP_ZB_ZCL_ATTR_METERING_CURRENT_MONTH_ALT_CONSUMPTION_DELIVERED = ESP_ZB_ZCL_ATTR_SET_WITH_ATTR_ID(
         ESP_ZB_ZCL_METERING_SET_ALTERNATIVE_HISTORICAL_CONSUMPTION, 0x40), /*!< CurrentMonthAlternativeConsumptionDelivered represents the summed value delivered to the premises
                                                                             *   since the Historical Freeze Time (HFT) on the 1st of the month to the last HFT read
@@ -1381,7 +1381,7 @@ typedef enum {
     /* 0x0C5C to 0xFFFF reserved */
 } esp_zb_zcl_metering_attr_t;
 
-/** @brief Values fot CurrentBlock attribute */
+/** @brief Values for CurrentBlock attribute */
 typedef enum {
     ESP_ZB_ZCL_METERING_BLOCK_NOT_USED = 0x00, /*!< No blocks in use */
     ESP_ZB_ZCL_METERING_BLOCK_1        = 0x01, /*!< Block 1 */
@@ -1440,7 +1440,7 @@ typedef enum {
     ESP_ZB_ZCL_METERING_WATER_CHECK_METER        = 1 << 0, /*!< CheckMeter bit is Set to true when a non fatal problem has been detected on the meter */
     ESP_ZB_ZCL_METERING_WATER_LOW_BATTERY        = 1 << 1, /*!< LowBattery bit is set to true when the battery needs maintenance */
     ESP_ZB_ZCL_METERING_WATER_TAMPER_DETECT      = 1 << 2, /*!< TamperDetect bit set to true if a tamper event has been detected */
-    ESP_ZB_ZCL_METERING_WATER_PIPE_EMTPY         = 1 << 3, /*!< PipeEmpty bit is set to true when the service pipe at the meter is empty and there is no flow in either direction */
+    ESP_ZB_ZCL_METERING_WATER_PIPE_EMPTY         = 1 << 3, /*!< PipeEmpty bit is set to true when the service pipe at the meter is empty and there is no flow in either direction */
     ESP_ZB_ZCL_METERING_WATER_LOW_PRESSURE       = 1 << 4, /*!< LowPressure bit is Set to true when the pressure at the meter is below the meter's low pressure threshold value */
     ESP_ZB_ZCL_METERING_WATER_LEAK_DETECT        = 1 << 5, /*!< LeakDetect bit is set to true when a leak has been detected */
     ESP_ZB_ZCL_METERING_WATER_SERVICE_DISCONNECT = 1 << 6, /*!< ServiceDisconnect bit is set to true when the service has been disconnected to this premises */
@@ -1563,7 +1563,7 @@ typedef enum {
     ESP_ZB_ZCL_METERING_UNIT_MJ_MJS_BCD       = 0x8C, /*!< MJ, MJ/h BCD value */
     ESP_ZB_ZCL_METERING_UNIT_KVAR_KVARH_BCD   = 0x8D, /*!< kVar, kVar/h BCD value */
 
-    ESP_ZB_ZCL_METERING_UNIT_BCD_RESERVED = 0x8E 
+    ESP_ZB_ZCL_METERING_UNIT_BCD_RESERVED = 0x8E
     /*!< 0x8E to 0xFF reserved */
 } esp_zb_zcl_metering_unit_of_measure_t;
 

@@ -24,7 +24,7 @@ extern "C" {
     (((sec_level) & 3U) | ((!!(with_link_key)) << 2U) | ((!!(involve_tc)) << 3U))
 
 /**
- * @brief Compare the ZGP devive identifier
+ * @brief Compare the ZGP device identifier
  *
  */
 #define ESP_ZB_ZGPD_IDS_COMPARE(id1, id2)              \
@@ -197,7 +197,7 @@ typedef enum esp_zb_zgpd_dev_id_e {
 } esp_zb_zgpd_dev_id_t;
 
 /**
- * @brief Green power proxy funtionality
+ * @brief Green power proxy functionality
  *
  */
 typedef enum esp_zgp_gpp_functionality_e {
@@ -224,7 +224,7 @@ typedef enum esp_zgp_gpp_functionality_e {
 } esp_zgp_gpp_functionality_t;
 
 /**
- * @brief Green power sink funtionality
+ * @brief Green power sink functionality
  *
  */
 typedef enum esp_zgp_gps_functionality_e {

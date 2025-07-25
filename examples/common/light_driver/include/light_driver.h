@@ -107,8 +107,8 @@ void light_driver_set_color_RGB(uint8_t red, uint8_t green, uint8_t blue);
 /**
 * @brief Set light color from color xy
 *
-* @param  color_currentx  The color x to be set
-* @param  color_currenty  The color y to be set
+* @param  color_current_x  The color x to be set
+* @param  color_current_y  The color y to be set
 */
 void light_driver_set_color_xy(uint16_t color_current_x, uint16_t color_current_y);
 

@@ -41,7 +41,7 @@ typedef struct {
 } esp_ncp_ctx_t;
 
 /**
- * @brief Type to represent the device infomation for the NCP.
+ * @brief Type to represent the device information for the NCP.
  *
  */
 typedef struct esp_ncp_dev_t {

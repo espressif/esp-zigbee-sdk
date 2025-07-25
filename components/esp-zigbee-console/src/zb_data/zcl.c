@@ -21,7 +21,7 @@ typedef struct esp_zcl_cluster_fn_s {
     uint16_t    cluster_id;
     register_fn_t register_fn;  /*!< function to add cluster (attribute list) to cluster list */
     create_fn_t create_fn;      /*!< function to create default cluster (attribute list) with mandatory attributes */
-    add_attr_fn_t add_attr_fn;  /*!< function to add attibute to cluster (attribute list)  */
+    add_attr_fn_t add_attr_fn;  /*!< function to add attribute to cluster (attribute list)  */
 } esp_zcl_cluster_fn_t;
 
 /**
