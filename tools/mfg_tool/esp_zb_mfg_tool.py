@@ -443,7 +443,7 @@ def generate(args):
     
     # The input key value do not through csv file
     if args.csv is None:
-        csv_values_file = open(file_name, 'w')
+        csv_values_file = open(file_name, 'w', newline='')
         key = ['id', 'installcode', 'mac_address', 'channel_mask_page0', 'manufacturer_name', 'manufacturer_code']
         value = [1, args.installcode, args.mac_address, hex(args.channel_mask), args.manufacturer_name, hex(args.manufacturer_code)]
         sigle_device_csv = csv.writer(csv_values_file)
