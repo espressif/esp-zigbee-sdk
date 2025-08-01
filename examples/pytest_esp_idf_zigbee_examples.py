@@ -74,12 +74,14 @@ def test_idf_example_gateway_dual_chip(dut):
     gateway_device = ExampleDevice(dut[2])
     gateway_device.check_response("Initialize Zigbee stack", timeout=100)
     gateway_device.get_example_device_network_info(coordinator=True)
-    gateway_device.check_response("Network steering started")
+    gateway_device.check_response(r'Network\([^)]*\) is open', timeout=10)
     # dut[1] is rcp
     cli = CliDevice(dut[0])
     cli.create_router('on_off_switch', network_type='c')
+    cli.check_response(MatchPattern.joined_network, timeout=10)
     cli.get_device_network_info(coordinator=False)
     Common.check_network_matched(cli.network_info, gateway_device.network_info)
+    Common.check_connection_status(cli, gateway_device.short_address)
 
 
 # Case 15: idf example gateway single chip test reuses Case 11
@@ -93,7 +95,7 @@ def test_idf_example_gateway_single_chip(dut):
     gateway_device = ExampleDevice(dut[1])
     gateway_device.check_response("Initialize Zigbee stack", timeout=50)
     gateway_device.get_example_device_network_info(coordinator=True)
-    gateway_device.check_response("Network steering started")
+    gateway_device.check_response(r'Network\([^)]*\) is open', timeout=10)
     time.sleep(2)
     cli = CliDevice(dut[0])
     cli.create_router('on_off_switch', network_type='c')
@@ -111,4 +113,3 @@ def test_idf_example_gateway_single_chip(dut):
     cli.get_device_network_info(coordinator=False)
     Common.check_network_matched(cli.network_info, gateway_device.network_info)
     Common.check_connection_status(cli, gateway_device.short_address)
-
