@@ -94,11 +94,13 @@ static esp_err_t cli_aps_send_raw(esp_zb_cli_cmd_t *self, int argc, char **argv)
 {
     struct {
         esp_zb_cli_aps_argtable_t aps;
-        arg_hex_t  *payload;
-        arg_u8_t   *radius;
-        arg_end_t  *end;
+        arg_hex_t *payload;
+        arg_u16_t *repeat_count;
+        arg_u8_t *radius;
+        arg_end_t *end;
     } argtable = {
         .payload = arg_hexn("p", "payload", "<hex:DATA>",  0, 1, "APS payload of the command, raw HEX data"),
+        .repeat_count = arg_u16n(NULL, "repeat", "<u16:REPEAT>", 0, 1, "Number of payload repetitions, default: 1"),
         .radius  = arg_u8n("r",  "radius",  "<u8:RADIUS>", 0, 1, "Maximum transmission hops"),
         .end = arg_end(2),
     };
@@ -106,6 +108,8 @@ static esp_err_t cli_aps_send_raw(esp_zb_cli_cmd_t *self, int argc, char **argv)
     esp_zb_cli_fill_aps_argtable(&argtable.aps);
 
     esp_err_t ret = ESP_ERR_NOT_FINISHED;
+    uint16_t repeat_count = 1;
+
     /* Default request settings */
      esp_zb_apsde_data_req_t req_params = {
         .dst_addr_mode = ESP_ZB_APS_ADDR_MODE_DST_ADDR_ENDP_NOT_PRESENT,
@@ -129,11 +133,19 @@ static esp_err_t cli_aps_send_raw(esp_zb_cli_cmd_t *self, int argc, char **argv)
                                            &req_params.cluster_id,
                                            &req_params.profile_id));
 
-    req_params.dst_addr_mode = (uint8_t)addr_mode_temp; 
+    req_params.dst_addr_mode = (uint8_t)addr_mode_temp;
 
-    if (argtable.payload->count > 0) {
-        req_params.asdu_length = argtable.payload->hsize[0];
-        req_params.asdu = argtable.payload->hval[0];
+    if (argtable.repeat_count->count > 0) {
+        repeat_count = argtable.repeat_count->val[0];
+    }
+    if (argtable.payload->count > 0 && repeat_count > 0) {
+        uint32_t repeat_length = argtable.payload->hsize[0];
+        req_params.asdu_length = repeat_length * repeat_count;
+        req_params.asdu = (uint8_t *)malloc(req_params.asdu_length);
+        EXIT_ON_FALSE(req_params.asdu, ESP_ERR_NO_MEM, cli_output_line("no memory for aps send raw"));
+        for (int i = 0; i < repeat_count; i++) {
+            memcpy(req_params.asdu + i * repeat_length, argtable.payload->hval[0], repeat_length);
+        }
     }
     if (argtable.radius->count > 0) {
         req_params.radius = argtable.radius->val[0];
@@ -143,6 +155,9 @@ static esp_err_t cli_aps_send_raw(esp_zb_cli_cmd_t *self, int argc, char **argv)
     esp_zb_aps_data_confirm_handler_register(&zb_apsde_data_confirm_handler);
     
 exit:
+    if (req_params.asdu) {
+        free(req_params.asdu);
+    }
     arg_hex_free(argtable.payload);
     ESP_ZB_CLI_FREE_ARGSTRUCT(&argtable);
     return ret;

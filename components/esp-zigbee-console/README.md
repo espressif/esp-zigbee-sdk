@@ -106,11 +106,15 @@ options:
 - `-e <u8:EID>`: Source endpoint of the command.
 - `--profile=<u16:PID>`: Profile id of the command.
 - `-c <u16:CID>`: Cluster id of the command.
+- `-p <hex:DATA>`: Payload of the command.
+- `--repeat <u16:REPEAT>`: Number of payload repetitions, default: 1.
 
 Destination address mode selection: same as [`zcl`](#zcl)
 
 ```bash
-esp> aps send_raw -e 2 --dst-ep 3 -c 0x0006 -d 0x33d2 -p 0x11223344
+esp> aps send_raw -e 2 --dst-ep 3 -c 0x0006 -d 0x33d2 -p 0x11111111
+Send aps data frame successful
+esp> aps send_raw -e 2 --dst-ep 3 -c 0x0006 -d 0x33d2 -p 0x11 --repeat 4
 Send aps data frame successful
 ```
 
@@ -123,13 +127,13 @@ esp> aps dump open
 ```
 Remote device send aps data frame.
 ```bash
-esp> aps send_raw -d 0x90eb -e 2 --dst-ep 2 -c 0x0006 -p 0x1122
+esp> aps send_raw -d 0x90eb -e 2 --dst-ep 2 -c 0x0006 -p 0x01 --repeat 4
 Send aps data frame successful
 ```
 Local device dump aps data frame.
 ```bash
 Received aps data frame
-I (680692) : 0x40817760   11 22                                             |."|
+I (680692) : 0x40817760   01 01 01 01                                       |."|
 ```
 
 
