@@ -36,6 +36,8 @@ include:
     - update_idf_cmake_list_for_master
     - update_gateway_wifi_config ${IDF_PATH}/examples/zigbee/esp_zigbee_gateway
     - cd ${IDF_PATH}
+    # Skip using IDF build app configuration
+    - rm -f .idf_build_apps.toml
     - python ${CI_PROJECT_DIR}/tools/ci/build_apps.py ./examples/zigbee
 
 .build_pytest_template_sdk_example:

@@ -156,20 +156,16 @@ def test_zb_touch_link(dut, count, app_path, erase_all):
 def test_zb_gateway(dut, count, app_path, target):
     gateway_device = ExampleDevice(dut[1])
     cli = CliDevice(dut[0])
-    # add sleep time to wait rcp update ready
     gateway_device.check_response(r'\*\*\* MATCH VERSION! \*\*\*', timeout=30)
-    # add sleep time to wait gateway Network steering
-    time.sleep(10)
+    gateway_device.check_response("Initialize Zigbee stack", timeout=20)
     gateway_device.get_example_device_network_info(coordinator=True)
+    gateway_device.check_response(r'Network\([^)]*\) is open', timeout=10)
     cli.create_router('on_off_light', network_type='c')
-    # wait connect gateway
-    joined_short_address = gateway_device.dut.expect(r'New device commissioned or rejoined'
-                                                     r' \(short: (0x[a-fA-F0-9]{4})\)', timeout=3)[1].decode()
-    cli.check_response(MatchPattern.joined_network)
+    cli.check_response(MatchPattern.joined_network, timeout=10)
     cli.get_device_network_info(coordinator=False)
     logging.info(f"gateway_info:{gateway_device.network_info}")
     Common.check_network_matched(gateway_device.network_info, cli.network_info)
-    assert cli.short_address == joined_short_address
+    Common.check_connection_status(cli, gateway_device.short_address)
 
 
 # Case 10: Zigbee deep sleep test
@@ -207,8 +203,7 @@ def test_gateway_single_chip(dut):
     gateway_device = ExampleDevice(dut[1])
     gateway_device.check_response("Initialize Zigbee stack", timeout=50)
     gateway_device.get_example_device_network_info(coordinator=True)
-    gateway_device.check_response("Network steering started")
-    time.sleep(2)
+    gateway_device.check_response(r'Network\([^)]*\) is open', timeout=10)
     cli = CliDevice(dut[0])
     cli.create_router('on_off_switch', network_type='c')
     joined = False
