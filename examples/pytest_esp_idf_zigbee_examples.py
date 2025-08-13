@@ -56,6 +56,7 @@ def test_idf_example_on_off_light(dut):
 @pytest.mark.usefixtures('teardown_fixture')
 def test_idf_example_on_off_switch(dut):
     switch_device = ExampleDevice(dut[0])
+    switch_device.check_response("Initialize Zigbee stack", timeout=20)
     switch_device.get_example_device_network_info(coordinator=True)
     light_device = ExampleDevice(dut[1])
     light_device.get_example_device_network_info(coordinator=False)
