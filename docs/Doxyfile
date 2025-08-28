@@ -30,6 +30,7 @@ INPUT = \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/esp_zigbee_trace.h                               \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/esp_zigbee_type.h                                \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/ha/esp_zigbee_ha_standard.h                      \
+    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_alarms.h                      \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_analog_input.h                \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_analog_output.h               \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_analog_value.h                \
@@ -41,6 +42,7 @@ INPUT = \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_color_control.h               \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_command.h                     \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_common.h                      \
+    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_device_temp_config.h          \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_door_lock.h                   \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_electrical_meas.h             \
     $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_fan_control.h                 \

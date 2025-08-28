@@ -79,12 +79,14 @@ The supported features in current ESP Zigbee SDK are listed below:
    =====================================  ============
      basic                                  0x0000
      power_configuration                    0x0001
+     device_temp_config                     0x0002
      identify                               0x0003
      groups                                 0x0004
      scenes                                 0x0005
      on_off                                 0x0006
      on_off_switch_cfg                      0x0007
      level_control                          0x0008
+     alarms                                 0x0009
      time                                   0x000a
      analog_input                           0x000c
      analog_output                          0x000d
