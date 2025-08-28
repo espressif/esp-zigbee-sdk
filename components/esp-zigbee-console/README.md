@@ -61,6 +61,7 @@ For specific type of argument, correct format should be provided so that it can 
 - [`reboot`](#reboot): Reboot the device.
 - [`role`](#role): Get/Set the Zigbee role of a device.
 - [`route`](#route): Route information.
+- [`sroute`](#sroute): Source route information.
 - [`start`](#start): Start Zigbee stack.
 - [`tl`](#tl): TouchLink configuration.
 - [`trace`](#trace): Configure Zigbee stack trace log.
@@ -791,13 +792,28 @@ zc
 ### route
 Route information.
 
-#### `neighbor table`
+#### `route table`
 Dump the route table in current node.
 
 ```bash
+esp> route table
 |Index|DestAddr|NextHop |Expiry| State  |Flags |
 +-----+--------+--------+------+--------+------+
 |   1 | 0x3095 | 0x83a6 |   59 | Active | 0x00 |
+```
+
+
+### sroute
+Source Route information
+
+#### `sroute table`
+Dump the route record table in current node.
+
+```bash
+esp> sroute table
+|Index|DestAddr|Expiry| Path                              |
++-----+--------+------+-----------------------------------+
+|   1 | 0x4647 |   59 |0xcecf                             |
 ```
 
 
