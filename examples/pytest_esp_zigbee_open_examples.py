@@ -46,28 +46,30 @@ def test_zb_basic(dut, count, app_path, erase_all):
     server = ExampleDevice(dut[1])
 
     Common.check_zigbee_network_status(client, server)
-    status_value, address_value, endpoint_value = client.get_match_desc_response_values()
+    logs = str(client.dut.expect(r"Received report information: attribute\(0x0\), type\(0x10\), value\(0\)", timeout=15, return_what_before_match=True))
+
+    status_value, address_value, endpoint_value = client.get_match_desc_response_values(logs=logs)
     assert status_value == address_value == '0'
     assert endpoint_value == '10'
 
-    status_value, endpoint_count_value = client.get_active_endpoint_response_values()
+    status_value, endpoint_count_value = client.get_active_endpoint_response_values(logs=logs)
     assert status_value == '0'
     # release/v1.0.8 change endpoint_count to 2
     assert endpoint_count_value == '2'
 
     status_value, device_id_value, app_version_value, profile_id_value, endpoint_id_value = \
-        client.get_simple_desc_response_values()
+        client.get_simple_desc_response_values(logs=logs)
 
     assert status_value == app_version_value == '0'
     assert device_id_value == '256'
     assert profile_id_value == '104'
     assert endpoint_id_value == '10'
 
-    address_value, endpoint_value, status_value = client.get_bind_response_values()
+    address_value, endpoint_value, status_value = client.get_bind_response_values(logs=logs)
     assert address_value == status_value == '0'
     assert endpoint_value == '1'
 
-    address, src_endpoint, dst_endpoint, cluster = client.get_received_report_values()
+    address, src_endpoint, dst_endpoint, cluster = client.get_received_report_values(logs=logs)
     assert address == '0'
     assert src_endpoint == '10'
     assert dst_endpoint == '1'
