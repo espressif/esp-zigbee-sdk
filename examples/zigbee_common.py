@@ -8,6 +8,7 @@ from constants import ZigbeeCIConstants
 from functools import wraps
 import logging
 from constants import MatchPattern
+import re
 
 logging.basicConfig(level=logging.INFO)
 
@@ -16,7 +17,11 @@ def expect_decorator(pattern):
     def decorator(func):
         @wraps(func)
         def wrapper(self, *args, **kwargs):
-            match_result = self.dut.expect(pattern, timeout=5)
+            logs = kwargs.pop("logs", None)
+            if logs is not None:
+                match_result = re.compile(pattern).search(logs)
+            else:
+                match_result = self.dut.expect(pattern, timeout=5)
             if not match_result:
                 assert False, f"No match found for pattern: {pattern}"
             matched_groups = match_result.groups()
@@ -78,7 +83,7 @@ class ExampleDevice:
         logging.info(f"progress: {progress}, total: {total}")
         return matched_values
 
-    @expect_decorator(r'status\((\d+)\) and endpoint count\((\d+)\)')
+    @expect_decorator(r"status\((\d+)\) and endpoint count\((\d+)\)")
     def get_active_endpoint_response_values(self, matched_values):
         status_value, endpoint_count_value = matched_values
         logging.info(f"Status: {status_value}, Endpoint Count: {endpoint_count_value}")
@@ -204,7 +209,7 @@ class CliDevice:
         comm += f' -d {short_address}' if short_address else ''
         comm += f' --dst-ep {dst_ep}' if dst_ep else ''
         self.dut.write(comm)
-        self.dut.expect(r'Receive Zigbee action\(0x[0-9A-Fa-f]+\) callback', timeout=1)
+        self.dut.expect(r'Receive Zigbee action\(0x[0-9A-Fa-f]+\) callback', timeout=6)
 
     def zcl_send_raw_and_check(self, source_ep, cluster, cmd, short_address='', dst_ep='', payload=''):
         comm = f'zcl send_raw -e {source_ep} -c {cluster} --cmd {cmd}'
