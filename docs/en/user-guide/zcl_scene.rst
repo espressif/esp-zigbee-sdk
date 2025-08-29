@@ -36,6 +36,7 @@ The following APIs are related to the main implementation of the ZCL Scene clust
 - :cpp:func:`esp_zb_zcl_scenes_table_store`
 - :cpp:func:`esp_zb_zcl_scenes_table_clear_by_index`
 - :cpp:func:`esp_zb_zcl_scenes_table_show`
+- :cpp:func:`esp_zb_zcl_scenes_table_set_size`
 
 
 5.6.3 Scenes Context Relationship
@@ -156,8 +157,12 @@ a light, you can refer to the code below. Let’s call this implementation the *
         esp_zb_cluster_list_add_level_cluster(cluster_list, esp_zb_level_cluster_create(NULL), ESP_ZB_ZCL_CLUSTER_SERVER_ROLE);
         esp_zb_cluster_list_add_on_off_cluster(cluster_list, esp_zb_on_off_cluster_create(NULL), ESP_ZB_ZCL_CLUSTER_SERVER_ROLE);
         esp_zb_ep_list_add_ep(ep_list, cluster_list, endpoint_config);
+        esp_zb_zcl_scenes_table_set_size(32);
         return esp_zb_device_register(ep_list);
     }
+
+The capacity of the scene table in the Scenes Server cluster is set to 16 by default. the :cpp:func:`esp_zb_zcl_scenes_table_set_size` can be called explicitly
+in your application to configure the capacity.
 
 5.6.4.2 Add Scene
 ^^^^^^^^^^^^^^^^^

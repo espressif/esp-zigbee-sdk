@@ -565,6 +565,28 @@ esp_zb_attribute_list_t *esp_zb_binary_value_cluster_create(esp_zb_binary_value_
  */
 esp_zb_attribute_list_t *esp_zb_poll_control_cluster_create(esp_zb_poll_control_cluster_cfg_t *poll_control_cfg);
 
+/**
+ * @brief  Create a standard device temperature configuration attribute list
+ *
+ * @param[in] cfg  Configuration parameters for this cluster defined by @ref esp_zb_device_temp_config_cluster_cfg_s
+ *
+ * @return pointer to attribute list @ref esp_zb_attribute_list_s
+ *
+ */
+esp_zb_attribute_list_t *esp_zb_device_temp_config_cluster_create(esp_zb_device_temp_config_cluster_cfg_t *cfg);
+
+/**
+ * @brief  Create a standard alarms attribute list
+ *
+ * If the alarm_table_size is not zero, the alarm_count attribute will be added by this function
+ *
+ * @param[in] cfg  Configuration parameters for this cluster defined by @ref esp_zb_alarms_cluster_cfg_s
+ *
+ * @return pointer to attribute list @ref esp_zb_attribute_list_s
+ *
+ */
+esp_zb_attribute_list_t *esp_zb_alarms_cluster_create(esp_zb_alarms_cluster_cfg_t *cfg);
+
 /**************************************** ADD CLUSTER ***********************************/
 /**
  * @brief Add basic cluster (attribute list) in a cluster list.
@@ -1284,6 +1306,34 @@ esp_err_t esp_zb_cluster_list_add_custom_cluster(esp_zb_cluster_list_t *cluster_
  *
  */
 esp_err_t esp_zb_cluster_list_add_poll_control_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
+
+/**
+ * @brief Add device temperature configuration cluster (attribute list) in a cluster list.
+ *
+ * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
+ * @param[in] attr_list  An attribute list which wants to add
+ * @param[in] role_mask  A role of server or client for this cluster (attribute list) refer to esp_zb_zcl_cluster_role_t
+ *
+ * @return
+ *      - ESP_OK on success
+ *      - ESP_ERR_INVALID_ARG if cluster list not initialized
+ *
+ */
+esp_err_t esp_zb_cluster_list_add_device_temp_config_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
+
+/**
+ * @brief Add device alarms (attribute list) in a cluster list.
+ *
+ * @param[in] cluster_list A pointer to cluster list @ref esp_zb_cluster_list_s
+ * @param[in] attr_list  An attribute list which wants to add
+ * @param[in] role_mask  A role of server or client for this cluster (attribute list) refer to esp_zb_zcl_cluster_role_t
+ *
+ * @return
+ *      - ESP_OK on success
+ *      - ESP_ERR_INVALID_ARG if cluster list not initialized
+ *
+ */
+esp_err_t esp_zb_cluster_list_add_alarms_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask);
 
 /**
  * @brief Get cluster (attribute list) from a cluster list.

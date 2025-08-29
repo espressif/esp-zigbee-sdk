@@ -120,11 +120,11 @@ typedef enum {
     ESP_ZB_ZCL_MI_DOMAIN_HVAC_OTHER = ESP_ZB_ZCL_MI_SET_APP_TYPE_WITH_ID(ESP_ZB_ZCL_MI_APP_TYPE_DOMAIN_HVAC, 0xFFFF) /*!< Other */
 } esp_zb_zcl_mi_domain_hvac_t;
 
-void esp_zb_zcl_multistate_input_init_server(void);
-void esp_zb_zcl_multistate_input_init_client(void);
+void esp_zb_zcl_multi_input_init_server(void);
+void esp_zb_zcl_multi_input_init_client(void);
 
-#define ESP_ZB_ZCL_CLUSTER_ID_MULTI_INPUT_SERVER_ROLE_INIT esp_zb_zcl_multistate_input_init_server
-#define ESP_ZB_ZCL_CLUSTER_ID_MULTI_INPUT_CLIENT_ROLE_INIT esp_zb_zcl_multistate_input_init_client
+#define ESP_ZB_ZCL_CLUSTER_ID_MULTI_INPUT_SERVER_ROLE_INIT esp_zb_zcl_multi_input_init_server
+#define ESP_ZB_ZCL_CLUSTER_ID_MULTI_INPUT_CLIENT_ROLE_INIT esp_zb_zcl_multi_input_init_client
 
 #ifdef __cplusplus
 }

@@ -337,7 +337,10 @@ typedef struct esp_zb_af_simple_desc_1_1_s {
     uint32_t   reserved: 4;                     /*!< Reserved */
     uint8_t    app_input_cluster_count;         /*!< Application input cluster count */
     uint8_t    app_output_cluster_count;        /*!< Application output cluster count */
-    uint16_t   app_cluster_list[2];             /*!< Application input and output cluster list */
+    uint16_t   *app_cluster_list;               /*!< Pointer to an array of uint16_t cluster IDs whose total length is
+                                                     (app_input_cluster_count + app_output_cluster_count).
+                                                     Input cluster IDs start from index 0.
+                                                     Output cluster IDs start from index app_input_cluster_count. */
 } ESP_ZB_PACKED_STRUCT
 esp_zb_af_simple_desc_1_1_t;
 
@@ -666,9 +669,9 @@ typedef struct esp_zb_pressure_meas_cluster_cfg_s {
  *
  */
 typedef struct esp_zb_flow_meas_cluster_cfg_s {
-    int16_t measured_value;                     /*!<  The attribute indicates the flow from 0x0000 to 0xffff */
-    int16_t min_value;                          /*!<  The attribute indicates minimum value of the measured value */
-    int16_t max_value;                          /*!<  The attribute indicates maximum value of the measured value */
+    uint16_t measured_value;                    /*!<  The attribute indicates the flow from 0x0000 to 0xffff */
+    uint16_t min_value;                         /*!<  The attribute indicates minimum value of the measured value */
+    uint16_t max_value;                         /*!<  The attribute indicates maximum value of the measured value */
 } esp_zb_flow_meas_cluster_cfg_t;
 
 /**
@@ -926,6 +929,22 @@ typedef struct esp_zb_poll_control_cluster_cfg_s {
     uint32_t long_poll_interval_min;/*!< The Poll Control Server MAY optionally provide its own minimum value for the LongPollInterval */
     uint16_t fast_poll_timeout_max; /*!< The Poll Control Server MAY optionally provide its own maximum value for the FastPollTimeout*/
 } esp_zb_poll_control_cluster_cfg_t;
+
+/**
+ * @brief Zigbee standard mandatory attribute for device temperature configuration cluster
+ *
+ */
+typedef struct esp_zb_device_temp_config_cluster_cfg_s {
+    int16_t current_temperature;     /*!< The CurrentTemperature attribute specifies the current internal temperature, in degrees Celsius. */
+} esp_zb_device_temp_config_cluster_cfg_t;
+
+/**
+ * @brief Zigbee standard mandatory attribute for device temperature configuration cluster
+ *
+ */
+typedef struct esp_zb_alarms_cluster_cfg_s {
+    uint16_t alarm_table_size;  /*!< The AlarmTableSize attribute specifies the maximum number of entries that can be stored in the alarm table. */
+} esp_zb_alarms_cluster_cfg_t;
 
 /****************** standard device config *********************/
 /**

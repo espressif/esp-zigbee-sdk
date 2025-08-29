@@ -463,14 +463,14 @@ typedef enum {
 
     /**
     * Overview:
-    * - Indicates that a PAN ID conflict has been detected. The application must decide whether to
-    *   initiate its resolution or not.
+    * - Indicates that a network failure has been detected.
     *
     * When generated:
-    *  - Upon detecting a PAN ID conflict.
+    * - Triggered when the network encounters a failure and the application can implement
+    *   error handling based on the reported status.
     *
     * Status code:
-    * - ESP_OK: Resolution initiated successfully.
+    * - ESP_OK: On success.
     *
     * Payload:
     * - Refer to esp_zb_zdo_signal_nwk_status_indication_params_t
@@ -491,7 +491,7 @@ typedef enum {
     * - ESP_FAIL: Rejoin failed.
     *
     * Payload:
-    * - Refer to esp_zb_zdo_signal_nwk_status_indication_params_t
+    * - None
     */
 
     ESP_ZB_BDB_SIGNAL_TC_REJOIN_DONE                            = 0x35,
@@ -508,7 +508,7 @@ typedef enum {
     * - ESP_OK: On successful operation.
     *
     * Payload:
-    * - Refer to esp_zb_zdo_signal_nwk_status_indication_params_t
+    * - Pointer to uint8_t, indicating the network status (open or closed).
     */
     ESP_ZB_NWK_SIGNAL_PERMIT_JOIN_STATUS                        = 0x36,
 

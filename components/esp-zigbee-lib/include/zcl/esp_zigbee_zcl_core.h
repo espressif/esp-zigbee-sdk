@@ -53,11 +53,15 @@
 #include "esp_zigbee_zcl_wind_speed_measurement.h"
 #include "esp_zigbee_zcl_drlc.h"
 #include "esp_zigbee_zcl_dehumidification_control.h"
+#include "esp_zigbee_zcl_binary_input.h"
 #include "esp_zigbee_zcl_binary_output.h"
 #include "esp_zigbee_zcl_binary_value.h"
 #include "esp_zigbee_zcl_multistate_input.h"
 #include "esp_zigbee_zcl_multistate_output.h"
+#include "esp_zigbee_zcl_multistate_value.h"
 #include "esp_zigbee_zcl_poll_control.h"
+#include "esp_zigbee_zcl_device_temp_config.h"
+#include "esp_zigbee_zcl_alarms.h"
 #include "esp_zigbee_zcl_command.h"
 
 #ifdef __cplusplus
@@ -145,6 +149,10 @@ extern "C" {
     ESP_ZB_CORE_DRLC_REPORT_EVENT_STATUS_CB_ID          = 0x0043,   /*!< Demand response and load control cluster ReportEventStatus message, refer to esp_zb_zcl_drlc_report_event_status_message_t */
     ESP_ZB_CORE_DRLC_GET_SCHEDULED_EVENTS_CB_ID         = 0x0044,   /*!< Demand response and load control cluster GetScheduledEvents message, refer to esp_zb_zcl_drlc_get_scheduled_events_message_t */
     ESP_ZB_CORE_POLL_CONTROL_CHECK_IN_REQ_CB_ID         = 0x0045,   /*!< Poll control cluster CheckInRequest message, refer to esp_zb_zcl_poll_control_check_in_req_message_t */
+    ESP_ZB_CORE_ALARMS_RESET_ALARM_CB_ID                = 0x0050,   /*!< Alarms cluster Reset Alarm command, refer to esp_zb_zcl_alarms_reset_alarm_message_t */
+    ESP_ZB_CORE_ALARMS_RESET_ALL_ALARMS_CB_ID           = 0x0051,   /*!< Alarms cluster Reset All Alarms command, refer to esp_zb_zcl_alarms_reset_all_alarms_message_t */
+    ESP_ZB_CORE_ALARMS_ALARM_CB_ID                      = 0x0052,   /*!<  Alarms cluster Alarm command, refer to esp_zb_zcl_alarms_alarm_message_t */
+    ESP_ZB_CORE_ALARMS_GET_ALARM_RESP_CB_ID             = 0x0053,   /*!< Alarms cluster Get Alarm Response command, refer to esp_zb_zcl_alarms_get_alarm_resp_message_t */
     ESP_ZB_CORE_CMD_READ_ATTR_RESP_CB_ID                = 0x1000,   /*!< Read attribute response, refer to esp_zb_zcl_cmd_read_attr_resp_message_t */
     ESP_ZB_CORE_CMD_WRITE_ATTR_RESP_CB_ID               = 0x1001,   /*!< Write attribute response, refer to esp_zb_zcl_cmd_write_attr_resp_message_t */
     ESP_ZB_CORE_CMD_REPORT_CONFIG_RESP_CB_ID            = 0x1002,   /*!< Configure report response, refer to esp_zb_zcl_cmd_config_report_resp_message_t */

@@ -1,5 +1,28 @@
 # Espressif Zigbee SDK Release Notes
 
+## 29-Aug-2025
+1.6.7 version release of ESP-ZIGBEE-SDK is based on esp-idf v5.3.2
+
+### Features
+- Added support for ZCL Alarms Cluster
+- Added support for ZCL Device temperature Configuration Cluster
+- Added support for the `ESP_ZB_ZCL_ATTR_COLOR_CONTROL_DRIFT_COMPENSATION_ID` and `ESP_ZB_ZCL_ATTR_COLOR_CONTROL_COMPENSATION_TEXT_ID` attributes in `esp_zb_color_control_cluster_add_attr()`
+- Added support for the `ESP_ZB_ZCL_ATTR_ELECTRICAL_MEASUREMENT_POWER_FACTOR_ID` attribute in `esp_zb_electrical_meas_cluster_add_attr()`
+- Added `esp_zb_zcl_scenes_table_set_size()` to configure the capacity of scene table in ZCL scenes cluster
+
+### Bug Fixes
+- Corrected the document for `ESP_ZB_NLME_STATUS_INDICATION`, `ESP_ZB_BDB_SIGNAL_TC_REJOIN_DONE`, and `ESP_ZB_NWK_SIGNAL_PERMIT_JOIN_STATUS` application signals.
+- Corrected the attribute type and access in `esp_zb_xxx_cluster_add_attr()`.
+- Fixed the ambiguous definition of `app_cluster_list`, clarifying it as a dynamic array of input and output cluster IDs
+- Fixed a link issue when using ZCL multistate input cluster
+- Fixed the incorrect check of the `present_value` attribute in the ZCL Multistate Input, Output, and Value clusters when it is written.
+- Fixed a crash that occurred when an attribute with an extremely large value was reported via `esp_zb_zcl_report_attr_cmd_req()`.
+- Fixed a crash that occurred when the stack handled a manufacturer-specific command with a unrecognized payload.
+
+### Changes
+- Updated esp-zigbee-lib to v1.6.7
+
+
 ## 25-Jul-2025
 1.6.6 version release of ESP-ZIGBEE-SDK is based on esp-idf v5.3.2
 

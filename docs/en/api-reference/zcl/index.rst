@@ -7,6 +7,7 @@ This section provides the ESP Zigbee SDK's APIs that support different kind of Z
 .. toctree::
    :maxdepth: 1
 
+   esp_zigbee_zcl_alarms
    esp_zigbee_zcl_analog_input
    esp_zigbee_zcl_analog_output
    esp_zigbee_zcl_analog_value
@@ -18,6 +19,7 @@ This section provides the ESP Zigbee SDK's APIs that support different kind of Z
    esp_zigbee_zcl_color_control
    esp_zigbee_zcl_command
    esp_zigbee_zcl_common
+   esp_zigbee_zcl_device_temp_config
    esp_zigbee_zcl_door_lock
    esp_zigbee_zcl_electrical_meas
    esp_zigbee_zcl_fan_control

@@ -48,6 +48,15 @@ typedef struct esp_zb_zcl_custom_cluster_handlers_s {
 } esp_zb_zcl_custom_cluster_handlers_t;
 
 /**
+ * @brief Structure for the Zigbee ZCL command without payload
+ *
+ */
+typedef struct esp_zb_zcl_no_payload_cmd_req_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;           /*!< Basic command info */
+    esp_zb_zcl_address_mode_t address_mode;         /*!< APS addressing mode constants refer to esp_zb_zcl_address_mode_t */
+} esp_zb_zcl_no_payload_cmd_req_t;
+
+/**
  * @brief The Zigbee ZCL read attribute command struct
  *
  */
@@ -1205,6 +1214,41 @@ typedef struct esp_zgp_zcl_pairing_configuration_req_s {
 #endif /* CONFIG_ZB_GP_ENABLED */
 
 /**
+ * @brief Structure for the Zigbee ZCL Alarms Alarm command
+ *
+ */
+typedef struct esp_zb_zcl_alarms_alarm_cmd_req_s {
+    esp_zb_zcl_basic_cmd_t zcl_basic_cmd;       /*!< Basic command information */
+    esp_zb_zcl_address_mode_t address_mode;     /*!< APS addressing mode, see esp_zb_zcl_address_mode_t */
+    uint8_t alarm_code;                         /*!< Identifying code for the cause of the alarm, as given in the specification of the cluster whose attribute generated this alarm. */
+    uint16_t cluster_id;                        /*!< The identifier of the cluster whose attribute generated this alarm. */
+} esp_zb_zcl_alarms_alarm_cmd_req_t;
+
+/**
+ * @brief Structure for the Zigbee ZCL Alarms ResetAlarm command
+ *
+ */
+typedef esp_zb_zcl_alarms_alarm_cmd_req_t esp_zb_zcl_alarms_reset_alarm_cmd_req_t;
+
+/**
+ * @brief Structure for the Zigbee ZCL Alarms ResetAllAlarms command
+ *
+ */
+typedef esp_zb_zcl_no_payload_cmd_req_t esp_zb_zcl_alarms_reset_all_alarms_cmd_req_t;
+
+/**
+ * @brief Structure for the Zigbee ZCL Alarms GetAlarm command
+ *
+ */
+typedef esp_zb_zcl_no_payload_cmd_req_t esp_zb_zcl_alarms_get_alarm_cmd_req_t;
+
+/**
+ * @brief Structure for the Zigbee ZCL Alarms ResetAlarmLog command
+ *
+ */
+typedef esp_zb_zcl_no_payload_cmd_req_t esp_zb_zcl_alarms_reset_alarm_log_cmd_req_t;
+
+/**
  * @brief The Zigbee ZCL custom cluster request command struct
  *
  */
@@ -2081,6 +2125,46 @@ typedef struct esp_zb_zcl_window_covering_movement_message_s {
         uint16_t tilt_value;            /*!< The payload for ESP_ZB_ZCL_CMD_WINDOW_COVERING_GO_TO_TILT_VALUE */
     } payload;                          /*!< Command payload */
 } esp_zb_zcl_window_covering_movement_message_t;
+
+/**
+ * @brief The Zigbee zcl alarms reset alarm callback message struct
+ *
+ */
+typedef struct esp_zb_zcl_alarms_reset_alarm_message_s {
+    esp_zb_device_cb_common_info_t info;/*!< The common information for Zigbee device callback */
+    uint8_t alarm_code;                 /*!< Identifying code for the cause of the alarm, as given in the specification of the cluster whose attribute generated this alarm. */
+    uint16_t cluster_id;                /*!< The identifier of the cluster whose attribute generated this alarm. */
+} esp_zb_zcl_alarms_reset_alarm_message_t;
+
+/**
+ * @brief The Zigbee zcl alarms reset all alarms callback message struct
+ *
+ */
+typedef struct esp_zb_zcl_alarms_reset_all_alarms_message_s {
+    esp_zb_device_cb_common_info_t info;/*!< The common information for Zigbee device callback */
+} esp_zb_zcl_alarms_reset_all_alarms_message_t;
+
+/**
+ * @brief The Zigbee zcl alarms alarm callback message struct
+ *
+ */
+typedef struct esp_zb_zcl_alarms_alarm_message_s {
+    esp_zb_device_cb_common_info_t info;    /*!< The common information for Zigbee device callback */
+    uint8_t alarm_code;                     /*!< Identifying code for the cause of the alarm, as given in the specification of the cluster whose attribute generated this alarm. */
+    uint16_t cluster_id;                    /*!< The identifier of the cluster whose attribute generated this alarm. */
+} esp_zb_zcl_alarms_alarm_message_t;
+
+/**
+ * @brief The Zigbee zcl alarms get alarm response callback message struct
+ *
+ */
+typedef struct esp_zb_zcl_alarms_get_alarm_resp_message_s {
+    esp_zb_device_cb_common_info_t info;/*!< The common information for Zigbee device callback */
+    uint8_t status;                     /*!< The status of get alarm response, refer to esp_zb_zcl_status_t */
+    uint8_t alarm_code;                 /*!< Identifying code for the cause of the alarm, as given in the specification of the cluster whose attribute generated this alarm. */
+    uint16_t cluster_id;                /*!< The identifier of the cluster whose attribute generated this alarm. */
+    uint32_t time_stamp;                /*!< The time when the alarm is triggered. */
+} esp_zb_zcl_alarms_get_alarm_resp_message_t;
 
 /**
  * @brief The Zigbee zcl attribute report message struct
@@ -3010,6 +3094,22 @@ uint8_t esp_zb_zcl_scenes_recall_scene_cmd_req(esp_zb_zcl_scenes_recall_scene_cm
 uint8_t esp_zb_zcl_scenes_get_scene_membership_cmd_req(esp_zb_zcl_scenes_get_scene_membership_cmd_t *cmd_req);
 
 /**
+ * @brief Set the size of the scene table for ZCL scenes.
+ *
+ * The scene table is shared by all endpoints with the Scenes cluster and is stored as non-volatile data
+ * in the `zb_storage` partition. This API MUST be called before esp_zb_device_register() and can only be
+ * invoked once during device startup.
+ *
+ * @param[in] size The maximum number of scenes the scene table can store.
+ * @return
+ *          - ESP_OK: On success.
+ *          - ESP_ERR_INVALID_STATE: The scene table size has already been set.
+ *          - ESP_ERR_NO_MEM: Insufficient memory to set the scene table size.
+ *          - ESP_FAIL: On failure.
+ */
+esp_err_t esp_zb_zcl_scenes_table_set_size(uint8_t size);
+
+/**
  * @brief Set the ZCL scenes cluster scene table for users.
  *
  * @param[in] endpoint          The endpoint identifier
@@ -3409,6 +3509,53 @@ uint8_t esp_zb_zcl_poll_control_set_long_poll_interval_cmd_req(esp_zb_zcl_poll_c
  * @return The transaction sequence number
  */
 uint8_t esp_zb_zcl_poll_control_set_short_poll_interval_cmd_req(esp_zb_zcl_poll_control_set_short_poll_interval_cmd_req_t *cmd_req);
+
+/**
+ * @brief Send alarms command to reset a specific alarm
+ * 
+ * @param[in] cmd_req Pointer to the ResetAlarm request of alarms cluster, refer to esp_zb_zcl_alarms_reset_alarm_cmd_req_t
+ *
+ * @return The transaction sequence number 
+ */
+uint8_t esp_zb_zcl_alarms_reset_alarm_cmd_req(esp_zb_zcl_alarms_reset_alarm_cmd_req_t *cmd_req);
+
+/**
+ * @brief Send alarms command to reset all alarms
+ * 
+ * @param[in] cmd_req Pointer to the ResetAllAlarms request of alarms cluster, refer to esp_zb_zcl_alarms_reset_all_alarms_cmd_req_t
+ *
+ * @return The transaction sequence number 
+ */
+uint8_t esp_zb_zcl_alarms_reset_all_alarms_cmd_req(esp_zb_zcl_alarms_reset_all_alarms_cmd_req_t *cmd_req);
+
+/**
+ * @brief Send alarms command to get the oldest alarm
+ * 
+ * @param[in] cmd_req Pointer to the GetAlarm request of alarms cluster, refer to esp_zb_zcl_alarms_get_alarm_cmd_req_t
+ *
+ * @return The transaction sequence number 
+ */
+uint8_t esp_zb_zcl_alarms_get_alarm_cmd_req(esp_zb_zcl_alarms_get_alarm_cmd_req_t *cmd_req);
+
+/**
+ * @brief Send alarms command to reset the alarm log in alarm table
+ * 
+ * @param[in] cmd_req Pointer to the ResetAlarmLog request of alarms cluster, refer to esp_zb_zcl_alarms_reset_alarm_log_cmd_req_t
+ *
+ * @return The transaction sequence number 
+ */
+uint8_t esp_zb_zcl_alarms_reset_alarm_log_cmd_req(esp_zb_zcl_alarms_reset_alarm_log_cmd_req_t *cmd_req);
+
+/**
+ * @brief Send alarms command to notify an alarm to the client
+ * 
+ * The Alarm command SHALL be generated from server to client when an alarm condition occurs on a device.
+ *
+ * @param[in] cmd_req Pointer to the Alarm request of alarms cluster, refer to esp_zb_zcl_alarms_alarm_cmd_req_t
+ *
+ * @return The transaction sequence number  
+ */
+uint8_t esp_zb_zcl_alarms_alarm_cmd_req(esp_zb_zcl_alarms_alarm_cmd_req_t *cmd_req);
 
 #ifdef CONFIG_ZB_GP_ENABLED
 /**
