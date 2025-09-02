@@ -52,6 +52,7 @@ For specific type of argument, correct format should be provided so that it can 
 - [`iperf`](#iperf): Iperf over Zigbee.
 - [`linkkey`](#linkkey): Link Key Configuration.
 - [`macfilter`](#macfilter): Zigbee stack mac filter management.
+- [`memdiag`](#memdiag): Diagnose memory usages.
 - [`neighbor`](#neighbor): Neighbor information.
 - [`network`](#network): Network configuration.
 - [`panid`](#panid): Get/Set the (extended) PAN ID of the node.
@@ -550,6 +551,24 @@ Clear all entries in the filter
 
 ```bash
 esp> macfilter clear
+```
+
+
+### memdiag
+Diagnose memory usages
+
+Get the minimum remaining stack space of zigbee_main task
+```bash
+esp> memdiag stack
+Min Free Stack: 2004 bytes
+```
+
+Get the amount of free heap memory remaining
+```bash
+esp> memdiag heap
+Cur Free Heap: 181344 bytes
+Min Free Heap: 177744 bytes
+Max Free Heap: 236352 bytes
 ```
 
 

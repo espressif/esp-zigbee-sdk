@@ -198,11 +198,46 @@ static esp_err_t cli_route_table(esp_zb_cli_cmd_t *self, int argc, char **argv)
     return ESP_OK;
 }
 
+static esp_err_t cli_memory_diag(esp_zb_cli_cmd_t *self, int argc, char **argv)
+{
+    struct {
+        arg_str_t *memory_type;
+        arg_end_t *end;
+    } argtable = {
+        .memory_type = arg_strn(NULL, NULL, "<heap|stack>", 1, 1, "Memory type"),
+        .end = arg_end(2),
+    };
+    esp_err_t ret = ESP_OK;
+
+    /* Parse command line arguments */
+    EXIT_ON_FALSE(argc > 1, ESP_OK, arg_print_help((void**)&argtable, argv[0]));
+    int nerrors = arg_parse(argc, argv, (void**)&argtable);
+    EXIT_ON_FALSE(nerrors == 0, ESP_ERR_INVALID_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
+
+    if (!strcmp(argtable.memory_type->sval[0], "heap")) {
+        cli_output("Cur Free Heap: %d bytes\n", heap_caps_get_free_size(MALLOC_CAP_DEFAULT));
+        cli_output("Min Free Heap: %d bytes\n", heap_caps_get_minimum_free_size(MALLOC_CAP_DEFAULT));
+        cli_output("Max Free Heap: %d bytes\n", heap_caps_get_total_size(MALLOC_CAP_DEFAULT));
+    } else if (!strcmp(argtable.memory_type->sval[0], "stack")) {
+        const char *task_name = "Zigbee_main";
+        TaskHandle_t task_handle;
+        EXIT_ON_FALSE((task_handle = xTaskGetHandle(task_name)) != NULL, ESP_ERR_NOT_FOUND);
+        cli_output("Min Free Stack: %d bytes\n", uxTaskGetStackHighWaterMark(task_handle));
+    } else {
+        EXIT_ON_ERROR(ESP_ERR_INVALID_ARG);
+    }
+
+exit:
+    ESP_ZB_CLI_FREE_ARGSTRUCT(&argtable);
+    return ret;
+}
+
 DECLARE_ESP_ZB_CLI_CMD(factoryreset, cli_factoryreset,, "Reset the device to factory new immediately");
 DECLARE_ESP_ZB_CLI_CMD(reboot,       cli_reboot,,       "Reboot the device immediately");
 DECLARE_ESP_ZB_CLI_CMD(radio,        cli_radio,,        "Enable/Disable the radio");
 DECLARE_ESP_ZB_CLI_CMD(start,        cli_start,,        "Start Zigbee stack");
 DECLARE_ESP_ZB_CLI_CMD(trace,        cli_trace,,        "Configure Zigbee stack trace log");
+DECLARE_ESP_ZB_CLI_CMD(memdiag,      cli_memory_diag,,  "Diagnose memory usages");
 DECLARE_ESP_ZB_CLI_CMD_WITH_SUB(macfilter, "Zigbee stack mac filter management",
     ESP_ZB_CLI_SUBCMD(add,      cli_macfilter_add,      "Add device ieee addr for filter in"),
     ESP_ZB_CLI_SUBCMD(clear,    cli_macfilter_clear,    "Clear all entries in the filter"),
