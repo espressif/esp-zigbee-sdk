@@ -9,6 +9,7 @@
 
 #include "esp_check.h"
 #include "esp_zigbee_core.h"
+#include "test/esp_zigbee_test_utils.h"
 
 #include "esp_zigbee_console.h"
 #include "cli_cmd.h"
@@ -102,6 +103,65 @@ static esp_err_t cli_sroute_table(esp_zb_cli_cmd_t *self, int argc, char **argv)
     return ESP_OK;
 }
 
+/* Implementation of "concentrator" command */
+
+static esp_err_t cli_cnctr_start(esp_zb_cli_cmd_t *self, int argc, char **argv)
+{
+    struct {
+        arg_u8_t *radius;
+        arg_u8_t *discovery_time;
+        arg_u8_t *separation_time;
+        arg_lit_t *help;
+        arg_end_t *end;
+    } argtable = {
+        .radius = arg_u8n("r",  "radius",  "<u8:RADIUS>", 0, 1, "Discovery radius, default: 30"),
+        .discovery_time = arg_u8n("M",  "discovery",  "<u8:TIMEOUT>", 0, 1, "Maximum period in sec to do discovery, default: 60"),
+        .separation_time = arg_u8n("m",  "separation",  "<u8:TIMEOUT>", 0, 1, "Minimum period in sec to do discovery, default: 30"),
+        .help = arg_lit0(NULL, "help", "Print this help message"),
+        .end = arg_end(2),
+    };
+    esp_err_t ret = ESP_OK;
+
+    /* Parse command line arguments */
+    int nerrors = arg_parse(argc, argv, (void**)&argtable);
+    EXIT_ON_FALSE(nerrors == 0, ESP_ERR_INVALID_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
+
+    uint8_t radius = 30;
+    uint8_t discovery_time = 60;
+    uint8_t separation_time = 30;
+
+    ESP_UNUSED(separation_time);
+
+    if (argtable.radius->count > 0) {
+        radius = argtable.radius->val[0];
+    }
+    if (argtable.discovery_time->count > 0) {
+        discovery_time = argtable.discovery_time->val[0];
+    }
+    if (argtable.separation_time->count > 0) {
+        separation_time = argtable.separation_time->val[0];
+    }
+
+    ret = esp_zb_nwk_start_concentrator_mode(radius, discovery_time);
+
+exit:
+    return ret;
+}
+
+static esp_err_t cli_cnctr_advise(esp_zb_cli_cmd_t *self, int argc, char **argv)
+{
+    return ESP_ERR_NOT_SUPPORTED;
+}
+
+static esp_err_t cli_cnctr_stop(esp_zb_cli_cmd_t *self, int argc, char **argv)
+{
+    if (argc > 1) {
+        return ESP_ERR_INVALID_ARG;
+    }
+
+    return esp_zb_nwk_stop_concentrator_mode();
+}
+
 DECLARE_ESP_ZB_CLI_CMD_WITH_SUB(neighbor, "Neighbor information",
     ESP_ZB_CLI_SUBCMD(table,    cli_neighbor_table, "Dump the neighbor table on current node."),
 );
@@ -110,4 +170,9 @@ DECLARE_ESP_ZB_CLI_CMD_WITH_SUB(route, "Route information",
 );
 DECLARE_ESP_ZB_CLI_CMD_WITH_SUB(sroute, "Source Route information",
     ESP_ZB_CLI_SUBCMD(table,    cli_sroute_table,   "Dump the route record table in current node."),
+);
+DECLARE_ESP_ZB_CLI_CMD_WITH_SUB(concentrator, "NWK Concentrator function",
+    ESP_ZB_CLI_SUBCMD(start,  cli_cnctr_start,  "Concentrator start"),
+    ESP_ZB_CLI_SUBCMD(advise, cli_cnctr_advise, "Advise an MTO-RREQ"),
+    ESP_ZB_CLI_SUBCMD(stop,   cli_cnctr_stop,   "Concentrator stop"),
 );
