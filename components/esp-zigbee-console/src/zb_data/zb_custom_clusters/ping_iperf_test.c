@@ -80,7 +80,7 @@ esp_err_t esp_zb_ping_iperf_test_cluster_add_attr(esp_zb_attribute_list_t *attr_
         default:
             ESP_RETURN_ON_FALSE(false, ESP_ERR_INVALID_ARG, TAG, "incorrect/unsupported attribute_id!");
     }
-    
+
     return esp_zb_custom_cluster_add_custom_attr(attr_list, attr_id, attr_type, attr_access, value_p);
 }
 
@@ -219,7 +219,7 @@ static esp_err_t zb_ping_iperf_test_cluster_ping_test_handler(const esp_zb_zcl_c
 
 /**
  * @brief Implementation of the iperf test.
- *                                              
+ *
  *                       +-------------------+                 +------------------+
  *                       |      Client       |                 |      Server      |
  *                       +-------------------+                 +------------------+
@@ -232,9 +232,9 @@ static esp_err_t zb_ping_iperf_test_cluster_ping_test_handler(const esp_zb_zcl_c
  * successfully                   |             .                        |
  *                                |             .                        |
  *                                |             .                        |
- *                                | reqn: command: IPERF_PROCESS         | 
+ *                                | reqn: command: IPERF_PROCESS         |
  * calculate throughput when send |------------------------------------->| calculate throughput
- * successfully                   |                                      |                
+ * successfully                   |                                      |
  *
  * The purpose of this implementation is to continuously measure the network throughput between the client
  * and the server during the test period and store the final test result for further analysis and verification.
@@ -252,7 +252,7 @@ esp_err_t esp_zb_ping_iperf_set_iperf_info(const esp_zb_iperf_req_info_t *info)
     ESP_RETURN_ON_FALSE(result == ESP_ZB_ZCL_STATUS_SUCCESS, ESP_FAIL, TAG, "Error occurred while writing the data len attribute of iperf, status: %d", result);
     result = zb_ping_iperf_set_iperf_attribute_val(info->src_endpoint, ESP_ZB_ZCL_CLUSTER_CLIENT_ROLE, ESP_ZB_ZCL_ATTR_PING_IPERF_TEST_IPERF_INTERVAL, &iperf_interval);
     ESP_RETURN_ON_FALSE(result == ESP_ZB_ZCL_STATUS_SUCCESS, ESP_FAIL, TAG, "Error occurred while writing the interval attribute of iperf, status: %d", result);
-    
+
     return ret;
 }
 
@@ -411,7 +411,7 @@ esp_err_t zb_ping_iperf_test_cluster_command_handler(const esp_zb_zcl_custom_clu
     return ret;
 }
 
-float esp_zb_ping_iperf_get_iperf_result(uint8_t endpoint, uint8_t cluster_role) 
+float esp_zb_ping_iperf_get_iperf_result(uint8_t endpoint, uint8_t cluster_role)
 {
     float throughput = 0;
     esp_zb_zcl_attr_t *attr = zb_ping_iperf_get_iperf_attribute_val(endpoint, cluster_role, ESP_ZB_ZCL_ATTR_PING_IPERF_TEST_IPERF_THROUGHPUT);

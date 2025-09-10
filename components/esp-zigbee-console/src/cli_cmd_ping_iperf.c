@@ -8,6 +8,7 @@
 #include <string.h>
 
 #include "esp_check.h"
+
 #include "esp_zigbee_console.h"
 #include "cli_cmd.h"
 #include "zb_data/zb_custom_clusters/custom_common.h"
@@ -48,7 +49,7 @@ static esp_err_t cli_ping(esp_zb_cli_cmd_t *self, int argc, char **argv)
     EXIT_ON_FALSE(nerrors == 0, ESP_ERR_INVALID_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
 
     esp_zb_ping_req_info_t ping_info = {
-        .dst_short_addr = argtable.dst_addr->addr[0].u.short_addr,
+        .dst_short_addr = argtable.dst_addr->addr[0].u.addr16,
         .dst_ep         = argtable.dst_ep->val[0],
         .payload_len    = argtable.payload_len->val[0],
         .src_ep         = argtable.src_ep->val[0],
@@ -58,7 +59,7 @@ static esp_err_t cli_ping(esp_zb_cli_cmd_t *self, int argc, char **argv)
         ping_info.timeout = argtable.timeout->val[0];
     }
     EXIT_ON_ERROR(esp_zb_ping_iperf_test_cluster_ping_req(&ping_info, cli_ping_finish_callback));
-    
+
 exit:
     ESP_ZB_CLI_FREE_ARGSTRUCT(&argtable);
     return ret;
@@ -98,7 +99,7 @@ static esp_err_t cli_iperf_start(esp_zb_cli_cmd_t *self, int argc, char **argv)
     }
     esp_zb_iperf_req_info_t iperf_req_info = {
         .direction      = ESP_ZB_ZCL_CMD_DIRECTION_TO_SRV,
-        .dst_address    = argtable.dst_addr->addr[0].u.short_addr,
+        .dst_address    = argtable.dst_addr->addr[0].u.addr16,
         .dst_endpoint   = argtable.dst_ep->val[0],
         .iperf_duration = argtable.iperf_duration->val[0],
         .iperf_interval = iperf_interval,
@@ -149,7 +150,7 @@ static esp_err_t cli_iperf_result(esp_zb_cli_cmd_t *self, int argc, char **argv)
     }
     float throughput = esp_zb_ping_iperf_get_iperf_result(argtable.src_ep->val[0], role);
     cli_output("iperf test throughput: %.3f kbps\n", throughput);
-    
+
 exit:
     ESP_ZB_CLI_FREE_ARGSTRUCT(&argtable);
     return ret;

@@ -12,8 +12,6 @@
 
 #include "esp_check.h"
 
-#include "cmdline_parser.h"
-
 #include "argtable_ext.h"
 
 static void arg_common_resetfn(struct arg_lit* parent)
@@ -321,7 +319,7 @@ static esp_err_t arg_addr_scanfn(arg_addr_t* parent, const char* argval)
     } else if (!argval) {
         parent->count++;
     } else {
-        ret = parse_zcl_addr(argval, &parent->addr[parent->count]);
+        ret = parse_addr(argval, &parent->addr[parent->count]);
         if (ret == ESP_OK) {
             parent->count++;
         }
@@ -338,7 +336,7 @@ arg_addr_t* arg_addrn(const char* shortopts, const char* longopts, const char* d
     /* foolproof things by ensuring maxcount is not less than mincount */
     maxcount = (maxcount < mincount) ? mincount : maxcount;
 
-    nbytes = sizeof(arg_addr_t) + (size_t)maxcount * sizeof(esp_zb_zcl_addr_t);
+    nbytes = sizeof(arg_addr_t) + (size_t)maxcount * sizeof(cli_addr_t);
 
     result = (arg_addr_t*)malloc(nbytes);
 
@@ -356,7 +354,7 @@ arg_addr_t* arg_addrn(const char* shortopts, const char* longopts, const char* d
     result->hdr.checkfn = (arg_checkfn*)arg_common_checkfn;
     result->hdr.errorfn = (arg_errorfn*)arg_common_errorfn;
 
-    result->addr = (esp_zb_zcl_addr_t*)(result + 1);
+    result->addr = (cli_addr_t*)(result + 1);
     result->count = 0;
 
     return result;

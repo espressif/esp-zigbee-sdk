@@ -7,7 +7,6 @@
 #include <string.h>
 
 #include "esp_check.h"
-#include "esp_zigbee_core.h"
 
 #include "cmdline_parser.h"
 
@@ -135,37 +134,33 @@ exit:
     return ret;
 }
 
-esp_err_t parse_ieee_addr(const char *string, esp_zb_ieee_addr_t ieee_addr)
+esp_err_t parse_addr(const char *string, cli_addr_t *addr)
 {
-#define DATA_SIZE sizeof(esp_zb_ieee_addr_t)
-    uint8_t temp[DATA_SIZE] = {0};
+#define MAX_DATA_SIZE 8
+    uint8_t temp[MAX_DATA_SIZE] = {0};
     size_t parsed = 0;
-    ESP_RETURN_ON_ERROR(parse_hex_str(string, temp, DATA_SIZE, &parsed), TAG, "Fail to parse HEX data");
-    if (parsed != DATA_SIZE) {
+    ESP_RETURN_ON_ERROR(parse_hex_str(string, temp, MAX_DATA_SIZE, &parsed), TAG, "Fail to parse HEX data");
+    switch (parsed) {
+    case sizeof(uint64_t):
+        addr->addr_type = CLI_ADDR_TYPE_64BIT;
+        break;
+    case sizeof(uint32_t):
+        addr->addr_type = CLI_ADDR_TYPE_32BIT;
+        break;
+    case sizeof(uint16_t):
+        addr->addr_type = CLI_ADDR_TYPE_16BIT;
+        break;
+
+    default:
         return ESP_ERR_INVALID_SIZE;
     }
+
     /* Reverse the result */
-    for (int i = 0; i < DATA_SIZE; i++) {
-        ((uint8_t*)ieee_addr)[i] = temp[DATA_SIZE - 1 - i];
+    for (int i = 0; i < parsed; i++) {
+        addr->u.u8[i] = temp[parsed - 1 - i];
     }
+
     return ESP_OK;
-}
-
-esp_err_t parse_zcl_addr(const char *string, esp_zb_zcl_addr_t *addr)
-{
-    esp_err_t ret = parse_ieee_addr(string, addr->u.ieee_addr);
-    if (ret == ESP_OK) {
-        addr->addr_type = ESP_ZB_ZCL_ADDR_TYPE_IEEE;
-    } else {
-        uint16_t short_addr = 0;
-        ret = parse_u16(string, &short_addr);
-        if (ret == ESP_OK) {
-            addr->u.short_addr = short_addr;
-            addr->addr_type = ESP_ZB_ZCL_ADDR_TYPE_SHORT;
-        }
-    }
-
-    return ret;
 }
 
 esp_err_t parse_attr_access(const char *string, uint8_t *access)

@@ -11,15 +11,14 @@
 
 #include "esp_check.h"
 #include "esp_zigbee_core.h"
-#include "zboss_api.h"
 
 #include "esp_zigbee_console.h"
 #include "cli_cmd.h"
 
 #define TAG "cli_cmd_misc"
 
-extern void mac_add_visible_device(zb_ieee_addr_t long_addr);
-extern void mac_add_invisible_short(zb_uint16_t addr);
+extern void mac_add_visible_device(esp_zb_ieee_addr_t long_addr);
+extern void mac_add_invisible_short(uint16_t addr);
 extern void mac_clear_filters(void);
 
 static esp_err_t cli_factoryreset(esp_zb_cli_cmd_t *self, int argc, char *argv[])
@@ -27,13 +26,11 @@ static esp_err_t cli_factoryreset(esp_zb_cli_cmd_t *self, int argc, char *argv[]
     if (argc > 1) {
         return ESP_ERR_INVALID_ARG;
     }
-    cli_output("Erasing NVRAM of Zigbee stack ... ");
-    esp_zb_zcl_reset_nvram_to_factory_default();
-    cli_output_line("Done");
-    cli_output_line("Reboot the device");
-    esp_restart();
 
-    /* Never reached, esp_restart are not expect to return. */
+    cli_output_line("Erase NVRAM of Zigbee stack and reboot the device");
+    esp_zb_factory_reset();
+
+    /* Never reached, esp_zb_factory_reset() are not expect to return. */
     return ESP_FAIL;
 }
 
@@ -110,16 +107,16 @@ static esp_err_t cli_macfilter_add(esp_zb_cli_cmd_t *self, int argc, char *argv[
     int nerrors = arg_parse(argc, argv, (void**)&argtable);
     EXIT_ON_FALSE(nerrors == 0, ESP_ERR_INVALID_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
 
-    esp_zb_zcl_addr_t *addr = &argtable.addr->addr[0];
+    cli_addr_t *addr = &argtable.addr->addr[0];
     /* only supports short address for invisible and ieee address for visible setting. */
-    bool is_correct_addr_type = !((argtable.invisible->count > 0) ^ (addr->addr_type == ESP_ZB_ZCL_ADDR_TYPE_SHORT));
+    bool is_correct_addr_type = !((argtable.invisible->count > 0) ^ (addr->addr_type == CLI_ADDR_TYPE_16BIT));
     EXIT_ON_FALSE(is_correct_addr_type, ESP_ERR_INVALID_ARG,
                   cli_output("Only %s address is supported!\n", argtable.invisible->count > 0 ? "short" : "ieee"));
 
     if (argtable.invisible->count > 0) {
-        mac_add_invisible_short(addr->u.short_addr);
+        mac_add_invisible_short(addr->u.addr16);
     } else {
-        mac_add_visible_device(addr->u.ieee_addr);
+        mac_add_visible_device(addr->u.u8);
     }
 
 exit:

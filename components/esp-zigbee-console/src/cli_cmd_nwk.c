@@ -39,10 +39,11 @@ static esp_err_t cli_neighbor_table(esp_zb_cli_cmd_t *self, int argc, char **arg
     esp_zb_nwk_info_iterator_t itor = ESP_ZB_NWK_INFO_ITERATOR_INIT;
     esp_zb_nwk_neighbor_info_t neighbor = {};
 
+    uint16_t index = 0;
     cli_output_table_header(ARRAY_SIZE(widths), titles, widths);
     while (ESP_OK == esp_zb_nwk_get_next_neighbor(&itor, &neighbor)) {
         cli_output("| %3d | %3d | 0x%04hx | 0x%016" PRIx64 " |",
-                    itor, neighbor.age, neighbor.short_addr, *(uint64_t *)neighbor.ieee_addr);
+                    index++, neighbor.age, neighbor.short_addr, *(uint64_t *)neighbor.ieee_addr);
         cli_output(" %3s | %c |", dev_type_name[neighbor.device_type], rel_name[neighbor.relationship]);
         cli_output(" %3d | %3d |  o:%d |", neighbor.depth, neighbor.lqi, neighbor.outgoing_cost);
         cli_output("\n");
@@ -66,10 +67,11 @@ static esp_err_t cli_route_table(esp_zb_cli_cmd_t *self, int argc, char **argv)
     esp_zb_nwk_info_iterator_t itor = ESP_ZB_NWK_INFO_ITERATOR_INIT;
     esp_zb_nwk_route_info_t route = {};
 
+    uint16_t index = 0;
     cli_output_table_header(ARRAY_SIZE(widths), titles, widths);
     while (ESP_OK == esp_zb_nwk_get_next_route(&itor, &route)) {
         cli_output("| %3d | 0x%04hx%c| 0x%04hx | %4d | %6s | 0x%02x |",
-                    itor, route.dest_addr, route.flags.group_id ? 'g' : ' ', route.next_hop_addr,
+                    index++, route.dest_addr, route.flags.group_id ? 'g' : ' ', route.next_hop_addr,
                     route.expiry, route_state_name[route.flags.status], *(uint8_t *)&route.flags);
         cli_output("\n");
     }
@@ -87,6 +89,7 @@ static esp_err_t cli_sroute_table(esp_zb_cli_cmd_t *self, int argc, char **argv)
     esp_zb_nwk_info_iterator_t itor = ESP_ZB_NWK_INFO_ITERATOR_INIT;
     esp_zb_nwk_route_record_info_t rrec = {};
 
+    uint16_t index = 0;
     cli_output_table_header(ARRAY_SIZE(widths), titles, widths);
     while (ESP_OK == esp_zb_nwk_get_next_route_record(&itor, &rrec)) {
         char *path = path_str;
@@ -96,7 +99,7 @@ static esp_err_t cli_sroute_table(esp_zb_cli_cmd_t *self, int argc, char **argv)
         *(path - 1) = '\0';
 
         cli_output("| %3d | 0x%04hx | %4d |%-*s|",
-                    itor, rrec.dest_address, rrec.expiry, sizeof(path_str), path_str);
+                    index++, rrec.dest_address, rrec.expiry, sizeof(path_str), path_str);
         cli_output("\n");
     }
 

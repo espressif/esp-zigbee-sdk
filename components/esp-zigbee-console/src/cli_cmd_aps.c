@@ -9,9 +9,9 @@
 
 #include "esp_check.h"
 
-#include "esp_zigbee_console.h"
 #include "aps/esp_zigbee_aps.h"
-#include "cmdline_parser.h"
+
+#include "esp_zigbee_console.h"
 #include "cli_cmd_aps.h"
 
 #define TAG "cli_cmd_aps"
@@ -32,16 +32,16 @@ esp_err_t esp_zb_cli_parse_aps_dst(esp_zb_cli_aps_argtable_t *parsed_argtable, e
     esp_err_t ret = ESP_OK;
     /* Fill "dst_addr", "dst_ep" and "addr_mode" */
     if (parsed_argtable->dst_addr->count > 0) {
-        esp_zb_zcl_addr_t *dst_addr = &parsed_argtable->dst_addr->addr[0];
+        cli_addr_t *dst_addr = &parsed_argtable->dst_addr->addr[0];
         esp_zb_aps_address_mode_t address_mode_select[][2] = {
-            [ESP_ZB_ZCL_ADDR_TYPE_SHORT][0] = ESP_ZB_APS_ADDR_MODE_16_GROUP_ENDP_NOT_PRESENT,
-            [ESP_ZB_ZCL_ADDR_TYPE_IEEE][0]  = ESP_ZB_APS_ADDR_MODE_64_PRESENT_ENDP_NOT_PRESENT,
-            [ESP_ZB_ZCL_ADDR_TYPE_SHORT][1] = ESP_ZB_APS_ADDR_MODE_16_ENDP_PRESENT,
-            [ESP_ZB_ZCL_ADDR_TYPE_IEEE][1]  = ESP_ZB_APS_ADDR_MODE_64_ENDP_PRESENT,
+            [CLI_ADDR_TYPE_16BIT][0] = ESP_ZB_APS_ADDR_MODE_16_GROUP_ENDP_NOT_PRESENT,
+            [CLI_ADDR_TYPE_64BIT][0]  = ESP_ZB_APS_ADDR_MODE_64_PRESENT_ENDP_NOT_PRESENT,
+            [CLI_ADDR_TYPE_16BIT][1] = ESP_ZB_APS_ADDR_MODE_16_ENDP_PRESENT,
+            [CLI_ADDR_TYPE_64BIT][1]  = ESP_ZB_APS_ADDR_MODE_64_ENDP_PRESENT,
         };
         /* Copy parse address */
         memcpy(dst_addr_u, &dst_addr->u, sizeof(esp_zb_addr_u));
-        
+
         if (parsed_argtable->dst_ep->count > 0) {
             *dst_endpoint = parsed_argtable->dst_ep->val[0];
         }
@@ -67,7 +67,7 @@ exit:
 static void zb_apsde_data_confirm_handler(esp_zb_apsde_data_confirm_t confirm)
 {
     if (confirm.status == 0x00) {
-        cli_output_line("Send aps data frame successful"); 
+        cli_output_line("Send aps data frame successful");
         esp_zb_console_notify_result(ESP_OK);
     } else {
         cli_output("Send aps data frame failed, status: %d\n", confirm.status);
@@ -79,8 +79,8 @@ static void zb_apsde_data_confirm_handler(esp_zb_apsde_data_confirm_t confirm)
 static bool zb_apsde_data_indication_handler(esp_zb_apsde_data_ind_t ind)
 {
     if (ind.status == 0x00) {
-        cli_output("Received aps data frame successful, src ep %d src addr 0x%04x -> dst ep %d dst addr 0x%04x\n", 
-                   ind.src_endpoint, ind.src_short_addr, ind.dst_endpoint, ind.dst_short_addr); 
+        cli_output("Received aps data frame successful, src ep %d src addr 0x%04x -> dst ep %d dst addr 0x%04x\n",
+                   ind.src_endpoint, ind.src_short_addr, ind.dst_endpoint, ind.dst_short_addr);
         if (ind.asdu_length > 0) {
             cli_output_buffer(ind.asdu, ind.asdu_length);
         }
@@ -123,7 +123,7 @@ static esp_err_t cli_aps_send_raw(esp_zb_cli_cmd_t *self, int argc, char **argv)
     EXIT_ON_FALSE(argc > 1, ESP_OK, arg_print_help((void**)&argtable, argv[0]));
     int nerrors = arg_parse(argc, argv, (void**)&argtable);
     EXIT_ON_FALSE(nerrors == 0, ESP_ERR_INVALID_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
-    
+
     esp_zb_aps_address_mode_t addr_mode_temp = ESP_ZB_APS_ADDR_MODE_DST_ADDR_ENDP_NOT_PRESENT;
     EXIT_ON_ERROR(esp_zb_cli_parse_aps_dst(&argtable.aps,
                                            &req_params.dst_addr,
@@ -153,7 +153,7 @@ static esp_err_t cli_aps_send_raw(esp_zb_cli_cmd_t *self, int argc, char **argv)
 
     EXIT_ON_ERROR(esp_zb_aps_data_request(&req_params));
     esp_zb_aps_data_confirm_handler_register(&zb_apsde_data_confirm_handler);
-    
+
 exit:
     if (req_params.asdu) {
         free(req_params.asdu);
