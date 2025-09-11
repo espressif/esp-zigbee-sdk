@@ -7,6 +7,7 @@ import pytest
 import time
 from constants import ZigbeeCIConstants, MatchPattern
 from examples.zigbee_common import Common, ExampleDevice, CliDevice
+from examples.zigbee_common import generic_chips_zigbee_test, single_chip_gateway, dual_chip_gateway, ota_chip_test
 import logging
 
 logging.basicConfig(level=logging.INFO)
@@ -36,11 +37,9 @@ gateway_pytest_build_dir = CLI_CURRENT_DIR_CLIENT + '|' + GATEWAY_CURRENT_DIR_CL
 
 # Case 5: Zigbee network connection basic test
 @pytest.mark.order(5)
-@pytest.mark.esp32h2
-@pytest.mark.esp32c6
 @pytest.mark.zigbee_multi_dut
 @pytest.mark.parametrize('count, app_path, erase_all', [(2, basic_pytest_build_dir, 'y'), ], indirect=True, )
-@pytest.mark.usefixtures('teardown_fixture')
+@generic_chips_zigbee_test
 def test_zb_basic(dut, count, app_path, erase_all):
     client = ExampleDevice(dut[0])
     server = ExampleDevice(dut[1])
@@ -78,10 +77,9 @@ def test_zb_basic(dut, count, app_path, erase_all):
 
 # Case 6: Zigbee ota test
 @pytest.mark.order(6)
-@pytest.mark.esp32h2
 @pytest.mark.zigbee_multi_dut
 @pytest.mark.parametrize('count, app_path, erase_all', [(2, ota_pytest_build_dir, 'y'), ], indirect=True, )
-@pytest.mark.usefixtures('teardown_fixture')
+@ota_chip_test
 def test_zb_ota(dut, count, app_path, erase_all):
     client = ExampleDevice(dut[0])
     server = ExampleDevice(dut[1])
@@ -103,11 +101,9 @@ def test_zb_ota(dut, count, app_path, erase_all):
 
 # Case 7: Zigbee light sleep test
 @pytest.mark.order(7)
-@pytest.mark.esp32h2
-@pytest.mark.esp32c6
 @pytest.mark.zigbee_multi_dut
 @pytest.mark.parametrize('count, app_path, erase_all', [(2, sleep_pytest_build_dir, 'y'), ], indirect=True, )
-@pytest.mark.usefixtures('teardown_fixture')
+@generic_chips_zigbee_test
 def test_zb_sleep(dut, count, app_path, erase_all):
     cli = CliDevice(dut[0])
     sleep_device = ExampleDevice(dut[1])
@@ -128,11 +124,9 @@ def test_zb_sleep(dut, count, app_path, erase_all):
 
 # Case 8: Zigbee touchlink test
 @pytest.mark.order(8)
-@pytest.mark.esp32h2
-@pytest.mark.esp32c6
 @pytest.mark.zigbee_multi_dut
 @pytest.mark.parametrize('count, app_path, erase_all', [(2, touchlink_pytest_build_dir, 'y'), ], indirect=True, )
-@pytest.mark.usefixtures('teardown_fixture')
+@generic_chips_zigbee_test
 def test_zb_touch_link(dut, count, app_path, erase_all):
     light = ExampleDevice(dut[0])
     switch = ExampleDevice(dut[1])
@@ -150,11 +144,10 @@ def test_zb_touch_link(dut, count, app_path, erase_all):
 
 # Case 9: Zigbee gateway test
 @pytest.mark.order(9)
-@pytest.mark.esp32s3
 @pytest.mark.zigbee_multi_dut
 @pytest.mark.parametrize('count, app_path, target, erase_all', [(2, gateway_pytest_build_dir, 'esp32h2|esp32s3', 'y'), ],
                          indirect=True, )
-@pytest.mark.usefixtures('teardown_fixture')
+@dual_chip_gateway
 def test_zb_gateway(dut, count, app_path, target):
     gateway_device = ExampleDevice(dut[1])
     cli = CliDevice(dut[0])
@@ -172,11 +165,9 @@ def test_zb_gateway(dut, count, app_path, target):
 
 # Case 10: Zigbee deep sleep test
 @pytest.mark.order(10)
-@pytest.mark.esp32h2
-@pytest.mark.esp32c6
 @pytest.mark.zigbee_multi_dut
 @pytest.mark.parametrize('count, app_path, erase_all', [(2, deep_sleep_pytest_build_dir, 'y'), ], indirect=True, )
-@pytest.mark.usefixtures('teardown_fixture')
+@generic_chips_zigbee_test
 def test_zb_deep_sleep(dut, count, app_path, erase_all):
     cli = CliDevice(dut[0])
     sleep_device = ExampleDevice(dut[1])
@@ -196,11 +187,10 @@ def test_zb_deep_sleep(dut, count, app_path, erase_all):
 
 # Case 11: Zigbee gateway single chip test
 @pytest.mark.order(11)
-@pytest.mark.esp32c6
 @pytest.mark.zigbee_multi_dut
 @pytest.mark.parametrize('count, app_path, erase_all', [(2, gateway_pytest_build_dir, 'y'), ],
                          indirect=True, )
-@pytest.mark.usefixtures('teardown_fixture')
+@single_chip_gateway
 def test_gateway_single_chip(dut):
     gateway_device = ExampleDevice(dut[1])
     gateway_device.check_response("Initialize Zigbee stack", timeout=50)

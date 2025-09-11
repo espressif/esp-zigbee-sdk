@@ -5,10 +5,13 @@ import os
 class ZbCiCons:
 
     IDF_DOCKER = {
-        'v5.1.4': 'v5.1:1',
-        'v5.2.3': 'v5.2:2',
-        'v5.3.2': 'v5.3:1',
-        'master': 'v6.0:2',
+        # IDF version: [build version, test version]
+        'v5.1.6': ['v5.1:1', 'v5.1:1'],
+        'v5.2.5': ['v5.2:2', 'v5.2:2'],
+        'v5.3.4': ['v5.3:1', 'v5.3:1'],
+        'v5.4.2': ['v5.4:2', 'v5.4:2'],
+        'v5.5.1': ['v5.5:3', 'v5.5:2'],
+        'master': ['v6.0:2', 'v6.0:2'],
     }
 
     PATH_PROJECT = os.environ.get('CI_PROJECT_DIR')

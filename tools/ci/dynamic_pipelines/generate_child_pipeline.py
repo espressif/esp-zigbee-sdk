@@ -17,7 +17,7 @@ def generate(idf_and_docker, generate_yaml, build_templates, pytest_job_template
                 name=job_name_fmt.format(idf_version),
                 extends=[f'.{tmpl}'],
                 variables={
-                    'DOCKER_ENV_VERSION': docker_version,
+                    'DOCKER_ENV_VERSION': docker_version[0],
                     'IDF_VERSION': idf_version
                 }
             ))
@@ -32,7 +32,7 @@ def generate(idf_and_docker, generate_yaml, build_templates, pytest_job_template
                     name=f'pytest_{chip}_{idf_version}',
                     extends=[f'.{pytest_job_template}'],
                     variables={
-                        'DOCKER_ENV_VERSION': docker_version,
+                        'DOCKER_ENV_VERSION': docker_version[1],
                         'CHIP': chip,
                         'IDF_VERSION': idf_version,
                     },

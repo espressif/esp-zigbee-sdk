@@ -1,121 +1,79 @@
 # Documentation: .gitlab/ci/README.md#manifest-file-to-control-the-buildtest-apps
 
-examples/esp_zigbee_all_device_types_app:
+.config_radio_native_targets: &config_radio_native_targets
   enable:
     - if: IDF_TARGET in ["esp32c6", "esp32h2"]
       temporary: true
       reason: the other targets are not tested yet
+    - if: IDF_TARGET == "esp32c5" and (IDF_VERSION >= "v5.5" or IDF_VERSION == "master")
+      temporary: true
+      reason: esp32c5 is only supported in IDF v5.5+
 
-examples/esp_zigbee_customized_devices/customized_client:
+.config_rcp_host_targets: &config_rcp_host_targets
   enable:
-    - if: IDF_TARGET in ["esp32c6", "esp32h2"]
+    - if: IDF_TARGET in ["esp32", "esp32s2", "esp32c3", "esp32s3", "esp32c6"]
       temporary: true
       reason: the other targets are not tested yet
-
-examples/esp_zigbee_customized_devices/customized_server:
-  enable:
-    - if: IDF_TARGET in ["esp32c6", "esp32h2"]
+    - if: IDF_TARGET == "esp32c5" and (IDF_VERSION >= "v5.5" or IDF_VERSION == "master")
       temporary: true
-      reason: the other targets are not tested yet
-
-examples/esp_zigbee_ota/ota_client:
-  enable:
-    - if: IDF_TARGET in ["esp32c6", "esp32h2"]
-      temporary: true
-      reason: the other targets are not tested yet
-
-examples/esp_zigbee_ota/ota_server:
-  enable:
-    - if: IDF_TARGET in ["esp32c6", "esp32h2"]
-      temporary: true
-      reason: the other targets are not tested yet
+      reason: esp32c5 is only supported in IDF v5.5+
 
 examples/esp_zigbee_gateway:
-  enable:
-    - if: IDF_TARGET in ["esp32", "esp32s2", "esp32c3", "esp32s3", "esp32c6"]
-      temporary: true
-      reason: the other targets are not tested yet
-
-examples/esp_zigbee_HA_sample/HA_color_dimmable_light:
-  enable:
-    - if: IDF_TARGET in ["esp32c6", "esp32h2"]
-      temporary: true
-      reason: the other targets are not tested yet
-
-examples/esp_zigbee_HA_sample/HA_color_dimmable_switch:
-  enable:
-    - if: IDF_TARGET in ["esp32c6", "esp32h2"]
-      temporary: true
-      reason: the other targets are not tested yet
-
-examples/esp_zigbee_HA_sample/HA_on_off_light:
-  enable:
-    - if: IDF_TARGET in ["esp32c6", "esp32h2"]
-      temporary: true
-      reason: the other targets are not tested yet
-
-examples/esp_zigbee_HA_sample/HA_on_off_switch:
-  enable:
-    - if: IDF_TARGET in ["esp32c6", "esp32h2"]
-      temporary: true
-      reason: the other targets are not tested yet
-
-examples/esp_zigbee_HA_sample/HA_temperature_sensor:
-  enable:
-    - if: IDF_TARGET in ["esp32c6", "esp32h2"]
-      temporary: true
-      reason: the other targets are not tested yet
-
-examples/esp_zigbee_HA_sample/HA_thermostat:
-  enable:
-    - if: IDF_TARGET in ["esp32c6", "esp32h2"]
-      temporary: true
-      reason: the other targets are not tested yet
-
-examples/esp_zigbee_touchlink/touchlink_light:
-  enable:
-    - if: IDF_TARGET in ["esp32c6", "esp32h2"]
-      temporary: true
-      reason: the other targets are not tested yet
-
-examples/esp_zigbee_touchlink/touchlink_switch:
-  enable:
-    - if: IDF_TARGET in ["esp32c6", "esp32h2"]
-      temporary: true
-      reason: the other targets are not tested yet
+  <<: *config_rcp_host_targets
 
 examples/esp_zigbee_host:
-  enable:
-    - if: IDF_TARGET in ["esp32", "esp32s2", "esp32c3", "esp32s3", "esp32c6"]
-      temporary: true
-      reason: the other targets are not tested yet
+  <<: *config_rcp_host_targets
+
+examples/esp_zigbee_all_device_types_app:
+  <<: *config_radio_native_targets
+
+examples/esp_zigbee_customized_devices/customized_client:
+  <<: *config_radio_native_targets
+
+examples/esp_zigbee_customized_devices/customized_server:
+  <<: *config_radio_native_targets
+
+examples/esp_zigbee_ota/ota_client:
+  <<: *config_radio_native_targets
+
+examples/esp_zigbee_ota/ota_server:
+  <<: *config_radio_native_targets
+
+examples/esp_zigbee_HA_sample/HA_color_dimmable_light:
+  <<: *config_radio_native_targets
+
+examples/esp_zigbee_HA_sample/HA_color_dimmable_switch:
+  <<: *config_radio_native_targets
+
+examples/esp_zigbee_HA_sample/HA_on_off_light:
+  <<: *config_radio_native_targets
+
+examples/esp_zigbee_HA_sample/HA_on_off_switch:
+  <<: *config_radio_native_targets
+
+examples/esp_zigbee_HA_sample/HA_temperature_sensor:
+  <<: *config_radio_native_targets
+
+examples/esp_zigbee_HA_sample/HA_thermostat:
+  <<: *config_radio_native_targets
+
+examples/esp_zigbee_touchlink/touchlink_light:
+  <<: *config_radio_native_targets
+
+examples/esp_zigbee_touchlink/touchlink_switch:
+  <<: *config_radio_native_targets
 
 examples/esp_zigbee_ncp:
-  enable:
-    - if: IDF_TARGET in ["esp32c6", "esp32h2"]
-      temporary: true
-      reason: the other targets are not tested yet
+  <<: *config_radio_native_targets
 
 examples/esp_zigbee_sleep/deep_sleep:
-  enable:
-    - if: IDF_TARGET in ["esp32c6", "esp32h2"]
-      temporary: true
-      reason: the other targets are not tested yet
+  <<: *config_radio_native_targets
 
 examples/esp_zigbee_sleep/light_sleep:
-  enable:
-    - if: IDF_TARGET in ["esp32c6", "esp32h2"]
-      temporary: true
-      reason: the other targets are not tested yet
+  <<: *config_radio_native_targets
 
 examples/esp_zigbee_greenpower/esp_zigbee_gpc:
-  enable:
-    - if: IDF_TARGET in ["esp32c6", "esp32h2"]
-      temporary: true
-      reason: the other targets are not tested yet
+  <<: *config_radio_native_targets
 
 examples/esp_zigbee_greenpower/esp_zigbee_gpd:
-  enable:
-    - if: IDF_TARGET in ["esp32c6", "esp32h2"]
-      temporary: true
-      reason: the other targets are not tested yet
+  <<: *config_radio_native_targets
