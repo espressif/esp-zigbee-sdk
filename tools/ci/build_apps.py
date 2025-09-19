@@ -36,6 +36,9 @@ IGNORE_WARNINGS = [
     r"warning: 'init_spiffs' defined but not used",
     r"warning: 'esp_zb_gateway_board_try_update' defined but not used",
     r"DeprecationWarning: pkg_resources is deprecated as an API",
+    r"Warning: Deprecated: Option '--flash_mode' is deprecated. Use '--flash-mode' instead.",
+    r"Warning: Deprecated: Option '--flash_freq' is deprecated. Use '--flash-freq' instead.",
+    r"Warning: Deprecated: Option '--flash_size' is deprecated. Use '--flash-size' instead."
 ]
 
 def _is_pytest_app(app: App) -> bool:
@@ -81,7 +84,8 @@ def main(args: argparse.Namespace) -> None:
 
     ignore_warnings = IGNORE_WARNINGS
     if args.ignore_warning:
-        ignore_warnings = [r"warning: .*"]
+        ignore_warnings = [r"warning: .*",
+                           r"Warning: .*"]
     ret_code = build_apps(
         apps_for_build,
         parallel_count=args.parallel_count,
