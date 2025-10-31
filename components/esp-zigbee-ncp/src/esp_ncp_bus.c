@@ -21,6 +21,7 @@
 #include "esp_ncp_bus.h"
 #include "esp_ncp_frame.h"
 #include "esp_ncp_main.h"
+#include "slip.h"
 
 static const char* TAG = "ESP_NCP_BUS";
 
@@ -56,7 +57,12 @@ static esp_err_t ncp_bus_init_hdl(uint8_t transport)
     uart_driver_install(CONFIG_NCP_BUS_UART_NUM, NCP_BUS_BUF_SIZE * 2, NCP_BUS_BUF_SIZE * 2, 20, &uart0_queue, 0);
     uart_param_config(CONFIG_NCP_BUS_UART_NUM, &uart_config);
     uart_set_pin(CONFIG_NCP_BUS_UART_NUM, CONFIG_NCP_BUS_UART_TX_PIN, CONFIG_NCP_BUS_UART_RX_PIN, CONFIG_NCP_BUS_UART_RTS_PIN, CONFIG_NCP_BUS_UART_CTS_PIN);
-
+	// configure a SLIP framing detector
+    esp_err_t err = uart_enable_pattern_det_baud_intr(CONFIG_NCP_BUS_UART_NUM, SLIP_END, 1, 1, 0, 0);
+	if (err != ESP_OK) {
+		ESP_LOGE(TAG, "uart_enable_pattern_det_baud_intr failed");
+		return err;
+	}
     return ESP_OK;
 }
 
@@ -76,9 +82,7 @@ static void esp_ncp_bus_task(void *pvParameter)
             bzero(dtmp, NCP_BUS_BUF_SIZE);
             switch(event.type) {
                 case UART_DATA:
-                    ncp_event.size = uart_read_bytes(CONFIG_NCP_BUS_UART_NUM, dtmp, event.size, portMAX_DELAY);
-                    xStreamBufferSend(bus->output_buf, dtmp, ncp_event.size, 0);
-                    esp_ncp_send_event(&ncp_event);
+                    // pass, handled by the pattern detector
                     break;
                 case UART_FIFO_OVF:
                     ESP_LOGI(TAG, "hw fifo overflow");
@@ -90,6 +94,22 @@ static void esp_ncp_bus_task(void *pvParameter)
                     uart_flush_input(CONFIG_NCP_BUS_UART_NUM);
                     xQueueReset(uart0_queue);
                     break;
+				case UART_PATTERN_DET:
+					ESP_LOGI(TAG, "uart pattern detection");
+					int pos;
+					do {
+						pos = uart_pattern_pop_pos(CONFIG_NCP_BUS_UART_NUM);
+						ESP_LOGI(TAG, "uart pattern pos: %d", pos);
+						if (pos > 0) {
+							// here we have the position of an END marker at the end (>0) of a frame
+							ncp_event.size = uart_read_bytes(CONFIG_NCP_BUS_UART_NUM, dtmp, pos + 1, portMAX_DELAY);
+							ESP_LOG_BUFFER_HEX_LEVEL(TAG, dtmp, ncp_event.size, ESP_LOG_INFO);
+							xStreamBufferSend(bus->output_buf, dtmp, ncp_event.size, 0);
+							esp_ncp_send_event(&ncp_event);
+							break; // one frame at a time
+						}
+					} while (pos >= 0);
+					break;
                 default:
                     ESP_LOGI(TAG, "uart event type: %d", event.type);
                     break;
