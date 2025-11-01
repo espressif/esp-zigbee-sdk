@@ -202,7 +202,7 @@ static void esp_ncp_zb_bind_cb(esp_zb_zdp_status_t zdo_status, void *user_ctx)
     };
 
     typedef struct {
-        esp_zb_zdp_status_t    zdo_status;
+        uint8_t                zdo_status;
         esp_ncp_zb_user_cb_t   zdo_cb;                   /*!< A ZDO match desc request callback */
     } ESP_NCP_ZB_PACKED_STRUCT esp_ncp_zb_bind_parameters_t;
 
