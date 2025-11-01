@@ -291,7 +291,7 @@ static void esp_ncp_zb_zdo_scan_complete_handler(esp_zb_zdp_status_t zdo_status,
         scan_data->count = count;
 
         if (nwk_descriptor && count) {
-            memcpy(scan_data + sizeof(esp_ncp_zb_scan_parameters_t), nwk_descriptor, (count * sizeof(esp_zb_network_descriptor_t)));
+            memcpy(scan_data + 1, nwk_descriptor, (count * sizeof(esp_zb_network_descriptor_t)));
         }
 
         esp_ncp_noti_input(&ncp_header, output, outlen);
