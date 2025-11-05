@@ -127,8 +127,6 @@ typedef void (*esp_zb_zdo_node_desc_callback_t)(esp_zb_zdp_status_t zdo_status, 
  *
  * @note User's callback get response from the remote device that local node wants to get power descriptor response.
  *
- * @param[in] zdo_status    The ZDO response status, refer to `esp_zb_zdp_status`
- * @param[in] addr          A short address of the device response, 0xFFFF - invalid address
  * @param[in] power_desc    A pointer to the power desc, refer to esp_zb_af_node_power_desc_t
  * @param[in] user_ctx      User information context, set in `esp_zb_zdo_power_desc_req()`
  *
@@ -472,7 +470,7 @@ typedef void (*esp_zb_zdo_scan_complete_callback_t)(esp_zb_zdp_status_t zdo_stat
  *
  * @param[in] status  The status of callback, refer to esp_zb_zdp_status_t
  * @param[in] count   The size of energy detect list
- * @param[in] ed_list The list of energy detect information, refer to esp_zb_energy_detect_channel_info_t
+ * @param[in] channel_info The energy detect information of channels, refer to esp_zb_energy_detect_channel_info_t
  *
  */
 typedef void (*esp_zb_zdo_energy_detect_callback_t)(esp_zb_zdp_status_t status, uint16_t count,
@@ -501,7 +499,8 @@ typedef void (*esp_zb_zdo_mgmt_lqi_rsp_callback_t)(const esp_zb_zdo_mgmt_lqi_rsp
  *
  * @brief A ZDO  Mgmt_NWK_Update_req callback for user to get status of request.
  *
- * @param[in] zdo_status    The ZDO response status, refer to `esp_zb_zdp_status`
+ * @param[in] notify    The notification structure of ZDO mgmt nwk update, refer to esp_zb_zdo_mgmt_update_notify_t
+ * @param[in] user_ctx  User information context, set in `esp_zb_zdo_mgmt_nwk_update_req()`
  *
  */
 typedef void (*esp_zb_zdo_mgmt_nwk_update_notify_callback_t)(const esp_zb_zdo_mgmt_update_notify_t *notify, void *user_ctx);

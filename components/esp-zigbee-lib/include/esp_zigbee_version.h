@@ -15,5 +15,5 @@
 #endif
 
 #ifndef ESP_ZB_VER_PATCH
-#define ESP_ZB_VER_PATCH 7
+#define ESP_ZB_VER_PATCH 8
 #endif
