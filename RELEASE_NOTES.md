@@ -1,5 +1,21 @@
 # Espressif Zigbee SDK Release Notes
 
+## 5-Nov-2025
+1.6.8 version release of ESP-ZIGBEE-SDK is based on esp-idf v5.5.1
+
+### Features
+- Added `esp_zb_nwk_set_extended_pan_id()` and `esp_zb_nwk_get_extended_pan_id()` to configure the NWK `nwkExtendedPANID` attribute.
+- Added `esp_zb_aps_set_authenticated()` and `esp_zb_aps_is_authenticated()` to configure the APS authenticated state.
+- Optimized the channel selection mechanism used when forming a Zigbee network.
+
+### Bug Fixes
+- Fixed a crash issue occurring when the `zb_storage` partition is marked as encrypted.
+- Fixed an issue where the parameter of `esp_zb_zgpd_send_command()` only took effect for the ZGPD `Toggle` command.
+
+### Changes
+- Updated esp-zigbee-lib to v1.6.8
+
+
 ## 29-Aug-2025
 1.6.7 version release of ESP-ZIGBEE-SDK is based on esp-idf v5.3.2
 
