@@ -13,8 +13,10 @@ menu "ESP Zigbee DevKit GPIO Configuration"
         int "External wakeup GPIO"
         default 9 if IDF_TARGET_ESP32H2
         default 7 if IDF_TARGET_ESP32C6
+        default 6 if IDF_TARGET_ESP32C5
         range 7 14 if IDF_TARGET_ESP32H2
         range 0 7 if IDF_TARGET_ESP32C6
+        range 0 6 if IDF_TARGET_ESP32C5
         default 9
 
         help

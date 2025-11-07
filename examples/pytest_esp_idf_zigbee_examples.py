@@ -7,6 +7,7 @@ import pytest
 import time
 import os
 from examples.zigbee_common import Common, ExampleDevice, CliDevice, MatchPattern
+from examples.zigbee_common import generic_chips_zigbee_test, single_chip_gateway, dual_chip_gateway
 import logging
 
 logging.basicConfig(level=logging.INFO)
@@ -24,12 +25,10 @@ idf_example_gateway_dual_chip_build_dir = CLI_CURRENT_DIR_CLIENT + '|' + IDF_EXA
 
 # Case 12: IDF zigbee example on-off-light test
 @pytest.mark.order(12)
-@pytest.mark.esp32h2
-@pytest.mark.esp32c6
 @pytest.mark.idf_example
 @pytest.mark.parametrize('count, app_path, erase_all', [(2, idf_example_on_off_light_build_dir, 'y'), ],
                          indirect=True, )
-@pytest.mark.usefixtures('teardown_fixture')
+@generic_chips_zigbee_test
 def test_idf_example_on_off_light(dut):
     cli = CliDevice(dut[0])
     light_device = ExampleDevice(dut[1])
@@ -48,12 +47,10 @@ def test_idf_example_on_off_light(dut):
 
 # Case 13: IDF zigbee example on-off-switch test
 @pytest.mark.order(13)
-@pytest.mark.esp32h2
-@pytest.mark.esp32c6
 @pytest.mark.idf_example
 @pytest.mark.parametrize('count, app_path, erase_all', [(2, idf_example_on_off_switch_build_dir, 'y'), ],
                          indirect=True, )
-@pytest.mark.usefixtures('teardown_fixture')
+@generic_chips_zigbee_test
 def test_idf_example_on_off_switch(dut):
     switch_device = ExampleDevice(dut[0])
     switch_device.check_response("Initialize Zigbee stack", timeout=20)
@@ -65,12 +62,12 @@ def test_idf_example_on_off_switch(dut):
 
 # Case 14: idf example dual-chip gateway test
 @pytest.mark.order(14)
-@pytest.mark.esp32s3
 @pytest.mark.idf_example
 @pytest.mark.dual_chip_gateway
 @pytest.mark.parametrize('count, app_path, target, erase_all', [(3, idf_example_gateway_dual_chip_build_dir, 'esp32h2|esp32h2|esp32s3','y'), ],
                          indirect=True, )
-@pytest.mark.usefixtures('teardown_fixture', 'erase_esp32s3_port')
+@dual_chip_gateway
+@pytest.mark.usefixtures('erase_esp32s3_port')
 def test_idf_example_gateway_dual_chip(dut):
     gateway_device = ExampleDevice(dut[2])
     gateway_device.check_response("Initialize Zigbee stack", timeout=100)
@@ -87,11 +84,10 @@ def test_idf_example_gateway_dual_chip(dut):
 
 # Case 15: idf example gateway single chip test reuses Case 11
 @pytest.mark.order(15)
-@pytest.mark.esp32c6
 @pytest.mark.idf_example
 @pytest.mark.parametrize('count, app_path, erase_all', [(2, idf_example_gateway_single_chip_build_dir, 'y'), ],
                          indirect=True, )
-@pytest.mark.usefixtures('teardown_fixture')
+@single_chip_gateway
 def test_idf_example_gateway_single_chip(dut):
     gateway_device = ExampleDevice(dut[1])
     gateway_device.check_response("Initialize Zigbee stack", timeout=50)

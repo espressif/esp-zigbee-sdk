@@ -9,9 +9,42 @@ from functools import wraps
 import logging
 from constants import MatchPattern
 import re
+import pytest
 
 logging.basicConfig(level=logging.INFO)
 
+
+def mark_chips(*marks):
+    def decorator(func):
+        # add chip marks
+        for mark in marks:
+            func = mark(func)
+        # add teardown_fixture
+        func = pytest.mark.usefixtures("teardown_fixture")(func)
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            return func(*args, **kwargs)
+        return wrapper
+    return decorator
+
+generic_chips_zigbee_test = mark_chips(
+    pytest.mark.esp32h2,
+    pytest.mark.esp32c6,
+    pytest.mark.esp32c5,
+)
+
+single_chip_gateway = mark_chips(
+    pytest.mark.esp32c6,
+    pytest.mark.esp32c5,
+)
+
+dual_chip_gateway = mark_chips(
+    pytest.mark.esp32s3,
+)
+
+ota_chip_test = mark_chips(
+    pytest.mark.esp32h2,
+)
 
 def expect_decorator(pattern):
     def decorator(func):

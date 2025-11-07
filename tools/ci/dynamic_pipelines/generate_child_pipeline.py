@@ -7,7 +7,7 @@ from utils import dump_jobs_to_yaml
 from constants import ZbCiCons
 import os
 
-def generate(idf_and_docker, generate_yaml, build_templates, pytest_job_template, chips):
+def generate(idf_and_docker, generate_yaml, build_templates, pytest_job_template, chips, manual_pytest):
     generate_jobs = []
     for idf_version, docker_version in idf_and_docker.items():
         for job_name_fmt, tmpl in build_templates:
@@ -17,7 +17,7 @@ def generate(idf_and_docker, generate_yaml, build_templates, pytest_job_template
                 name=job_name_fmt.format(idf_version),
                 extends=[f'.{tmpl}'],
                 variables={
-                    'DOCKER_ENV_VERSION': docker_version,
+                    'DOCKER_ENV_VERSION': docker_version[0],
                     'IDF_VERSION': idf_version
                 }
             ))
@@ -32,11 +32,12 @@ def generate(idf_and_docker, generate_yaml, build_templates, pytest_job_template
                     name=f'pytest_{chip}_{idf_version}',
                     extends=[f'.{pytest_job_template}'],
                     variables={
-                        'DOCKER_ENV_VERSION': docker_version,
+                        'DOCKER_ENV_VERSION': docker_version[1],
                         'CHIP': chip,
                         'IDF_VERSION': idf_version,
                     },
-                    needs=[needs_target]
+                    needs=[needs_target],
+                    when='manual' if manual_pytest else 'always'
                 ))
     dump_jobs_to_yaml(generate_jobs, generate_yaml, ZbCiCons.PATH_TEMPLATE)
 
@@ -67,7 +68,7 @@ def main(arg):
     idf_and_docker = match_idf_docker(arg.idf_version)
     yaml_result_path = os.path.join(ZbCiCons.PATH_PROJECT, arg.result)
     build_templates, pytest_template = parse_job_templates(arg.job_templates)
-    generate(idf_and_docker, yaml_result_path, build_templates, pytest_template, arg.chips)
+    generate(idf_and_docker, yaml_result_path, build_templates, pytest_template, arg.chips, arg.manual_pytest)
 
 
 if __name__ == '__main__':
@@ -97,6 +98,13 @@ if __name__ == '__main__':
         required=True,
         help='job template names (e.g. build_pytest_template build_non_pytest_template build_pytest_gateway_template)',
         nargs='+',
+    )
+    parser.add_argument(
+        "--manual_pytest",
+        action="store_true",
+        dest="manual_pytest",
+        default=False,
+        help="Set pytest jobs to manual",
     )
     args = parser.parse_args()
     main(args)

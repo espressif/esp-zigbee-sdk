@@ -271,6 +271,20 @@ esp_err_t esp_zb_aps_set_fragment_interframe_delay(uint8_t delay_ms);
  */
 uint8_t esp_zb_aps_get_fragment_interframe_delay(void);
 
+/**
+ * @brief Set the authenticated state of the device in the APS layer.
+ *
+ * @param[in] authenticated The authenticated state to be set.
+ */
+void esp_zb_aps_set_authenticated(bool authenticated);
+
+/**
+ * @brief Check whether the device is authenticated.
+ *
+ * @return true if authenticated, otherwise false.
+ */
+bool esp_zb_aps_is_authenticated();
+
 #ifdef __cplusplus
 }
 #endif

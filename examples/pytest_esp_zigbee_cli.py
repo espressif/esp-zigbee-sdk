@@ -8,6 +8,7 @@ from constants import MatchPattern
 import time
 from examples.constants import ZigbeeCIConstants
 from examples.zigbee_common import CliDevice, Common
+from examples.zigbee_common import generic_chips_zigbee_test
 
 CLI_CURRENT_DIR_CLIENT = str(pathlib.Path(__file__).parent) + '/esp_zigbee_all_device_types_app'
 cli_build_dir = CLI_CURRENT_DIR_CLIENT + '|' + CLI_CURRENT_DIR_CLIENT
@@ -15,11 +16,9 @@ cli_build_dir = CLI_CURRENT_DIR_CLIENT + '|' + CLI_CURRENT_DIR_CLIENT
 
 # Case 1: Zigbee network connection
 @pytest.mark.order(1)
-@pytest.mark.esp32h2
-@pytest.mark.esp32c6
 @pytest.mark.zigbee_multi_dut
 @pytest.mark.parametrize('count, app_path, erase_all', [(2, cli_build_dir, 'y'), ], indirect=True, )
-@pytest.mark.usefixtures('teardown_fixture')
+@generic_chips_zigbee_test
 def test_zb_cli_zb_connection(dut, count, app_path, erase_all) -> None:
     switch_device = CliDevice(dut[0])
     light_device = CliDevice(dut[1])
@@ -39,11 +38,9 @@ def test_zb_cli_zb_connection(dut, count, app_path, erase_all) -> None:
 
 # Case 2: Zigbee network finding-binding
 @pytest.mark.order(2)
-@pytest.mark.esp32h2
-@pytest.mark.esp32c6
 @pytest.mark.zigbee_multi_dut
 @pytest.mark.parametrize('count, app_path, erase_all', [(2, cli_build_dir, 'y'), ], indirect=True, )
-@pytest.mark.usefixtures('teardown_fixture')
+@generic_chips_zigbee_test
 def test_zb_cli_zc_finding_binding(dut, count, app_path, erase_all) -> None:
     # config coordinator and light
     switch_device = CliDevice(dut[0])
@@ -92,11 +89,9 @@ def test_zb_cli_zc_finding_binding(dut, count, app_path, erase_all) -> None:
 
 # #Case 3: Zigbee network ZCL command
 @pytest.mark.order(3)
-@pytest.mark.esp32h2
-@pytest.mark.esp32c6
 @pytest.mark.zigbee_multi_dut
 @pytest.mark.parametrize('count, app_path, erase_all', [(2, cli_build_dir, 'y'), ], indirect=True, )
-@pytest.mark.usefixtures('teardown_fixture')
+@generic_chips_zigbee_test
 def test_zb_cli_zcl_command(dut, count, app_path, erase_all) -> None:
     switch_device = CliDevice(dut[0])
     light_device = CliDevice(dut[1])
@@ -140,11 +135,9 @@ def test_zb_cli_zcl_command(dut, count, app_path, erase_all) -> None:
 
 # #Case 4: Zigbee network leaving
 @pytest.mark.order(4)
-@pytest.mark.esp32h2
-@pytest.mark.esp32c6
 @pytest.mark.zigbee_multi_dut
 @pytest.mark.parametrize('count, app_path, erase_all', [(2, cli_build_dir, 'y'), ], indirect=True, )
-@pytest.mark.usefixtures('teardown_fixture')
+@generic_chips_zigbee_test
 def test_zb_cli_zc_check_leaving(dut, count, app_path, erase_all) -> None:
     switch_device = CliDevice(dut[0])
     light_device = CliDevice(dut[1])

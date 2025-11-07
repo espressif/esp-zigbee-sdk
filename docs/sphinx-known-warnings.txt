@@ -1,0 +1,22 @@
+# File contains known/allowed Sphinx warnings.
+
+esp_zigbee_zcl_commissioning.inc:line: WARNING: Error in declarator or parameters-and-qualifiers
+If pointer to member declarator:
+  Invalid C++ declaration: Expected identifier in nested name. [error at 56]
+    struct esp_zb_zcl_commissioning_restart_device_options_t
+    --------------------------------------------------------^
+If declarator-id:
+  Invalid C++ declaration: Expected identifier in nested name. [error at 56]
+    struct esp_zb_zcl_commissioning_restart_device_options_t
+    --------------------------------------------------------^
+
+esp_zigbee_zcl_commissioning.inc:line: WARNING: Error in declarator or parameters-and-qualifiers
+If pointer to member declarator:
+  Invalid C++ declaration: Expected identifier in nested name. [error at 61]
+    struct esp_zb_zcl_commissioning_reset_startup_param_options_t
+    -------------------------------------------------------------^
+If declarator-id:
+  Invalid C++ declaration: Expected identifier in nested name. [error at 61]
+    struct esp_zb_zcl_commissioning_reset_startup_param_options_t
+    -------------------------------------------------------------^
+

@@ -32,8 +32,8 @@ include:
   extends:
     - .build_pytest_template_base
   script:
-    - build_example ${CI_PROJECT_DIR}/examples/esp_zigbee_all_device_types_app esp32h2 esp32c6
-    - update_idf_cmake_list_for_master
+    - build_example ${CI_PROJECT_DIR}/examples/esp_zigbee_all_device_types_app esp32h2 esp32c6 esp32c5
+    - update_idf_cmake_list
     - update_gateway_wifi_config ${IDF_PATH}/examples/zigbee/esp_zigbee_gateway
     - cd ${IDF_PATH}
     # Skip using IDF build app configuration
@@ -81,7 +81,7 @@ include:
     - .build_pytest_gateway_template_base
   script:
     - build_example ${CI_PROJECT_DIR}/examples/esp_zigbee_all_device_types_app esp32h2
-    - update_idf_cmake_list_for_master
+    - update_idf_cmake_list
     # false means not enable rcp update
     - build_rcp_gateway ${IDF_PATH}/examples/zigbee/esp_zigbee_gateway false
 

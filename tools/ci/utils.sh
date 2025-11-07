@@ -77,9 +77,9 @@ function build_rcp_gateway() {
     popd
 }
 
-function update_idf_cmake_list_for_master() {
+function update_idf_cmake_list() {
     echo "IDF_VERSION: $IDF_VERSION"
-    if [ "$IDF_VERSION" == "master" ]; then
+    if [ "$IDF_VERSION" == "master" ] || [ "$IDF_VERSION" == "v5.5.1" ]; then
         sed -i "/idf_component_register(/ s/$/ REQUIRES espressif__esp-zigbee-lib espressif__esp-zboss-lib/" "${IDF_PATH}"/examples/zigbee/**/main/CMakeLists.txt
     fi
 }
