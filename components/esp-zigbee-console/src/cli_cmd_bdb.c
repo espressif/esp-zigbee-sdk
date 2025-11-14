@@ -195,6 +195,36 @@ exit:
     return ret;
 }
 
+static esp_err_t cli_rx_mode(esp_zb_cli_cmd_t *self, int argc, char **argv)
+{
+    struct {
+        arg_u8_t  *rx_on;
+        arg_lit_t *help;
+        arg_end_t *end;
+    } argtable = {
+        .rx_on = arg_u8n(NULL, NULL, "<RxMode>", 0, 1, "RxOnWhenIdle, 1: enable, 0: disable. Default: 1"),
+        .help = arg_lit0(NULL, "help", "Print this help message"),
+        .end = arg_end(2),
+    };
+    esp_err_t ret = ESP_OK;
+
+    /* Parse command line arguments */
+    int nerrors = arg_parse(argc, argv, (void**)&argtable);
+    EXIT_ON_FALSE(argtable.help->count == 0, ESP_OK, arg_print_help((void**)&argtable, argv[0]));
+    EXIT_ON_FALSE(nerrors == 0, ESP_ERR_INVALID_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
+
+    /* Handle set / get */
+    if (argc > 1) {
+        esp_zb_set_rx_on_when_idle(argtable.rx_on->val[0] == 1);
+    } else {
+        cli_output("RxOnWhenIdle: %s\n", esp_zb_get_rx_on_when_idle() ? "enabled" : "disabled");
+    }
+
+exit:
+    ESP_ZB_CLI_FREE_ARGSTRUCT(&argtable);
+    return ret;
+}
+
 /* Sub-commands of `network` */
 
 static esp_err_t cli_nwk_type(esp_zb_cli_cmd_t *self, int argc, char **argv)
@@ -1023,7 +1053,8 @@ exit:
 DECLARE_ESP_ZB_CLI_CMD(role,    cli_role,,    "Get/Set the Zigbee role of a device");
 DECLARE_ESP_ZB_CLI_CMD(panid,   cli_panid,,   "Get/Set the (extended) PAN ID of the node");
 DECLARE_ESP_ZB_CLI_CMD(address, cli_address,, "Get/Set the (extended) address of the node");
-DECLARE_ESP_ZB_CLI_CMD(channel, cli_channel,,  "Get/Set 802.15.4 channels for network");
+DECLARE_ESP_ZB_CLI_CMD(channel, cli_channel,, "Get/Set 802.15.4 channels for network");
+DECLARE_ESP_ZB_CLI_CMD(rx_mode, cli_rx_mode,, "Get/Set RxOnWhenIdle");
 DECLARE_ESP_ZB_CLI_CMD_WITH_SUB(network, "Network configuration",
     ESP_ZB_CLI_SUBCMD(type,     cli_nwk_type,     "Get/Set the network type"),
     ESP_ZB_CLI_SUBCMD(key,      cli_nwk_key,      "Get/Set the network key"),

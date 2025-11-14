@@ -61,6 +61,7 @@ For specific type of argument, correct format should be provided so that it can 
 - [`reboot`](#reboot): Reboot the device.
 - [`role`](#role): Get/Set the Zigbee role of a device.
 - [`route`](#route): Route information.
+- [`rx_mode`](#rx_mode): Get/Set RxOnWhenIdle.
 - [`sroute`](#sroute): Source route information.
 - [`start`](#start): Start Zigbee stack.
 - [`tl`](#tl): TouchLink configuration.
@@ -800,6 +801,27 @@ esp> route table
 |Index|DestAddr|NextHop |Expiry| State  |Flags |
 +-----+--------+--------+------+--------+------+
 |   1 | 0x3095 | 0x83a6 |   59 | Active | 0x00 |
+```
+
+
+### rx_mode
+Get/Set RxOnWhenIdle.
+
+#### `rx_mode`
+Get RxOnWhenIdle.
+
+```bash
+esp> rx_mode
+RxOnWhenIdle: enabled
+```
+
+#### `rx_mode (0|1)`
+Set RxOnWhenIdle.
+
+```bash
+esp> rx_mode 0
+esp> rx_mode
+RxOnWhenIdle: disabled
 ```
 
 
