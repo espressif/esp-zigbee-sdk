@@ -12,6 +12,24 @@
 
 static const char *TAG = "ESP_ZB_CONSOLE_APP";
 
+const char* nwk_network_status_str(uint8_t status)
+{
+    switch (status) {
+    case ESP_ZB_NWK_COMMAND_STATUS_NO_ROUTE_AVAILABLE: return "Legacy no route";
+    case ESP_ZB_NWK_COMMAND_STATUS_TREE_LINK_FAILURE: return "Legacy link failure";
+    case ESP_ZB_NWK_COMMAND_STATUS_NONE_TREE_LINK_FAILURE: return "Link failure";
+    case ESP_ZB_NWK_COMMAND_STATUS_PARENT_LINK_FAILURE: return "ParentLink failure";
+    case ESP_ZB_NWK_COMMAND_STATUS_SOURCE_ROUTE_FAILURE: return "SourceRoute failure";
+    case ESP_ZB_NWK_COMMAND_STATUS_MANY_TO_ONE_ROUTE_FAILURE: return "MTO-Route failure";
+    case ESP_ZB_NWK_COMMAND_STATUS_ADDRESS_CONFLICT: return "Address conflict";
+    case ESP_ZB_NWK_COMMAND_STATUS_PAN_IDENTIFIER_UPDATE: return "PANID update";
+    case ESP_ZB_NWK_COMMAND_STATUS_NETWORK_ADDRESS_UPDATE: return "Address update";
+    case ESP_ZB_NWK_COMMAND_STATUS_UNKNOWN_COMMAND: return "Command unknown";
+    case 0x14: return "PANID conflict";
+    default: return "Unknown";
+    }
+}
+
 static void log_nwk_info(const char *status_string)
 {
     esp_zb_ieee_addr_t extended_pan_id;
@@ -36,6 +54,8 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
         ESP_LOGI(TAG, "Initialize Zigbee stack");
         break;
     case ESP_ZB_BDB_SIGNAL_DEVICE_FIRST_START:
+        ESP_LOGI(TAG, "Device first start");
+        /* fall through */
     case ESP_ZB_BDB_SIGNAL_DEVICE_REBOOT:
         if (err_status == ESP_OK) {
             ESP_LOGI(TAG, "Device started up in%s factory-reset mode", esp_zb_bdb_is_factory_new() ? "" : " non");
@@ -109,6 +129,18 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
         } else {
             ESP_LOGW(TAG, "No Touchlink target devices found");
         }
+        break;
+    case ESP_ZB_NLME_STATUS_INDICATION:
+        if (err_status == ESP_OK) {
+            esp_zb_zdo_signal_nwk_status_indication_params_t *param = (esp_zb_zdo_signal_nwk_status_indication_params_t *)esp_zb_app_signal_get_params(p_sg_p);
+            ESP_LOGW(TAG, "NLME-NWK-STATUS: %s(%d), address: 0x%04" PRIx16,
+                          nwk_network_status_str(param->status), param->status, param->network_addr);
+        } else {
+            assert(0);
+        }
+        break;
+    case ESP_ZB_COMMON_SIGNAL_CAN_SLEEP:
+        /* Don't output anything to avoid pollution in console */
         break;
     default:
         ESP_LOGI(TAG, "ZDO signal: %s (0x%x), status: %s", esp_zb_zdo_signal_to_string(sig_type), sig_type,
