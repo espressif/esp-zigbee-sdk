@@ -1,22 +1,82 @@
 # File contains known/allowed Sphinx warnings.
+#
+# Build will fail if sphinx-warning-log.txt contains any lines
+# which are not in this file. Lines are pre-sanitized by
+# `build_docs.py build` to remove formatting, paths and line numbers.
+#
+# Warnings in this file must be in the same overall order as the log file.
 
-esp_zigbee_zcl_commissioning.inc:line: WARNING: Error in declarator or parameters-and-qualifiers
+af.inc:line: WARNING: Error in declarator or parameters-and-qualifiers
 If pointer to member declarator:
-  Invalid C++ declaration: Expected identifier in nested name. [error at 56]
-    struct esp_zb_zcl_commissioning_restart_device_options_t
-    --------------------------------------------------------^
+  Invalid C++ declaration: Expected identifier in nested name. [error at 31]
+    struct ezb_af_node_power_desc_u
+    -------------------------------^
 If declarator-id:
-  Invalid C++ declaration: Expected identifier in nested name. [error at 56]
-    struct esp_zb_zcl_commissioning_restart_device_options_t
-    --------------------------------------------------------^
+  Invalid C++ declaration: Expected identifier in nested name. [error at 31]
+    struct ezb_af_node_power_desc_u
+    -------------------------------^
 
-esp_zigbee_zcl_commissioning.inc:line: WARNING: Error in declarator or parameters-and-qualifiers
+color_control.inc:line: WARNING: Error in declarator or parameters-and-qualifiers
 If pointer to member declarator:
-  Invalid C++ declaration: Expected identifier in nested name. [error at 61]
-    struct esp_zb_zcl_commissioning_reset_startup_param_options_t
-    -------------------------------------------------------------^
+  Invalid C++ declaration: Expected identifier in nested name. [error at 35]
+    union ezb_zcl_color_control_color_t
+    -----------------------------------^
 If declarator-id:
-  Invalid C++ declaration: Expected identifier in nested name. [error at 61]
-    struct esp_zb_zcl_commissioning_reset_startup_param_options_t
-    -------------------------------------------------------------^
+  Invalid C++ declaration: Expected identifier in nested name. [error at 35]
+    union ezb_zcl_color_control_color_t
+    -----------------------------------^
+
+electrical_measurement.inc:line: WARNING: Duplicate C++ declaration, also defined at api-reference/esp_zigbee_core/zcl/cluster/measurement_and_sensing:line.
+Declaration is '.. cpp:member:: ezb_zcl_electrical_measurement_get_meas_prof_rsp_payload_t * payload'.
+
+ota_upgrade.inc:line: WARNING: Duplicate C++ declaration, also defined at api-reference/esp_zigbee_core/zcl/cluster/ota_upgrade:line.
+Declaration is '.. cpp:member:: ezb_zcl_ota_upgrade_server_progress_upgrade_time_t finish'.
+
+ota_upgrade.inc:line: WARNING: Error in declarator or parameters-and-qualifiers
+If pointer to member declarator:
+  Invalid C++ declaration: Expected identifier in nested name. [error at 51]
+    union ezb_zcl_ota_upgrade_image_block_rsp_payload_t
+    ---------------------------------------------------^
+If declarator-id:
+  Invalid C++ declaration: Expected identifier in nested name. [error at 51]
+    union ezb_zcl_ota_upgrade_image_block_rsp_payload_t
+    ---------------------------------------------------^
+
+ias_ace.inc:line: WARNING: Duplicate C++ declaration, also defined at api-reference/esp_zigbee_core/zcl/cluster/security_and_safety:line.
+Declaration is '.. cpp:member:: ezb_zcl_ias_ace_bypass_rsp_payload_t * payload'.
+
+ias_ace.inc:line: WARNING: Duplicate C++ declaration, also defined at api-reference/esp_zigbee_core/zcl/cluster/security_and_safety:line.
+Declaration is '.. cpp:member:: ezb_zcl_ias_ace_get_zone_status_rsp_payload_t * payload'.
+
+metering.inc:line: WARNING: Duplicate C++ declaration, also defined at api-reference/esp_zigbee_core/zcl/cluster/smart_energy:line.
+Declaration is '.. cpp:member:: ezb_zcl_metering_get_profile_rsp_t * payload'.
+
+metering.inc:line: WARNING: Duplicate C++ declaration, also defined at api-reference/esp_zigbee_core/zcl/cluster/smart_energy:line.
+Declaration is '.. cpp:member:: ezb_zcl_metering_request_fast_poll_mode_rsp_t payload'.
+
+metering.inc:line: WARNING: Duplicate C++ declaration, also defined at api-reference/esp_zigbee_core/zcl/cluster/smart_energy:line.
+Declaration is '.. cpp:member:: ezb_zcl_metering_publish_snapshot_payload_t * payload'.
+
+metering.inc:line: WARNING: Duplicate C++ declaration, also defined at api-reference/esp_zigbee_core/zcl/cluster/smart_energy:line.
+Declaration is '.. cpp:member:: ezb_zcl_metering_get_sampled_data_rsp_t * payload'.
+
+zcl_general_cmd.inc:line: WARNING: Error in declarator or parameters-and-qualifiers
+If pointer to member declarator:
+  Invalid C++ declaration: Expected identifier in nested name. [error at 36]
+    union ezb_zcl_config_report_record_s
+    ------------------------------------^
+If declarator-id:
+  Invalid C++ declaration: Expected identifier in nested name. [error at 36]
+    union ezb_zcl_config_report_record_s
+    ------------------------------------^
+
+zcl_general_cmd.inc:line: WARNING: Error in declarator or parameters-and-qualifiers
+If pointer to member declarator:
+  Invalid C++ declaration: Expected identifier in nested name. [error at 47]
+    union ezb_zcl_read_report_config_rsp_variable_s
+    -----------------------------------------------^
+If declarator-id:
+  Invalid C++ declaration: Expected identifier in nested name. [error at 47]
+    union ezb_zcl_read_report_config_rsp_variable_s
+    -----------------------------------------------^
 

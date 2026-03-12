@@ -20,95 +20,149 @@ PROJECT_NAME = "ESP Zigbee Programming Guide"
 ## These files are placed in '_inc' directory
 ## and used to include in API reference documentation
 
-INPUT = \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/esp_zigbee_attribute.h                           \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/esp_zigbee_cluster.h                             \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/esp_zigbee_core.h                                \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/esp_zigbee_endpoint.h                            \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/esp_zigbee_ota.h                                 \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/esp_zigbee_secur.h                               \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/esp_zigbee_trace.h                               \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/esp_zigbee_type.h                                \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/ha/esp_zigbee_ha_standard.h                      \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_alarms.h                      \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_analog_input.h                \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_analog_output.h               \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_analog_value.h                \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_basic.h                       \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_binary_input.h                \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_binary_output.h               \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_binary_value.h                \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_carbon_dioxide_measurement.h  \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_color_control.h               \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_command.h                     \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_common.h                      \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_device_temp_config.h          \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_door_lock.h                   \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_electrical_meas.h             \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_fan_control.h                 \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_groups.h                      \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_humidity_meas.h               \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_ias_zone.h                    \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_identify.h                    \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_illuminance_meas.h            \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_level.h                       \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_metering.h                    \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_multistate_input.h            \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_multistate_output.h           \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_multistate_value.h            \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_occupancy_sensing.h           \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_on_off_switch_config.h        \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_on_off.h                      \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_ota.h                         \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_pm2_5_measurement.h           \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_power_config.h                \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_pressure_meas.h               \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_scenes.h                      \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_shade_config.h                \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_temperature_meas.h            \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_thermostat_ui_config.h        \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_thermostat.h                  \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_time.h                        \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_window_covering.h             \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_green_power.h                 \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_diagnostics.h                 \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_meter_identification.h        \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_flow_meas.h                   \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_price.h                       \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_commissioning.h               \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_ias_ace.h                     \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_ias_wd.h                      \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_ec_measurement.h              \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_ph_measurement.h              \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_wind_speed_measurement.h      \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_drlc.h                        \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_dehumidification_control.h    \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zcl/esp_zigbee_zcl_poll_control.h                \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zdo/esp_zigbee_zdo_command.h                     \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zdo/esp_zigbee_zdo_common.h                      \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/bdb/esp_zigbee_bdb_touchlink.h                   \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zgp/esp_zigbee_zgp.h                             \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zgp/esp_zigbee_zgpd.h                            \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/zgp/esp_zigbee_zgps.h                            \
-    $(PROJECT_PATH)/components/esp-zigbee-ncp/include/esp_zb_ncp.h                                     \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/aps/esp_zigbee_aps.h                             \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/nwk/esp_zigbee_nwk.h                             \
-    $(PROJECT_PATH)/components/esp-zigbee-lib/include/mac/esp_zigbee_mac.h                             \
-
+INPUT   = \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/esp_zigbee.h                                               \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/esp_zigbee_version.h                                       \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/error.h                                              \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/core_types.h                                         \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/core.h                                               \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/secur.h                                              \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/mac.h                                                \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/nwk.h                                                \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/aps.h                                                \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/af.h                                                 \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/bdb.h                                                \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/app_signals.h                                        \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/tasklet.h                                            \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/platform/alarm.h                                     \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/platform/crypto.h                                    \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/platform/datasets.h                                  \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/platform/log.h                                       \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/platform/radio.h                                     \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/platform/toolchain.h                                 \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zdo.h                                                \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zdo/zdo_bind_mgmt.h                                  \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zdo/zdo_dev_srv_disc.h                               \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zdo/zdo_nwk_mgmt.h                                   \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zdo/zdo_type.h                                       \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zha.h                                                \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl.h                                                \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/zcl_common.h                                     \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/zcl_core.h                                       \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/zcl_desc.h                                       \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/zcl_general_cmd.h                                \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/zcl_reporting.h                                  \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/zcl_type.h                                       \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/alarms_desc.h                            \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/alarms.h                                 \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/analog_input_desc.h                      \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/analog_input.h                           \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/analog_output_desc.h                     \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/analog_output.h                          \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/analog_value_desc.h                      \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/analog_value.h                           \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/basic_desc.h                             \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/basic.h                                  \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/binary_input_desc.h                      \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/binary_input.h                           \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/binary_output_desc.h                     \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/binary_output.h                          \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/binary_value_desc.h                      \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/binary_value.h                           \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/color_control_desc.h                     \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/color_control.h                          \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/custom.h                                 \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/dehumidification_control_desc.h          \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/dehumidification_control.h               \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/device_temp_config_desc.h                \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/device_temp_config.h                     \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/door_lock_desc.h                         \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/door_lock.h                              \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/electrical_measurement_desc.h            \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/electrical_measurement.h                 \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/fan_control_desc.h                       \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/fan_control.h                            \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/groups_desc.h                            \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/groups.h                                 \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/ias_ace_desc.h                           \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/ias_ace.h                                \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/ias_wd_desc.h                            \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/ias_wd.h                                 \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/ias_zone_desc.h                          \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/ias_zone.h                               \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/identify_desc.h                          \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/identify.h                               \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/level_desc.h                             \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/level.h                                  \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/meter_identification_desc.h              \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/meter_identification.h                   \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/metering_desc.h                          \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/metering.h                               \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/multistate_input_desc.h                  \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/multistate_input.h                       \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/multistate_output_desc.h                 \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/multistate_output.h                      \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/multistate_value_desc.h                  \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/multistate_value.h                       \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/occupancy_sensing_desc.h                 \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/occupancy_sensing.h                      \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/on_off_desc.h                            \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/on_off.h                                 \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/on_off_switch_config_desc.h              \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/on_off_switch_config.h                   \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/ota_file.h                               \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/ota_upgrade_desc.h                       \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/ota_upgrade.h                            \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/poll_control_desc.h                      \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/poll_control.h                           \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/power_config_desc.h                      \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/power_config.h                           \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/price_desc.h                             \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/price.h                                  \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/scenes_desc.h                            \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/scenes.h                                 \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/shade_config_desc.h                      \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/shade_config.h                           \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/thermostat_desc.h                        \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/thermostat.h                             \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/thermostat_ui_config_desc.h              \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/thermostat_ui_config.h                   \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/time_desc.h                              \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/time.h                                   \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/touchlink_commissioning_desc.h           \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/touchlink_commissioning.h                \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/window_covering_desc.h                   \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/window_covering.h                        \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/carbon_dioxide_measurement_desc.h        \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/ec_measurement_desc.h                    \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/flow_measurement_desc.h                  \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/illuminance_measurement_desc.h           \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/ph_measurement_desc.h                    \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/pm2_5_measurement_desc.h                 \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/pressure_measurement_desc.h              \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/rel_humidity_measurement_desc.h          \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/wind_speed_measurement_desc.h            \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/temperature_measurement_desc.h           \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/zcl/cluster/simple_measurement.h                     \
 
 ## Get warnings for functions that have no documentation for their parameters or return value
 ##
 WARN_NO_PARAMDOC = YES
+WARN_IF_UNDOCUMENTED = YES
 
 ## Enable preprocessing and remove __attribute__(...) expressions from the INPUT files
 ##
 ENABLE_PREPROCESSING   = YES
 MACRO_EXPANSION        = YES
 EXPAND_ONLY_PREDEF     = YES
-PREDEFINED             = \
+PREDEFINED             =    \
     $(ENV_DOXYGEN_DEFINES)  \
     __attribute__(x)=       \
-    "ESP_ZB_DEPRECATED="    \
+    EZB_DEPRECATED=         \
+    EZB_EXPERIMENTAL=       \
+    EZB_PACKED_BEGIN=       \
+    EZB_PACKED_FIELD=       \
+    EZB_PACKED_END=         \
 
 ## Do not complain about not having dot
 ##
@@ -120,7 +174,6 @@ GENERATE_XML    = YES
 XML_OUTPUT      = xml
 
 GENERATE_HTML   = NO
-HAVE_DOT        = NO
 GENERATE_LATEX  = NO
 GENERATE_MAN    = YES
 GENERATE_RTF    = NO
@@ -128,3 +181,8 @@ GENERATE_RTF    = NO
 ## Skip distracting progress messages
 ##
 QUIET = YES
+
+## Enable Section Tags for conditional documentation
+##
+ENABLED_SECTIONS += DOC_EXCLUDE_HEADER_SECTION
+ENABLED_SECTIONS += DOC_SINGLE_GROUP

@@ -3,11 +3,18 @@ from esp_docs.conf_docs import *  # noqa: F403,F401
 languages = ['en']
 idf_targets = ['esp32', 'esp32s3', 'esp32c3', 'esp32h2', 'esp32c6', 'esp32c5']
 
-extensions += ['sphinx_copybutton',
-               # Needed as a trigger for running doxygen
-               'esp_docs.esp_extensions.dummy_build_system',
-               'esp_docs.esp_extensions.run_doxygen',
-               ]
+extensions += [
+    'sphinx_copybutton',
+    'sphinxcontrib.wavedrom',
+    # Needed as a trigger for running doxygen
+    'esp_docs.esp_extensions.dummy_build_system',
+    'esp_docs.esp_extensions.run_doxygen',
+]
+
+# Use wavedrompy as backend, instead of wavedrom-cli
+render_using_wavedrompy = True
+
+smartquotes = False
 
 # link roles config
 github_repo = 'espressif/esp-zigbee-sdk'

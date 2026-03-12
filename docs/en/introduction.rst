@@ -1,8 +1,8 @@
-1. Introduction
-===============
+Introduction
+============
 
-1.1 Espressif Zigbee Solutions
-------------------------------
+Espressif Zigbee Solutions
+--------------------------
 
 Espressif's Zigbee Solutions consist of:
 
@@ -10,8 +10,8 @@ Espressif's Zigbee Solutions consist of:
    - Production ready SDK
    - Zigbee and ESP RainMaker integration
 
-1.1.1 Espressif Zigbee Platforms
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Espressif Zigbee Platforms
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Espressif platform solutions are as shown below:
 
@@ -22,28 +22,27 @@ Espressif platform solutions are as shown below:
 
 - 802.15.4 SoCs (ESP32-H2, ESP32-C6, etc) can be used to build **Zigbee devices**.
 - By efficiently combining Espressif 802.15.4 and Wi-Fi SoCs (ESP32, ESP32-C3, ESP32-S3, etc), **Zigbee gateway** can be built to connect the Zigbee network with the Wi-Fi network.
-- We also provide Matter-Zigbee bridge solution that enable non-Matter devices based on Zigbee and other protocols to connect to the Matter ecosystem. See `ESP Matter <https://docs.espressif.com/projects/esp-matter/>`__.
+- We also provide a Matter-Zigbee bridge solution that enables non-Matter devices based on Zigbee and other protocols to connect to the Matter ecosystem. See `ESP Matter <https://docs.espressif.com/projects/esp-matter/>`__.
 
-1.1.2 ESP Zigbee SDK
-~~~~~~~~~~~~~~~~~~~~
+ESP Zigbee SDK
+~~~~~~~~~~~~~~
 
-Espressif's Zigbee SDK is built on top of the `ESP-IDF <https://github.com/espressif/esp-idf>`__ and `Zboss stack <https://dsr-zboss.com/>`__.
+Espressif's Zigbee SDK v2.x is built on top of the `ESP-IDF`_ and an Espressif proprietary implementation of Zigbee protocol.
+The full SDK is maintained in the `esp-zigbee-sdk`_ repository with several ESP-IDF components, documentations and examples for development.
+The core component (`esp-zigbee-lib`_) which is delivered as a pre-built library is also available on `ESP Registry`_.
 
-.. figure:: ../_static/esp_zigbee_stack.png
+.. figure:: ../_static/esp_zigbee_sdk.svg
     :align: center
     :alt: ESP Zigbee Software Components
     :figclass: align-center
 
-The ZBOSS and Espressif Zigbee SDK is provided as pre-built library:
+.. _ESP-IDF: https://github.com/espressif/esp-idf
+.. _esp-zigbee-sdk: https://github.com/espressif/esp-zigbee-sdk/tree/main
+.. _esp-zigbee-lib: https://components.espressif.com/components/espressif/esp-zigbee-lib
+.. _ESP Registry: https://components.espressif.com/
 
-- `esp-zboss-lib <https://components.espressif.com/components/espressif/esp-zboss-lib>`__: ZBOSS libraries for ESP32 series SoCs
-
-- `esp-zigbee-lib <https://components.espressif.com/components/espressif/esp-zigbee-lib>`__: Espressif Zigbee SDK and APIs libraries
-
-These two library components are hosted by `ESP Registry <https://components.espressif.com/>`__.
-
-1.1.3 Zigbee and ESP RainMaker Integration
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Zigbee and ESP RainMaker Integration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Espressif's AIoT cloud platform `ESP RainMaker <https://rainmaker.espressif.com/>`__ can provide remote control and enable cloud-based device management for Zigbee devices.
 
@@ -52,26 +51,26 @@ By combining the above-mentioned Zigbee hardware and software solutions with ESP
 .. todo::
     Add introduction here and add example in the rainmaker repository for Zigbee solution
 
-1.2 Supported Features
-----------------------
+Supported Features
+------------------
 
-The supported features in current ESP Zigbee SDK are listed below:
+The supported features in the current ESP Zigbee SDK are listed below:
 
 - Zigbee 3.0
-- Zigbee Pro R22
+- Zigbee Pro R23
 - Zigbee Cluster Library (ZCL) v8
 - Home Automation Devices
 - Touchlink
-- Green Power Proxy, Sink, GPD
-- Coordinator / Router / ZED / Sleepy device roles
+- Coordinator / Router / (Sleepy) End Device roles
 - Gateway and Radio Co-Processor (RCP) example
-- Network Co-Processor (NCP) and Host example
-- Sniffer
+- Command Line Interface (CLI) example
 
-1.2.1 ZCL Clusters
-~~~~~~~~~~~~~~~~~~
+ZCL Clusters
+~~~~~~~~~~~~
 
-.. table:: **ZCL cluster**
+The following clusters are supported:
+
+.. table:: **Supported ZCL clusters**
    :align: center
 
    =====================================  ============
@@ -127,43 +126,48 @@ The supported features in current ESP Zigbee SDK are listed below:
      metering                               0x0702
      meter_identification                   0x0b01
      electrical_measurement                 0x0b04
-     diagnostics                            0x0b05
      touchlink_commissioning                0x1000
    =====================================  ============
 
+Attributes and Commands
+^^^^^^^^^^^^^^^^^^^^^^^
 
-1.2.1.1 Attributes and Commands
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-See each cluster's supported attribute in `ZCL api-reference <https://docs.espressif.com/projects/esp-zigbee-sdk/en/latest/esp32/api-reference/zcl/index.html>`__
+See each cluster's supported attributes in :doc:`ZCL API Reference </api-reference/esp_zigbee_core/zcl/index>`
 
 
-1.2.2 HA Automation Device Types
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Home Automation Device Types
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. table:: **Zigbee Home Automation**
+.. table:: **Zigbee Home Automation** [1]_
    :align: center
 
-   =========== ======================= ======================================================================= 
-    Device ID       Device Name                                   Default Clusters                             
-   =========== ======================= ======================================================================= 
-     0x0002         on_off_light                       basic, identify, groups, scenes, on_off                 
-     0x0000         on_off_switch                                 basic, identify                              
-     0x0102     color_dimmable_light    basic, identify, groups, scenes, on_off, level_control, color_control  
-     0x0105     color_dimmable_switch                              basic, identify                             
-     0x0009         power_outlet                       basic, identify, groups,scenes, on_off                  
-     0x0200             shade               basic, identify, groups, scenes, on_off, level_control, shade      
-     0x0201       shade_controller                                 basic, identify                             
-     0x000A           door_lock                      basic, identify, groups, scenes, door_lock                
-     0x000B     door_lock_controller                               basic, identify                             
-     0x0301         thermostat                         basic, identify, thermostat_configuration
-     0x0302      temperature_sensor                       basic, identify, temperature_meas                    
-     0x0005      configuration_tool     basic, identify, groups, scenes, on_off, level_control, color_control  
-   =========== ======================= ======================================================================= 
+   =========== ============================== =========================================================================
+    Device ID       Device Name                                           Default Clusters
+   =========== ============================== =========================================================================
+     0x0000      on_off_switch                  basic, identify, identify*, on_off*
+     0x0005      configuration_tool             basic, identify, basic*
+     0x0009      mains power_outlet             basic, identify, groups, scenes, on_off
+     0x000A      door_lock                      basic, identify, groups, scenes, door_lock
+     0x000B      door_lock_controller           basic, identify, identify*, groups*, scenes*, door_lock*
+     0x0100      on_off_light                   basic, identify, groups, scenes, on_off
+     0x0101      dimmable_light                 basic, identify, groups, scenes, on_off, level_control
+     0x0102      color_dimmable_light           basic, identify, groups, scenes, on_off, level_control, color_control
+     0x0104      dimmer_switch                  basic, identify, identify*, on_off*, level_control*
+     0x0105      color_dimmer_switch            basic, identify, identify*, on_off*, level_control*, color_control*
+     0x0106      light_sensor                   basic, identify, illuminance_measurement, identify*
+     0x0200      shade                          basic, identify, groups, scenes, on_off, level_control, shade_config
+     0x0201      shade_controller               basic, identify, identify*, on_off*, level_control*
+     0x0202      window_covering                basic, identify, groups, scenes, window_covering
+     0x0203      window_covering_controller     basic, identify, identify*, window_covering*
+     0x0301      thermostat                     basic, identify, thermostat
+     0x0302      temperature_sensor             basic, identify, temperature_measurement, identify*
+   =========== ============================== =========================================================================
 
-See default mandatory attributes in each HA device's cluster in `HA api-reference <https://docs.espressif.com/projects/esp-zigbee-sdk/en/latest/esp32/api-reference/ha/index.html>`__
+.. [1] \* denotes the client cluster.
 
-1.2.3 More Supported
-~~~~~~~~~~~~~~~~~~~~
+See default mandatory attributes in each HA device's cluster in :doc:`HA api-reference </api-reference/esp_zigbee_core/ha>`.
+
+More Supported
+~~~~~~~~~~~~~~
 
 For any new cluster or device needs, please open an `issue <https://github.com/espressif/esp-zigbee-sdk/issues>`__ on GitHub. We will get back to you soon.
