@@ -12,7 +12,6 @@
 
 #include "esp_zigbee_console.h"
 #include "cli_cmd.h"
-#include "cmdline_parser.h"
 
 #define TAG "cli_cmd_bdb"
 
@@ -89,8 +88,8 @@ static esp_err_t cli_panid(esp_zb_cli_cmd_t *self, int argc, char **argv)
 
     if (argtable.extended->count > 0) {
         if (argtable.address->count > 0) {
-            EXIT_ON_FALSE(argtable.address->addr[0].addr_type == ESP_ZB_ZCL_ADDR_TYPE_IEEE, ESP_ERR_INVALID_ARG);
-            esp_zb_set_extended_pan_id(argtable.address->addr[0].u.ieee_addr);
+            EXIT_ON_FALSE(argtable.address->addr[0].addr_type == CLI_ADDR_TYPE_64BIT, ESP_ERR_INVALID_ARG);
+            esp_zb_set_extended_pan_id(argtable.address->addr[0].u.u8);
         } else {
             esp_zb_ieee_addr_t ext_pan_id;
             esp_zb_get_extended_pan_id(ext_pan_id);
@@ -98,8 +97,8 @@ static esp_err_t cli_panid(esp_zb_cli_cmd_t *self, int argc, char **argv)
         }
     } else {
         if (argtable.address->count > 0) {
-            EXIT_ON_FALSE(argtable.address->addr[0].addr_type == ESP_ZB_ZCL_ADDR_TYPE_SHORT, ESP_ERR_INVALID_ARG);
-            esp_zb_set_pan_id(argtable.address->addr[0].u.short_addr);
+            EXIT_ON_FALSE(argtable.address->addr[0].addr_type == CLI_ADDR_TYPE_16BIT, ESP_ERR_INVALID_ARG);
+            esp_zb_set_pan_id(argtable.address->addr[0].u.addr16);
         } else {
             cli_output("0x%04hx\n", esp_zb_get_pan_id());
         }
@@ -132,8 +131,8 @@ static esp_err_t cli_address(esp_zb_cli_cmd_t *self, int argc, char **argv)
 
     if (argtable.extended->count > 0) {
         if (argtable.address->count > 0) {
-            EXIT_ON_FALSE(argtable.address->addr[0].addr_type == ESP_ZB_ZCL_ADDR_TYPE_IEEE, ESP_ERR_INVALID_ARG);
-            EXIT_ON_ERROR(esp_zb_set_long_address(argtable.address->addr[0].u.ieee_addr));
+            EXIT_ON_FALSE(argtable.address->addr[0].addr_type == CLI_ADDR_TYPE_64BIT, ESP_ERR_INVALID_ARG);
+            EXIT_ON_ERROR(esp_zb_set_long_address(argtable.address->addr[0].u.u8));
         } else {
             esp_zb_ieee_addr_t ext_pan_id;
             esp_zb_get_long_address(ext_pan_id);
@@ -188,6 +187,36 @@ static esp_err_t cli_channel(esp_zb_cli_cmd_t *self, int argc, char **argv)
     } else {
         cli_output("Allowed Channel: 0x%08" PRIx32 "\n", esp_zb_get_channel_mask());
         cli_output("Current Channel: %d\n", esp_zb_get_current_channel());
+    }
+
+exit:
+    ESP_ZB_CLI_FREE_ARGSTRUCT(&argtable);
+    return ret;
+}
+
+static esp_err_t cli_rx_mode(esp_zb_cli_cmd_t *self, int argc, char **argv)
+{
+    struct {
+        arg_u8_t  *rx_on;
+        arg_lit_t *help;
+        arg_end_t *end;
+    } argtable = {
+        .rx_on = arg_u8n(NULL, NULL, "<RxMode>", 0, 1, "RxOnWhenIdle, 1: enable, 0: disable. Default: 1"),
+        .help = arg_lit0(NULL, "help", "Print this help message"),
+        .end = arg_end(2),
+    };
+    esp_err_t ret = ESP_OK;
+
+    /* Parse command line arguments */
+    int nerrors = arg_parse(argc, argv, (void**)&argtable);
+    EXIT_ON_FALSE(argtable.help->count == 0, ESP_OK, arg_print_help((void**)&argtable, argv[0]));
+    EXIT_ON_FALSE(nerrors == 0, ESP_ERR_INVALID_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
+
+    /* Handle set / get */
+    if (argc > 1) {
+        esp_zb_set_rx_on_when_idle(argtable.rx_on->val[0] == 1);
+    } else {
+        cli_output("RxOnWhenIdle: %s\n", esp_zb_get_rx_on_when_idle() ? "enabled" : "disabled");
     }
 
 exit:
@@ -639,7 +668,7 @@ static esp_err_t cli_ic_add(esp_zb_cli_cmd_t *self, int argc, char **argv)
     EXIT_ON_FALSE(nerrors == 0, ESP_ERR_INVALID_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
 
     EXIT_ON_FALSE(esp_zb_is_started(), ESP_ERR_INVALID_SIZE, cli_output_line("Please start Zigbee stack first"));
-    EXIT_ON_FALSE(argtable.add_addr->addr->addr_type == ESP_ZB_ZCL_ADDR_TYPE_IEEE, ESP_ERR_INVALID_ARG,
+    EXIT_ON_FALSE(argtable.add_addr->addr->addr_type == CLI_ADDR_TYPE_64BIT, ESP_ERR_INVALID_ARG,
                   cli_output_line("IEEE address is required."));
 
     switch (argtable.ic_code->hsize[0]) {
@@ -652,7 +681,7 @@ static esp_err_t cli_ic_add(esp_zb_cli_cmd_t *self, int argc, char **argv)
         break;
     }
 
-    EXIT_ON_ERROR(esp_zb_secur_ic_add(argtable.add_addr->addr[0].u.ieee_addr, ic_type, argtable.ic_code->hval[0]),
+    EXIT_ON_ERROR(esp_zb_secur_ic_add(argtable.add_addr->addr[0].u.u8, ic_type, argtable.ic_code->hval[0]),
                   cli_output_line("Fail to add install code."));
 
 exit:
@@ -677,9 +706,9 @@ static esp_err_t cli_ic_remove(esp_zb_cli_cmd_t *self, int argc, char **argv)
     int nerrors = arg_parse(argc, argv, (void**)&argtable);
     EXIT_ON_FALSE(nerrors == 0, ESP_ERR_INVALID_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
 
-    EXIT_ON_FALSE(argtable.add_addr->addr->addr_type == ESP_ZB_ZCL_ADDR_TYPE_IEEE, ESP_ERR_INVALID_ARG,
+    EXIT_ON_FALSE(argtable.add_addr->addr->addr_type == CLI_ADDR_TYPE_64BIT, ESP_ERR_INVALID_ARG,
                   cli_output_line("IEEE address is required."));
-    EXIT_ON_ERROR(esp_zb_secur_ic_remove_req(argtable.add_addr->addr->u.ieee_addr),
+    EXIT_ON_ERROR(esp_zb_secur_ic_remove_req(argtable.add_addr->addr->u.u8),
                   cli_output_line("Fail to remove install code."));
 
 exit:
@@ -1013,7 +1042,7 @@ static esp_err_t cli_tl_keymask(esp_zb_cli_cmd_t *self, int argc, char **argv)
     EXIT_ON_FALSE(nerrors == 0, ESP_ERR_INVALID_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
 
     esp_zb_zdo_touchlink_set_key_bitmask((esp_zb_touchlink_key_bitmask_t)argtable.keymask->val[0]);
-    
+
 exit:
     ESP_ZB_CLI_FREE_ARGSTRUCT(&argtable);
     return ret;
@@ -1023,7 +1052,8 @@ exit:
 DECLARE_ESP_ZB_CLI_CMD(role,    cli_role,,    "Get/Set the Zigbee role of a device");
 DECLARE_ESP_ZB_CLI_CMD(panid,   cli_panid,,   "Get/Set the (extended) PAN ID of the node");
 DECLARE_ESP_ZB_CLI_CMD(address, cli_address,, "Get/Set the (extended) address of the node");
-DECLARE_ESP_ZB_CLI_CMD(channel, cli_channel,,  "Get/Set 802.15.4 channels for network");
+DECLARE_ESP_ZB_CLI_CMD(channel, cli_channel,, "Get/Set 802.15.4 channels for network");
+DECLARE_ESP_ZB_CLI_CMD(rx_mode, cli_rx_mode,, "Get/Set RxOnWhenIdle");
 DECLARE_ESP_ZB_CLI_CMD_WITH_SUB(network, "Network configuration",
     ESP_ZB_CLI_SUBCMD(type,     cli_nwk_type,     "Get/Set the network type"),
     ESP_ZB_CLI_SUBCMD(key,      cli_nwk_key,      "Get/Set the network key"),

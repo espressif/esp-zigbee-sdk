@@ -12,9 +12,9 @@
 
 #include "esp_zigbee_console.h"
 #include "cli_cmd.h"
+#include "cli_cmd_aps.h"
 #include "cmdline_parser.h"
 #include "zb_data/zcl.h"
-#include "cli_cmd_aps.h"
 #include "zb_data/zb_custom_clusters/custom_common.h"
 
 #define TAG "cli_cmd_zcl"

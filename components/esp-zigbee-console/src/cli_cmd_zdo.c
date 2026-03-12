@@ -12,8 +12,6 @@
 
 #include "esp_zigbee_console.h"
 #include "cli_cmd.h"
-#include "cmdline_parser.h"
-#include "zb_data/zcl.h"
 
 #define TAG "cli_cmd_zdo"
 
@@ -242,54 +240,54 @@ static esp_err_t cli_zdo_request(esp_zb_cli_cmd_t *self, int argc, char **argv)
     EXIT_ON_FALSE(nerrors == 0, ESP_ERR_INVALID_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
 
     if (!strcmp(argtable.request->sval[0], "nwk_addr")) {
-        EXIT_ON_FALSE(argtable.address->addr->addr_type == ESP_ZB_ZCL_ADDR_TYPE_IEEE, ESP_ERR_INVALID_ARG,
+        EXIT_ON_FALSE(argtable.address->addr->addr_type == CLI_ADDR_TYPE_64BIT, ESP_ERR_INVALID_ARG,
                     cli_output("%s %s:only ieee address is supported\n", argv[0], argv[1]));
     } else {
-        EXIT_ON_FALSE(argtable.address->addr->addr_type == ESP_ZB_ZCL_ADDR_TYPE_SHORT, ESP_ERR_INVALID_ARG,
+        EXIT_ON_FALSE(argtable.address->addr->addr_type == CLI_ADDR_TYPE_16BIT, ESP_ERR_INVALID_ARG,
                     cli_output("%s %s:only short address is supported\n", argv[0], argv[1]));
     }
 
     if (!strcmp(argtable.request->sval[0], "node_desc")) {
         esp_zb_zdo_node_desc_req_param_t *nd_req = malloc(sizeof(esp_zb_zdo_node_desc_req_param_t));
-        nd_req->dst_nwk_addr = argtable.address->addr[0].u.short_addr;
+        nd_req->dst_nwk_addr = argtable.address->addr[0].u.addr16;
         esp_zb_zdo_node_desc_req(nd_req, cli_zdo_node_desc_cb, nd_req);
     } else if (!strcmp(argtable.request->sval[0], "power_desc")) {
         esp_zb_zdo_power_desc_req_param_t *pd_req = malloc(sizeof(esp_zb_zdo_power_desc_req_param_t));
-        pd_req->dst_nwk_addr = argtable.address->addr[0].u.short_addr;
+        pd_req->dst_nwk_addr = argtable.address->addr[0].u.addr16;
         esp_zb_zdo_power_desc_req(pd_req, cli_zdo_power_desc_cb, pd_req);
     } else if (!strcmp(argtable.request->sval[0], "simple_desc")) {
         esp_zb_zdo_simple_desc_req_param_t *sd_req = malloc(sizeof(esp_zb_zdo_simple_desc_req_param_t));
-        sd_req->addr_of_interest = argtable.address->addr[0].u.short_addr,
+        sd_req->addr_of_interest = argtable.address->addr[0].u.addr16,
         sd_req->endpoint = argtable.endpoint->val[0];
         esp_zb_zdo_simple_desc_req(sd_req, cli_zdo_simple_desc_cb, sd_req);
     } else if (!strcmp(argtable.request->sval[0], "active_ep")) {
         esp_zb_zdo_active_ep_req_param_t *ae_req = malloc(sizeof(esp_zb_zdo_active_ep_req_param_t));
-        ae_req->addr_of_interest = argtable.address->addr[0].u.short_addr;
+        ae_req->addr_of_interest = argtable.address->addr[0].u.addr16;
         esp_zb_zdo_active_ep_req(ae_req, cli_zdo_active_ep_cb, ae_req);
     } else if (!strcmp(argtable.request->sval[0], "nwk_addr")) {
         esp_zb_zdo_nwk_addr_req_param_t *na_req = malloc(sizeof(esp_zb_zdo_nwk_addr_req_param_t));
         na_req->dst_nwk_addr = 0xFFFD; /* Broadcast to all devices which macRxOnIdle = True. */
-        memcpy(na_req->ieee_addr_of_interest, argtable.address->addr[0].u.ieee_addr, sizeof(esp_zb_ieee_addr_t));
+        memcpy(na_req->ieee_addr_of_interest, argtable.address->addr[0].u.u8, sizeof(esp_zb_ieee_addr_t));
         na_req->request_type = 0;
         na_req->start_index = 0;
         esp_zb_zdo_nwk_addr_req(na_req, cli_zdo_nwk_addr_cb, na_req);
     } else if (!strcmp(argtable.request->sval[0], "ieee_addr")) {
         esp_zb_zdo_ieee_addr_req_param_t *ia_req = malloc(sizeof(esp_zb_zdo_ieee_addr_req_param_t));
-        ia_req->dst_nwk_addr = argtable.address->addr[0].u.short_addr;
+        ia_req->dst_nwk_addr = argtable.address->addr[0].u.addr16;
         ia_req->addr_of_interest = ia_req->dst_nwk_addr;
         ia_req->request_type = 0;
         ia_req->start_index = 0;
         esp_zb_zdo_ieee_addr_req(ia_req, cli_zdo_ieee_addr_cb, ia_req);
     } else if (!strcmp(argtable.request->sval[0], "neighbors")) {
         esp_zb_zdo_mgmt_lqi_req_param_t *ml_req = malloc(sizeof(esp_zb_zdo_mgmt_lqi_req_param_t));
-        ml_req->dst_addr = argtable.address->addr[0].u.short_addr;
+        ml_req->dst_addr = argtable.address->addr[0].u.addr16;
         ml_req->start_index = 0;
         esp_zb_zdo_mgmt_lqi_req(ml_req, cli_zdo_neighbor_table_cb, ml_req);
     } else if (!strcmp(argtable.request->sval[0], "routes")) {
         ret = ESP_ERR_NOT_SUPPORTED;
     } else if (!strcmp(argtable.request->sval[0], "bindings")) {
         esp_zb_zdo_mgmt_bind_param_t *mb_req = malloc(sizeof(esp_zb_zdo_mgmt_bind_param_t));
-        mb_req->dst_addr = argtable.address->addr[0].u.short_addr;
+        mb_req->dst_addr = argtable.address->addr[0].u.addr16;
         mb_req->start_index = 0;
         esp_zb_zdo_binding_table_req(mb_req, cli_zdo_binding_table_cb, mb_req);
     } else {
@@ -356,7 +354,7 @@ static esp_err_t cli_zdo_match(esp_zb_cli_cmd_t *self, int argc, char **argv)
     int nerrors = arg_parse(argc, argv, (void**)&argtable);
     EXIT_ON_FALSE(nerrors == 0, ESP_ERR_INVALID_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
 
-    EXIT_ON_FALSE(argtable.address->addr->addr_type == ESP_ZB_ZCL_ADDR_TYPE_SHORT, ESP_ERR_INVALID_ARG);
+    EXIT_ON_FALSE(argtable.address->addr->addr_type == CLI_ADDR_TYPE_16BIT, ESP_ERR_INVALID_ARG);
 
     esp_zb_zdo_match_desc_req_param_t *req = malloc(sizeof(esp_zb_zdo_match_desc_req_param_t));
     uint8_t in_num = argtable.in_cluster->count;
@@ -371,7 +369,7 @@ static esp_err_t cli_zdo_match(esp_zb_cli_cmd_t *self, int argc, char **argv)
     if (argtable.profile_id->count > 0) {
         req->profile_id = argtable.profile_id->val[0];
     }
-    req->dst_nwk_addr = argtable.address->addr[0].u.short_addr;
+    req->dst_nwk_addr = argtable.address->addr[0].u.addr16;
     req->addr_of_interest = req->dst_nwk_addr;
     EXIT_ON_ERROR(esp_zb_zdo_match_cluster(req, cli_zdo_match_desc_cb, req));
 
@@ -409,7 +407,7 @@ static esp_err_t cli_zdo_nwk_open(esp_zb_cli_cmd_t *self, int argc, char **argv)
     int nerrors = arg_parse(argc, argv, (void**)&argtable);
     EXIT_ON_FALSE(nerrors == 0, ESP_ERR_INVALID_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
 
-    EXIT_ON_FALSE(argtable.address->addr->addr_type == ESP_ZB_ZCL_ADDR_TYPE_SHORT, ESP_ERR_INVALID_ARG);
+    EXIT_ON_FALSE(argtable.address->addr->addr_type == CLI_ADDR_TYPE_16BIT, ESP_ERR_INVALID_ARG);
 
     esp_zb_zdo_permit_joining_req_param_t *req = malloc(sizeof(esp_zb_zdo_permit_joining_req_param_t));
     req->permit_duration = 60;
@@ -417,7 +415,7 @@ static esp_err_t cli_zdo_nwk_open(esp_zb_cli_cmd_t *self, int argc, char **argv)
         req->permit_duration = argtable.timeout->val[0];
     }
     req->tc_significance = 0x01;  /* This field should always be '0x01'. */
-    req->dst_nwk_addr = argtable.address->addr[0].u.short_addr;
+    req->dst_nwk_addr = argtable.address->addr[0].u.addr16;
     esp_zb_zdo_permit_joining_req(req, cli_zdo_permit_join_cb, req);
 
 exit:
@@ -456,7 +454,7 @@ static esp_err_t cli_zdo_nwk_leave(esp_zb_cli_cmd_t *self, int argc, char **argv
     int nerrors = arg_parse(argc, argv, (void**)&argtable);
     EXIT_ON_FALSE(nerrors == 0, ESP_ERR_INVALID_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
 
-    EXIT_ON_FALSE(argtable.address->addr->addr_type == ESP_ZB_ZCL_ADDR_TYPE_SHORT, ESP_ERR_INVALID_ARG);
+    EXIT_ON_FALSE(argtable.address->addr->addr_type == CLI_ADDR_TYPE_16BIT, ESP_ERR_INVALID_ARG);
 
     esp_zb_zdo_mgmt_leave_req_param_t *req = calloc(1, sizeof(esp_zb_zdo_mgmt_leave_req_param_t));
     if (argtable.rejoin->count > 0) {
@@ -465,7 +463,7 @@ static esp_err_t cli_zdo_nwk_leave(esp_zb_cli_cmd_t *self, int argc, char **argv
     if (argtable.remove->count > 0) {
         req->remove_children = 1;
     }
-    req->dst_nwk_addr = argtable.address->addr[0].u.short_addr;
+    req->dst_nwk_addr = argtable.address->addr[0].u.addr16;
     esp_zb_zdo_device_leave_req(req, cli_zdo_leave_cb, req);
 
 exit:
@@ -522,23 +520,23 @@ static esp_err_t cli_zdo_bind(esp_zb_cli_cmd_t *self, int argc, char **argv)
     esp_zb_zdo_bind_req_param_t *req = malloc(sizeof(esp_zb_zdo_bind_req_param_t));
     req->cluster_id = argtable.cluster->val[0];
     /* Populate dst information of binding */
-    if (argtable.dst_addr->addr[0].addr_type == ESP_ZB_ZCL_ADDR_TYPE_SHORT) {
+    if (argtable.dst_addr->addr[0].addr_type == CLI_ADDR_TYPE_16BIT) {
         req->dst_endp = 0;
         req->dst_addr_mode = ESP_ZB_ZDO_BIND_DST_ADDR_MODE_16_BIT_GROUP;
-        req->dst_address_u.addr_short = argtable.dst_addr->addr[0].u.short_addr;
+        req->dst_address_u.addr_short = argtable.dst_addr->addr[0].u.addr16;
     } else {
         EXIT_ON_FALSE(argtable.dst_ep->count > 0, ESP_ERR_INVALID_ARG, cli_output("dst-ep is required\n"));
         req->dst_endp = argtable.dst_ep->val[0];
         req->dst_addr_mode = ESP_ZB_ZDO_BIND_DST_ADDR_MODE_64_BIT_EXTENDED;
-        memcpy(req->dst_address_u.addr_long, argtable.dst_addr->addr[0].u.ieee_addr, sizeof(esp_zb_ieee_addr_t));
+        memcpy(req->dst_address_u.addr_long, argtable.dst_addr->addr[0].u.u8, sizeof(esp_zb_ieee_addr_t));
     }
 
     /* Populate src information of binding */
     req->src_endp = argtable.src_ep->val[0];
-    if (argtable.src_addr->addr[0].addr_type == ESP_ZB_ZCL_ADDR_TYPE_SHORT) {
-        req->req_dst_addr = argtable.src_addr->addr[0].u.short_addr;
+    if (argtable.src_addr->addr[0].addr_type == CLI_ADDR_TYPE_16BIT) {
+        req->req_dst_addr = argtable.src_addr->addr[0].u.addr16;
     } else {
-        req->req_dst_addr = esp_zb_address_short_by_ieee(argtable.src_addr->addr[0].u.ieee_addr);
+        req->req_dst_addr = esp_zb_address_short_by_ieee(argtable.src_addr->addr[0].u.u8);
     }
     EXIT_ON_ERROR(esp_zb_ieee_address_by_short(req->req_dst_addr, req->src_address));
     if (argtable.remove->count > 0) {

@@ -7,11 +7,27 @@
 #pragma once
 
 #include "esp_err.h"
-#include "esp_zigbee_type.h"
+#include "esp_zigbee_core.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+typedef enum {
+    CLI_ADDR_TYPE_16BIT = 0,
+    CLI_ADDR_TYPE_32BIT,
+    CLI_ADDR_TYPE_64BIT,
+} cli_addr_type_t;
+
+typedef struct {
+    cli_addr_type_t addr_type;
+    union {
+        uint16_t addr16; /* Parsed 16-bit address value */
+        uint32_t addr32; /* Parsed 32-bit address value */
+        uint64_t addr64; /* Parsed 64-bit address value */
+        uint8_t  u8[8];  /* Raw address bytes */
+    } u;
+} cli_addr_t;
 
 /**
  * @brief Parse string to uint64_t
@@ -76,27 +92,15 @@ esp_err_t parse_u8(const char *string, uint8_t *value_u8);
 esp_err_t parse_hex_str(const char *string, uint8_t *buffer, size_t buffer_size, size_t* out_size);
 
 /**
- * @brief Parse HEX string to IEEE address
+ * @brief Parse HEX string to @ref cli_addr_t
  *
  * @param[in] string A string contains the data in HEX.
- * @param[out] ieee_addr Parsed IEEE address.
- * @return
- *      - ESP_OK: Success
- *      - ESP_ERR_INVALID_ARG: Invalid arguments
- *      - ESP_ERR_INVALID_SIZE: Wrong string length
- */
-esp_err_t parse_ieee_addr(const char *string, esp_zb_ieee_addr_t ieee_addr);
-
-/**
- * @brief Parse HEX string to @ref esp_zb_zcl_addr_t
- *
- * @param[in] string A string contains the data in HEX.
- * @param[out] addr Parsed esp_zb_zcl_addr_t structure.
+ * @param[out] addr Parsed cli_addr_t structure.
  * @return
  *      - ESP_OK: Success
  *      - ESP_ERR_INVALID_ARG: Invalid arguments
  */
-esp_err_t parse_zcl_addr(const char *string, esp_zb_zcl_addr_t *addr);
+esp_err_t parse_addr(const char *string, cli_addr_t *addr);
 
 /**
  * @brief Parse setting string to attribute access value

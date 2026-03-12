@@ -13,7 +13,8 @@
 #include <stdint.h>
 
 #include "argtable3/argtable3.h"
-#include "esp_zigbee_type.h"
+
+#include "cmdline_parser.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -49,7 +50,7 @@ typedef struct arg_hex {
 typedef struct arg_addr {
     struct arg_hdr hdr;         /* The mandatory argtable header struct */
     int count;                  /* Number of matching command line args */
-    esp_zb_zcl_addr_t* addr;    /* Array of parsed argument values */
+    cli_addr_t *addr;           /* Array of parsed argument values */
 } arg_addr_t;
 
 typedef arg_u16_t arg_devid_t;
