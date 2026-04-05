@@ -1,0 +1,16 @@
+## IDF Component Manager Manifest File
+dependencies:
+  ## Required IDF version
+  espressif/led_strip: "~2.0.0"
+  espressif/esp_rcp_update: "~1.6.0"
+  espressif/esp-serial-flasher: "~1.8.0"
+  idf:
+    version: ">=5.2"
+  espressif/esp-zigbee-lib:
+    version: ">=2.0.0"
+  light_driver:
+    path: "../../utils/light_driver"
+  alarm_timer:
+    path: "../../utils/alarm_timer"
+  protocol_examples_common:
+    path: "${IDF_PATH}/examples/common_components/protocol_examples_common"

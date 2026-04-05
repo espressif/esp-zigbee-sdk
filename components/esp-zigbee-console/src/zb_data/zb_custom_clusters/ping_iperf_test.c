@@ -5,86 +5,130 @@
  */
 
 #include <string.h>
+#include <ezbee/zcl/zcl_type.h>
+
 #include "esp_timer.h"
 #include "esp_check.h"
+
+#include "cli_util.h"
 #include "ping_iperf_test.h"
 
-#define TAG "ping_iperf_test"
+#define TAG                        "ping_iperf_test"
 #define IS_ADDRESS_BROADCAST(addr) ((addr) >= 0xfff8)
 
 typedef struct iperf_context {
     iperf_finish_callback_t iperf_finish_cb;
-    esp_zb_zcl_custom_cluster_cmd_t *message_to_iperf;
-    uint64_t iperf_duration;
-    int64_t iperf_start_time;
-    uint64_t iperf_packet_count;
-    int64_t iperf_end_time;
-    uint32_t iperf_interval;
-    uint16_t iperf_data_len;
-    uint8_t iperf_endpoint;
-    bool client_in_progress;
+    ezb_zcl_custom_cmd_t   *message_to_iperf;
+    uint64_t                iperf_duration;
+    int64_t                 iperf_start_time;
+    uint64_t                iperf_packet_count;
+    int64_t                 iperf_end_time;
+    uint32_t                iperf_interval;
+    uint16_t                iperf_data_len;
+    uint8_t                 iperf_endpoint;
+    bool                    client_in_progress;
+    esp_timer_handle_t      iperf_timer;
 } iperf_context_t;
 
 typedef struct ping_context {
     ping_finish_callback_t ping_finish_cb;
-    int64_t ping_start_time;
-    uint32_t timeout;
-    uint8_t ping_tsn;
-    bool is_in_progress;
-    bool is_broadcast;
+    int64_t                ping_start_time;
+    uint32_t               timeout;
+    uint8_t                ping_tsn;
+    bool                   is_in_progress;
+    bool                   is_broadcast;
+    esp_timer_handle_t     timeout_timer;
 } ping_context_t;
 
-static esp_zb_zcl_status_t zb_ping_iperf_set_iperf_attribute_val(uint8_t endpoint, uint8_t cluster_role, uint16_t attr_id, void *value_p);
+static ezb_zcl_status_t zb_ping_iperf_set_iperf_attribute_val(uint8_t  endpoint,
+                                                              uint8_t  cluster_role,
+                                                              uint16_t attr_id,
+                                                              void    *value_p);
 
-static esp_zb_zcl_attr_t *zb_ping_iperf_get_iperf_attribute_val(uint8_t endpoint, uint8_t cluster_role, uint16_t attr_id);
+static void ping_timeout_handler(void *arg);
 
-static void ping_timeout_handler(uint8_t param);
-
-static ping_context_t ping_ctx = {0};
+static ping_context_t  ping_ctx  = {0};
 static iperf_context_t iperf_ctx = {0};
 
-esp_err_t esp_zb_cluster_list_add_ping_iperf_test_cluster(esp_zb_cluster_list_t *cluster_list, esp_zb_attribute_list_t *attr_list, uint8_t role_mask)
+static ezb_zcl_status_t ezb_zcl_ping_iperf_test_cluster_process_cmd_handler(const ezb_zcl_cmd_hdr_t *header,
+                                                                            const uint8_t           *payload,
+                                                                            uint16_t                 payload_length);
+
+void ezb_zcl_ping_iperf_test_cluster_init(uint8_t ep_id)
 {
-    return esp_zb_cluster_list_add_custom_cluster(cluster_list, attr_list, role_mask);
+    ezb_zcl_custom_cluster_handlers_t server_handlers = {
+        .cluster_id     = EZB_ZCL_CLUSTER_ID_PING_IPERF_TEST,
+        .cluster_role   = EZB_ZCL_CLUSTER_SERVER,
+        .check_value_cb = NULL,
+        .write_attr_cb  = NULL,
+        .cmd_disc_cb    = NULL,
+        .process_cmd_cb = ezb_zcl_ping_iperf_test_cluster_process_cmd_handler,
+    };
+
+    ezb_zcl_custom_cluster_handlers_t client_handlers = {
+        .cluster_id     = EZB_ZCL_CLUSTER_ID_PING_IPERF_TEST,
+        .cluster_role   = EZB_ZCL_CLUSTER_CLIENT,
+        .check_value_cb = NULL,
+        .write_attr_cb  = NULL,
+        .cmd_disc_cb    = NULL,
+        .process_cmd_cb = ezb_zcl_ping_iperf_test_cluster_process_cmd_handler,
+    };
+    ezb_zcl_custom_cluster_handlers_register(&server_handlers);
+    ezb_zcl_custom_cluster_handlers_register(&client_handlers);
 }
 
-esp_zb_attribute_list_t *esp_zb_ping_iperf_test_cluster_create(esp_zb_ping_iperf_test_cluster_cfg_t *custom_cfg)
+void ezb_zcl_ping_iperf_test_cluster_deinit(uint8_t ep_id) { (void)ep_id; }
+
+ezb_zcl_cluster_desc_t ezb_zcl_ping_iperf_test_create_cluster_desc(ezb_ping_iperf_test_cluster_config_t *ping_iperf_test_cfg,
+                                                                   uint8_t                               role_mask)
 {
-    esp_zb_ping_iperf_test_cluster_cfg_t cluster_cfg = {0};
-    if (custom_cfg != NULL) {
-        memcpy(&cluster_cfg, custom_cfg, sizeof(esp_zb_ping_iperf_test_cluster_cfg_t));
+    ezb_zcl_cluster_desc_t               cluster_desc = NULL;
+    ezb_ping_iperf_test_cluster_config_t cfg          = {0};
+    ezb_zcl_custom_cluster_config_t      custom_cfg   = {
+               .cluster_id  = EZB_ZCL_CLUSTER_ID_PING_IPERF_TEST,
+               .init_func   = ezb_zcl_ping_iperf_test_cluster_init,
+               .deinit_func = ezb_zcl_ping_iperf_test_cluster_deinit,
+    };
+    cluster_desc = ezb_zcl_custom_create_cluster_desc(&custom_cfg, role_mask);
+    if (ping_iperf_test_cfg != NULL) {
+        memcpy(&cfg, ping_iperf_test_cfg, sizeof(ezb_ping_iperf_test_cluster_config_t));
     }
-    esp_zb_attribute_list_t *esp_zb_custom_cluster_attr_list = esp_zb_zcl_attr_list_create(ESP_ZB_ZCL_CLUSTER_ID_PING_IPERF_TEST);
-    esp_zb_ping_iperf_test_cluster_add_attr(esp_zb_custom_cluster_attr_list, ESP_ZB_ZCL_ATTR_PING_IPERF_TEST_IPERF_THROUGHPUT, &(cluster_cfg.throughput));
-    esp_zb_ping_iperf_test_cluster_add_attr(esp_zb_custom_cluster_attr_list, ESP_ZB_ZCL_ATTR_PING_IPERF_TEST_IPERF_DURATION, &(cluster_cfg.iperf_duration));
-    esp_zb_ping_iperf_test_cluster_add_attr(esp_zb_custom_cluster_attr_list, ESP_ZB_ZCL_ATTR_PING_IPERF_TEST_IPERF_DATA_LEN, &(cluster_cfg.iperf_data_len));
-    esp_zb_ping_iperf_test_cluster_add_attr(esp_zb_custom_cluster_attr_list, ESP_ZB_ZCL_ATTR_PING_IPERF_TEST_IPERF_INTERVAL, &(cluster_cfg.iperf_interval));
-
-    return esp_zb_custom_cluster_attr_list;
+    ezb_zcl_ping_iperf_test_cluster_desc_add_attr(cluster_desc, EZB_ZCL_ATTR_PING_IPERF_TEST_IPERF_THROUGHPUT, &cfg.throughput);
+    ezb_zcl_ping_iperf_test_cluster_desc_add_attr(cluster_desc, EZB_ZCL_ATTR_PING_IPERF_TEST_IPERF_DURATION,
+                                                  &cfg.iperf_duration);
+    ezb_zcl_ping_iperf_test_cluster_desc_add_attr(cluster_desc, EZB_ZCL_ATTR_PING_IPERF_TEST_IPERF_DATA_LEN,
+                                                  &cfg.iperf_data_len);
+    ezb_zcl_ping_iperf_test_cluster_desc_add_attr(cluster_desc, EZB_ZCL_ATTR_PING_IPERF_TEST_IPERF_INTERVAL,
+                                                  &cfg.iperf_interval);
+    return cluster_desc;
 }
 
-esp_err_t esp_zb_ping_iperf_test_cluster_add_attr(esp_zb_attribute_list_t *attr_list, uint16_t attr_id, void *value_p)
+ezb_err_t ezb_zcl_ping_iperf_test_cluster_desc_add_attr(ezb_zcl_cluster_desc_t cluster_desc, uint16_t attr_id, const void *value_p)
 {
-    uint8_t attr_type = ESP_ZB_ZCL_ATTR_TYPE_INVALID;
-    uint8_t attr_access = ESP_ZB_ZCL_ATTR_ACCESS_READ_WRITE;
+    ezb_err_t ret         = EZB_ERR_NONE;
+    uint8_t   attr_type   = EZB_ZCL_ATTR_TYPE_UNK;
+    uint8_t   attr_access = EZB_ZCL_ATTR_ACCESS_READ_WRITE;
     switch (attr_id) {
-        case ESP_ZB_ZCL_ATTR_PING_IPERF_TEST_IPERF_THROUGHPUT:
-            attr_type = ESP_ZB_ZCL_ATTR_TYPE_SINGLE;
-            attr_access = ESP_ZB_ZCL_ATTR_ACCESS_READ_WRITE | ESP_ZB_ZCL_ATTR_ACCESS_REPORTING;
-            break;
-        case ESP_ZB_ZCL_ATTR_PING_IPERF_TEST_IPERF_DATA_LEN:
-        case ESP_ZB_ZCL_ATTR_PING_IPERF_TEST_IPERF_DURATION:
-        case ESP_ZB_ZCL_ATTR_PING_IPERF_TEST_IPERF_INTERVAL:
-            attr_type = ESP_ZB_ZCL_ATTR_TYPE_U16;
-            break;
-        default:
-            ESP_RETURN_ON_FALSE(false, ESP_ERR_INVALID_ARG, TAG, "incorrect/unsupported attribute_id!");
+    case EZB_ZCL_ATTR_PING_IPERF_TEST_IPERF_THROUGHPUT:
+        attr_type   = EZB_ZCL_ATTR_TYPE_SINGLE;
+        attr_access = EZB_ZCL_ATTR_ACCESS_READ_WRITE | EZB_ZCL_ATTR_ACCESS_REPORTING;
+        break;
+    case EZB_ZCL_ATTR_PING_IPERF_TEST_IPERF_DATA_LEN:
+    case EZB_ZCL_ATTR_PING_IPERF_TEST_IPERF_DURATION:
+    case EZB_ZCL_ATTR_PING_IPERF_TEST_IPERF_INTERVAL:
+        attr_type = EZB_ZCL_ATTR_TYPE_UINT16;
+        break;
+    default:
+        EXIT_ON_FALSE(0, EZB_ERR_INV_ARG);
     }
-
-    return esp_zb_custom_cluster_add_custom_attr(attr_list, attr_id, attr_type, attr_access, value_p);
+    EXIT_ON_ERROR(ezb_zcl_custom_cluster_desc_add_manuf_attr(cluster_desc, attr_id, attr_type, attr_access,
+                                                             EZB_ZCL_STD_MANUF_CODE, value_p));
+exit:
+    return ret;
 }
 
-static void finish_ping(esp_err_t result) {
+static void finish_ping(ezb_err_t result)
+{
     ping_ctx.is_in_progress = false;
     if (ping_ctx.ping_finish_cb) {
         ping_ctx.ping_finish_cb(result);
@@ -92,130 +136,153 @@ static void finish_ping(esp_err_t result) {
     }
 }
 
-static void ping_timeout_handler_cancel(esp_err_t result)
+static void ping_timeout_handler_cancel(ezb_err_t result)
 {
-    esp_zb_scheduler_alarm_cancel(ping_timeout_handler, 0);
+    if (ping_ctx.timeout_timer != NULL) {
+        esp_timer_stop(ping_ctx.timeout_timer);
+        esp_timer_delete(ping_ctx.timeout_timer);
+        ping_ctx.timeout_timer = NULL;
+    }
     finish_ping(result);
 }
 
-static void zb_ping_iperf_test_cluster_ping_req_send_status_callback(esp_zb_zcl_command_send_status_message_t message)
+static void ping_timeout_handler(void *arg)
 {
-    if (message.status != ESP_OK){
-        ESP_LOGE(TAG, "Ping request failed, error: %d tsn: %d", message.status, ping_ctx.ping_tsn);
-        ping_timeout_handler_cancel(ESP_FAIL);
+    esp_timer_handle_t timer = ping_ctx.timeout_timer;
+    ping_ctx.timeout_timer   = NULL;
+    if (timer != NULL) {
+        esp_timer_delete(timer);
+    }
+    if (!ping_ctx.is_broadcast) {
+        ESP_LOGE(TAG, "No ping response received, tsn: %d", ping_ctx.ping_tsn);
+        finish_ping(EZB_ERR_FAIL);
+    } else {
+        ESP_LOGI(TAG, "Ping broadcast done, tsn: %d", ping_ctx.ping_tsn);
+        finish_ping(EZB_ERR_NONE);
+    }
+}
+
+static void ping_req_send_status_callback(ezb_zcl_cmd_cnf_t *info, void *data)
+{
+    if (info->status != EZB_ZCL_STATUS_SUCCESS) {
+        ESP_LOGE(TAG, "Ping request failed, error: %d tsn: %d", info->status, ping_ctx.ping_tsn);
+        ping_timeout_handler_cancel(EZB_ERR_FAIL);
     } else {
         ESP_LOGI(TAG, "Ping request success, tsn: %d", ping_ctx.ping_tsn);
     }
-    esp_zb_zcl_command_send_status_handler_register(NULL);
 }
 
-static void ping_timeout_handler(uint8_t param)
+ezb_err_t ezb_zcl_ping_iperf_test_cluster_ping_req(const ezb_ping_req_info_t *info, ping_finish_callback_t ping_finish_cb)
 {
-    esp_zb_zcl_command_send_status_handler_register(NULL);
-    if (!ping_ctx.is_broadcast) {
-        ESP_LOGE(TAG, "No ping response received, tsn: %d", ping_ctx.ping_tsn);
-        finish_ping(ESP_FAIL);
-    } else {
-        ESP_LOGI(TAG, "Ping broadcast done, tsn: %d", ping_ctx.ping_tsn);
-        finish_ping(ESP_OK);
-    }
-}
-
-esp_err_t esp_zb_ping_iperf_test_cluster_ping_req(const esp_zb_ping_req_info_t *info, ping_finish_callback_t ping_finish_cb)
-{
-    ESP_RETURN_ON_FALSE(!ping_ctx.is_in_progress, ESP_ERR_INVALID_STATE, TAG, "Consecutive ping operations are not allowed");
+    ezb_err_t            ret = EZB_ERR_NONE;
+    ezb_zcl_custom_cmd_t req = {0};
+    EXIT_ON_FALSE(!ping_ctx.is_in_progress, EZB_ERR_INV_STATE);
     ping_ctx.ping_tsn++;
-    esp_zb_zcl_custom_cluster_cmd_t req = {
-        .address_mode     = ESP_ZB_APS_ADDR_MODE_16_ENDP_PRESENT,
-        .profile_id       = ESP_ZB_AF_HA_PROFILE_ID,
-        .cluster_id       = ESP_ZB_ZCL_CLUSTER_ID_PING_IPERF_TEST,
-        .dis_default_resp = 1,
-        .custom_cmd_id    = ESP_ZB_ZCL_CMD_PING_IPERF_TEST_ECHO,
-        .direction        = ESP_ZB_ZCL_CMD_DIRECTION_TO_SRV,
-    };
-    req.zcl_basic_cmd.dst_addr_u.addr_short = info->dst_short_addr;
-    req.zcl_basic_cmd.src_endpoint = info->src_ep;
-    req.zcl_basic_cmd.dst_endpoint = info->dst_ep;
-    req.data.type = ESP_ZB_ZCL_ATTR_TYPE_SET;
-    req.data.size = info->payload_len;
-    req.data.value = malloc(req.data.size);
-    ESP_RETURN_ON_FALSE(req.data.value, ESP_ERR_NO_MEM, TAG, "malloc ping req data failed");
-    memset(req.data.value, 1, req.data.size);
-    uint8_t *value_ptr = (uint8_t *)req.data.value;
-    value_ptr[0] = ping_ctx.ping_tsn;
 
-    ping_ctx.is_broadcast = IS_ADDRESS_BROADCAST(info->dst_short_addr);
+    req.cmd_ctrl.dst_addr.addr_mode    = EZB_APS_ADDR_MODE_16_ENDP_PRESENT;
+    req.cmd_ctrl.dst_addr.u.short_addr = info->dst_short_addr;
+    req.cmd_ctrl.src_ep                = info->src_ep;
+    req.cmd_ctrl.dst_ep                = info->dst_ep;
+    req.cmd_ctrl.cluster_id            = EZB_ZCL_CLUSTER_ID_PING_IPERF_TEST;
+    req.cmd_ctrl.fc.direction          = EZB_ZCL_CMD_DIRECTION_TO_SRV;
+    req.cmd_ctrl.fc.dis_default_rsp    = 1;
+    req.cmd_ctrl.cnf_ctx.cb            = ping_req_send_status_callback;
+    req.cmd_ctrl.cnf_ctx.user_ctx      = &ping_ctx;
+    req.cmd_id                         = EZB_ZCL_CMD_PING_IPERF_TEST_ECHO;
+    req.data_length                    = info->payload_len;
+    req.data                           = malloc(info->payload_len);
+    EXIT_ON_FALSE(req.data, EZB_ERR_NO_MEM);
+    memset(req.data, 1, info->payload_len);
+    ((uint8_t *)req.data)[0] = ping_ctx.ping_tsn;
+
+    ping_ctx.is_broadcast    = IS_ADDRESS_BROADCAST(info->dst_short_addr);
     ping_ctx.ping_start_time = esp_timer_get_time();
-    ping_ctx.timeout = info->timeout;
-    ping_ctx.ping_finish_cb = ping_finish_cb;
+    ping_ctx.timeout         = info->timeout;
+    ping_ctx.ping_finish_cb  = ping_finish_cb;
+    ping_ctx.timeout_timer   = NULL;
+    ezb_zcl_custom_cmd_req(&req);
 
-    esp_zb_zcl_command_send_status_handler_register(zb_ping_iperf_test_cluster_ping_req_send_status_callback);
-
-    esp_zb_zcl_custom_cluster_cmd_req(&req);
-    esp_zb_scheduler_alarm(ping_timeout_handler, 0, ping_ctx.timeout);
+    const esp_timer_create_args_t timer_args = {.callback = &ping_timeout_handler, .arg = NULL, .name = "ping_timeout"};
+    EXIT_ON_ERROR(esp_timer_create(&timer_args, &ping_ctx.timeout_timer));
+    EXIT_ON_ERROR(esp_timer_start_once(ping_ctx.timeout_timer, ping_ctx.timeout * 1000ULL));
     ping_ctx.is_in_progress = true;
-    ESP_LOGI(TAG, "Request to ping address: 0x%04x", req.zcl_basic_cmd.dst_addr_u.addr_short);
-    free(req.data.value);
+    ESP_LOGI(TAG, "Request to ping address: 0x%04x", req.cmd_ctrl.dst_addr.u.short_addr);
 
-    return ESP_OK;
+exit:
+    if (req.data) {
+        free(req.data);
+    }
+    if (ret != EZB_ERR_NONE && ping_ctx.timeout_timer) {
+        esp_timer_delete(ping_ctx.timeout_timer);
+        ping_ctx.timeout_timer = NULL;
+    }
+    return ret;
 }
 
-static esp_err_t zb_ping_iperf_test_cluster_ping_test_request_handler(const esp_zb_zcl_custom_cluster_command_message_t *message)
+static ezb_zcl_status_t zb_ping_iperf_test_cluster_ping_test_request_handler(const ezb_zcl_cmd_hdr_t *header,
+                                                                             const uint8_t           *payload,
+                                                                             uint16_t                 payload_length)
 {
     ESP_LOGI(TAG, "RECEIVE PING REQUEST");
-    esp_zb_zcl_custom_cluster_cmd_t resp = {0};
-    resp.zcl_basic_cmd.src_endpoint = message->info.dst_endpoint;
-    resp.zcl_basic_cmd.dst_endpoint = message->info.src_endpoint;
-    resp.zcl_basic_cmd.dst_addr_u.addr_short = message->info.src_address.u.short_addr;
-    resp.address_mode = ESP_ZB_APS_ADDR_MODE_16_ENDP_PRESENT;
-    resp.profile_id = ESP_ZB_AF_HA_PROFILE_ID;
-    resp.cluster_id = ESP_ZB_ZCL_CLUSTER_ID_PING_IPERF_TEST;
-    resp.direction = 1 - message->info.command.direction;
-    resp.custom_cmd_id = ESP_ZB_ZCL_CMD_PING_IPERF_TEST_ECHO;
-    resp.dis_default_resp = 1;
-    resp.data.type = ESP_ZB_ZCL_ATTR_TYPE_SET;
-    resp.data.size = message->data.size;
-    resp.data.value = message->data.value;
-    esp_zb_zcl_custom_cluster_cmd_req(&resp);
-    ESP_LOGI(TAG, "Response to ping address: 0x%04x", resp.zcl_basic_cmd.dst_addr_u.addr_short);
 
-    return ESP_OK;
+    ezb_zcl_custom_cmd_t rsp           = {0};
+    rsp.cmd_ctrl.dst_addr.addr_mode    = EZB_APS_ADDR_MODE_16_ENDP_PRESENT;
+    rsp.cmd_ctrl.dst_addr.u.short_addr = header->src_addr.u.short_addr;
+    rsp.cmd_ctrl.src_ep                = header->dst_ep;
+    rsp.cmd_ctrl.dst_ep                = header->src_ep;
+    rsp.cmd_ctrl.cluster_id            = EZB_ZCL_CLUSTER_ID_PING_IPERF_TEST;
+    rsp.cmd_ctrl.fc.direction          = EZB_ZCL_CMD_FC_IS_TO_CLI_DIRECTION(header->fc) ? EZB_ZCL_CMD_DIRECTION_TO_SRV
+                                                                                        : EZB_ZCL_CMD_DIRECTION_TO_CLI;
+    rsp.cmd_ctrl.fc.dis_default_rsp    = 1;
+    rsp.cmd_id                         = EZB_ZCL_CMD_PING_IPERF_TEST_ECHO;
+    rsp.data_length                    = payload_length;
+    rsp.data                           = (uint8_t *)payload;
+    ezb_zcl_custom_cmd_req(&rsp);
+    ESP_LOGI(TAG, "Response to ping address: 0x%04x", rsp.cmd_ctrl.dst_addr.u.short_addr);
+    return EZB_ZCL_STATUS_SUCCESS;
 }
 
-static esp_err_t zb_ping_iperf_test_cluster_ping_test_response_handler(const esp_zb_zcl_custom_cluster_command_message_t *message)
+static ezb_zcl_status_t zb_ping_iperf_test_cluster_ping_test_response_handler(const ezb_zcl_cmd_hdr_t *header,
+                                                                              const uint8_t           *payload,
+                                                                              uint16_t                 payload_length)
 {
     if (!ping_ctx.is_in_progress) {
-        return ESP_OK;
+        return EZB_ZCL_STATUS_SUCCESS;
     }
-    uint8_t req_tsn = ((uint8_t *)message->data.value)[0];
+
+    uint8_t req_tsn = ((uint8_t *)payload)[0];
+    ESP_LOGI(TAG, "RECEIVE PING RESPONSE, TSN: %d, ping_tsn: %d", req_tsn, ping_ctx.ping_tsn);
     if (req_tsn == ping_ctx.ping_tsn) {
         int64_t ping_rtt = (esp_timer_get_time() - ping_ctx.ping_start_time) / 1000;
-        ESP_LOGI(TAG, "RECEIVE PING RESPONSE from 0x%04x with %d bytes, rtt: %lld ms", message->info.src_address.u.short_addr, message->data.size, ping_rtt);
+        ESP_LOGI(TAG, "RECEIVE PING RESPONSE from 0x%04x with %d bytes, rtt: %lld ms", header->src_addr.u.short_addr,
+                 payload_length, ping_rtt);
         if (!ping_ctx.is_broadcast) {
-            ping_timeout_handler_cancel(ESP_OK);
+            ping_timeout_handler_cancel(EZB_ERR_NONE);
         }
     }
 
-    return ESP_OK;
+    return EZB_ZCL_STATUS_SUCCESS;
 }
 
-static esp_err_t zb_ping_iperf_test_cluster_ping_test_handler(const esp_zb_zcl_custom_cluster_command_message_t *message)
+static ezb_zcl_status_t zb_ping_iperf_test_cluster_ping_test_handler(const ezb_zcl_cmd_hdr_t *header,
+                                                                     const uint8_t           *payload,
+                                                                     uint16_t                 payload_length)
 {
-    esp_err_t ret = ESP_OK;
-    switch (message->info.command.direction) {
-        case ESP_ZB_ZCL_CMD_DIRECTION_TO_SRV:
-            ret = zb_ping_iperf_test_cluster_ping_test_request_handler(message);
-            break;
-        case ESP_ZB_ZCL_CMD_DIRECTION_TO_CLI:
-            ret = zb_ping_iperf_test_cluster_ping_test_response_handler(message);
-            break;
-        default:
-            break;
+    ezb_zcl_status_t ret = EZB_ZCL_STATUS_SUCCESS;
+    uint8_t          dir = EZB_ZCL_CMD_FC_IS_TO_CLI_DIRECTION(header->fc) ? EZB_ZCL_CMD_DIRECTION_TO_CLI : EZB_ZCL_CMD_DIRECTION_TO_SRV;
+    switch (dir) {
+    case EZB_ZCL_CMD_DIRECTION_TO_SRV:
+        ret = zb_ping_iperf_test_cluster_ping_test_request_handler(header, payload, payload_length);
+        break;
+    case EZB_ZCL_CMD_DIRECTION_TO_CLI:
+        ret = zb_ping_iperf_test_cluster_ping_test_response_handler(header, payload, payload_length);
+        break;
+    default:
+        break;
     }
 
     return ret;
 }
-
 
 /**
  * @brief Implementation of the iperf test.
@@ -239,55 +306,68 @@ static esp_err_t zb_ping_iperf_test_cluster_ping_test_handler(const esp_zb_zcl_c
  * The purpose of this implementation is to continuously measure the network throughput between the client
  * and the server during the test period and store the final test result for further analysis and verification.
  */
-esp_err_t esp_zb_ping_iperf_set_iperf_info(const esp_zb_iperf_req_info_t *info)
+ezb_err_t ezb_zcl_ping_iperf_set_iperf_info(const ezb_iperf_req_info_t *info)
 {
-    esp_err_t ret = ESP_OK;
-    esp_zb_zcl_status_t result;
-    uint16_t payload_len = info->payload_len;
-    uint16_t iperf_interval = info->iperf_interval;
-    uint16_t iperf_duration = info->iperf_duration;
-    result = zb_ping_iperf_set_iperf_attribute_val(info->src_endpoint, ESP_ZB_ZCL_CLUSTER_CLIENT_ROLE, ESP_ZB_ZCL_ATTR_PING_IPERF_TEST_IPERF_DURATION, &iperf_duration);
-    ESP_RETURN_ON_FALSE(result == ESP_ZB_ZCL_STATUS_SUCCESS, ESP_FAIL, TAG, "Iperf has not been registered or is unavailable");
-    result = zb_ping_iperf_set_iperf_attribute_val(info->src_endpoint, ESP_ZB_ZCL_CLUSTER_CLIENT_ROLE, ESP_ZB_ZCL_ATTR_PING_IPERF_TEST_IPERF_DATA_LEN, &payload_len);
-    ESP_RETURN_ON_FALSE(result == ESP_ZB_ZCL_STATUS_SUCCESS, ESP_FAIL, TAG, "Error occurred while writing the data len attribute of iperf, status: %d", result);
-    result = zb_ping_iperf_set_iperf_attribute_val(info->src_endpoint, ESP_ZB_ZCL_CLUSTER_CLIENT_ROLE, ESP_ZB_ZCL_ATTR_PING_IPERF_TEST_IPERF_INTERVAL, &iperf_interval);
-    ESP_RETURN_ON_FALSE(result == ESP_ZB_ZCL_STATUS_SUCCESS, ESP_FAIL, TAG, "Error occurred while writing the interval attribute of iperf, status: %d", result);
+    ezb_err_t        ret            = EZB_ERR_NONE;
+    ezb_zcl_status_t result         = EZB_ZCL_STATUS_SUCCESS;
+    uint16_t         payload_len    = info->payload_len;
+    uint16_t         iperf_interval = info->iperf_interval;
+    uint16_t         iperf_duration = info->iperf_duration;
+    result                          = zb_ping_iperf_set_iperf_attribute_val(info->src_endpoint, EZB_ZCL_CLUSTER_CLIENT,
+                                                                            EZB_ZCL_ATTR_PING_IPERF_TEST_IPERF_DURATION, &iperf_duration);
+    ESP_RETURN_ON_FALSE(result == EZB_ZCL_STATUS_SUCCESS, EZB_ERR_FAIL, TAG, "Iperf has not been registered or is unavailable");
+    result = zb_ping_iperf_set_iperf_attribute_val(info->src_endpoint, EZB_ZCL_CLUSTER_CLIENT,
+                                                   EZB_ZCL_ATTR_PING_IPERF_TEST_IPERF_DATA_LEN, &payload_len);
+    ESP_RETURN_ON_FALSE(result == EZB_ZCL_STATUS_SUCCESS, EZB_ERR_FAIL, TAG,
+                        "Error occurred while writing the data len attribute of iperf, status: %d", result);
+    result = zb_ping_iperf_set_iperf_attribute_val(info->src_endpoint, EZB_ZCL_CLUSTER_CLIENT,
+                                                   EZB_ZCL_ATTR_PING_IPERF_TEST_IPERF_INTERVAL, &iperf_interval);
+    ESP_RETURN_ON_FALSE(result == EZB_ZCL_STATUS_SUCCESS, EZB_ERR_FAIL, TAG,
+                        "Error occurred while writing the interval attribute of iperf, status: %d", result);
 
     return ret;
 }
 
-static esp_err_t zb_ping_iperf_test_cluster_calculate_iperf(uint8_t endpoint, uint8_t cluster_role)
+static ezb_zcl_status_t zb_ping_iperf_test_cluster_calculate_iperf(uint8_t endpoint, uint8_t cluster_role)
 {
-    esp_err_t ret = ESP_OK;
-    float throughput = ((float)(iperf_ctx.iperf_packet_count) * (float)(iperf_ctx.iperf_data_len) * 8 * 1000) / ((float)(iperf_ctx.iperf_end_time - iperf_ctx.iperf_start_time));
-    esp_zb_zcl_status_t result = zb_ping_iperf_set_iperf_attribute_val(endpoint, cluster_role, ESP_ZB_ZCL_ATTR_PING_IPERF_TEST_IPERF_THROUGHPUT, &throughput);
+    ezb_zcl_status_t ret = EZB_ZCL_STATUS_SUCCESS;
+    float     throughput = ((float)(iperf_ctx.iperf_packet_count) * (float)(iperf_ctx.iperf_data_len) * 8 * 1000) /
+                       ((float)(iperf_ctx.iperf_end_time - iperf_ctx.iperf_start_time));
+    ezb_zcl_status_t result = zb_ping_iperf_set_iperf_attribute_val(endpoint, cluster_role,
+                                                                    EZB_ZCL_ATTR_PING_IPERF_TEST_IPERF_THROUGHPUT, &throughput);
     ESP_LOGI(TAG, "throughput: %.3f kbps, count: %llu", throughput, iperf_ctx.iperf_packet_count);
-    ESP_RETURN_ON_FALSE(result == ESP_ZB_ZCL_STATUS_SUCCESS, ESP_FAIL, TAG, "Fail to write throughput attribute: %d", result);
+    ESP_RETURN_ON_FALSE(result == EZB_ZCL_STATUS_SUCCESS, result, TAG, "Fail to write throughput attribute: %d", result);
 
     return ret;
 }
 
-static void zb_ping_iperf_test_cluster_ipref_req_send_status_callback(esp_zb_zcl_command_send_status_message_t message)
+static void ipref_req_send_status_callback(ezb_zcl_cmd_cnf_t *info, void *data)
 {
-    if (message.status == ESP_OK){
+    (void)data;
+    if (info->status == EZB_ZCL_STATUS_SUCCESS) {
         iperf_ctx.iperf_packet_count++;
         iperf_ctx.iperf_end_time = esp_timer_get_time();
-        zb_ping_iperf_test_cluster_calculate_iperf(message.src_endpoint, ESP_ZB_ZCL_CLUSTER_CLIENT_ROLE);
+        zb_ping_iperf_test_cluster_calculate_iperf(info->src_ep, EZB_ZCL_CLUSTER_CLIENT);
     } else {
-        ESP_LOGE(TAG, "Fail to send: error: %d tsn: %d", message.status, message.tsn);
+        ESP_LOGE(TAG, "Fail to send: error: %d tsn: %d", info->status, info->tsn);
     }
 }
 
-static void do_iperf(uint8_t param)
+static void do_iperf(void *arg)
 {
-    if (esp_timer_get_time() - iperf_ctx.iperf_start_time < iperf_ctx.iperf_duration){
-        esp_zb_zcl_custom_cluster_cmd_req(iperf_ctx.message_to_iperf);
-        esp_zb_scheduler_alarm(do_iperf, 0, iperf_ctx.iperf_interval);
-        iperf_ctx.message_to_iperf->custom_cmd_id = ESP_ZB_ZCL_CMD_PING_IPERF_TEST_IPERF_PROCESS;
+    if (esp_timer_get_time() - iperf_ctx.iperf_start_time < iperf_ctx.iperf_duration) {
+        ezb_zcl_custom_cmd_req(iperf_ctx.message_to_iperf);
+        iperf_ctx.message_to_iperf->cmd_id = EZB_ZCL_CMD_PING_IPERF_TEST_IPERF_PROCESS;
+        esp_timer_start_once(iperf_ctx.iperf_timer, iperf_ctx.iperf_interval * 1000ULL);
     } else {
+        if (iperf_ctx.iperf_timer != NULL) {
+            esp_timer_stop(iperf_ctx.iperf_timer);
+            esp_timer_delete(iperf_ctx.iperf_timer);
+            iperf_ctx.iperf_timer = NULL;
+        }
         if (iperf_ctx.message_to_iperf) {
-            free(iperf_ctx.message_to_iperf->data.value);
-            iperf_ctx.message_to_iperf->data.value = NULL;
+            free(iperf_ctx.message_to_iperf->data);
+            iperf_ctx.message_to_iperf->data = NULL;
             free(iperf_ctx.message_to_iperf);
             iperf_ctx.message_to_iperf = NULL;
         }
@@ -299,127 +379,148 @@ static void do_iperf(uint8_t param)
     }
 }
 
-static esp_zb_zcl_status_t zb_ping_iperf_set_iperf_attribute_val(uint8_t endpoint, uint8_t cluster_role, uint16_t attr_id, void *value_p)
+static ezb_zcl_status_t zb_ping_iperf_set_iperf_attribute_val(uint8_t  endpoint,
+                                                              uint8_t  cluster_role,
+                                                              uint16_t attr_id,
+                                                              void    *value_p)
 {
-    return esp_zb_zcl_set_manufacturer_attribute_val(endpoint,
-                                                     ESP_ZB_ZCL_CLUSTER_ID_PING_IPERF_TEST,
-                                                     cluster_role,
-                                                     ESP_ZB_ZCL_ATTR_NON_MANUFACTURER_SPECIFIC,
-                                                     attr_id,
-                                                     value_p,
-                                                     false);
+    return ezb_zcl_set_attr_value(endpoint, EZB_ZCL_CLUSTER_ID_PING_IPERF_TEST, cluster_role, attr_id, EZB_ZCL_STD_MANUF_CODE,
+                                  (uint8_t *)value_p, false);
 }
 
-static esp_zb_zcl_attr_t *zb_ping_iperf_get_iperf_attribute_val(uint8_t endpoint, uint8_t cluster_role, uint16_t attr_id)
+static ezb_zcl_attr_desc_t zb_ping_iperf_get_iperf_attribute_val(uint8_t endpoint, uint8_t cluster_role, uint16_t attr_id)
 {
-    return esp_zb_zcl_get_manufacturer_attribute(endpoint,
-                                                 ESP_ZB_ZCL_CLUSTER_ID_PING_IPERF_TEST,
-                                                 cluster_role,
-                                                 attr_id,
-                                                 ESP_ZB_ZCL_ATTR_NON_MANUFACTURER_SPECIFIC);
+    return ezb_zcl_get_attr_desc(endpoint, EZB_ZCL_CLUSTER_ID_PING_IPERF_TEST, cluster_role, attr_id, EZB_ZCL_STD_MANUF_CODE);
 }
 
-static esp_err_t iperf_message_set(const esp_zb_iperf_req_info_t *info)
+static ezb_err_t iperf_message_set(const ezb_iperf_req_info_t *info)
 {
-    esp_err_t ret = ESP_OK;
-    iperf_ctx.message_to_iperf = malloc(sizeof(esp_zb_zcl_custom_cluster_cmd_t));
-    ESP_RETURN_ON_FALSE(iperf_ctx.message_to_iperf, ESP_FAIL, TAG, "Failed to allocate memory for iperf request data");
-    iperf_ctx.message_to_iperf->zcl_basic_cmd.src_endpoint = info->src_endpoint;
-    iperf_ctx.message_to_iperf->zcl_basic_cmd.dst_endpoint = info->dst_endpoint;
-    iperf_ctx.message_to_iperf->zcl_basic_cmd.dst_addr_u.addr_short = info->dst_address;
-    iperf_ctx.message_to_iperf->address_mode = ESP_ZB_APS_ADDR_MODE_16_ENDP_PRESENT;
-    iperf_ctx.message_to_iperf->profile_id = ESP_ZB_AF_HA_PROFILE_ID;
-    iperf_ctx.message_to_iperf->cluster_id = ESP_ZB_ZCL_CLUSTER_ID_PING_IPERF_TEST;
-    iperf_ctx.message_to_iperf->direction = info->direction;
-    iperf_ctx.message_to_iperf->dis_default_resp = 1;
-
-    esp_zb_zcl_attr_t *attr = zb_ping_iperf_get_iperf_attribute_val(info->src_endpoint,
-                                                                    ESP_ZB_ZCL_CLUSTER_CLIENT_ROLE,
-                                                                    ESP_ZB_ZCL_ATTR_PING_IPERF_TEST_IPERF_DATA_LEN);
-
-    if (!attr || (*(uint16_t *)(attr->data_p)) == 0) {
+    ezb_err_t ret              = EZB_ERR_NONE;
+    iperf_ctx.message_to_iperf = malloc(sizeof(ezb_zcl_custom_cmd_t));
+    ESP_RETURN_ON_FALSE(iperf_ctx.message_to_iperf, EZB_ERR_FAIL, TAG, "Failed to allocate memory for iperf request data");
+    iperf_ctx.message_to_iperf->cmd_ctrl.dst_ep                = info->dst_endpoint;
+    iperf_ctx.message_to_iperf->cmd_ctrl.src_ep                = info->src_endpoint;
+    iperf_ctx.message_to_iperf->cmd_ctrl.dst_addr.addr_mode    = EZB_APS_ADDR_MODE_16_ENDP_PRESENT;
+    iperf_ctx.message_to_iperf->cmd_ctrl.dst_addr.u.short_addr = info->dst_address;
+    iperf_ctx.message_to_iperf->cmd_ctrl.cluster_id            = EZB_ZCL_CLUSTER_ID_PING_IPERF_TEST;
+    iperf_ctx.message_to_iperf->cmd_ctrl.fc.direction          = info->direction;
+    iperf_ctx.message_to_iperf->cmd_ctrl.fc.dis_default_rsp    = 1;
+    iperf_ctx.message_to_iperf->cmd_ctrl.cnf_ctx.cb            = ipref_req_send_status_callback;
+    iperf_ctx.message_to_iperf->cmd_ctrl.cnf_ctx.user_ctx      = NULL;
+    ezb_zcl_attr_desc_t attr = zb_ping_iperf_get_iperf_attribute_val(info->src_endpoint, EZB_ZCL_CLUSTER_CLIENT,
+                                                                     EZB_ZCL_ATTR_PING_IPERF_TEST_IPERF_DATA_LEN);
+    uint16_t data_len = 0;
+    ezb_zcl_attr_desc_get_value(attr, &data_len);
+    if (data_len == 0) {
         ESP_LOGE(TAG, "The length of the iperf payload should not be zero.");
         free(iperf_ctx.message_to_iperf);
-        return ESP_FAIL;
+        iperf_ctx.message_to_iperf = NULL;
+        return EZB_ERR_FAIL;
     }
-    iperf_ctx.message_to_iperf->data.type = ESP_ZB_ZCL_ATTR_TYPE_SET;
-    iperf_ctx.message_to_iperf->data.size = *(uint16_t *)(attr->data_p);
-    iperf_ctx.iperf_data_len = *(uint16_t *)(attr->data_p);
-    iperf_ctx.message_to_iperf->data.value = calloc(1, iperf_ctx.message_to_iperf->data.size);
-    if (iperf_ctx.message_to_iperf->data.value == NULL) {
-        ESP_LOGE(TAG, "Failed to allocate memory for iperf request data.value");
+    iperf_ctx.message_to_iperf->data_length = data_len;
+    iperf_ctx.iperf_data_len                = data_len;
+    iperf_ctx.message_to_iperf->data        = calloc(1, iperf_ctx.message_to_iperf->data_length);
+    if (iperf_ctx.message_to_iperf->data == NULL) {
+        ESP_LOGE(TAG, "Failed to allocate memory for iperf request data");
         free(iperf_ctx.message_to_iperf);
-        return ESP_FAIL;
+        iperf_ctx.message_to_iperf = NULL;
+        return EZB_ERR_FAIL;
     }
+    memset(iperf_ctx.message_to_iperf->data, 1, iperf_ctx.message_to_iperf->data_length);
 
     return ret;
 }
 
-esp_err_t esp_zb_ping_iperf_test_cluster_iperf_req(const esp_zb_iperf_req_info_t *info, iperf_finish_callback_t iperf_finish_cb)
+ezb_err_t ezb_zcl_ping_iperf_test_cluster_iperf_req(const ezb_iperf_req_info_t *info, iperf_finish_callback_t iperf_finish_cb)
 {
-    ESP_RETURN_ON_FALSE(!iperf_ctx.client_in_progress, ESP_FAIL, TAG, "Please wait for the previous iperf process to complete.");
-    esp_err_t ret = ESP_OK;
-    esp_zb_zcl_attr_t *attr;
-    attr = zb_ping_iperf_get_iperf_attribute_val(info->src_endpoint,
-                                                 ESP_ZB_ZCL_CLUSTER_CLIENT_ROLE,
-                                                 ESP_ZB_ZCL_ATTR_PING_IPERF_TEST_IPERF_DURATION);
-    ESP_RETURN_ON_FALSE(attr, ESP_ERR_NOT_FOUND, TAG, "Attribute IPERF_DURATION not found, register ping_iperf_test cluster before test");
-    ESP_RETURN_ON_FALSE((*(uint16_t *)(attr->data_p))!= 0, ESP_FAIL, TAG, "iperf duration time should not be zero");
-    iperf_ctx.iperf_duration = (*(uint16_t *)(attr->data_p)) * 1000 * 1000;
+    ezb_err_t           ret  = EZB_ERR_NONE;
+    ezb_zcl_attr_desc_t attr = NULL;
 
-    attr = zb_ping_iperf_get_iperf_attribute_val(info->src_endpoint,
-                                                 ESP_ZB_ZCL_CLUSTER_CLIENT_ROLE,
-                                                 ESP_ZB_ZCL_ATTR_PING_IPERF_TEST_IPERF_INTERVAL);
-    ESP_RETURN_ON_FALSE(attr && (*(uint16_t *)(attr->data_p))!= 0, ESP_FAIL, TAG, "iperf interval should not be zero");
-    iperf_ctx.iperf_interval = *(uint16_t *)(attr->data_p);
-    iperf_ctx.iperf_start_time = esp_timer_get_time();
+    EXIT_ON_FALSE(!iperf_ctx.client_in_progress, EZB_ERR_FAIL);
+    attr = zb_ping_iperf_get_iperf_attribute_val(info->src_endpoint, EZB_ZCL_CLUSTER_CLIENT,
+                                                 EZB_ZCL_ATTR_PING_IPERF_TEST_IPERF_DURATION);
+    EXIT_ON_FALSE(attr, EZB_ERR_NOT_FOUND);
+    uint16_t duration = 0;
+    ezb_zcl_attr_desc_get_value(attr, &duration);
+    EXIT_ON_FALSE(duration != 0, EZB_ERR_FAIL);
+    iperf_ctx.iperf_duration = duration * 1000 * 1000;
+
+    attr = zb_ping_iperf_get_iperf_attribute_val(info->src_endpoint, EZB_ZCL_CLUSTER_CLIENT,
+                                                 EZB_ZCL_ATTR_PING_IPERF_TEST_IPERF_INTERVAL);
+    uint16_t interval = 0;
+    EXIT_ON_ERROR(ret = ezb_zcl_attr_desc_get_value(attr, &interval));
+    EXIT_ON_FALSE(interval != 0, EZB_ERR_FAIL);
+    iperf_ctx.iperf_interval     = interval;
+    iperf_ctx.iperf_start_time   = esp_timer_get_time();
     iperf_ctx.iperf_packet_count = 0;
-    iperf_ctx.iperf_finish_cb = iperf_finish_cb;
+    iperf_ctx.iperf_finish_cb    = iperf_finish_cb;
 
-    esp_zb_zcl_command_send_status_handler_register(zb_ping_iperf_test_cluster_ipref_req_send_status_callback);
-    ESP_RETURN_ON_FALSE(iperf_message_set(info) == ESP_OK, ESP_FAIL, TAG, "fail to set iperf test data");
-    do_iperf(0);
-    iperf_ctx.client_in_progress = true;
-    iperf_ctx.message_to_iperf->custom_cmd_id = ESP_ZB_ZCL_CMD_PING_IPERF_TEST_IPERF_START;
+    EXIT_ON_ERROR(iperf_message_set(info));
 
+    const esp_timer_create_args_t timer_args = {.callback = &do_iperf, .arg = NULL, .name = "iperf_interval"};
+    EXIT_ON_ERROR(esp_timer_create(&timer_args, &iperf_ctx.iperf_timer));
+
+    iperf_ctx.client_in_progress       = true;
+    iperf_ctx.message_to_iperf->cmd_id = EZB_ZCL_CMD_PING_IPERF_TEST_IPERF_START;
+
+    do_iperf(NULL);
+
+exit:
+    if (ret != EZB_ERR_NONE) {
+        if (iperf_ctx.iperf_timer != NULL) {
+            esp_timer_delete(iperf_ctx.iperf_timer);
+            iperf_ctx.iperf_timer = NULL;
+        }
+        if (iperf_ctx.message_to_iperf != NULL) {
+            if (iperf_ctx.message_to_iperf->data != NULL) {
+                free(iperf_ctx.message_to_iperf->data);
+            }
+            free(iperf_ctx.message_to_iperf);
+            iperf_ctx.message_to_iperf = NULL;
+        }
+        iperf_ctx.client_in_progress = false;
+    }
     return ret;
 }
 
-esp_err_t zb_ping_iperf_test_cluster_command_handler(const esp_zb_zcl_custom_cluster_command_message_t *message)
+static ezb_zcl_status_t ezb_zcl_ping_iperf_test_cluster_process_cmd_handler(const ezb_zcl_cmd_hdr_t *header,
+                                                                            const uint8_t           *payload,
+                                                                            uint16_t                 payload_length)
 {
-    esp_err_t ret = ESP_OK;
-    switch (message->info.command.id){
-        case ESP_ZB_ZCL_CMD_PING_IPERF_TEST_ECHO:
-            ret = zb_ping_iperf_test_cluster_ping_test_handler(message);
-            break;
-        case ESP_ZB_ZCL_CMD_PING_IPERF_TEST_IPERF_START:
-            iperf_ctx.iperf_data_len = message->data.size;
-            iperf_ctx.iperf_packet_count = 1;
-            iperf_ctx.iperf_start_time = esp_timer_get_time();
-            ESP_LOGI(TAG, "IPERF START, TSN: %d", message->info.header.tsn);
-            break;
-        case ESP_ZB_ZCL_CMD_PING_IPERF_TEST_IPERF_PROCESS:
-            iperf_ctx.iperf_packet_count++;
-            iperf_ctx.iperf_end_time = esp_timer_get_time();
-            ESP_LOGI(TAG, "time cost: %.3f s", (float)(iperf_ctx.iperf_end_time - iperf_ctx.iperf_start_time) / 1000000.0);
-            ret = zb_ping_iperf_test_cluster_calculate_iperf(message->info.dst_endpoint, ESP_ZB_ZCL_CLUSTER_SERVER_ROLE);
-            break;
-        default:
-            break;
+    ezb_zcl_status_t ret = EZB_ZCL_STATUS_SUCCESS;
+    assert(header);
+    switch (header->cmd_id) {
+    case EZB_ZCL_CMD_PING_IPERF_TEST_ECHO:
+        ret = zb_ping_iperf_test_cluster_ping_test_handler(header, payload, payload_length);
+        break;
+    case EZB_ZCL_CMD_PING_IPERF_TEST_IPERF_START:
+        iperf_ctx.iperf_data_len     = payload_length;
+        iperf_ctx.iperf_packet_count = 1;
+        iperf_ctx.iperf_start_time   = esp_timer_get_time();
+        ESP_LOGI(TAG, "IPERF START, TSN: %d", header->tsn);
+        break;
+    case EZB_ZCL_CMD_PING_IPERF_TEST_IPERF_PROCESS:
+        iperf_ctx.iperf_packet_count++;
+        iperf_ctx.iperf_end_time = esp_timer_get_time();
+        ESP_LOGI(TAG, "time cost: %.3f s", (float)(iperf_ctx.iperf_end_time - iperf_ctx.iperf_start_time) / 1000000.0);
+        ret = zb_ping_iperf_test_cluster_calculate_iperf(header->dst_ep, EZB_ZCL_CLUSTER_SERVER);
+        break;
+    default:
+        break;
     }
 
     return ret;
 }
 
-float esp_zb_ping_iperf_get_iperf_result(uint8_t endpoint, uint8_t cluster_role)
+float ezb_zcl_ping_iperf_get_iperf_result(uint8_t endpoint, uint8_t cluster_role)
 {
-    float throughput = 0;
-    esp_zb_zcl_attr_t *attr = zb_ping_iperf_get_iperf_attribute_val(endpoint, cluster_role, ESP_ZB_ZCL_ATTR_PING_IPERF_TEST_IPERF_THROUGHPUT);
+    float               throughput = 0;
+    ezb_zcl_attr_desc_t attr       = ezb_zcl_get_attr_desc(endpoint, EZB_ZCL_CLUSTER_ID_PING_IPERF_TEST, cluster_role,
+                                                           EZB_ZCL_ATTR_PING_IPERF_TEST_IPERF_THROUGHPUT, EZB_ZCL_STD_MANUF_CODE);
     if (!attr) {
-        ESP_LOGE(TAG, "IPERF_DURATION not found, register ping_iperf_test cluster before test");
-        return throughput;
+        ESP_LOGE(TAG, "IPERF_THROUGHPUT not found, register ping_iperf_test cluster before test");
+        return 0;
     }
-    throughput = *(float *)(attr->data_p);
-    esp_zb_zcl_command_send_status_handler_register(NULL);
+    ezb_zcl_attr_desc_get_value(attr, &throughput);
     return throughput;
 }

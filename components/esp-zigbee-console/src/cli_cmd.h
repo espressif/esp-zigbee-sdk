@@ -1,12 +1,12 @@
 /*
- * SPDX-FileCopyrightText: 2024 Espressif Systems (Shanghai) CO LTD
+ * SPDX-FileCopyrightText: 2024-2026 Espressif Systems (Shanghai) CO LTD
  *
  * SPDX-License-Identifier: Apache-2.0
  */
 
 #pragma once
 
-#include "esp_err.h"
+#include "ezbee/error.h"
 
 #include "cli_util.h"
 #include "argtable_ext.h"
@@ -18,7 +18,7 @@ extern "C" {
 typedef struct esp_zb_cli_cmd_s {
     const char *name;
     const char *help;
-    esp_err_t (*operation)(struct esp_zb_cli_cmd_s *self, int argc, char **argv);
+    ezb_err_t (*operation)(struct esp_zb_cli_cmd_s *self, int argc, char **argv);
     struct esp_zb_cli_cmd_s *sub_cmds;
     int sub_cmd_count;
 } esp_zb_cli_cmd_t;
@@ -99,7 +99,7 @@ typedef struct esp_zb_cli_cmd_s {
     ESP_ZB_CLI_CMD_DESC(_name)                                                                  \
     = ESP_ZB_CLI_CMD_WITH_SUB(_name, _name, _help)
 
-esp_err_t esp_zb_cli_process_cmd(esp_zb_cli_cmd_t *cmd, int argc, char **argv);
+ezb_err_t esp_zb_cli_process_cmd(esp_zb_cli_cmd_t *cmd, int argc, char **argv);
 
 #ifdef __cplusplus
 }

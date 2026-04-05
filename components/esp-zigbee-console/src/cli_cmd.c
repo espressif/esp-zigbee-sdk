@@ -1,12 +1,12 @@
 /*
- * SPDX-FileCopyrightText: 2024 Espressif Systems (Shanghai) CO LTD
+ * SPDX-FileCopyrightText: 2024-2026 Espressif Systems (Shanghai) CO LTD
  *
  * SPDX-License-Identifier: Apache-2.0
  */
 
-#include <string.h>
-
 #include "cli_cmd.h"
+
+#include <string.h>
 
 static void cli_output_cmd_help(uint8_t indent_size, esp_zb_cli_cmd_t *cmd)
 {
@@ -22,9 +22,9 @@ static void cli_output_cmd_help(uint8_t indent_size, esp_zb_cli_cmd_t *cmd)
     }
 }
 
-esp_err_t esp_zb_cli_process_cmd(esp_zb_cli_cmd_t *cmd, int argc, char **argv)
+ezb_err_t esp_zb_cli_process_cmd(esp_zb_cli_cmd_t *cmd, int argc, char **argv)
 {
-    esp_err_t ret = ESP_FAIL;
+    ezb_err_t ret = EZB_ERR_FAIL;
     /* argv[0] is the name of main command */
     if (argc > 1 && argv[1][0] != '-') {
         /* We got sub commands */
@@ -44,7 +44,7 @@ esp_err_t esp_zb_cli_process_cmd(esp_zb_cli_cmd_t *cmd, int argc, char **argv)
         ret = cmd->operation(cmd, argc, argv);
     } else {
         cli_output_cmd_help(0, cmd);
-        ret = ESP_OK;
+        ret = EZB_ERR_NONE;
     }
 
     return ret;

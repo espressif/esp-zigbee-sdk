@@ -1,0 +1,12 @@
+#
+# Partition Table
+#
+CONFIG_PARTITION_TABLE_CUSTOM=y
+CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="partitions.csv"
+# end of Partition Table
+
+#
+# Zigbee
+#
+CONFIG_ZB_ENABLED=y
+# end of Zigbee

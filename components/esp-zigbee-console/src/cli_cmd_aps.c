@@ -4,15 +4,15 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+#include "cli_cmd_aps.h"
+
 #include <stdio.h>
 #include <string.h>
-
-#include "esp_check.h"
-
-#include "aps/esp_zigbee_aps.h"
+#include "ezbee/aps.h"
+#include "ezbee/af.h"
 
 #include "esp_zigbee_console.h"
-#include "cli_cmd_aps.h"
+#include "cli_cmd.h"
 
 #define TAG "cli_cmd_aps"
 
@@ -25,29 +25,37 @@ void esp_zb_cli_fill_aps_argtable(esp_zb_cli_aps_argtable_t *aps)
     aps->cluster  = arg_u16n("c",  "cluster",  "<u16:CID>",   1, 1, "cluster id of the command");
 }
 
-esp_err_t esp_zb_cli_parse_aps_dst(esp_zb_cli_aps_argtable_t *parsed_argtable, esp_zb_addr_u *dst_addr_u,
-                                   uint8_t *dst_endpoint, esp_zb_aps_address_mode_t *address_mode,
-                                   uint8_t *src_endpoint, uint16_t *cluster_id, uint16_t *profile_id)
+ezb_err_t esp_zb_cli_parse_aps_dst(esp_zb_cli_aps_argtable_t *parsed_argtable, ezb_address_t *dst_addr,
+                                   uint8_t *dst_endpoint, uint8_t *src_endpoint,
+                                   uint16_t *cluster_id, uint16_t *profile_id)
 {
-    esp_err_t ret = ESP_OK;
+    ezb_err_t ret = EZB_ERR_NONE;
     /* Fill "dst_addr", "dst_ep" and "addr_mode" */
     if (parsed_argtable->dst_addr->count > 0) {
-        cli_addr_t *dst_addr = &parsed_argtable->dst_addr->addr[0];
-        esp_zb_aps_address_mode_t address_mode_select[][2] = {
-            [CLI_ADDR_TYPE_16BIT][0] = ESP_ZB_APS_ADDR_MODE_16_GROUP_ENDP_NOT_PRESENT,
-            [CLI_ADDR_TYPE_64BIT][0]  = ESP_ZB_APS_ADDR_MODE_64_PRESENT_ENDP_NOT_PRESENT,
-            [CLI_ADDR_TYPE_16BIT][1] = ESP_ZB_APS_ADDR_MODE_16_ENDP_PRESENT,
-            [CLI_ADDR_TYPE_64BIT][1]  = ESP_ZB_APS_ADDR_MODE_64_ENDP_PRESENT,
+        cli_addr_t *cli_addr = &parsed_argtable->dst_addr->addr[0];
+        ezb_aps_address_mode_t address_mode_select[][2] = {
+            [CLI_ADDR_TYPE_16BIT][0] = EZB_APS_ADDR_MODE_16_GROUP_ENDP_NOT_PRESENT,
+            [CLI_ADDR_TYPE_64BIT][0] = 0x4U,
+            [CLI_ADDR_TYPE_16BIT][1] = EZB_APS_ADDR_MODE_16_ENDP_PRESENT,
+            [CLI_ADDR_TYPE_64BIT][1] = EZB_APS_ADDR_MODE_64_ENDP_PRESENT,
         };
-        /* Copy parse address */
-        memcpy(dst_addr_u, &dst_addr->u, sizeof(esp_zb_addr_u));
 
-        if (parsed_argtable->dst_ep->count > 0) {
-            *dst_endpoint = parsed_argtable->dst_ep->val[0];
+        dst_addr->addr_mode = address_mode_select[cli_addr->addr_type][parsed_argtable->dst_ep->count > 0 ? 1 : 0];
+
+        /* Copy parsed address */
+        if (dst_addr->addr_mode == EZB_APS_ADDR_MODE_16_GROUP_ENDP_NOT_PRESENT) {
+            dst_addr->u.group_addr.bcast = 0xfffd;
+            dst_addr->u.group_addr.group = cli_addr->u.addr16;
+        } else {
+            memcpy(&dst_addr->u, &cli_addr->u, sizeof(dst_addr->u));
+
+            if (parsed_argtable->dst_ep->count > 0) {
+                *dst_endpoint = parsed_argtable->dst_ep->val[0];
+            }
         }
-        *address_mode = address_mode_select[dst_addr->addr_type][parsed_argtable->dst_ep->count > 0 ? 1 : 0];
-        EXIT_ON_FALSE(*address_mode !=  ESP_ZB_APS_ADDR_MODE_64_PRESENT_ENDP_NOT_PRESENT,
-                      ESP_ERR_NOT_SUPPORTED, cli_output_line("Unsupported address mode, dst-ep is required"));
+
+        EXIT_ON_FALSE(dst_addr->addr_mode != 0x4U, EZB_ERR_NOT_SUPPORTED,
+                      cli_output_line("Unsupported address mode, dst-ep is required"));
     }
 
     if (parsed_argtable->profile->count > 0 && profile_id) {
@@ -64,33 +72,33 @@ exit:
     return ret;
 }
 
-static void zb_apsde_data_confirm_handler(esp_zb_apsde_data_confirm_t confirm)
+static void zb_apsde_data_confirm_handler(const ezb_apsde_data_confirm_t *confirm)
 {
-    if (confirm.status == 0x00) {
+    if (confirm->status == 0x00) {
         cli_output_line("Send aps data frame successful");
-        esp_zb_console_notify_result(ESP_OK);
+        esp_zb_console_notify_result(EZB_ERR_NONE);
     } else {
-        cli_output("Send aps data frame failed, status: %d\n", confirm.status);
-        esp_zb_console_notify_result(ESP_FAIL);
+        cli_output("Send aps data frame failed, status: %d\n", confirm->status);
+        esp_zb_console_notify_result(EZB_ERR_FAIL);
     }
-    esp_zb_aps_data_confirm_handler_register(NULL);
+    ezb_apsde_data_confirm_handler_register(NULL);
 }
 
-static bool zb_apsde_data_indication_handler(esp_zb_apsde_data_ind_t ind)
+static bool zb_apsde_data_indication_handler(const ezb_apsde_data_ind_t *ind)
 {
-    if (ind.status == 0x00) {
+    if (ind->status == 0x00) {
         cli_output("Received aps data frame successful, src ep %d src addr 0x%04x -> dst ep %d dst addr 0x%04x\n",
-                   ind.src_endpoint, ind.src_short_addr, ind.dst_endpoint, ind.dst_short_addr);
-        if (ind.asdu_length > 0) {
-            cli_output_buffer(ind.asdu, ind.asdu_length);
+                   ind->src_endpoint, ind->src_address.u.short_addr, ind->dst_endpoint, ind->dst_address.u.short_addr);
+        if (ind->asdu_length > 0) {
+            cli_output_buffer(ind->asdu, ind->asdu_length);
         }
     } else {
-        cli_output("Received aps data frame failed, status: %d\n", ind.status);
+        cli_output("Received aps data frame failed, status: %d\n", ind->status);
     }
     return false;
 }
 
-static esp_err_t cli_aps_send_raw(esp_zb_cli_cmd_t *self, int argc, char **argv)
+static ezb_err_t cli_aps_send_raw(esp_zb_cli_cmd_t *self, int argc, char **argv)
 {
     struct {
         esp_zb_cli_aps_argtable_t aps;
@@ -107,33 +115,27 @@ static esp_err_t cli_aps_send_raw(esp_zb_cli_cmd_t *self, int argc, char **argv)
 
     esp_zb_cli_fill_aps_argtable(&argtable.aps);
 
-    esp_err_t ret = ESP_ERR_NOT_FINISHED;
+    ezb_err_t ret = EZB_ERR_NOT_FINISHED;
     uint16_t repeat_count = 1;
 
     /* Default request settings */
-     esp_zb_apsde_data_req_t req_params = {
-        .dst_addr_mode = ESP_ZB_APS_ADDR_MODE_DST_ADDR_ENDP_NOT_PRESENT,
-        .profile_id = ESP_ZB_AF_HA_PROFILE_ID,
-        .tx_options = ESP_ZB_APSDE_TX_OPT_ACK_TX | ESP_ZB_APSDE_TX_OPT_FRAG_PERMITTED,
-        .use_alias  = false,
-        .radius     = 15,
+    ezb_apsde_data_req_t req_params = {
+        .dst_address = EZB_ADDRESS_NONE(),
+        .profile_id = EZB_AF_HA_PROFILE_ID,
+        .tx_options = EZB_APSDE_TX_OPT_ACK_TX | EZB_APSDE_TX_OPT_FRAG_PERMITTED,
     };
 
     /* Parse command line arguments */
-    EXIT_ON_FALSE(argc > 1, ESP_OK, arg_print_help((void**)&argtable, argv[0]));
+    EXIT_ON_FALSE(argc > 1, EZB_ERR_NONE, arg_print_help((void**)&argtable, argv[0]));
     int nerrors = arg_parse(argc, argv, (void**)&argtable);
-    EXIT_ON_FALSE(nerrors == 0, ESP_ERR_INVALID_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
+    EXIT_ON_FALSE(nerrors == 0, EZB_ERR_INV_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
 
-    esp_zb_aps_address_mode_t addr_mode_temp = ESP_ZB_APS_ADDR_MODE_DST_ADDR_ENDP_NOT_PRESENT;
     EXIT_ON_ERROR(esp_zb_cli_parse_aps_dst(&argtable.aps,
-                                           &req_params.dst_addr,
+                                           &req_params.dst_address,
                                            &req_params.dst_endpoint,
-                                           &addr_mode_temp,
                                            &req_params.src_endpoint,
                                            &req_params.cluster_id,
                                            &req_params.profile_id));
-
-    req_params.dst_addr_mode = (uint8_t)addr_mode_temp;
 
     if (argtable.repeat_count->count > 0) {
         repeat_count = argtable.repeat_count->val[0];
@@ -142,7 +144,7 @@ static esp_err_t cli_aps_send_raw(esp_zb_cli_cmd_t *self, int argc, char **argv)
         uint32_t repeat_length = argtable.payload->hsize[0];
         req_params.asdu_length = repeat_length * repeat_count;
         req_params.asdu = (uint8_t *)malloc(req_params.asdu_length);
-        EXIT_ON_FALSE(req_params.asdu, ESP_ERR_NO_MEM, cli_output_line("no memory for aps send raw"));
+        EXIT_ON_FALSE(req_params.asdu, EZB_ERR_NO_MEM, cli_output_line("no memory for aps send raw"));
         for (int i = 0; i < repeat_count; i++) {
             memcpy(req_params.asdu + i * repeat_length, argtable.payload->hval[0], repeat_length);
         }
@@ -151,8 +153,8 @@ static esp_err_t cli_aps_send_raw(esp_zb_cli_cmd_t *self, int argc, char **argv)
         req_params.radius = argtable.radius->val[0];
     }
 
-    EXIT_ON_ERROR(esp_zb_aps_data_request(&req_params));
-    esp_zb_aps_data_confirm_handler_register(&zb_apsde_data_confirm_handler);
+    EXIT_ON_ERROR(ezb_apsde_data_request(&req_params));
+    ezb_apsde_data_confirm_handler_register(zb_apsde_data_confirm_handler);
 
 exit:
     if (req_params.asdu) {
@@ -163,7 +165,7 @@ exit:
     return ret;
 }
 
-static esp_err_t cli_aps_dump(esp_zb_cli_cmd_t *self, int argc, char **argv)
+static ezb_err_t cli_aps_dump(esp_zb_cli_cmd_t *self, int argc, char **argv)
 {
     struct {
         arg_str_t *flag;
@@ -172,19 +174,19 @@ static esp_err_t cli_aps_dump(esp_zb_cli_cmd_t *self, int argc, char **argv)
         .flag = arg_strn(NULL, NULL, "<open|close>", 1, 1, "flag of dump aps indication frame"),
         .end = arg_end(2),
     };
-    esp_err_t ret = ESP_OK;
+    ezb_err_t ret = EZB_ERR_NONE;
 
     /* Parse command line arguments */
-    EXIT_ON_FALSE(argc > 1, ESP_OK, arg_print_help((void**)&argtable, argv[0]));
+    EXIT_ON_FALSE(argc > 1, EZB_ERR_NONE, arg_print_help((void**)&argtable, argv[0]));
     int nerrors = arg_parse(argc, argv, (void**)&argtable);
-    EXIT_ON_FALSE(nerrors == 0, ESP_ERR_INVALID_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
+    EXIT_ON_FALSE(nerrors == 0, EZB_ERR_INV_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
 
     if (!strcmp(argtable.flag->sval[0], "open")) {
-        esp_zb_aps_data_indication_handler_register(&zb_apsde_data_indication_handler);
+        ezb_apsde_data_indication_handler_register(zb_apsde_data_indication_handler);
     } else if (!strcmp(argtable.flag->sval[0], "close")) {
-        esp_zb_aps_data_indication_handler_register(NULL);
+        ezb_apsde_data_indication_handler_register(NULL);
     } else {
-        EXIT_ON_ERROR(ESP_ERR_INVALID_ARG, cli_output_line("invalid arg for dump"));
+        EXIT_ON_ERROR(EZB_ERR_INV_ARG, cli_output_line("invalid arg for dump"));
     }
 
 exit:

@@ -1,37 +1,27 @@
 /*
- * SPDX-FileCopyrightText: 2024 Espressif Systems (Shanghai) CO LTD
+ * SPDX-FileCopyrightText: 2024-2026 Espressif Systems (Shanghai) CO LTD
  *
  * SPDX-License-Identifier: Apache-2.0
  */
 
 #include <stdio.h>
 #include <string.h>
-
-#include "esp_check.h"
-#include "esp_zigbee_core.h"
+#include "ezbee/nwk.h"
+#include "ezbee/bdb.h"
+#include "ezbee/touchlink.h"
 
 #include "esp_zigbee_console.h"
 #include "cli_cmd.h"
 
 #define TAG "cli_cmd_bdb"
 
-typedef struct cli_bdb_context_s {
-    bool    distributed;
-    bool    ic_only;
-} cli_bdb_context_t;
-
-static cli_bdb_context_t s_bdb_ctx = {
-    .distributed = true,
-    .ic_only = false,
-};
-
-static esp_err_t cli_role(esp_zb_cli_cmd_t *self, int argc, char **argv)
+static ezb_err_t cli_role(esp_zb_cli_cmd_t *self, int argc, char **argv)
 {
     static const char *role_string[] = {
-        [ESP_ZB_DEVICE_TYPE_COORDINATOR] = "zc",
-        [ESP_ZB_DEVICE_TYPE_ROUTER] = "zr",
-        [ESP_ZB_DEVICE_TYPE_ED] = "zed",
-        [ESP_ZB_DEVICE_TYPE_NONE] = "unknown",
+        [EZB_NWK_DEVICE_TYPE_COORDINATOR] = "zc",
+        [EZB_NWK_DEVICE_TYPE_ROUTER] = "zr",
+        [EZB_NWK_DEVICE_TYPE_END_DEVICE] = "zed",
+        [EZB_NWK_DEVICE_TYPE_NONE] = "unknown",
     };
     struct {
         arg_str_t *role;
@@ -42,23 +32,23 @@ static esp_err_t cli_role(esp_zb_cli_cmd_t *self, int argc, char **argv)
         .help = arg_lit0(NULL, "help", "print this help message"),
         .end = arg_end(2),
     };
-    esp_err_t ret = ESP_OK;
+    ezb_err_t ret = EZB_ERR_NONE;
 
     /* Parse command line arguments */
     int nerrors = arg_parse(argc, argv, (void**)&argtable);
-    EXIT_ON_FALSE(argtable.help->count == 0, ESP_OK, arg_print_help((void**)&argtable, argv[0]));
-    EXIT_ON_FALSE(nerrors == 0, ESP_ERR_INVALID_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
+    EXIT_ON_FALSE(argtable.help->count == 0, EZB_ERR_NONE, arg_print_help((void**)&argtable, argv[0]));
+    EXIT_ON_FALSE(nerrors == 0, EZB_ERR_INV_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
 
     if (argtable.role->count > 0) {
-        for (esp_zb_nwk_device_type_t role = ESP_ZB_DEVICE_TYPE_COORDINATOR; role < ESP_ZB_DEVICE_TYPE_NONE; role++) {
+        for (ezb_nwk_device_type_t role = EZB_NWK_DEVICE_TYPE_COORDINATOR; role < EZB_NWK_DEVICE_TYPE_NONE; role++) {
             if (!strcmp(argtable.role->sval[0], role_string[role])) {
-                EXIT_NOW(ret = esp_zb_set_network_device_role(role));
+                EXIT_NOW(ret = ezb_nwk_set_device_type(role));
             }
         }
         cli_output("unknown device role: %s\n", argtable.role->sval[0]);
-        ret = ESP_ERR_NOT_SUPPORTED;
+        ret = EZB_ERR_NOT_SUPPORTED;
     } else {
-        cli_output_line(role_string[esp_zb_get_network_device_role()]);
+        cli_output_line(role_string[ezb_nwk_get_device_type()]);
     }
 
 exit:
@@ -66,7 +56,7 @@ exit:
     return ret;
 }
 
-static esp_err_t cli_panid(esp_zb_cli_cmd_t *self, int argc, char **argv)
+static ezb_err_t cli_panid(esp_zb_cli_cmd_t *self, int argc, char **argv)
 {
     struct {
         arg_lit_t  *extended;
@@ -79,28 +69,28 @@ static esp_err_t cli_panid(esp_zb_cli_cmd_t *self, int argc, char **argv)
         .help     = arg_lit0(NULL, "help", "Print this help message"),
         .end = arg_end(2),
     };
-    esp_err_t ret = ESP_OK;
+    ezb_err_t ret = EZB_ERR_NONE;
 
     /* Parse command line arguments */
     int nerrors = arg_parse(argc, argv, (void**)&argtable);
-    EXIT_ON_FALSE(argtable.help->count == 0, ESP_OK, arg_print_help((void**)&argtable, argv[0]));
-    EXIT_ON_FALSE(nerrors == 0, ESP_ERR_INVALID_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
+    EXIT_ON_FALSE(argtable.help->count == 0, EZB_ERR_NONE, arg_print_help((void**)&argtable, argv[0]));
+    EXIT_ON_FALSE(nerrors == 0, EZB_ERR_INV_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
 
     if (argtable.extended->count > 0) {
         if (argtable.address->count > 0) {
-            EXIT_ON_FALSE(argtable.address->addr[0].addr_type == CLI_ADDR_TYPE_64BIT, ESP_ERR_INVALID_ARG);
-            esp_zb_set_extended_pan_id(argtable.address->addr[0].u.u8);
+            EXIT_ON_FALSE(argtable.address->addr[0].addr_type == CLI_ADDR_TYPE_64BIT, EZB_ERR_INV_ARG);
+            ezb_set_use_extended_panid(&(ezb_extpanid_t){.u64 = argtable.address->addr[0].u.addr64});
         } else {
-            esp_zb_ieee_addr_t ext_pan_id;
-            esp_zb_get_extended_pan_id(ext_pan_id);
-            cli_output("0x%016" PRIx64 "\n", *(uint64_t *)&ext_pan_id);
+            ezb_extpanid_t extpanid;
+            ezb_get_extended_panid(&extpanid);
+            cli_output("0x%016" PRIx64 "\n", extpanid.u64);
         }
     } else {
         if (argtable.address->count > 0) {
-            EXIT_ON_FALSE(argtable.address->addr[0].addr_type == CLI_ADDR_TYPE_16BIT, ESP_ERR_INVALID_ARG);
-            esp_zb_set_pan_id(argtable.address->addr[0].u.addr16);
+            EXIT_ON_FALSE(argtable.address->addr[0].addr_type == CLI_ADDR_TYPE_16BIT, EZB_ERR_INV_ARG);
+            ezb_set_panid(argtable.address->addr[0].u.addr16);
         } else {
-            cli_output("0x%04hx\n", esp_zb_get_pan_id());
+            cli_output("0x%04hx\n", ezb_get_panid());
         }
     }
 
@@ -109,7 +99,7 @@ exit:
     return ret;
 }
 
-static esp_err_t cli_address(esp_zb_cli_cmd_t *self, int argc, char **argv)
+static ezb_err_t cli_address(esp_zb_cli_cmd_t *self, int argc, char **argv)
 {
     struct {
         arg_lit_t  *extended;
@@ -122,27 +112,27 @@ static esp_err_t cli_address(esp_zb_cli_cmd_t *self, int argc, char **argv)
         .help     = arg_lit0(NULL, "help", "Print this help message"),
         .end = arg_end(2),
     };
-    esp_err_t ret = ESP_OK;
+    ezb_err_t ret = EZB_ERR_NONE;
 
     /* Parse command line arguments */
     int nerrors = arg_parse(argc, argv, (void**)&argtable);
-    EXIT_ON_FALSE(argtable.help->count == 0, ESP_OK, arg_print_help((void**)&argtable, argv[0]));
-    EXIT_ON_FALSE(nerrors == 0, ESP_ERR_INVALID_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
+    EXIT_ON_FALSE(argtable.help->count == 0, EZB_ERR_NONE, arg_print_help((void**)&argtable, argv[0]));
+    EXIT_ON_FALSE(nerrors == 0, EZB_ERR_INV_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
 
     if (argtable.extended->count > 0) {
         if (argtable.address->count > 0) {
-            EXIT_ON_FALSE(argtable.address->addr[0].addr_type == CLI_ADDR_TYPE_64BIT, ESP_ERR_INVALID_ARG);
-            EXIT_ON_ERROR(esp_zb_set_long_address(argtable.address->addr[0].u.u8));
+            EXIT_ON_FALSE(argtable.address->addr[0].addr_type == CLI_ADDR_TYPE_64BIT, EZB_ERR_INV_ARG);
+            ezb_set_extended_address(&(ezb_extaddr_t){.u64 = argtable.address->addr[0].u.addr64});
         } else {
-            esp_zb_ieee_addr_t ext_pan_id;
-            esp_zb_get_long_address(ext_pan_id);
-            cli_output("0x%016" PRIx64 "\n", *(uint64_t *)&ext_pan_id);
+            ezb_extaddr_t extaddr;
+            ezb_get_extended_address(&extaddr);
+            cli_output("0x%016" PRIx64 "\n", extaddr.u64);
         }
     } else {
         if (argtable.address->count > 0) {
-            EXIT_ON_FALSE(0, ESP_ERR_NOT_SUPPORTED, cli_output_line("set short address is not supported"));
+            ezb_set_short_address(argtable.address->addr[0].u.addr16);
         } else {
-            cli_output("0x%04hx\n", esp_zb_get_short_address());
+            cli_output("0x%04hx\n", ezb_get_short_address());
         }
     }
 
@@ -151,7 +141,7 @@ exit:
     return ret;
 }
 
-static esp_err_t cli_channel(esp_zb_cli_cmd_t *self, int argc, char **argv)
+static ezb_err_t cli_channel(esp_zb_cli_cmd_t *self, int argc, char **argv)
 {
     struct {
         arg_lit_t *mask;
@@ -164,12 +154,12 @@ static esp_err_t cli_channel(esp_zb_cli_cmd_t *self, int argc, char **argv)
         .help    = arg_lit0(NULL, "help", "Print this help message"),
         .end = arg_end(2),
     };
-    esp_err_t ret = ESP_OK;
+    ezb_err_t ret = EZB_ERR_NONE;
 
     /* Parse command line arguments */
     int nerrors = arg_parse(argc, argv, (void**)&argtable);
-    EXIT_ON_FALSE(argtable.help->count == 0, ESP_OK, arg_print_help((void**)&argtable, argv[0]));
-    EXIT_ON_FALSE(nerrors == 0, ESP_ERR_INVALID_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
+    EXIT_ON_FALSE(argtable.help->count == 0, EZB_ERR_NONE, arg_print_help((void**)&argtable, argv[0]));
+    EXIT_ON_FALSE(nerrors == 0, EZB_ERR_INV_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
 
     /* Handle set / get */
     if (argc > 1) {
@@ -180,13 +170,13 @@ static esp_err_t cli_channel(esp_zb_cli_cmd_t *self, int argc, char **argv)
         if (argtable.mask->count == 0) {
             channel_mask = 1 << channel_mask;
         }
-        EXIT_ON_ERROR(esp_zb_set_channel_mask(channel_mask));
+        EXIT_ON_ERROR(ezb_set_channel_mask(channel_mask));
         /* Also set the channels for BDB commissioning */
-        EXIT_ON_ERROR(esp_zb_set_primary_network_channel_set(channel_mask));
-        EXIT_ON_ERROR(esp_zb_set_secondary_network_channel_set(channel_mask));
+        EXIT_ON_ERROR(ezb_bdb_set_primary_channel_set(channel_mask));
+        EXIT_ON_ERROR(ezb_bdb_set_secondary_channel_set(channel_mask));
     } else {
-        cli_output("Allowed Channel: 0x%08" PRIx32 "\n", esp_zb_get_channel_mask());
-        cli_output("Current Channel: %d\n", esp_zb_get_current_channel());
+        cli_output("Allowed Channel: 0x%08" PRIx32 "\n", ezb_get_channel_mask());
+        cli_output("Current Channel: %d\n", ezb_get_current_channel());
     }
 
 exit:
@@ -194,7 +184,7 @@ exit:
     return ret;
 }
 
-static esp_err_t cli_rx_mode(esp_zb_cli_cmd_t *self, int argc, char **argv)
+static ezb_err_t cli_rx_mode(esp_zb_cli_cmd_t *self, int argc, char **argv)
 {
     struct {
         arg_u8_t  *rx_on;
@@ -205,18 +195,18 @@ static esp_err_t cli_rx_mode(esp_zb_cli_cmd_t *self, int argc, char **argv)
         .help = arg_lit0(NULL, "help", "Print this help message"),
         .end = arg_end(2),
     };
-    esp_err_t ret = ESP_OK;
+    ezb_err_t ret = EZB_ERR_NONE;
 
     /* Parse command line arguments */
     int nerrors = arg_parse(argc, argv, (void**)&argtable);
-    EXIT_ON_FALSE(argtable.help->count == 0, ESP_OK, arg_print_help((void**)&argtable, argv[0]));
-    EXIT_ON_FALSE(nerrors == 0, ESP_ERR_INVALID_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
+    EXIT_ON_FALSE(argtable.help->count == 0, EZB_ERR_NONE, arg_print_help((void**)&argtable, argv[0]));
+    EXIT_ON_FALSE(nerrors == 0, EZB_ERR_INV_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
 
     /* Handle set / get */
     if (argc > 1) {
-        esp_zb_set_rx_on_when_idle(argtable.rx_on->val[0] == 1);
+        ezb_set_rx_on_when_idle(argtable.rx_on->val[0] == 1);
     } else {
-        cli_output("RxOnWhenIdle: %s\n", esp_zb_get_rx_on_when_idle() ? "enabled" : "disabled");
+        cli_output("RxOnWhenIdle: %s\n", ezb_get_rx_on_when_idle() ? "enabled" : "disabled");
     }
 
 exit:
@@ -226,7 +216,7 @@ exit:
 
 /* Sub-commands of `network` */
 
-static esp_err_t cli_nwk_type(esp_zb_cli_cmd_t *self, int argc, char **argv)
+static ezb_err_t cli_nwk_type(esp_zb_cli_cmd_t *self, int argc, char **argv)
 {
     struct {
         arg_str_t *role;
@@ -237,29 +227,29 @@ static esp_err_t cli_nwk_type(esp_zb_cli_cmd_t *self, int argc, char **argv)
         .help = arg_lit0(NULL, "help", "Print this help message"),
         .end = arg_end(2),
     };
-    esp_err_t ret = ESP_OK;
+    ezb_err_t ret = EZB_ERR_NONE;
 
     /* Parse command line arguments */
     int nerrors = arg_parse(argc, argv, (void**)&argtable);
-    EXIT_ON_FALSE(argtable.help->count == 0, ESP_OK, arg_print_help((void**)&argtable, argv[0]));
-    EXIT_ON_FALSE(nerrors == 0, ESP_ERR_INVALID_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
+    EXIT_ON_FALSE(argtable.help->count == 0, EZB_ERR_NONE, arg_print_help((void**)&argtable, argv[0]));
+    EXIT_ON_FALSE(nerrors == 0, EZB_ERR_INV_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
 
     if (argtable.role->count > 0) {
         switch (argtable.role->sval[0][0]){
             case 'd':
-                s_bdb_ctx.distributed = true;
+                ezb_aps_secur_enable_distributed_security(true);
                 break;
             case 'c':
-                s_bdb_ctx.distributed = false;
+                ezb_aps_secur_enable_distributed_security(false);
                 break;
             default:
-                EXIT_ON_ERROR(ESP_ERR_INVALID_ARG, cli_output("unknown network type: %s\n", argtable.role->sval[0]));
+                EXIT_ON_ERROR(EZB_ERR_INV_ARG, cli_output("unknown network type: %s\n", argtable.role->sval[0]));
                 break;
         }
     } else {
-        cli_output("setting: %s\n", s_bdb_ctx.distributed ? "distributed" : "centralized");
-        if (esp_zb_bdb_dev_joined()) {
-            cli_output("current on: %s\n", esp_zb_network_is_distributed() ? "distributed" : "centralized");
+        cli_output("setting: %s\n", ezb_aps_secur_is_distributed_security() ? "distributed" : "centralized");
+        if (ezb_bdb_dev_joined()) {
+            cli_output("current on: %s\n", ezb_aps_secur_is_distributed_security() ? "distributed" : "centralized");
         }
     }
 
@@ -268,29 +258,29 @@ exit:
     return ret;
 }
 
-static esp_err_t cli_nwk_legacy(esp_zb_cli_cmd_t *self, int argc, char **argv)
+static ezb_err_t cli_nwk_legacy(esp_zb_cli_cmd_t *self, int argc, char **argv)
 {
-    esp_err_t ret = ESP_OK;
+    ezb_err_t ret = EZB_ERR_NONE;
 
     if (argc < 2) {
         /* TODO: Add support to get the SDK status. */
         cli_output_line("Get the legacy support status is not supported");
-        ret = ESP_ERR_NOT_SUPPORTED;
+        ret = EZB_ERR_NOT_SUPPORTED;
     } else if (argc > 3) {
-        ret = ESP_ERR_INVALID_ARG;
+        ret = EZB_ERR_INV_ARG;
     } else if (!strcmp(argv[1], "enable")) {
-        esp_zb_secur_link_key_exchange_required_set(false);
+        ezb_secur_set_tclk_exchange_required(false);
     } else if (!strcmp(argv[1], "disable")) {
-        esp_zb_secur_link_key_exchange_required_set(true);
+        ezb_secur_set_tclk_exchange_required(true);
     } else {
         cli_output("Invalid option: %s, use \"enable\" or \"disable\"\n", argv[1]);
-        ret = ESP_ERR_INVALID_ARG;
+        ret = EZB_ERR_INV_ARG;
     }
 
     return ret;
 }
 
-static esp_err_t cli_nwk_key(esp_zb_cli_cmd_t *self, int argc, char **argv)
+static ezb_err_t cli_nwk_key(esp_zb_cli_cmd_t *self, int argc, char **argv)
 {
     struct {
         arg_hex_t *key;
@@ -301,20 +291,20 @@ static esp_err_t cli_nwk_key(esp_zb_cli_cmd_t *self, int argc, char **argv)
         .help = arg_lit0(NULL, "help", "Print this help message"),
         .end = arg_end(2),
     };
-    esp_err_t ret = ESP_OK;
+    ezb_err_t ret = EZB_ERR_NONE;
 
     /* Parse command line arguments */
     int nerrors = arg_parse(argc, argv, (void**)&argtable);
-    EXIT_ON_FALSE(argtable.help->count == 0, ESP_OK, arg_print_help((void**)&argtable, argv[0]));
-    EXIT_ON_FALSE(nerrors == 0, ESP_ERR_INVALID_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
+    EXIT_ON_FALSE(argtable.help->count == 0, EZB_ERR_NONE, arg_print_help((void**)&argtable, argv[0]));
+    EXIT_ON_FALSE(nerrors == 0, EZB_ERR_INV_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
 
     if (argtable.key->count > 0) {
-        EXIT_ON_FALSE(argtable.key->hsize[0] == 16, ESP_ERR_INVALID_ARG);
-        EXIT_ON_ERROR(esp_zb_secur_network_key_set(argtable.key->hval[0]));
+        EXIT_ON_FALSE(argtable.key->hsize[0] == EZB_CCM_KEY_SIZE, EZB_ERR_INV_ARG);
+        EXIT_ON_ERROR(ezb_secur_set_network_key(argtable.key->hval[0]));
     } else {
-        uint8_t key[ESP_ZB_CCM_KEY_SIZE];
-        EXIT_ON_ERROR(esp_zb_secur_primary_network_key_get(key), cli_output_line("Fail to get network key."));
-        cli_output_buffer(key, ESP_ZB_CCM_KEY_SIZE);
+        uint8_t key[EZB_CCM_KEY_SIZE];
+        EXIT_ON_ERROR(ezb_secur_get_network_key(key), cli_output_line("Fail to get network key."));
+        cli_output_buffer(key, EZB_CCM_KEY_SIZE);
     }
 
 exit:
@@ -323,7 +313,7 @@ exit:
     return ret;
 }
 
-static esp_err_t cli_nwk_childmax(esp_zb_cli_cmd_t *self, int argc, char **argv)
+static ezb_err_t cli_nwk_childmax(esp_zb_cli_cmd_t *self, int argc, char **argv)
 {
     struct {
         arg_u8_t  *childmax;
@@ -334,17 +324,17 @@ static esp_err_t cli_nwk_childmax(esp_zb_cli_cmd_t *self, int argc, char **argv)
         .help = arg_lit0(NULL, "help", "Print this help message"),
         .end = arg_end(2),
     };
-    esp_err_t ret = ESP_OK;
+    ezb_err_t ret = EZB_ERR_NONE;
 
     /* Parse command line arguments */
     int nerrors = arg_parse(argc, argv, (void**)&argtable);
-    EXIT_ON_FALSE(argtable.help->count == 0, ESP_OK, arg_print_help((void**)&argtable, argv[0]));
-    EXIT_ON_FALSE(nerrors == 0, ESP_ERR_INVALID_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
+    EXIT_ON_FALSE(argtable.help->count == 0, EZB_ERR_NONE, arg_print_help((void**)&argtable, argv[0]));
+    EXIT_ON_FALSE(nerrors == 0, EZB_ERR_INV_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
 
     if (argtable.childmax->count > 0) {
-        esp_zb_nwk_set_max_children(argtable.childmax->val[0]);
+        ezb_nwk_set_max_children(argtable.childmax->val[0]);
     } else {
-        cli_output("%d\n", esp_zb_nwk_get_max_children());
+        cli_output("%d\n", ezb_nwk_get_max_children());
     }
 
 exit:
@@ -352,7 +342,7 @@ exit:
     return ret;
 }
 
-static esp_err_t cli_nwk_open(esp_zb_cli_cmd_t *self, int argc, char **argv)
+static ezb_err_t cli_nwk_open(esp_zb_cli_cmd_t *self, int argc, char **argv)
 {
     struct {
         arg_u8_t  *timeout;
@@ -361,62 +351,56 @@ static esp_err_t cli_nwk_open(esp_zb_cli_cmd_t *self, int argc, char **argv)
         .timeout = arg_u8n("t", NULL, "<u8:TIMEOUT>", 1, 1, "timeouts in second for opening"),
         .end = arg_end(2),
     };
-    esp_err_t ret = ESP_OK;
+    ezb_err_t ret = EZB_ERR_NONE;
 
     /* Parse command line arguments */
-    EXIT_ON_FALSE(argc > 1, ESP_OK, arg_print_help((void**)&argtable, argv[0]));
+    EXIT_ON_FALSE(argc > 1, EZB_ERR_NONE, arg_print_help((void**)&argtable, argv[0]));
     int nerrors = arg_parse(argc, argv, (void**)&argtable);
-    EXIT_ON_FALSE(nerrors == 0, ESP_ERR_INVALID_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
+    EXIT_ON_FALSE(nerrors == 0, EZB_ERR_INV_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
 
-    EXIT_ON_ERROR(esp_zb_bdb_open_network(argtable.timeout->val[0]), cli_output_line("Fail to open network."));
+    EXIT_ON_ERROR(ezb_bdb_open_network(argtable.timeout->val[0]), cli_output_line("Fail to open network."));
 
 exit:
     ESP_ZB_CLI_FREE_ARGSTRUCT(&argtable);
     return ret;
 }
 
-static esp_err_t cli_nwk_close(esp_zb_cli_cmd_t *self, int argc, char **argv)
+static ezb_err_t cli_nwk_close(esp_zb_cli_cmd_t *self, int argc, char **argv)
 {
-    esp_err_t ret = ESP_OK;
+    ezb_err_t ret = EZB_ERR_NONE;
 
-    EXIT_ON_FALSE(argc == 1, ESP_ERR_INVALID_ARG);
+    EXIT_ON_FALSE(argc == 1, EZB_ERR_INV_ARG);
 
-    EXIT_ON_ERROR(esp_zb_bdb_close_network(), cli_output_line("Fail to close network."));
+    EXIT_ON_ERROR(ezb_bdb_close_network(), cli_output_line("Fail to close network."));
 
 exit:
     return ret;
 }
 
-static void cli_output_active_scan_results(esp_zb_network_descriptor_t *nwk_descriptor, uint16_t count)
+static void cli_nwk_scan_cb(ezb_nwk_active_scan_result_t *result, void *user_ctx)
 {
-    static const char *titles[] = {"Chnl", "PanID", "ExtPanID", "Status", "Cap"};
-    static const uint8_t widths[] = {4, 8, 20, 7, 3};
+    static bool print_header = true;
+    static const char *titles[] = {"Chnl", "PanID", "ExtPanID", "Router", "Status", "Cap"};
+    static const uint8_t widths[] = {4, 8, 20, 8, 7, 3};
 
-    cli_output_table_header(ARRAY_SIZE(widths), titles, widths);
-    for (int i = 0; i < count; i++) {
-        cli_output("| %2d | 0x%04hx | 0x%016" PRIx64 " | %5s | %c%c|\n",
-                   nwk_descriptor[i].logic_channel,
-                   nwk_descriptor[i].short_pan_id,
-                   *(uint64_t *)nwk_descriptor[i].extended_pan_id,
-                   nwk_descriptor[i].permit_joining ? "Open" : "Close",
-                   nwk_descriptor[i].router_capacity ? 'R' : ' ',
-                   nwk_descriptor[i].end_device_capacity ? 'E' : ' ');
+    if (print_header) {
+        cli_output_table_header(ARRAY_SIZE(widths), titles, widths);
+        print_header = false;
+    }
+
+    if (result != NULL) {
+        cli_output("| %2d | 0x%04hx | 0x%016" PRIx64 " | 0x%04hx | %5s | %c%c|\n",
+            result->channel_number, result->panid, result->extpanid.u64, result->shortaddr,
+            result->permit_join ? "Open" : "Close",
+            result->router_capacity ? 'R' : ' ',
+            result->enddev_capacity ? 'E' : ' ');
+    } else {
+        print_header = true;
+        esp_zb_console_notify_result(EZB_ERR_NONE);
     }
 }
 
-static void cli_nwk_scan_cb(esp_zb_zdp_status_t status, uint8_t count, esp_zb_network_descriptor_t *nwk_descriptor)
-{
-    esp_err_t ret = ESP_OK;
-    EXIT_ON_FALSE(status == ESP_ZB_ZDP_STATUS_SUCCESS, ESP_FAIL,
-                  cli_output("ED Scan failed: %d\n", status));
-
-    cli_output_active_scan_results(nwk_descriptor, count);
-
-exit:
-    esp_zb_console_notify_result(ret);
-}
-
-static esp_err_t cli_nwk_scan(esp_zb_cli_cmd_t *self, int argc, char **argv)
+static ezb_err_t cli_nwk_scan(esp_zb_cli_cmd_t *self, int argc, char **argv)
 {
     struct {
         arg_lit_t *mask;
@@ -429,12 +413,12 @@ static esp_err_t cli_nwk_scan(esp_zb_cli_cmd_t *self, int argc, char **argv)
         .duration = arg_u8n("t",   NULL, "<u8:TIMEOUT>",  0, 1, "timeout in sec of scan, default: 1s"),
         .end = arg_end(2),
     };
-    esp_err_t ret = ESP_ERR_NOT_FINISHED;
+    ezb_err_t ret = EZB_ERR_NOT_FINISHED;
 
     /* Parse command line arguments */
-    EXIT_ON_FALSE(argc > 1, ESP_OK, arg_print_help((void**)&argtable, argv[0]));
+    EXIT_ON_FALSE(argc > 1, EZB_ERR_NONE, arg_print_help((void**)&argtable, argv[0]));
     int nerrors = arg_parse(argc, argv, (void**)&argtable);
-    EXIT_ON_FALSE(nerrors == 0, ESP_ERR_INVALID_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
+    EXIT_ON_FALSE(nerrors == 0, EZB_ERR_INV_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
 
     uint32_t channel_mask = 0;
     if (argtable.channel->count > 0) {
@@ -443,40 +427,40 @@ static esp_err_t cli_nwk_scan(esp_zb_cli_cmd_t *self, int argc, char **argv)
     if (argtable.mask->count == 0) {
         channel_mask = 1 << channel_mask;
     }
-    esp_zb_zdo_active_scan_request(channel_mask,
-                                   argtable.duration->count > 0 ? argtable.duration->val[0] : 1,
-                                   cli_nwk_scan_cb);
+
+    ezb_nwk_scan_req_t active_scan_req = {
+        .scan_type = EZB_NWK_SCAN_TYPE_ACTIVE,
+        .scan_duration = argtable.duration->count > 0 ? argtable.duration->val[0] : 3,
+        .scan_channels = channel_mask,
+        .active_scan_cb = cli_nwk_scan_cb,
+    };
+    EXIT_ON_ERROR(ezb_nwk_scan(&active_scan_req));
 
 exit:
     ESP_ZB_CLI_FREE_ARGSTRUCT(&argtable);
     return ret;
 }
 
-static void cli_output_ed_scan_results(esp_zb_energy_detect_channel_info_t *channel_info, uint16_t count)
+static void cli_nwk_ed_scan_cb(ezb_nwk_ed_scan_result_t *result, void *user_ctx)
 {
+    static bool print_header = true;
     static const char *titles[] = {"Chnl", "RSSI"};
     static const uint8_t widths[] = {4, 6};
 
-    cli_output_table_header(ARRAY_SIZE(widths), titles, widths);
-    for (int i = 0; i < count; i++) {
-        cli_output("| %2d | %4d |\n", channel_info[i].channel_number, channel_info[i].energy_detected);
+    if (print_header) {
+        cli_output_table_header(ARRAY_SIZE(widths), titles, widths);
+        print_header = false;
+    }
+
+    if (result != NULL) {
+        cli_output("| %2d | %4d |\n", result->channel_number, result->max_rssi);
+    } else {
+        print_header = true;
+        esp_zb_console_notify_result(EZB_ERR_NONE);
     }
 }
 
-static void cli_nwk_ed_scan_cb(esp_zb_zdp_status_t status, uint16_t count,
-                               esp_zb_energy_detect_channel_info_t *channel_info)
-{
-    esp_err_t ret = ESP_OK;
-    EXIT_ON_FALSE(status == ESP_ZB_ZDP_STATUS_SUCCESS, ESP_FAIL,
-                  cli_output("ED Scan failed: %d\n", status));
-
-    cli_output_ed_scan_results(channel_info, count);
-
-exit:
-    esp_zb_console_notify_result(ret);
-}
-
-static esp_err_t cli_nwk_ed_scan(esp_zb_cli_cmd_t *self, int argc, char **argv)
+static ezb_err_t cli_nwk_ed_scan(esp_zb_cli_cmd_t *self, int argc, char **argv)
 {
     struct {
         arg_lit_t *mask;
@@ -489,12 +473,12 @@ static esp_err_t cli_nwk_ed_scan(esp_zb_cli_cmd_t *self, int argc, char **argv)
         .duration = arg_u8n("t",   NULL, "<u8:TIMEOUT>",  0, 1, "timeout in sec of scan, default: 1s"),
         .end = arg_end(2),
     };
-    esp_err_t ret = ESP_ERR_NOT_FINISHED;
+    ezb_err_t ret = EZB_ERR_NOT_FINISHED;
 
     /* Parse command line arguments */
-    EXIT_ON_FALSE(argc > 1, ESP_OK, arg_print_help((void**)&argtable, argv[0]));
+    EXIT_ON_FALSE(argc > 1, EZB_ERR_NONE, arg_print_help((void**)&argtable, argv[0]));
     int nerrors = arg_parse(argc, argv, (void**)&argtable);
-    EXIT_ON_FALSE(nerrors == 0, ESP_ERR_INVALID_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
+    EXIT_ON_FALSE(nerrors == 0, EZB_ERR_INV_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
 
     uint32_t channel_mask = 0;
     if (argtable.channel->count > 0) {
@@ -503,9 +487,14 @@ static esp_err_t cli_nwk_ed_scan(esp_zb_cli_cmd_t *self, int argc, char **argv)
     if (argtable.mask->count == 0) {
         channel_mask = 1 << channel_mask;
     }
-    esp_zb_zdo_energy_detect_request(channel_mask,
-                                     argtable.duration->count > 0 ? argtable.duration->val[0] : 1,
-                                     cli_nwk_ed_scan_cb);
+
+    ezb_nwk_scan_req_t energy_detect_req = {
+        .scan_type = EZB_NWK_SCAN_TYPE_ED,
+        .scan_duration = argtable.duration->count > 0 ? argtable.duration->val[0] : 3,
+        .scan_channels = channel_mask,
+        .ed_scan_cb = cli_nwk_ed_scan_cb,
+    };
+    EXIT_ON_ERROR(ezb_nwk_scan(&energy_detect_req));
 
 exit:
     ESP_ZB_CLI_FREE_ARGSTRUCT(&argtable);
@@ -520,7 +509,7 @@ typedef enum linkkey_op_s {
     LKO_set,
 } linkkey_op_t;
 
-static esp_err_t cli_linkkey_op(linkkey_op_t op, esp_zb_cli_cmd_t *self, int argc, char **argv)
+static ezb_err_t cli_linkkey_op(linkkey_op_t op, esp_zb_cli_cmd_t *self, int argc, char **argv)
 {
     struct {
         arg_str_t *type;
@@ -533,15 +522,15 @@ static esp_err_t cli_linkkey_op(linkkey_op_t op, esp_zb_cli_cmd_t *self, int arg
         .help = arg_lit0(NULL, "help", "Print this help message"),
         .end = arg_end(2),
     };
-    esp_err_t ret = ESP_OK;
+    ezb_err_t ret = EZB_ERR_NONE;
     bool centralized = true; // true if type: c
 
     /* Parse command line arguments */
     int nerrors = arg_parse(argc, argv, (void**)&argtable);
-    EXIT_ON_FALSE(argtable.help->count == 0, ESP_OK, arg_print_help((void**)&argtable, argv[0]));
-    EXIT_ON_FALSE(nerrors == 0, ESP_ERR_INVALID_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
+    EXIT_ON_FALSE(argtable.help->count == 0, EZB_ERR_NONE, arg_print_help((void**)&argtable, argv[0]));
+    EXIT_ON_FALSE(nerrors == 0, EZB_ERR_INV_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
 
-    EXIT_ON_FALSE(argtable.key->hsize[0] == 16, ESP_ERR_INVALID_ARG);
+    EXIT_ON_FALSE(argtable.key->hsize[0] == EZB_CCM_KEY_SIZE, EZB_ERR_INV_ARG);
 
     if (argtable.type->count > 0) {
         switch (argtable.type->sval[0][0]) {
@@ -554,35 +543,21 @@ static esp_err_t cli_linkkey_op(linkkey_op_t op, esp_zb_cli_cmd_t *self, int arg
                 centralized = true;
                 break;
             default:
-                EXIT_ON_ERROR(ESP_ERR_INVALID_ARG, cli_output("%s: invalid argument to option --type\n", argv[0]));
+                EXIT_ON_ERROR(EZB_ERR_INV_ARG, cli_output("%s: invalid argument to option --type\n", argv[0]));
                 break;
         }
     }
 
-    if (centralized) {
-        switch (op) {
-            case LKO_set:
-                esp_zb_secur_TC_standard_preconfigure_key_set(argtable.key->hval[0]);
-                break;
-            case LKO_add:
-                ret = esp_zb_secur_multi_TC_standard_preconfigure_key_add(argtable.key->hval[0]);
-                break;
-            case LKO_remove:
-                ret = esp_zb_secur_multi_TC_standard_preconfigure_key_remove(argtable.key->hval[0]);
-                break;
-        }
-    } else {
-        switch (op) {
-            case LKO_set:
-                esp_zb_secur_TC_standard_distributed_key_set(argtable.key->hval[0]);
-                break;
-            case LKO_add:
-                ret = esp_zb_secur_multi_standard_distributed_key_add(argtable.key->hval[0]);
-                break;
-            case LKO_remove:
-                ret = esp_zb_secur_multi_standard_distributed_key_remove(argtable.key->hval[0]);
-                break;
-        }
+    (void)centralized;
+
+    switch (op) {
+        case LKO_set:
+            ezb_secur_set_global_link_key(argtable.key->hval[0]);
+            break;
+        case LKO_add:
+        case LKO_remove:
+            ret = EZB_ERR_NOT_SUPPORTED;
+            break;
     }
 
 exit:
@@ -591,25 +566,24 @@ exit:
     return ret;
 }
 
-static esp_err_t cli_linkkey_add(esp_zb_cli_cmd_t *self, int argc, char **argv)
+static ezb_err_t cli_linkkey_add(esp_zb_cli_cmd_t *self, int argc, char **argv)
 {
     return cli_linkkey_op(LKO_add, self, argc, argv);
 }
 
-static esp_err_t cli_linkkey_remove(esp_zb_cli_cmd_t *self, int argc, char **argv)
+static ezb_err_t cli_linkkey_remove(esp_zb_cli_cmd_t *self, int argc, char **argv)
 {
     return cli_linkkey_op(LKO_remove, self, argc, argv);
 }
 
-static esp_err_t cli_linkkey_set(esp_zb_cli_cmd_t *self, int argc, char **argv)
+static ezb_err_t cli_linkkey_set(esp_zb_cli_cmd_t *self, int argc, char **argv)
 {
     return cli_linkkey_op(LKO_set, self, argc, argv);
 }
 
-
 /* Sub-commands of `ic` */
 
-static esp_err_t cli_ic_policy(esp_zb_cli_cmd_t *self, int argc, char **argv)
+static ezb_err_t cli_ic_policy(esp_zb_cli_cmd_t *self, int argc, char **argv)
 {
     struct {
         arg_int_t  *ic_policy;
@@ -621,25 +595,25 @@ static esp_err_t cli_ic_policy(esp_zb_cli_cmd_t *self, int argc, char **argv)
                                                                     "2 - IC Required\n"),
         .end = arg_end(2),
     };
-    esp_err_t ret = ESP_OK;
+    ezb_err_t ret = EZB_ERR_NONE;
 
     /* Parse command line arguments */
-    EXIT_ON_FALSE(argc > 1, ESP_OK, arg_print_help((void**)&argtable, argv[0]));
+    EXIT_ON_FALSE(argc > 1, EZB_ERR_NONE, arg_print_help((void**)&argtable, argv[0]));
     int nerrors = arg_parse(argc, argv, (void**)&argtable);
-    EXIT_ON_FALSE(nerrors == 0, ESP_ERR_INVALID_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
+    EXIT_ON_FALSE(nerrors == 0, EZB_ERR_INV_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
 
     switch (argtable.ic_policy->ival[0]) {
         case 0:
-            ret = ESP_ERR_NOT_SUPPORTED;
+            ret = EZB_ERR_NOT_SUPPORTED;
             break;
         case 1:
-            EXIT_ON_ERROR(esp_zb_secur_ic_only_enable(false));
+            EXIT_ON_ERROR(ezb_secur_set_ic_required(false));
             break;
         case 2:
-            EXIT_ON_ERROR(esp_zb_secur_ic_only_enable(true));
+            EXIT_ON_ERROR(ezb_secur_set_ic_required(true));
             break;
         default:
-            EXIT_NOW(ret = ESP_ERR_INVALID_ARG; cli_output("Unknown policy value: %d\n", argtable.ic_policy->ival[0]));
+            EXIT_NOW(ret = EZB_ERR_INV_ARG; cli_output("Unknown policy value: %d\n", argtable.ic_policy->ival[0]));
             break;
     }
 
@@ -648,7 +622,7 @@ exit:
     return ret;
 }
 
-static esp_err_t cli_ic_add(esp_zb_cli_cmd_t *self, int argc, char **argv)
+static ezb_err_t cli_ic_add(esp_zb_cli_cmd_t *self, int argc, char **argv)
 {
     struct {
         arg_addr_t *add_addr;
@@ -659,29 +633,30 @@ static esp_err_t cli_ic_add(esp_zb_cli_cmd_t *self, int argc, char **argv)
         .ic_code  = arg_hexn(NULL, NULL,  "<hex:IC>", 1, 1, "install code"),
         .end = arg_end(2),
     };
-    esp_err_t ret = ESP_OK;
+    ezb_err_t ret = EZB_ERR_NONE;
     uint8_t ic_type;
 
     /* Parse command line arguments */
-    EXIT_ON_FALSE(argc > 1, ESP_OK, arg_print_help((void**)&argtable, argv[0]));
+    EXIT_ON_FALSE(argc > 1, EZB_ERR_NONE, arg_print_help((void**)&argtable, argv[0]));
     int nerrors = arg_parse(argc, argv, (void**)&argtable);
-    EXIT_ON_FALSE(nerrors == 0, ESP_ERR_INVALID_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
+    EXIT_ON_FALSE(nerrors == 0, EZB_ERR_INV_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
 
-    EXIT_ON_FALSE(esp_zb_is_started(), ESP_ERR_INVALID_SIZE, cli_output_line("Please start Zigbee stack first"));
-    EXIT_ON_FALSE(argtable.add_addr->addr->addr_type == CLI_ADDR_TYPE_64BIT, ESP_ERR_INVALID_ARG,
+    EXIT_ON_FALSE(esp_zigbee_is_started(), EZB_ERR_INV_SIZE, cli_output_line("Please start Zigbee stack first"));
+    EXIT_ON_FALSE(argtable.add_addr->addr->addr_type == CLI_ADDR_TYPE_64BIT, EZB_ERR_INV_ARG,
                   cli_output_line("IEEE address is required."));
 
     switch (argtable.ic_code->hsize[0]) {
-      case 8: ic_type = ESP_ZB_IC_TYPE_48; break;
-      case 10: ic_type = ESP_ZB_IC_TYPE_64; break;
-      case 14: ic_type = ESP_ZB_IC_TYPE_96; break;
-      case 18: ic_type = ESP_ZB_IC_TYPE_128; break;
+      case 8:  ic_type = EZB_SECUR_IC_TYPE_48;  break;
+      case 10: ic_type = EZB_SECUR_IC_TYPE_64;  break;
+      case 14: ic_type = EZB_SECUR_IC_TYPE_96;  break;
+      case 18: ic_type = EZB_SECUR_IC_TYPE_128; break;
       default:
-        EXIT_NOW(ret = ESP_ERR_INVALID_ARG; cli_output("Install code incorrect length %d\n", argtable.ic_code->hsize[0]));
+        EXIT_NOW(ret = EZB_ERR_INV_ARG; cli_output("Install code incorrect length %d\n", argtable.ic_code->hsize[0]));
         break;
     }
 
-    EXIT_ON_ERROR(esp_zb_secur_ic_add(argtable.add_addr->addr[0].u.u8, ic_type, argtable.ic_code->hval[0]),
+    EXIT_ON_ERROR(ezb_secur_ic_add(&(ezb_extaddr_t){.u64 = argtable.add_addr->addr->u.addr64},
+                                   ic_type, argtable.ic_code->hval[0]),
                   cli_output_line("Fail to add install code."));
 
 exit:
@@ -690,7 +665,7 @@ exit:
     return ret;
 }
 
-static esp_err_t cli_ic_remove(esp_zb_cli_cmd_t *self, int argc, char **argv)
+static ezb_err_t cli_ic_remove(esp_zb_cli_cmd_t *self, int argc, char **argv)
 {
     struct {
         arg_addr_t *add_addr;
@@ -699,16 +674,16 @@ static esp_err_t cli_ic_remove(esp_zb_cli_cmd_t *self, int argc, char **argv)
         .add_addr = arg_addrn(NULL, NULL, "<eui64:EUI64>", 1, 1, "IEEE address of the device"),
         .end = arg_end(2),
     };
-    esp_err_t ret = ESP_OK;
+    ezb_err_t ret = EZB_ERR_NONE;
 
     /* Parse command line arguments */
-    EXIT_ON_FALSE(argc > 1, ESP_OK, arg_print_help((void**)&argtable, argv[0]));
+    EXIT_ON_FALSE(argc > 1, EZB_ERR_NONE, arg_print_help((void**)&argtable, argv[0]));
     int nerrors = arg_parse(argc, argv, (void**)&argtable);
-    EXIT_ON_FALSE(nerrors == 0, ESP_ERR_INVALID_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
+    EXIT_ON_FALSE(nerrors == 0, EZB_ERR_INV_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
 
-    EXIT_ON_FALSE(argtable.add_addr->addr->addr_type == CLI_ADDR_TYPE_64BIT, ESP_ERR_INVALID_ARG,
+    EXIT_ON_FALSE(argtable.add_addr->addr->addr_type == CLI_ADDR_TYPE_64BIT, EZB_ERR_INV_ARG,
                   cli_output_line("IEEE address is required."));
-    EXIT_ON_ERROR(esp_zb_secur_ic_remove_req(argtable.add_addr->addr->u.u8),
+    EXIT_ON_ERROR(ezb_secur_ic_remove(&(ezb_extaddr_t){.u64 = argtable.add_addr->addr->u.addr64}),
                   cli_output_line("Fail to remove install code."));
 
 exit:
@@ -716,7 +691,7 @@ exit:
     return ret;
 }
 
-static esp_err_t cli_ic_set(esp_zb_cli_cmd_t *self, int argc, char **argv)
+static ezb_err_t cli_ic_set(esp_zb_cli_cmd_t *self, int argc, char **argv)
 {
     struct {
         arg_hex_t *ic_code;
@@ -725,25 +700,25 @@ static esp_err_t cli_ic_set(esp_zb_cli_cmd_t *self, int argc, char **argv)
         .ic_code = arg_hexn(NULL, NULL, "<hex:IC>", 1, 1, "install code"),
         .end = arg_end(2),
     };
-    esp_err_t ret = ESP_OK;
+    ezb_err_t ret = EZB_ERR_NONE;
     uint8_t ic_type;
 
     /* Parse command line arguments */
-    EXIT_ON_FALSE(argc > 1, ESP_OK, arg_print_help((void**)&argtable, argv[0]));
+    EXIT_ON_FALSE(argc > 1, EZB_ERR_NONE, arg_print_help((void**)&argtable, argv[0]));
     int nerrors = arg_parse(argc, argv, (void**)&argtable);
-    EXIT_ON_FALSE(nerrors == 0, ESP_ERR_INVALID_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
+    EXIT_ON_FALSE(nerrors == 0, EZB_ERR_INV_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
 
     switch (argtable.ic_code->hsize[0]) {
-      case 8: ic_type = ESP_ZB_IC_TYPE_48; break;
-      case 10: ic_type = ESP_ZB_IC_TYPE_64; break;
-      case 14: ic_type = ESP_ZB_IC_TYPE_96; break;
-      case 18: ic_type = ESP_ZB_IC_TYPE_128; break;
+      case 8:  ic_type = EZB_SECUR_IC_TYPE_48;  break;
+      case 10: ic_type = EZB_SECUR_IC_TYPE_64;  break;
+      case 14: ic_type = EZB_SECUR_IC_TYPE_96;  break;
+      case 18: ic_type = EZB_SECUR_IC_TYPE_128; break;
       default:
-        EXIT_NOW(ret = ESP_ERR_INVALID_ARG; cli_output("Install code incorrect length %d\n", argtable.ic_code->hsize[0]));
+        EXIT_NOW(ret = EZB_ERR_INV_ARG; cli_output("Install code incorrect length %d\n", argtable.ic_code->hsize[0]));
         break;
     }
 
-    EXIT_ON_ERROR(esp_zb_secur_ic_set(ic_type, argtable.ic_code->hval[0]), cli_output_line("Fail to set install code\n"));
+    EXIT_ON_ERROR(ezb_secur_ic_set(ic_type, argtable.ic_code->hval[0]), cli_output_line("Fail to set install code\n"));
 
 exit:
     arg_hex_free(argtable.ic_code);
@@ -751,19 +726,19 @@ exit:
     return ret;
 }
 
-static esp_err_t cli_ic_get(esp_zb_cli_cmd_t *self, int argc, char **argv)
+static ezb_err_t cli_ic_get(esp_zb_cli_cmd_t *self, int argc, char **argv)
 {
-    esp_err_t ret = ESP_OK;
-    EXIT_ON_FALSE(argc == 1, ESP_ERR_INVALID_ARG);
+    ezb_err_t ret = EZB_ERR_NONE;
+    EXIT_ON_FALSE(argc == 1, EZB_ERR_INV_ARG);
 
     uint8_t ic_size[] = { 8, 10, 14, 18 };
-    uint8_t ic_type = ESP_ZB_IC_TYPE_MAX;
-    uint8_t *ic = esp_zb_secur_ic_get(&ic_type);
+    uint8_t ic[18];
+    uint8_t ic_type = EZB_SECUR_IC_TYPE_MAX_NR;
 
-    if (ic == NULL) {
-        cli_output_line("No install code configured.");
-    } else {
+    if (ezb_secur_ic_get(ic, &ic_type) == EZB_ERR_NONE) {
         cli_output_buffer(ic, ic_size[ic_type]);
+    } else {
+        cli_output_line("No install code configured.");
     }
 
 exit:
@@ -772,7 +747,7 @@ exit:
 
 /* Sub-commands of `bdb_comm` */
 
-static esp_err_t cli_bdb_channel(esp_zb_cli_cmd_t *self, int argc, char **argv)
+static ezb_err_t cli_bdb_channel(esp_zb_cli_cmd_t *self, int argc, char **argv)
 {
     struct {
         arg_lit_t  *mask;
@@ -787,12 +762,12 @@ static esp_err_t cli_bdb_channel(esp_zb_cli_cmd_t *self, int argc, char **argv)
         .help          = arg_lit0(NULL, "help", "Print this help message"),
         .end = arg_end(2),
     };
-    esp_err_t ret = ESP_OK;
+    ezb_err_t ret = EZB_ERR_NONE;
 
     /* Parse command line arguments */
     int nerrors = arg_parse(argc, argv, (void**)&argtable);
-    EXIT_ON_FALSE(argtable.help->count == 0, ESP_OK, arg_print_help((void**)&argtable, argv[0]));
-    EXIT_ON_FALSE(nerrors == 0, ESP_ERR_INVALID_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
+    EXIT_ON_FALSE(argtable.help->count == 0, EZB_ERR_NONE, arg_print_help((void**)&argtable, argv[0]));
+    EXIT_ON_FALSE(nerrors == 0, EZB_ERR_INV_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
 
     /* Handle set / get */
     if (argc > 1) {
@@ -808,11 +783,11 @@ static esp_err_t cli_bdb_channel(esp_zb_cli_cmd_t *self, int argc, char **argv)
             primary_channel_mask = 1 << primary_channel_mask;
             secondary_channel_mask = 1 << secondary_channel_mask;
         }
-        EXIT_ON_ERROR(esp_zb_set_primary_network_channel_set(primary_channel_mask));
-        EXIT_ON_ERROR(esp_zb_set_secondary_network_channel_set(secondary_channel_mask));
+        EXIT_ON_ERROR(ezb_bdb_set_primary_channel_set(primary_channel_mask));
+        EXIT_ON_ERROR(ezb_bdb_set_secondary_channel_set(secondary_channel_mask));
     } else {
-        cli_output("Primary Channel: 0x%08" PRIx32 "\n", esp_zb_get_primary_network_channel_set());
-        cli_output("Secondary Channel: 0x%08" PRIx32 "\n", esp_zb_get_secondary_network_channel_set());
+        cli_output("Primary Channel: 0x%08" PRIx32 "\n", ezb_bdb_get_primary_channel_set());
+        cli_output("Secondary Channel: 0x%08" PRIx32 "\n", ezb_bdb_get_secondary_channel_set());
     }
 
 exit:
@@ -820,19 +795,19 @@ exit:
     return ret;
 }
 
-static esp_err_t cli_bdb_mode(esp_zb_cli_cmd_t *self, int argc, char **argv)
+static ezb_err_t cli_bdb_mode(esp_zb_cli_cmd_t *self, int argc, char **argv)
 {
-    esp_err_t ret = ESP_OK;
+    ezb_err_t ret = EZB_ERR_NONE;
 
-    EXIT_ON_FALSE(argc == 1, ESP_ERR_INVALID_ARG);
+    EXIT_ON_FALSE(argc == 1, EZB_ERR_INV_ARG);
 
-    cli_output("0x%02hx\n", (uint8_t)esp_zb_get_bdb_commissioning_mode());
+    cli_output("0x%02hx\n", (uint8_t)ezb_bdb_get_commissioning_mode());
 
 exit:
     return ret;
 }
 
-static esp_err_t cli_bdb_start(esp_zb_cli_cmd_t *self, int argc, char **argv)
+static ezb_err_t cli_bdb_start(esp_zb_cli_cmd_t *self, int argc, char **argv)
 {
     struct {
         arg_str_t *mode;
@@ -840,56 +815,43 @@ static esp_err_t cli_bdb_start(esp_zb_cli_cmd_t *self, int argc, char **argv)
         arg_end_t *end;
     } argtable = {
         .mode = arg_strn(NULL, NULL, "<MODE>", 1, 4, "bdb commissioning mode"),
-        .rem_mode = arg_rem("", "steer|form|bind|initiator|target"),
+        .rem_mode = arg_rem("", "init|steer|form|bind|initiator|target"),
         .end = arg_end(2),
     };
-    esp_err_t ret = ESP_OK;
+    ezb_err_t ret = EZB_ERR_NONE;
 
     /* Parse command line arguments */
-    EXIT_ON_FALSE(argc > 1, ESP_OK, arg_print_help((void**)&argtable, argv[0]));
+    EXIT_ON_FALSE(argc > 1, EZB_ERR_NONE, arg_print_help((void**)&argtable, argv[0]));
     int nerrors = arg_parse(argc, argv, (void**)&argtable);
-    EXIT_ON_FALSE(nerrors == 0, ESP_ERR_INVALID_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
+    EXIT_ON_FALSE(nerrors == 0, EZB_ERR_INV_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
 
-    esp_zb_bdb_commissioning_mode_t bdb_comm_mode = ESP_ZB_BDB_MODE_INITIALIZATION;
+    ezb_bdb_comm_mode_mask_t bdb_comm_mode = 0;
 
     if (argtable.mode->count > 0) {
         for (int i = 0; i < argtable.mode->count; i++) {
-            if (!strcmp(argtable.mode->sval[i], "steer")) {
-                if (s_bdb_ctx.distributed) {
-                    esp_zb_enable_joining_to_distributed(true);
-                }
-                bdb_comm_mode = bdb_comm_mode | ESP_ZB_BDB_NETWORK_STEERING;
+            if (!strcmp(argtable.mode->sval[i], "init")) {
+                bdb_comm_mode |= EZB_BDB_MODE_INITIALIZATION;
+            } else if (!strcmp(argtable.mode->sval[i], "steer")) {
+                bdb_comm_mode |= EZB_BDB_MODE_NETWORK_STEERING;
             } else if (!strcmp(argtable.mode->sval[i], "form")) {
-                if (s_bdb_ctx.distributed) {
-                    esp_zb_enable_distributed_network(true);
-                    esp_zb_zdo_setup_network_as_distributed();
-                    esp_zb_tc_policy_set_distributed_security(true);
-                }
-                bdb_comm_mode = bdb_comm_mode | ESP_ZB_BDB_NETWORK_FORMATION;
+                bdb_comm_mode |= EZB_BDB_MODE_NETWORK_FORMATION;
             } else if (!strcmp(argtable.mode->sval[i], "bind")) {
-                bdb_comm_mode = bdb_comm_mode | ESP_ZB_BDB_FINDING_N_BINDING;
+                bdb_comm_mode |= EZB_BDB_MODE_FINDING_N_BINDING;
             } else if (!strcmp(argtable.mode->sval[i], "initiator")) {
-                uint32_t channel_mask = esp_zb_get_primary_network_channel_set();
-                if (channel_mask != ESP_ZB_TRANSCEIVER_ALL_CHANNELS_MASK) {
-                    esp_zb_zdo_touchlink_set_nwk_channel(__builtin_ctz(channel_mask));
-                } else {
-                    esp_zb_zdo_touchlink_set_nwk_channel(0);
-                }
-                bdb_comm_mode = bdb_comm_mode | ESP_ZB_BDB_TOUCHLINK_COMMISSIONING;
+                bdb_comm_mode |= EZB_BDB_MODE_TOUCHLINK_INITIATOR;
             } else if (!strcmp(argtable.mode->sval[i], "target")) {
-                esp_zb_set_channel_mask(esp_zb_get_primary_network_channel_set());
-                bdb_comm_mode = ESP_ZB_BDB_TOUCHLINK_TARGET;
+                bdb_comm_mode |= EZB_BDB_MODE_TOUCHLINK_TARGET;
             } else {
                 cli_output("Skip %s bdb commissioning mode: %s\n", "unknown", argtable.mode->sval[i]);
             }
         }
     }
 
-    if (!esp_zb_is_started()) {
-        EXIT_ON_ERROR(esp_zb_start(false), cli_output_line("Fail to start Zigbee stack."));
+    if (!esp_zigbee_is_started()) {
+        EXIT_ON_ERROR(esp_zigbee_start(false), cli_output_line("Fail to start Zigbee stack."));
     }
 
-    EXIT_ON_ERROR(esp_zb_bdb_start_top_level_commissioning(bdb_comm_mode),
+    EXIT_ON_ERROR(ezb_bdb_start_top_level_commissioning(bdb_comm_mode),
                   cli_output_line("Fail to start bdb top level commissioning."));
 
 exit:
@@ -897,7 +859,7 @@ exit:
     return ret;
 }
 
-static esp_err_t cli_bdb_cancel(esp_zb_cli_cmd_t *self, int argc, char **argv)
+static ezb_err_t cli_bdb_cancel(esp_zb_cli_cmd_t *self, int argc, char **argv)
 {
     struct {
         arg_str_t *mode;
@@ -906,20 +868,20 @@ static esp_err_t cli_bdb_cancel(esp_zb_cli_cmd_t *self, int argc, char **argv)
         .mode = arg_strn(NULL, NULL, "<steer|form|target>", 1, 1, "commissioning mode to cancel"),
         .end = arg_end(2),
     };
-    esp_err_t ret = ESP_OK;
+    ezb_err_t ret = EZB_ERR_NONE;
 
     /* Parse command line arguments */
-    EXIT_ON_FALSE(argc > 1, ESP_OK, arg_print_help((void**)&argtable, argv[0]));
+    EXIT_ON_FALSE(argc > 1, EZB_ERR_NONE, arg_print_help((void**)&argtable, argv[0]));
     int nerrors = arg_parse(argc, argv, (void**)&argtable);
-    EXIT_ON_FALSE(nerrors == 0, ESP_ERR_INVALID_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
+    EXIT_ON_FALSE(nerrors == 0, EZB_ERR_INV_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
 
     if (argtable.mode->count > 0) {
         if (!strcmp(argtable.mode->sval[0], "steer")) {
-            ret = esp_zb_bdb_cancel_steering();
+            ret = ezb_bdb_cancel_steering();
         } else if (!strcmp(argtable.mode->sval[0], "form")) {
-            ret = esp_zb_bdb_cancel_formation();
+            ret = ezb_bdb_cancel_formation();
         } else if (!strcmp(argtable.mode->sval[0], "target")) {
-            ret = esp_zb_bdb_cancel_touchlink_target();
+            ret = ezb_bdb_cancel_touchlink_target();
         } else {
             cli_output("%s mode for cancelling:%s\n", "unsupported", argtable.mode->sval[0]);
         }
@@ -931,8 +893,7 @@ exit:
 }
 
 /* Sub-commands of `tl` */
-
-static esp_err_t cli_tl_timeout(esp_zb_cli_cmd_t *self, int argc, char **argv)
+static ezb_err_t cli_tl_timeout(esp_zb_cli_cmd_t *self, int argc, char **argv)
 {
     struct {
         arg_u32_t *timeout;
@@ -943,17 +904,17 @@ static esp_err_t cli_tl_timeout(esp_zb_cli_cmd_t *self, int argc, char **argv)
         .help = arg_lit0(NULL, "help", "Print this help message"),
         .end = arg_end(2),
     };
-    esp_err_t ret = ESP_OK;
+    ezb_err_t ret = EZB_ERR_NONE;
 
     /* Parse command line arguments */
     int nerrors = arg_parse(argc, argv, (void**)&argtable);
-    EXIT_ON_FALSE(argtable.help->count == 0, ESP_OK, arg_print_help((void**)&argtable, argv[0]));
-    EXIT_ON_FALSE(nerrors == 0, ESP_ERR_INVALID_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
+    EXIT_ON_FALSE(argtable.help->count == 0, EZB_ERR_NONE, arg_print_help((void**)&argtable, argv[0]));
+    EXIT_ON_FALSE(nerrors == 0, EZB_ERR_INV_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
 
     if (argtable.timeout->count > 0) {
-        esp_zb_zdo_touchlink_target_set_timeout(argtable.timeout->val[0]);
+        ezb_touchlink_set_target_timeout(argtable.timeout->val[0]);
     } else {
-        EXIT_ON_ERROR(ESP_ERR_NOT_SUPPORTED, cli_output_line("Get value is not supported."));
+        cli_output("%d\n", ezb_touchlink_get_target_timeout());
     }
 
 exit:
@@ -961,7 +922,7 @@ exit:
     return ret;
 }
 
-static esp_err_t cli_tl_rssi(esp_zb_cli_cmd_t *self, int argc, char **argv)
+static ezb_err_t cli_tl_rssi(esp_zb_cli_cmd_t *self, int argc, char **argv)
 {
     struct {
         arg_int_t *rssi;
@@ -972,17 +933,17 @@ static esp_err_t cli_tl_rssi(esp_zb_cli_cmd_t *self, int argc, char **argv)
         .help = arg_lit0(NULL, "help", "Print this help message"),
         .end = arg_end(2),
     };
-    esp_err_t ret = ESP_OK;
+    ezb_err_t ret = EZB_ERR_NONE;
 
     /* Parse command line arguments */
     int nerrors = arg_parse(argc, argv, (void**)&argtable);
-    EXIT_ON_FALSE(argtable.help->count == 0, ESP_OK, arg_print_help((void**)&argtable, argv[0]));
-    EXIT_ON_FALSE(nerrors == 0, ESP_ERR_INVALID_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
+    EXIT_ON_FALSE(argtable.help->count == 0, EZB_ERR_NONE, arg_print_help((void**)&argtable, argv[0]));
+    EXIT_ON_FALSE(nerrors == 0, EZB_ERR_INV_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
 
     if (argtable.rssi->count > 0) {
-        esp_zb_zdo_touchlink_set_rssi_threshold(argtable.rssi->ival[0]);
+        ezb_touchlink_set_rssi_threshold(argtable.rssi->ival[0]);
     } else {
-        cli_output("%d\n", esp_zb_zdo_touchlink_get_rssi_threshold());
+        cli_output("%d\n", ezb_touchlink_get_rssi_threshold());
     }
 
 exit:
@@ -990,7 +951,7 @@ exit:
     return ret;
 }
 
-static esp_err_t cli_tl_key(esp_zb_cli_cmd_t *self, int argc, char **argv)
+static ezb_err_t cli_tl_key(esp_zb_cli_cmd_t *self, int argc, char **argv)
 {
     struct {
         arg_hex_t *key;
@@ -1001,18 +962,20 @@ static esp_err_t cli_tl_key(esp_zb_cli_cmd_t *self, int argc, char **argv)
         .help = arg_lit0(NULL, "help", "Print this help message"),
         .end = arg_end(2),
     };
-    esp_err_t ret = ESP_OK;
+    ezb_err_t ret = EZB_ERR_NONE;
 
     /* Parse command line arguments */
     int nerrors = arg_parse(argc, argv, (void**)&argtable);
-    EXIT_ON_FALSE(argtable.help->count == 0, ESP_OK, arg_print_help((void**)&argtable, argv[0]));
-    EXIT_ON_FALSE(nerrors == 0, ESP_ERR_INVALID_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
+    EXIT_ON_FALSE(argtable.help->count == 0, EZB_ERR_NONE, arg_print_help((void**)&argtable, argv[0]));
+    EXIT_ON_FALSE(nerrors == 0, EZB_ERR_INV_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
 
     if (argtable.key->count > 0) {
-        EXIT_ON_FALSE(argtable.key->hsize[0] == 16, ESP_ERR_INVALID_ARG);
-        esp_zb_zdo_touchlink_set_master_key(argtable.key->hval[0]);
+        EXIT_ON_FALSE(argtable.key->hsize[0] == 16, EZB_ERR_INV_ARG);
+        ezb_touchlink_set_master_key(argtable.key->hval[0]);
     } else {
-        EXIT_ON_ERROR(ESP_ERR_NOT_SUPPORTED, cli_output_line("Get value is not supported."));
+        uint8_t key[EZB_CCM_KEY_SIZE];
+        EXIT_ON_ERROR(ezb_touchlink_get_master_key(key), cli_output_line("Fail to get master key."));
+        cli_output_buffer(key, EZB_CCM_KEY_SIZE);
     }
 
 exit:
@@ -1021,7 +984,7 @@ exit:
     return ret;
 }
 
-static esp_err_t cli_tl_keymask(esp_zb_cli_cmd_t *self, int argc, char **argv)
+static ezb_err_t cli_tl_keymask(esp_zb_cli_cmd_t *self, int argc, char **argv)
 {
     struct {
         arg_u16_t  *keymask;
@@ -1034,20 +997,19 @@ static esp_err_t cli_tl_keymask(esp_zb_cli_cmd_t *self, int argc, char **argv)
         .help    = arg_lit0(NULL, "help", "Print this help message"),
         .end = arg_end(2),
     };
-    esp_err_t ret = ESP_OK;
+    ezb_err_t ret = EZB_ERR_NONE;
 
     /* Parse command line arguments */
-    EXIT_ON_FALSE(argc > 1, ESP_OK, arg_print_help((void**)&argtable, argv[0]));
+    EXIT_ON_FALSE(argc > 1, EZB_ERR_NONE, arg_print_help((void**)&argtable, argv[0]));
     int nerrors = arg_parse(argc, argv, (void**)&argtable);
-    EXIT_ON_FALSE(nerrors == 0, ESP_ERR_INVALID_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
+    EXIT_ON_FALSE(nerrors == 0, EZB_ERR_INV_ARG, arg_print_errors(stdout, argtable.end, argv[0]));
 
-    esp_zb_zdo_touchlink_set_key_bitmask((esp_zb_touchlink_key_bitmask_t)argtable.keymask->val[0]);
+    ezb_touchlink_set_key_bitmask(argtable.keymask->val[0]);
 
 exit:
     ESP_ZB_CLI_FREE_ARGSTRUCT(&argtable);
     return ret;
 }
-
 
 DECLARE_ESP_ZB_CLI_CMD(role,    cli_role,,    "Get/Set the Zigbee role of a device");
 DECLARE_ESP_ZB_CLI_CMD(panid,   cli_panid,,   "Get/Set the (extended) PAN ID of the node");

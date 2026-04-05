@@ -1,15 +1,15 @@
 /*
- * SPDX-FileCopyrightText: 2024 Espressif Systems (Shanghai) CO LTD
+ * SPDX-FileCopyrightText: 2024-2026 Espressif Systems (Shanghai) CO LTD
  *
  * SPDX-License-Identifier: Apache-2.0
  */
 
+#include "cli_util.h"
+
 #include <stdarg.h>
 #include <string.h>
-
+#include <stdio.h>
 #include "esp_log.h"
-
-#include "cli_util.h"
 
 void cli_output(const char *format, ...)
 {

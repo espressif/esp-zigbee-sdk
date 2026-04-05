@@ -1,0 +1,12 @@
+## IDF Component Manager Manifest File
+dependencies:
+  ## Required IDF version
+  espressif/esp_delta_ota: "~1.1.0"
+  idf:
+    version: ">=5.2"
+  espressif/esp-zigbee-lib:
+    version: ">=2.0.0"
+  alarm_timer:
+    path: "../../../utils/alarm_timer"
+  delta_ota:
+    path: "../../../utils/delta_ota"

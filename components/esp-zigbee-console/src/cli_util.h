@@ -1,11 +1,14 @@
 /*
- * SPDX-FileCopyrightText: 2024 Espressif Systems (Shanghai) CO LTD
+ * SPDX-FileCopyrightText: 2024-2026 Espressif Systems (Shanghai) CO LTD
  *
  * SPDX-License-Identifier: Apache-2.0
  */
 #pragma once
 
-#include "esp_err.h"
+#include <stdint.h>
+#include <stddef.h>
+#include <inttypes.h>
+#include "esp_compiler.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -22,8 +25,8 @@ extern "C" {
     } while(0);
 
 #define EXIT_ON_ERROR(x, ...) do {                                              \
-        esp_err_t err_rc_ = (x);                                                \
-        if (unlikely(err_rc_ != ESP_OK)) {                                      \
+        int err_rc_ = (x);                                                      \
+        if (unlikely(err_rc_ != 0)) {                                           \
             ret = err_rc_;                                                      \
             __VA_ARGS__;                                                        \
             goto exit;                                                          \

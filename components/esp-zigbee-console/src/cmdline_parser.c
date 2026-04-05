@@ -1,14 +1,15 @@
 /*
- * SPDX-FileCopyrightText: 2024 Espressif Systems (Shanghai) CO LTD
+ * SPDX-FileCopyrightText: 2024-2026 Espressif Systems (Shanghai) CO LTD
  *
  * SPDX-License-Identifier: Apache-2.0
  */
 
-#include <string.h>
-
-#include "esp_check.h"
-
 #include "cmdline_parser.h"
+
+#include <string.h>
+#include <stdbool.h>
+#include "esp_check.h"
+#include "ezbee/zcl/zcl_type.h"
 
 #define TAG ""
 
@@ -174,19 +175,19 @@ esp_err_t parse_attr_access(const char *string, uint8_t *access)
         switch (*cur) {
             case 'R':
             case 'r':
-                tmp_access |= ESP_ZB_ZCL_ATTR_ACCESS_READ_ONLY;
+                tmp_access |= EZB_ZCL_ATTR_ACCESS_READ;
                 break;
             case 'W':
             case 'w':
-                tmp_access |= ESP_ZB_ZCL_ATTR_ACCESS_WRITE_ONLY;
+                tmp_access |= EZB_ZCL_ATTR_ACCESS_WRITE;
                 break;
             case 'P':
             case 'p':
-                tmp_access |= ESP_ZB_ZCL_ATTR_ACCESS_REPORTING;
+                tmp_access |= EZB_ZCL_ATTR_ACCESS_REPORTING;
                 break;
             case 'S':
             case 's':
-                tmp_access |= ESP_ZB_ZCL_ATTR_ACCESS_SCENE;
+                tmp_access |= EZB_ZCL_ATTR_ACCESS_SCENE;
                 break;
             default:
                 ESP_RETURN_ON_ERROR(ESP_ERR_INVALID_ARG, TAG, "Invalid attr access: '%c'", *cur);

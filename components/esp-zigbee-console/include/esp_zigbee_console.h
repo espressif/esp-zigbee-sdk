@@ -1,12 +1,13 @@
 /*
- * SPDX-FileCopyrightText: 2024 Espressif Systems (Shanghai) CO LTD
+ * SPDX-FileCopyrightText: 2024-2026 Espressif Systems (Shanghai) CO LTD
  *
  * SPDX-License-Identifier: Apache-2.0
  */
 
 #pragma once
 
-#include "esp_zigbee_core.h"
+#include "esp_err.h"
+#include "esp_zigbee.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -39,10 +40,10 @@ esp_err_t esp_zb_console_deinit(void);
  * The function enables the ESP Zigbee Console to add/show/register
  * ZCL data model with `dm` command.
  *
- * @param ep_list   User defined endpoint list, NULL means an empty list.
+ * @param device_desc User defined device descriptor, NULL means an empty device.
  * @return ESP_OK on success, error code otherwise.
  */
-esp_err_t esp_zb_console_manage_ep_list(esp_zb_ep_list_t *ep_list);
+esp_err_t esp_zb_console_manage_ep_list(ezb_af_device_desc_t device_desc);
 
 #ifdef __cplusplus
 }
