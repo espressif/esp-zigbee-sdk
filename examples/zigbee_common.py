@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2024 Espressif Systems (Shanghai) CO LTD
+# SPDX-FileCopyrightText: 2026 Espressif Systems (Shanghai) CO LTD
 
 # SPDX-License-Identifier: CC0-1.0
 
@@ -10,8 +10,15 @@ import logging
 from constants import MatchPattern
 import re
 import pytest
+import pexpect
+from pytest_embedded_idf.dut import IdfDut
 
 logging.basicConfig(level=logging.INFO)
+
+def clean_buffer(dut: IdfDut) -> None:
+    str_length = str(len(dut.expect(pexpect.TIMEOUT, timeout=0.1)))
+    dut.expect(rf'[\s\S]{{{str_length}}}', timeout=10)
+
 
 
 def mark_chips(*marks):
@@ -46,15 +53,16 @@ ota_chip_test = mark_chips(
     pytest.mark.esp32h2,
 )
 
-def expect_decorator(pattern):
+def expect_decorator(pattern, timeout=5):
     def decorator(func):
         @wraps(func)
         def wrapper(self, *args, **kwargs):
             logs = kwargs.pop("logs", None)
+            expect_timeout = kwargs.pop("expect_timeout", timeout)
             if logs is not None:
                 match_result = re.compile(pattern).search(logs)
             else:
-                match_result = self.dut.expect(pattern, timeout=5)
+                match_result = self.dut.expect(pattern, timeout=expect_timeout)
             if not match_result:
                 assert False, f"No match found for pattern: {pattern}"
             matched_groups = match_result.groups()
@@ -79,17 +87,17 @@ class ExampleDevice:
         self.extended_pan_id = None
         self.network_info = None
 
-    @expect_decorator(r"Extended PAN ID: (?:0x)?([0-9a-fA-F]{16}|(?:[0-9a-fA-F]{2}:){7}[0-9a-fA-F]{2}), "
-                      r"PAN ID: (0x[a-fA-F0-9]{4}), "
-                      r"Channel:(\d+), "
-                      r"Short Address: (0x[a-fA-F0-9]{4})")
-    def get_formed_network_parameters(self, matched_values):
-        self.extended_pan_id, self.pan_id, self.channel, self.short_address = matched_values
-        if ":" in self.extended_pan_id:
-            self.extended_pan_id = self.extended_pan_id.replace(":", "")
-            self.extended_pan_id = '0x' + self.extended_pan_id
-        logging.info(f"Extended PAN ID: {self.extended_pan_id}, PAN ID: {self.pan_id},"
-                     f" Channel: {self.channel}, Short Address: {self.short_address}")
+    # Matches: PAN ID(0x%04hx, EXT: 0x%llx), Channel(%d), Short Address(0x%04hx)
+    @expect_decorator(
+        r"PAN ID\((0x[a-fA-F0-9]{4}),\s*EXT:\s*(0x[a-fA-F0-9]+)\),\s*"
+        r"Channel\((\d+)\),\s*Short Address\((0x[a-fA-F0-9]{4})\)"
+    )
+    def get_formed_network_parameters(self, matched_values, expect_timeout=15):
+        self.pan_id, self.extended_pan_id, self.channel, self.short_address = matched_values
+        logging.info(
+            f"Extended PAN ID: {self.extended_pan_id}, PAN ID: {self.pan_id},"
+            f" Channel: {self.channel}, Short Address: {self.short_address}"
+        )
         return self.extended_pan_id, self.pan_id, self.channel, self.short_address
 
     @expect_decorator(r"Match desc response: status\((\d+)\),\s*address\(0x([0-9a-fA-F]+)\),\s*endpoint\((\d+)\)")
@@ -98,19 +106,19 @@ class ExampleDevice:
         logging.info(f"Status: {status_value}, Address: {address_value}, Endpoint: {endpoint_value}")
         return matched_values
 
-    @expect_decorator(r"OTA version: (0x[0-9a-fA-F]+), image type: (0x[0-9a-fA-F]+), manufacturer code: (\d+)")
+    @expect_decorator(r"manuf_code=(0x[0-9a-fA-F]+), image_type=(0x[0-9a-fA-F]+), file_version=(0x[0-9a-fA-F]+)")
     def get_ota_information(self, matched_values):
-        ota_version, image_type, manufacturer_code = matched_values
+        manufacturer_code, image_type, ota_version = matched_values
         logging.info(f"OTA Version: {ota_version}, Image Type: {image_type}, Manufacturer Code: {manufacturer_code}")
         return matched_values
 
-    @expect_decorator(r"data from 0x0 to (0x[0-9a-fA-F]+): progress \[(\d+)/(\d+)\]")
+    @expect_decorator(r"In progress: \[(\d+) / (\d+)\]")
     def get_ota_transmits_data(self, matched_values):
-        client_address, progress, total = matched_values
-        logging.info(f"OTA client_address: {client_address}, progress: {progress}, total: {total}")
+        progress, total = matched_values
+        logging.info(f"OTA progress: {progress}, total: {total}")
         return matched_values
 
-    @expect_decorator(r"receives data: progress \[(\d+)/(\d+)\]")
+    @expect_decorator(r"In progress: \[(\d+) / (\d+)\]")
     def get_ota_receives_data(self, matched_values):
         progress, total = matched_values
         logging.info(f"progress: {progress}, total: {total}")
@@ -147,8 +155,8 @@ class ExampleDevice:
                      f"Cluster: {cluster}")
         return matched_values
 
-    def get_example_device_network_info(self, coordinator: bool):
-        self.get_formed_network_parameters()
+    def get_example_device_network_info(self, coordinator: bool, timeout=15):
+        self.get_formed_network_parameters(expect_timeout=timeout)
         assert self.extended_pan_id.strip('0:') != ''
         assert self.pan_id not in ZigbeeCIConstants.invalid_panid
         assert ZigbeeCIConstants.channel_min <= int(self.channel) <= ZigbeeCIConstants.channel_max, (
@@ -200,12 +208,14 @@ class CliDevice:
         self.dut.write(f'zha add {ep} {device_name}')
         self.dut.expect(f'{device_name} created with endpoint_id {ep}')
         self.dut.write('dm register')
+        self.dut.write('dm show')
 
     def _start_bdb_comm(self, mode):
         self.dut.write(f'bdb_comm start {mode}')
 
     def _execute_comm_and_get_return_value(self, comm, pattern):
         self.dut.write(comm)
+        self.dut.expect(comm)
         return self.get_cli_comm_return_value(pattern)[0]
 
     def _create_zb_device(self, device_name, mode, role, channel, network_type):
@@ -214,7 +224,21 @@ class CliDevice:
         self._set_network_type(network_type)
         ep = self.endpoint
         self._create_zha_device(device_name, ep)
-        self._start_bdb_comm(mode)
+        match_string = fr'({MatchPattern.join_success}|{MatchPattern.join_failed})'
+        if mode == 'steer':
+            joined = False
+            for _ in range(3):
+                self._start_bdb_comm(mode)
+                match = self.dut.expect(match_string, timeout=20)
+                if not match:
+                    assert False, 'Failed to join network in 20 seconds'
+                if match.group(1).decode() == MatchPattern.join_success:
+                    joined = True
+                    break
+            else:
+                assert joined, 'Failed to join the network in 3 times'
+        else:
+            self._start_bdb_comm(mode)
         time.sleep(1)
 
     def get_cli_comm_return_value(self, pattern, timeout=5):
@@ -308,6 +332,21 @@ class CliDevice:
         }
         logging.info(f"network_info: {self.network_info}")
 
+    def change_attribute_value(self, ep, cluster, attribute, value):
+        self.dut.write(f'dm write -e {ep} -c {cluster} -a {attribute} -v {value} -f')
+        self.dut.write(f'dm read -e {ep} -c {cluster} -a {attribute}')
+
+    def dm_add(self, endpoint, cluster=None, attr=None, attr_type=None, access=None, value=None, role='S',
+            force=False, manuf_code=None):
+        cmd = f'dm add -e {endpoint}'
+        cmd += f' -c {cluster} -r {role}' if cluster else ''
+        cmd += ' -f' if force else ''
+        cmd += f' -a {attr}' if attr is not None else ''
+        cmd += f' --type {attr_type}' if attr_type is not None else ''
+        cmd += f' --access {access}' if access is not None else ''
+        cmd += f' -v {value}' if value is not None else ''
+        cmd += f' --manuf {manuf_code}' if manuf_code is not None else ''
+        self.dut.write(cmd)
 
 class Common:
 
@@ -336,18 +375,32 @@ class Common:
         Common.check_network_matched(example_client.network_info, example_server.network_info)
 
     @staticmethod
-    def check_zigbee_sleep_intervals(example_dut):
-        sleep_pattern = r'ESP_ZB_SLEEP: Zigbee can sleep'
-        last_time = None
+    def check_zigbee_sleep_intervals(example_dut, min_boot_ms=30000):
+        enter_sleep_boot_ms_pat = re.compile(
+            r'I \((\d+)\) .*LIGHT_SLEEP_APP'
+        )
+        warmup_deadline = time.time() + 40
+        while time.time() < warmup_deadline:
+            match = example_dut.dut.expect(enter_sleep_boot_ms_pat, timeout=11)
+            assert match, 'expected Enter Light Sleep line with boot timestamp'
+            grp = match.group(1)
+            boot_ms = int(grp.decode() if isinstance(grp, bytes) else grp)
+            if boot_ms > min_boot_ms:
+                break
+        else:
+            assert False, f'timeout waiting for Enter Light Sleep with boot time > {min_boot_ms} ms'
+        logging.info(f'Enter Light Sleep with boot time > {min_boot_ms} ms')
+
+        sleep_start = r'Enter Light Sleep'
+        sleep_end = r'Exit Light Sleep'
+        match = example_dut.dut.expect(sleep_start, timeout=11)
+        assert match, 'expected Enter Light Sleep line'
         start_time = time.time()
-        while time.time() - start_time < 10:
-            match = example_dut.dut.expect(sleep_pattern, timeout=5)
-            current_time = time.time()
-            if match is not None and last_time is not None:
-                interval = current_time - last_time
-                assert interval <= 5, f"Interval between 'Zigbee can sleep' entries exceeds 5 seconds: {interval} " \
-                                      f"seconds"
-            last_time = current_time
+        match = example_dut.dut.expect(sleep_end, timeout=11)
+        assert match, 'expected Exit Light Sleep line'
+        interval = time.time() - start_time
+        logging.info(f"Interval: {interval} seconds")
+        assert interval > 5 and interval <= 10, f"Interval: {interval} seconds"
 
     @staticmethod
     def cli_light_control_and_check(cli_switch, example_light, on: bool):
@@ -364,14 +417,13 @@ class Common:
     def cli_create_and_verify_network_connection(source_device, destination_device, source_device_name,
                                                  destination_device_name, network_type):
         source_device.create_coordinator(device_name=source_device_name, network_type=network_type)
-        source_device.check_response(MatchPattern.form_success)
+        source_device.check_response(MatchPattern.form_success, timeout=5)
 
         source_device.get_device_network_info(coordinator=True)
         source_device.network_open()
 
         destination_device.create_router(device_name=destination_device_name, network_type=network_type)
-        source_device.check_response(MatchPattern.device_commission)
-        destination_device.check_response(MatchPattern.joined_network, timeout=3)
+        source_device.check_response(MatchPattern.device_commission, timeout=5)
 
         destination_device.get_device_network_info(coordinator=False)
         Common.check_network_matched(source_device.network_info, destination_device.network_info)
@@ -407,27 +459,20 @@ class Common:
             time.sleep(1)
 
     @staticmethod
-    def cli_color_switch_and_check_rsp(switch_device, light_device, cmd, expect_x_value='', expect_y_value='', payload='',
-                                       send_read=True):
+    def cli_color_switch_and_check_rsp(switch_device, light_device, cmd, expect_x_value='', expect_y_value='', payload=''):
         cluster = ZigbeeCIConstants.color_control_cluster_id
         switch_device.zcl_send_raw_and_check(switch_device.endpoint, cluster, cmd, light_device.short_address,
                                              light_device.endpoint, payload=payload)
+
+        if cmd == '0x09':
+            time.sleep(5)
+
         if cmd == '0x08':
             time.sleep(2.4)
             switch_device.zcl_send_raw_and_check(switch_device.endpoint, cluster, '0x47', light_device.short_address,
                                                  light_device.endpoint)
-        if cmd == '0x09':
-            time.sleep(5)
         light_device.check_hex_response(expect_x_value)
         light_device.check_hex_response(expect_y_value)
-        time.sleep(1)
-        if send_read:
-            switch_device.zcl_send_gen_and_check('read', switch_device.endpoint, cluster, light_device.short_address,
-                                                 light_device.endpoint, attr=3)
-            switch_device.check_hex_response(expect_x_value)
-            switch_device.zcl_send_gen_and_check('read', switch_device.endpoint, cluster, light_device.short_address,
-                                                 light_device.endpoint, attr=4)
-            switch_device.check_hex_response(expect_y_value)
 
     @staticmethod
     def check_connection_status(src_device, dst_addr):

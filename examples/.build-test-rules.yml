@@ -2,9 +2,8 @@
 
 .config_radio_native_targets: &config_radio_native_targets
   enable:
+    - if: SOC_IEEE802154_SUPPORTED == 1
     - if: IDF_TARGET in ["esp32c6", "esp32h2"]
-      temporary: true
-      reason: the other targets are not tested yet
     - if: IDF_TARGET == "esp32c5" and (IDF_VERSION >= "v5.5" or IDF_VERSION == "master")
       temporary: true
       reason: esp32c5 is only supported in IDF v5.5+
@@ -18,62 +17,54 @@
       temporary: true
       reason: esp32c5 is only supported in IDF v5.5+
 
-examples/esp_zigbee_gateway:
+.example_no_build: &example_no_build
+  disable:
+    - if: INCLUDE_DEFAULT == 1
+
+examples/zigbee_gateway:
   <<: *config_rcp_host_targets
 
-examples/esp_zigbee_host:
-  <<: *config_rcp_host_targets
-
-examples/esp_zigbee_all_device_types_app:
+examples/all_device_types_app:
   <<: *config_radio_native_targets
 
-examples/esp_zigbee_customized_devices/customized_client:
+examples/ota_upgrade/ota_client:
   <<: *config_radio_native_targets
 
-examples/esp_zigbee_customized_devices/customized_server:
+examples/ota_upgrade/ota_server:
   <<: *config_radio_native_targets
 
-examples/esp_zigbee_ota/ota_client:
+examples/home_automation_devices/thermostat:
   <<: *config_radio_native_targets
 
-examples/esp_zigbee_ota/ota_server:
+examples/home_automation_devices/temperature_sensor:
   <<: *config_radio_native_targets
 
-examples/esp_zigbee_HA_sample/HA_color_dimmable_light:
+examples/home_automation_devices/color_dimmable_light:
   <<: *config_radio_native_targets
 
-examples/esp_zigbee_HA_sample/HA_color_dimmable_switch:
+examples/home_automation_devices/color_dimmer_switch:
   <<: *config_radio_native_targets
 
-examples/esp_zigbee_HA_sample/HA_on_off_light:
+examples/home_automation_devices/on_off_light:
   <<: *config_radio_native_targets
 
-examples/esp_zigbee_HA_sample/HA_on_off_switch:
+examples/home_automation_devices/on_off_switch:
   <<: *config_radio_native_targets
 
-examples/esp_zigbee_HA_sample/HA_temperature_sensor:
+examples/sleepy_devices/deep_sleep_end_device:
   <<: *config_radio_native_targets
 
-examples/esp_zigbee_HA_sample/HA_thermostat:
+examples/sleepy_devices/light_sleep_end_device:
   <<: *config_radio_native_targets
 
-examples/esp_zigbee_touchlink/touchlink_light:
+examples/customized_devices/data_consumer:
   <<: *config_radio_native_targets
 
-examples/esp_zigbee_touchlink/touchlink_switch:
+examples/customized_devices/data_producer:
   <<: *config_radio_native_targets
 
-examples/esp_zigbee_ncp:
+examples/touchlink/touchlink_initiator:
   <<: *config_radio_native_targets
 
-examples/esp_zigbee_sleep/deep_sleep:
-  <<: *config_radio_native_targets
-
-examples/esp_zigbee_sleep/light_sleep:
-  <<: *config_radio_native_targets
-
-examples/esp_zigbee_greenpower/esp_zigbee_gpc:
-  <<: *config_radio_native_targets
-
-examples/esp_zigbee_greenpower/esp_zigbee_gpd:
+examples/touchlink/touchlink_target:
   <<: *config_radio_native_targets

@@ -2,13 +2,13 @@ include:
   - '.gitlab/ci/common.yml'
 
 .common_before_scripts: &common_before_scripts
-  - source tools/ci/utils.sh
+  - source tools/ci/ci_utils.sh
   - setup_idf
-  - setup_zboss_lib
-  - bash tools/ci/update_cmake_files.sh
+  - setup_esp_zigbee_sdk
   - pip install -r tools/ci/requirements-build.txt
+  - update_lib_path
 
-.build_pytest_template_base:
+.build_example_template:
   stage: build
   before_script:
     - *common_before_scripts
@@ -28,84 +28,27 @@ include:
   tags:
     - build
 
-.build_pytest_template_idf_example:
+.build_non_pytest_example:
   extends:
-    - .build_pytest_template_base
+    - .build_example_template
   script:
-    - build_example ${CI_PROJECT_DIR}/examples/esp_zigbee_all_device_types_app esp32h2 esp32c6 esp32c5
-    - update_idf_cmake_list
-    - update_gateway_wifi_config ${IDF_PATH}/examples/zigbee/esp_zigbee_gateway
-    - cd ${IDF_PATH}
-    # Skip using IDF build app configuration
-    - rm -f .idf_build_apps.toml
-    - python ${CI_PROJECT_DIR}/tools/ci/build_apps.py ./examples/zigbee
+    - python tools/ci/build_apps.py ./examples --no_pytest --ignore_warning
 
-.build_pytest_template_sdk_example:
+.build_pytest_sdk_example:
   extends:
-    - .build_pytest_template_base
+    - .build_example_template
   parallel: 4
   script:
-    - update_gateway_wifi_config ${CI_PROJECT_DIR}/examples/esp_zigbee_gateway
-    - python tools/ci/build_apps.py ./examples --pytest
+    - update_gateway_wifi_config ${CI_PROJECT_DIR}/examples/zigbee_gateway
+    - python tools/ci/build_apps.py ./examples --pytest --ignore_warning
 
-.build_pytest_gateway_template_base:
-  stage: build
-  before_script:
-    - *common_before_scripts
-  image: ${CI_DOCKER_REGISTRY}/esp-env-${DOCKER_ENV_VERSION}
-  artifacts:
-    paths:
-      - "**/build*/*.bin"
-      - "**/build*/*.map"
-      - "**/build*/*.elf"
-      - "**/build*/flasher_args.json"
-      - "**/build*/flash_project_args"
-      - "**/build*/config/sdkconfig.json"
-      - "**/build*/bootloader/*.bin"
-      - "**/build*/partition_table/*.bin"
-    when: always
-    expire_in: 4 days
-  tags:
-    - build
-
-.build_pytest_gateway_template_sdk_example:
+.build_pytest_gateway_sdk_example:
   extends:
-    - .build_pytest_gateway_template_base
+    - .build_example_template
   script:
-    - build_example ${CI_PROJECT_DIR}/examples/esp_zigbee_all_device_types_app esp32h2
+    - build_example ${CI_PROJECT_DIR}/examples/all_device_types_app esp32h2
     # true means enable rcp update
-    - build_rcp_gateway ${CI_PROJECT_DIR}/examples/esp_zigbee_gateway true
-
-.build_pytest_gateway_template_idf_example:
-  extends:
-    - .build_pytest_gateway_template_base
-  script:
-    - build_example ${CI_PROJECT_DIR}/examples/esp_zigbee_all_device_types_app esp32h2
-    - update_idf_cmake_list
-    # false means not enable rcp update
-    - build_rcp_gateway ${IDF_PATH}/examples/zigbee/esp_zigbee_gateway false
-
-.build_non_pytest_template_sdk_example:
-  stage: build
-  before_script:
-    - *common_before_scripts
-  image: ${CI_DOCKER_REGISTRY}/esp-env-${DOCKER_ENV_VERSION}
-  artifacts:
-    paths:
-      - "**/build*/*.bin"
-      - "**/build*/flasher_args.json"
-      - "**/build*/config/sdkconfig.json"
-      - "**/build*/bootloader/*.bin"
-      - "**/build*/partition_table/*.bin"
-    when: always
-    expire_in: 4 days
-  parallel: 4
-  script:
-    - python tools/ci/build_apps.py ./examples --no_pytest
-      --parallel-count ${CI_NODE_TOTAL:-1}
-      --parallel-index ${CI_NODE_INDEX:-1}
-  tags:
-    - build
+    - build_rcp_gateway ${CI_PROJECT_DIR}/examples/zigbee_gateway true
 
 .pytest_template_base:
   stage: target_test
@@ -119,17 +62,10 @@ include:
     - ${CHIP}
     - zigbee_multi_dut
 
-.pytest_template_idf_example:
-  extends:
-    - .pytest_template_base
-  script:
-    - export IDF_PATH=${CI_PROJECT_DIR}/esp-idf
-    - pip install -r tools/ci/requirements-pytest.txt
-    - find examples/ -name "pytest_*.py" | xargs pytest --target ${CHIP} -m idf_example
-
-.pytest_template_sdk_example:
+.pytest_sdk_example:
   extends:
     - .pytest_template_base
   script:
     - pip install -r tools/ci/requirements-pytest.txt
     - find examples/ -name "pytest_*.py" | xargs pytest --target ${CHIP} -m zigbee_multi_dut
+

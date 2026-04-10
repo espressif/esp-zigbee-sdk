@@ -1,7 +1,5 @@
-# SPDX-FileCopyrightText: 2022 Espressif Systems (Shanghai) CO LTD
-
-# SPDX-License-Identifier: CC0-1.0
-
+# SPDX-FileCopyrightText: 2022-2026 Espressif Systems (Shanghai) CO LTD
+# SPDX-License-Identifier: Apache-2.0.
 # This file is used in CI generate binary files for different kinds of apps
 
 import argparse
@@ -11,41 +9,49 @@ from typing import List
 from pathlib import Path
 from idf_build_apps import App, build_apps, find_apps, setup_logging
 
-# from idf_ci_utils import IDF_PATH, get_pytest_app_paths, get_pytest_cases, get_ttfw_app_paths
 APPS_BUILD_PER_JOB = 30
-
 targets_for_gateway = ["esp32c6", "esp32c5"]
 targets_for_generic_apps = ["esp32h2", "esp32c6", "esp32c5"]
 targets_for_ota = ['esp32h2']
-
 PYTEST_APPS = {
-    "esp_zigbee_all_device_types_app": targets_for_generic_apps,
-    "HA_color_dimmable_light": targets_for_generic_apps,
-    "customized_client": targets_for_generic_apps,
-    "customized_server": targets_for_generic_apps,
-    "light_sleep": targets_for_generic_apps,
-    "deep_sleep": targets_for_generic_apps,
-    "touchlink_switch": targets_for_generic_apps,
-    "touchlink_light": targets_for_generic_apps,
-    "esp_zigbee_gateway": targets_for_gateway,
+    "all_device_types_app": targets_for_generic_apps,
+    "light_sleep_end_device": targets_for_generic_apps,
+    "deep_sleep_end_device": targets_for_generic_apps,
+    "touchlink_initiator": targets_for_generic_apps,
+    "touchlink_target": targets_for_generic_apps,
+    "zigbee_gateway": targets_for_gateway,
     "ota_client": targets_for_ota,
     "ota_server": targets_for_ota,
+    "color_dimmable_light": targets_for_generic_apps,
+    "color_dimmer_switch": targets_for_generic_apps,
+    "on_off_light": targets_for_generic_apps,
+    "on_off_switch": targets_for_generic_apps,
+    "thermostat": targets_for_generic_apps,
+    "temperature_sensor": targets_for_generic_apps,
+    "data_consumer": targets_for_generic_apps,
+    "data_producer": targets_for_generic_apps,
 }
 
-IGNORE_WARNINGS = [
-    r"warning: 'init_spiffs' defined but not used",
-    r"warning: 'esp_zb_gateway_board_try_update' defined but not used",
-    r"DeprecationWarning: pkg_resources is deprecated as an API",
-    r"Warning: Deprecated: Option '--flash_mode' is deprecated. Use '--flash-mode' instead.",
-    r"Warning: Deprecated: Option '--flash_freq' is deprecated. Use '--flash-freq' instead.",
-    r"Warning: Deprecated: Option '--flash_size' is deprecated. Use '--flash-size' instead."
-]
+DEFAULT_IGNORE_WARNING_FILE = Path(__file__).resolve().parent / 'ignore_build_warnings.txt'
+
+
+def _load_ignore_warnings_from_file(filepath: Path) -> List[str]:
+    """Load ignore warning regex patterns from file (one per line, skip empty and # lines)."""
+    if not filepath.exists():
+        return []
+    patterns = []
+    with open(filepath, 'r', encoding='utf-8') as f:
+        for line in f:
+            line = line.strip()
+            if line and not line.startswith('#'):
+                patterns.append(line)
+    return patterns
+
 
 def _is_pytest_app(app: App) -> bool:
     if app.name in PYTEST_APPS and app.target in PYTEST_APPS[app.name]:
         return True
     return False
-
 
 def get_cmake_apps(
         path: str,
@@ -76,29 +82,30 @@ def main(args: argparse.Namespace) -> None:
         apps_for_build = [app for app in apps if not _is_pytest_app(app)]
     elif args.pytest:
         apps_for_build = [app for app in apps if _is_pytest_app(app)]
+    elif args.example:
+        apps_for_build = [app for app in apps if args.example == app.name]
     else:
         apps_for_build = apps[:]
     assert apps_for_build, 'Found no apps for build'
-    print(f'Found {len(apps_for_build)} apps after filtering')
-    print(f'Suggest setting the parallel count to {len(apps_for_build) // APPS_BUILD_PER_JOB + 1} for this build job')
+    print('Found {} apps after filtering'.format(len(apps_for_build)))
+    for app in apps_for_build:
+        print(app.name, app.target)
+    print('Suggest setting the parallel count to {} for this build job'.format(len(apps_for_build) // APPS_BUILD_PER_JOB + 1))
 
-    ignore_warnings = IGNORE_WARNINGS
+    ignore_warnings = []
     if args.ignore_warning:
-        ignore_warnings = [r"warning: .*",
-                           r"Warning: .*"]
+        ignore_warnings = _load_ignore_warnings_from_file(DEFAULT_IGNORE_WARNING_FILE)
     ret_code = build_apps(
         apps_for_build,
         parallel_count=args.parallel_count,
         parallel_index=args.parallel_index,
         dry_run=False,
         collect_size_info=args.collect_size_info,
-        # build_verbose=0,
         keep_going=True,
         ignore_warning_strs=ignore_warnings,
         copy_sdkconfig=True,
     )
-
-    # revert_sdkconfig_files()
+    print('ret_code:{}'.format(ret_code))
     sys.exit(ret_code)
 
 
@@ -154,6 +161,10 @@ if __name__ == '__main__':
         action="store_true",
         help='Ignore all warnings',
     )
+    parser.add_argument(
+        '--example',
+        help='Build specific example',
+    )
     arguments = parser.parse_args()
-    setup_logging(verbose=1)  # Info
+    setup_logging(verbose=1)
     main(arguments)

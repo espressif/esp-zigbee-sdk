@@ -1,0 +1,10 @@
+# Regex patterns: build log lines matching any line below are ignored (not treated as failure).
+# One pattern per line; empty lines and lines starting with # are skipped.
+
+.*warning.*is deprecated.*
+.*Config key.*pyproject_toml_depth.*
+.*Config key.*pyproject_toml_table_header.*
+.*warning: unknown kconfig symbol 'COMPILER_DISABLE_DEFAULT_ERRORS'.*
+.*warning: unknown kconfig symbol 'ESP_SYSTEM_USE_FRAME_POINTER'.*
+.*warning: unknown kconfig symbol 'ULP_COPROC_ENABLED'.*
+.*warning: unknown kconfig symbol 'ULP_COPROC_RESERVE_MEM'.*

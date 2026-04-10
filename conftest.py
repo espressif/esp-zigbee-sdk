@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2021-2022 Espressif Systems (Shanghai) CO LTD
+# SPDX-FileCopyrightText: 2022-2026 Espressif Systems (Shanghai) CO LTD
 # SPDX-License-Identifier: Apache-2.0
 
 # pylint: disable=W0621  # redefined-outer-name
@@ -168,7 +168,7 @@ def build_dir(app_path: str, target: Optional[str], config: Optional[str]) -> st
     if target is not None and config is not None:
         check_dirs.append(f'build_{target}_{config}')
     if target is not None:
-        check_dirs.append(f'build_{target}')
+        check_dirs.append(f'build_{target}_default')
     if config is not None:
         check_dirs.append(f'build_{config}')
     check_dirs.append('build')

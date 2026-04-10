@@ -1,7 +1,15 @@
 export ESP_IDF_HTTP="https://gitlab-ci-token:${CI_JOB_TOKEN}@${ESP_GITLAB}/espressif/esp-idf.git"
-export ESP_ZBOSS_LIB_HTTP="https://gitlab-ci-token:${CI_JOB_TOKEN}@${ESP_GITLAB}/espressif/esp-zboss-lib.git"
+export ESP_ZIGBEE_SDK_HTTP="https://gitlab-ci-token:${CI_JOB_TOKEN}@${ESP_GITLAB}/espressif/esp-zigbee-sdk.git"
 
 shopt -s globstar # Allow ** for recursive matches
+
+function build_ot_rcp() {
+    pushd $CI_PROJECT_DIR/esp-idf/examples/openthread/ot_rcp || exit 1
+    echo "CONFIG_OPENTHREAD_NCP_VENDOR_HOOK=y" >> sdkconfig.defaults
+    idf.py set-target esp32h2
+    idf.py build
+    popd
+}
 
 function setup_idf() {
     pushd $CI_PROJECT_DIR
@@ -12,15 +20,26 @@ function setup_idf() {
     popd
 
     pushd esp-idf
+    git config --global url."https://gitlab-ci-token:${CI_JOB_TOKEN}@${ESP_GITLAB}/".insteadOf "https://${ESP_GITLAB}/"
     git submodule update --init --depth=1
+    # If IDF version is 5.3.4, download and apply patch
+    if [ "${IDF_VERSION}" == "v5.3.4" ]; then
+        commit_hash="b600b6a176f030b71780691d954c0f4feb9b0944"
+        git fetch origin ${commit_hash} 2>/dev/null || true
+        git cherry-pick ${commit_hash} || echo "Cherry-pick failed, continuing..."
+    fi
     ./install.sh
     . ./export.sh
     popd
+
+    build_ot_rcp
 }
 
-function setup_zboss_lib() {
-    pushd $CI_PROJECT_DIR
-    git clone --depth=1 -b $CI_COMMIT_REF_NAME ${ESP_ZBOSS_LIB_HTTP} || git clone --depth=1 -b master ${ESP_ZBOSS_LIB_HTTP}
+function setup_esp_zigbee_sdk() {
+    git clone --depth=1 -b ${CI_COMMIT_REF_NAME} ${ESP_ZIGBEE_SDK_HTTP} || git clone --depth=1 -b dev/2.x ${ESP_ZIGBEE_SDK_HTTP}
+    export ESP_ZB_SDK_PATH="${CI_PROJECT_DIR}/esp-zigbee-sdk"
+    pushd esp-zigbee-sdk
+    echo "Current checked out branch: $(git branch --show-current)"
     popd
 }
 
@@ -58,13 +77,7 @@ function build_rcp_gateway() {
     # $2 -> update_rcp: Boolean flag ("true" or "false") to enable RCP update configuration
     local gateway_dir="$1"
     local update_rcp="$2"
-
     update_gateway_wifi_config $gateway_dir
-    pushd $CI_PROJECT_DIR/esp-idf/examples/openthread/ot_rcp
-    echo "CONFIG_OPENTHREAD_NCP_VENDOR_HOOK=y" >> sdkconfig.defaults
-    idf.py set-target esp32h2
-    idf.py build
-    popd
 
     pushd $gateway_dir
     if [ "$update_rcp" == "true" ]; then
@@ -77,9 +90,14 @@ function build_rcp_gateway() {
     popd
 }
 
-function update_idf_cmake_list() {
-    echo "IDF_VERSION: $IDF_VERSION"
-    if [ "$IDF_VERSION" == "master" ] || [ "$IDF_VERSION" == "v5.5.1" ]; then
-        sed -i "/idf_component_register(/ s/$/ REQUIRES espressif__esp-zigbee-lib espressif__esp-zboss-lib/" "${IDF_PATH}"/examples/zigbee/**/main/CMakeLists.txt
-    fi
+function update_lib_path() {
+    find examples -type f -path "*/main/idf_component.yml" 2>/dev/null | while read -r f; do
+        echo "Processing $f"
+        sed -i '/espressif\/esp-zigbee-lib/ a\    path: "${CI_PROJECT_DIR}/components/esp-zigbee-lib"' "$f"
+    done
+    find components -type f -name "idf_component.yml" 2>/dev/null | while read -r f; do
+        echo "Processing $f"
+        sed -i '/espressif\/esp-zigbee-lib/ a\    path: "${CI_PROJECT_DIR}/components/esp-zigbee-lib"' "$f"
+    done
 }
+

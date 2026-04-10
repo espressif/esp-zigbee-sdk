@@ -7,3 +7,6 @@ stages:
 variables:
     DOCKER_ENV_FOR_GENERATE: "v5.5:3"
     DOCKER_ENV_FOR_DOCS: "v5.5:3-1"
+    CI_IDF_DEFAULT: "v5.5.4"
+    CI_IDF_LTS: "v5.2.6 v5.3.5 v5.4.3"
+
