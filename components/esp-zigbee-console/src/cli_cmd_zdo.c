@@ -363,9 +363,10 @@ static esp_err_t cli_zdo_match(esp_zb_cli_cmd_t *self, int argc, char **argv)
     req->profile_id = ESP_ZB_AF_HA_PROFILE_ID;
     req->num_in_clusters = in_num;
     req->num_out_clusters = out_num;
-    req->cluster_list = malloc(in_num + out_num);
-    memcpy(req->cluster_list, argtable.in_cluster->val, in_num);
-    memcpy(req->cluster_list + in_num, argtable.out_cluster->val, out_num);
+    req->cluster_list = malloc((in_num + out_num) * sizeof(uint16_t));
+    memcpy(req->cluster_list, argtable.in_cluster->val, in_num * sizeof(uint16_t));
+    memcpy(req->cluster_list + in_num, argtable.out_cluster->val, out_num * sizeof(uint16_t));
+
     if (argtable.profile_id->count > 0) {
         req->profile_id = argtable.profile_id->val[0];
     }
