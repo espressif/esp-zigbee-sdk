@@ -1,10 +1,13 @@
 # esp-zigbee-sdk
 
-## Introduction  
-  
+ESP-Zigbee-SDK v1.x is now under LTS maintenance (bug fixes only, no new features).
+We recommended to use [ESP-Zigbee-SDK v2.x](https://github.com/espressif/esp-zigbee-sdk/tree/main) for new designs and productions.
+
+## Introduction
+
 ESP-Zigbee-SDK is the official Zigbee development framework for Espressif's ESP32 series SoCs. It provides varieties of APIs aimed to simplify the development process of Zigbee products and enable the users to go to production in the shortest possible time.
 
-Refer [ESP Zigbee SDK Guide](https://docs.espressif.com/projects/esp-zigbee-sdk/en/latest) for the latest version of the documentation.
+Refer [ESP Zigbee SDK Guide](https://docs.espressif.com/projects/esp-zigbee-sdk/en/release-v1.0/) for the latest version of the documentation.
 
 ## Software Components
 
