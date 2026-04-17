@@ -4,7 +4,7 @@ include:
 .common_before_scripts: &common_before_scripts
   - source tools/ci/ci_utils.sh
   - setup_idf
-  - setup_esp_zigbee_sdk
+  - if [ -n "${UPSTREAM_JOB_ID}" ]; then prepare_esp_zigbee_lib; fi
   - pip install -r tools/ci/requirements-build.txt
   - update_lib_path
 

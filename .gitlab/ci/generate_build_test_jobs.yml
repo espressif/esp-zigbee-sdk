@@ -1,4 +1,10 @@
+.rules_generate_build_test:
+  rules:
+    - when: on_success
+
 generate_child_pipeline:
+  extends:
+    - .rules_generate_build_test
   stage: pre_build
   image: ${CI_DOCKER_REGISTRY}/esp-env-${DOCKER_ENV_FOR_GENERATE}
   artifacts:
@@ -26,6 +32,8 @@ generate_child_pipeline:
         --test_templates pytest_sdk_example
 
 build_and_test_pipeline_default:
+  extends:
+    - .rules_generate_build_test
   stage: build
   needs:
     - generate_child_pipeline
@@ -40,6 +48,8 @@ build_and_test_pipeline_default:
     strategy: depend
 
 build_and_test_pipeline_lts:
+  extends:
+    - .rules_generate_build_test
   stage: build
   needs:
     - generate_child_pipeline
