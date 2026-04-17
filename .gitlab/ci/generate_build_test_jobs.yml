@@ -5,7 +5,6 @@ generate_child_pipeline:
     paths:
       - child_pipeline_default.yml
       - child_pipeline_lts.yml
-      - child_pipeline_idf_example.yml
     expire_in: 3 days
     when: always
   tags:
@@ -14,23 +13,17 @@ generate_child_pipeline:
     - |
       python3 tools/ci/dynamic_pipelines/generate_child_pipeline.py \
         --result child_pipeline_default.yml \
-        --idf_version v5.5.1 \
-        --chips esp32h2 esp32c6 esp32s3 esp32c5\
-        --job_templates build_pytest_template_sdk_example build_non_pytest_template_sdk_example build_pytest_gateway_template_sdk_example pytest_template_sdk_example
+        --idf_version ${CI_IDF_DEFAULT} \
+        --chips esp32h2 esp32s3 esp32c6 esp32c5 \
+        --build_templates build_non_pytest_example build_pytest_sdk_example build_pytest_gateway_sdk_example \
+        --test_templates pytest_sdk_example
     - |
       python3 tools/ci/dynamic_pipelines/generate_child_pipeline.py \
         --result child_pipeline_lts.yml \
-        --idf_version v5.1.6 v5.2.5 v5.3.4 v5.4.2 \
-        --chips esp32h2 esp32c6 esp32s3 \
-        --job_templates build_pytest_template_sdk_example build_non_pytest_template_sdk_example build_pytest_gateway_template_sdk_example pytest_template_sdk_example \
-        --manual_pytest
-    - |
-      python3 tools/ci/dynamic_pipelines/generate_child_pipeline.py \
-        --result child_pipeline_idf_example.yml \
-        --idf_version v5.5.1 master \
-        --chips esp32h2 esp32c6 esp32s3 esp32c5 \
-        --job_templates build_pytest_template_idf_example build_pytest_gateway_template_idf_example pytest_template_idf_example \
-        --manual_pytest
+        --idf_version ${CI_IDF_LTS} \
+        --chips esp32h2 esp32s3 esp32c6 \
+        --build_templates build_non_pytest_example build_pytest_sdk_example build_pytest_gateway_sdk_example \
+        --test_templates pytest_sdk_example
 
 build_and_test_pipeline_default:
   stage: build
@@ -60,16 +53,3 @@ build_and_test_pipeline_lts:
       pipeline_variables: true
     strategy: depend
 
-build_and_test_pipeline_idf_example:
-  stage: build
-  needs:
-    - generate_child_pipeline
-  inherit:
-    variables: true
-  trigger:
-    include:
-      - artifact: child_pipeline_idf_example.yml
-        job: generate_child_pipeline
-    forward:
-      pipeline_variables: true
-    strategy: depend

@@ -1,16 +1,15 @@
-# SPDX-FileCopyrightText: 2022-2024 Espressif Systems (Shanghai) CO LTD
-
+# SPDX-FileCopyrightText: 2022-2026 Espressif Systems (Shanghai) CO LTD
 # SPDX-License-Identifier: CC0-1.0
 
 import pathlib
 import pytest
 from constants import MatchPattern
 import time
-from examples.constants import ZigbeeCIConstants
-from examples.zigbee_common import CliDevice, Common
-from examples.zigbee_common import generic_chips_zigbee_test
+from constants import ZigbeeCIConstants
+from zigbee_common import CliDevice, Common
+from zigbee_common import generic_chips_zigbee_test
 
-CLI_CURRENT_DIR_CLIENT = str(pathlib.Path(__file__).parent) + '/esp_zigbee_all_device_types_app'
+CLI_CURRENT_DIR_CLIENT = str(pathlib.Path(__file__).parent) + '/all_device_types_app'
 cli_build_dir = CLI_CURRENT_DIR_CLIENT + '|' + CLI_CURRENT_DIR_CLIENT
 
 
@@ -87,7 +86,7 @@ def test_zb_cli_zc_finding_binding(dut, count, app_path, erase_all) -> None:
     switch_device.check_response(MatchPattern.empty_binding_table)
 
 
-# #Case 3: Zigbee network ZCL command
+# Case 3: Zigbee network ZCL command
 @pytest.mark.order(3)
 @pytest.mark.zigbee_multi_dut
 @pytest.mark.parametrize('count, app_path, erase_all', [(2, cli_build_dir, 'y'), ], indirect=True, )
@@ -95,11 +94,10 @@ def test_zb_cli_zc_finding_binding(dut, count, app_path, erase_all) -> None:
 def test_zb_cli_zcl_command(dut, count, app_path, erase_all) -> None:
     switch_device = CliDevice(dut[0])
     light_device = CliDevice(dut[1])
-
-    Common.cli_create_and_verify_network_connection(switch_device, light_device, 'color_dimmable_switch',
+    Common.cli_create_and_verify_network_connection(switch_device, light_device, 'color_dimmer_switch',
                                                     'color_dimmable_light', 'c')
 
-    # zcl command on off 0x0006 cluster
+    # Zcl command on off 0x0006 cluster
     # On command
     Common.cli_light_switch_and_check_rsp(switch_device, light_device, '0x01', expect_rsp='01', send_read=True)
     # Off command
@@ -108,27 +106,27 @@ def test_zb_cli_zcl_command(dut, count, app_path, erase_all) -> None:
     Common.cli_light_switch_and_check_rsp(switch_device, light_device, '0x02', expect_rsp='01', send_read=True)
 
     # zcl command level-control 0x0008 cluster
-    # Move to level(with On/Off) command
+    # Move to level(with On/Off) command, 0xffff: as fast as possible
     Common.cli_level_switch_and_check_rsp(switch_device, light_device, '0x04', expect_rsp='05', payload='0x05ffff',
                                           send_read=True)
-    # Move (with On/Off) command
+    # Move (with On/Off) command, down: 0x01, rate: 0x05
     Common.cli_level_switch_and_check_rsp(switch_device, light_device, '0x05', expect_rsp='00', payload='0x0105',
                                           send_read=True)
-    # Step (with On/Off) command
-    Common.cli_level_switch_and_check_rsp(switch_device, light_device, '0x06', expect_rsp='05', payload='0x00053200',
+    # Step (with On/Off) command, step mode: 0x00 up, size: 0x05, transition time: 0x0028 = 4s
+    Common.cli_level_switch_and_check_rsp(switch_device, light_device, '0x06', expect_rsp='05', payload='0x00052800',
                                           send_read=True)
-    # Step (with On/Off) command and Stop command
-    Common.cli_level_switch_and_check_rsp(switch_device, light_device, '0x06', expect_rsp='08', payload='0x00051e00',
-                                          send_read=True, check_stop_move=True)
+    # Step (with On/Off) command and Stop command, step mode: 0x00 up, size: 0x05, transition time: 0x001e = 3s
+    Common.cli_level_switch_and_check_rsp(switch_device, light_device, '0x06', expect_rsp='07', payload='0x00051e00',
+                                          send_read=False, check_stop_move=True)
 
     # zcl command color-control 0x0300 cluster
-    # Move to color command
+    # Move to color command x: 0x3015 y: 0x3220
     Common.cli_color_switch_and_check_rsp(switch_device, light_device, '0x07', expect_x_value='15 30',
                                           expect_y_value='20 32', payload='0x153020320000')
-    # Move color command and check stop move
+    # Move color command and stop x: 0x3017, y: 0x3222, x rate: 0x0001, y rate: 0x0001
     Common.cli_color_switch_and_check_rsp(switch_device, light_device, '0x08', expect_x_value='17 30',
                                           expect_y_value='22 32', payload='0x01000100')
-    # Step color command x + 3, y + 3 in 5s
+    # Step color command step x: 0x0003, step y: 0x0003, transition time: 0x0032 = 5s
     Common.cli_color_switch_and_check_rsp(switch_device, light_device, '0x09', expect_x_value='1a 30',
                                           expect_y_value='25 32', payload='0x030003003200')
 
@@ -146,5 +144,5 @@ def test_zb_cli_zc_check_leaving(dut, count, app_path, erase_all) -> None:
                                                     'c')
     time.sleep(2)
     switch_device.zdo_nwk_leave_and_check(light_device.short_address)
-    switch_device.check_response(fr'Zigbee Node \({light_device.short_address}\) is leaving network')
-    light_device.check_response(MatchPattern.left_network, timeout=2)
+    switch_device.check_response(fr'Zigbee Node \({light_device.short_address}\) is leaving network', timeout=5)
+    light_device.check_response(MatchPattern.left_network, timeout=5)

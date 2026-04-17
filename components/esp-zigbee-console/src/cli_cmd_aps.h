@@ -7,6 +7,8 @@
 
 #include "cli_cmd.h"
 
+#include "ezbee/aps.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -21,9 +23,9 @@ typedef struct esp_zb_cli_aps_argtable_s {
 
 void esp_zb_cli_fill_aps_argtable(esp_zb_cli_aps_argtable_t *aps);
 
-esp_err_t esp_zb_cli_parse_aps_dst(esp_zb_cli_aps_argtable_t *parsed_argtable, esp_zb_addr_u *dst_addr_u,
-                                   uint8_t *dst_endpoint, esp_zb_aps_address_mode_t *address_mode,
-                                   uint8_t *src_endpoint, uint16_t *cluster_id, uint16_t *profile_id);
+ezb_err_t esp_zb_cli_parse_aps_dst(esp_zb_cli_aps_argtable_t *parsed_argtable, ezb_address_t *dst_addr,
+                                   uint8_t *dst_endpoint, uint8_t *src_endpoint,
+                                   uint16_t *cluster_id, uint16_t *profile_id);
 
 #ifdef __cplusplus
 }

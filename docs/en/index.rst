@@ -10,11 +10,11 @@ Table of Contents
 
 .. toctree::
    :maxdepth: 1
+   :numbered:
 
    introduction
    developing
-   certification
-   production
    user-guide/index
+   migration-guide/index
    api-reference/index
    faq

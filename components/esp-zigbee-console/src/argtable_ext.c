@@ -8,11 +8,10 @@
  *  This file implements the extensions of argtable3 used by esp-zigbee-console.
  */
 
-#include <string.h>
-
-#include "esp_check.h"
-
 #include "argtable_ext.h"
+
+#include <string.h>
+#include "esp_err.h"
 
 static void arg_common_resetfn(struct arg_lit* parent)
 {

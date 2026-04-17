@@ -1,5 +1,11 @@
 # Espressif Zigbee SDK Release Notes
 
+## 16-Apr-2026
+2.0.0 version release of ESP-ZIGBEE-SDK is based on esp-idf v5.5.4
+
+### Change
+- Remove the dependency on ZBOSS.
+
 ## 5-Nov-2025
 1.6.8 version release of ESP-ZIGBEE-SDK is based on esp-idf v5.5.1
 

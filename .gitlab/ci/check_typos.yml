@@ -5,7 +5,7 @@ check_typos:
     - pip install codespell
     - git fetch origin main
     - |
-      FILES=$(git diff --name-only origin/main...HEAD)
+      FILES=$(git diff --name-only --diff-filter=d origin/main...HEAD)
       echo "change files: $FILES"
       if [ -n "$FILES" ]; then
         ./tools/check_typos.sh $FILES

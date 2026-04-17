@@ -1,13 +1,19 @@
-# SPDX-FileCopyrightText: 2024 Espressif Systems (Shanghai) CO LTD
+# SPDX-FileCopyrightText: 2025 Espressif Systems (Shanghai) CO LTD
 # SPDX-License-Identifier: Apache-2.0
 """This file is used for generating the child pipeline for build jobs."""
 import argparse
+import os
+import sys
+
+# 添加当前目录到路径
+sys.path.insert(0, os.path.dirname(__file__))
+
 from models import BuildJob
 from utils import dump_jobs_to_yaml
-from constants import ZbCiCons
-import os
+from constants import EzDevCiCons
 
-def generate(idf_and_docker, generate_yaml, build_templates, pytest_job_template, chips, manual_pytest):
+
+def generate(idf_and_docker, generate_yaml, build_templates, test_job_template, chips, manual_pytest):
     generate_jobs = []
     for idf_version, docker_version in idf_and_docker.items():
         for job_name_fmt, tmpl in build_templates:
@@ -21,7 +27,8 @@ def generate(idf_and_docker, generate_yaml, build_templates, pytest_job_template
                     'IDF_VERSION': idf_version
                 }
             ))
-        if pytest_job_template:
+        if test_job_template:
+            assert chips, "chips is required when --test_templates is set"
             for chip in chips:
                 needs_target = (
                     f'build_pytest_examples_{idf_version}'
@@ -30,7 +37,7 @@ def generate(idf_and_docker, generate_yaml, build_templates, pytest_job_template
                 )
                 generate_jobs.append(BuildJob(
                     name=f'pytest_{chip}_{idf_version}',
-                    extends=[f'.{pytest_job_template}'],
+                    extends=[f'.{test_job_template}'],
                     variables={
                         'DOCKER_ENV_VERSION': docker_version[1],
                         'CHIP': chip,
@@ -39,36 +46,50 @@ def generate(idf_and_docker, generate_yaml, build_templates, pytest_job_template
                     needs=[needs_target],
                     when='manual' if manual_pytest else 'always'
                 ))
-    dump_jobs_to_yaml(generate_jobs, generate_yaml, ZbCiCons.PATH_TEMPLATE)
+    dump_jobs_to_yaml(generate_jobs, generate_yaml, EzDevCiCons.PATH_TEMPLATE)
+
 
 def match_idf_docker(idf_version):
     idf_and_docker = {}
-    for idf_version in idf_version:
-        if idf_version in ZbCiCons.IDF_DOCKER:
-            idf_and_docker[idf_version] = ZbCiCons.IDF_DOCKER[idf_version]
+    for version in idf_version:
+        if version in EzDevCiCons.IDF_DOCKER:
+            idf_and_docker[version] = EzDevCiCons.IDF_DOCKER[version]
         else:
-            raise ValueError(f'Invalid IDF version: {idf_version}')
+            raise ValueError(f'Invalid IDF version: {version}')
     return idf_and_docker
 
-def parse_job_templates(job_templates):
-    build_templates = []
-    pytest_template = None
-    for job in job_templates:
-        if "build_pytest_template" in job:
-            build_templates.append(('build_pytest_examples_{}', job))
-        elif "build_non_pytest_template" in job:
-            build_templates.append(('build_non_pytest_examples_{}', job))
-        elif "build_pytest_gateway_template" in job:
-            build_templates.append(('build_pytest_gateway_{}', job))
-        else:
-            pytest_template = job
-    return build_templates, pytest_template
+
+def parse_build_templates(build_template_names):
+    result = []
+    for name in build_template_names:
+        if "gateway" in name:
+            result.append(('build_pytest_gateway_{}', name))
+            continue
+        if "non_pytest" in name:
+            result.append(('build_non_pytest_{}', name))
+            continue
+        if "build_pytest" in name:
+            result.append(('build_pytest_examples_{}', name))
+            continue
+        result.append((name + '_{}', name))
+    return result
+
 
 def main(arg):
     idf_and_docker = match_idf_docker(arg.idf_version)
-    yaml_result_path = os.path.join(ZbCiCons.PATH_PROJECT, arg.result)
-    build_templates, pytest_template = parse_job_templates(arg.job_templates)
-    generate(idf_and_docker, yaml_result_path, build_templates, pytest_template, arg.chips, arg.manual_pytest)
+    yaml_result_path = os.path.join(EzDevCiCons.PATH_PROJECT, arg.result)
+    build_templates = parse_build_templates(arg.build_templates)
+    test_template = arg.test_templates[0] if arg.test_templates else None
+    if test_template and not arg.chips:
+        raise ValueError('--chips is required when --test_templates is set')
+    generate(
+        idf_and_docker,
+        yaml_result_path,
+        build_templates,
+        test_template,
+        arg.chips,
+        arg.manual_pytest,
+    )
 
 
 if __name__ == '__main__':
@@ -80,31 +101,41 @@ if __name__ == '__main__':
         '--idf_version',
         required=True,
         nargs='+',
-        help='List of IDF versions (e.g. v5.2.3 v5.1.4)',
+        help='List of IDF versions (e.g. v5.5.1 v5.5.2)',
     )
     parser.add_argument(
         '--result',
         required=True,
-        help='Output YAML name (e.g. idf.yml)',
+        help='Output YAML name (e.g. child_pipeline_default.yml)',
     )
     parser.add_argument(
         '--chips',
         default=None,
         nargs='+',
-        help='List of chip names (e.g. esp32c6 esp32h2 esp32s3)'
+        help='Chip names for pytest jobs (required if --test_templates is set)',
     )
     parser.add_argument(
-        '--job_templates',
+        '--build_templates',
         required=True,
-        help='job template names (e.g. build_pytest_template build_non_pytest_template build_pytest_gateway_template)',
         nargs='+',
+        metavar='TEMPLATE',
+        help='One or more build hidden template names (e.g. build_non_pytest_example build_pytest_sdk_example)',
     )
     parser.add_argument(
-        "--manual_pytest",
-        action="store_true",
-        dest="manual_pytest",
-        default=False,
-        help="Set pytest jobs to manual",
+        '--test_templates',
+        default=None,
+        nargs=1,
+        metavar='TEMPLATE',
+        help='Exactly one test (pytest) hidden template; omit if no pytest jobs in this pipeline',
     )
+    parser.add_argument(
+        '--manual_pytest',
+        action='store_true',
+        dest='manual_pytest',
+        default=False,
+        help='Set pytest jobs to manual',
+    )
+
     args = parser.parse_args()
     main(args)
+

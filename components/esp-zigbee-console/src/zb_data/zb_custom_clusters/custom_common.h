@@ -5,19 +5,16 @@
  */
 
 #pragma once
-#include "esp_zigbee_core.h"
-#include "ping_iperf_test.h"
 
-#define ESP_ZB_HA_CUSTOM_TEST_TOOL_DEVICE_ID 0xfff3
+#include "esp_zigbee.h"
+
+#define EZB_ZHA_CUSTOM_TEST_TOOL_DEVICE_ID 0xfff3
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
-esp_err_t esp_zb_custom_clusters_command_handler(const esp_zb_zcl_custom_cluster_command_message_t *message);
-
-esp_zb_cluster_list_t *esp_zb_custom_test_tool_clusters_create(void *test_tool_cfg);
+ezb_af_ep_desc_t ezb_zha_create_custom_test_tool(uint8_t ep_id, void *cfg);
 
 #ifdef __cplusplus
 }

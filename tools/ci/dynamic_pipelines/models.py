@@ -1,9 +1,10 @@
-# SPDX-FileCopyrightText: 2024 Espressif Systems (Shanghai) CO LTD
+# SPDX-FileCopyrightText: 2025 Espressif Systems (Shanghai) CO LTD
 # SPDX-License-Identifier: Apache-2.0
 import inspect
 import yaml
 
 class Job:
+    """Base class for GitLab CI job definition"""
     def __init__(
             self,
             name,
@@ -38,6 +39,8 @@ class Job:
         return yaml.dump(self.to_dict())  # type: ignore
 
     def set_variable(self, key, value):
+        if self.variables is None:
+            self.variables = {}
         self.variables[key] = value
 
     def to_dict(self):
@@ -69,12 +72,13 @@ class Job:
 
 
 class BuildJob(Job):
+    """Job class for build tasks"""
     def __init__(
             self,
             name,
-            extends= None,
+            extends=None,
             tags=None,
-            stage= None,
+            stage=None,
             **kwargs
     ):
         super().__init__(
@@ -84,3 +88,4 @@ class BuildJob(Job):
             stage=stage,
             **kwargs
         )
+
