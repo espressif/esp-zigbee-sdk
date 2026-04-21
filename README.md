@@ -19,7 +19,7 @@ The SDK is built on top of [ESP-IDF](https://github.com/espressif/esp-idf) and a
 [link-v2.x]: https://github.com/espressif/esp-zigbee-sdk/tree/main
 [link-dsr]: https://dsr-zoi.com
 
-If you are going to migrate from v1.x to v2.x, please refer to our [Migration Guide](https://docs.espressif.com/projects/esp-zigbee-sdk/en/latest/esp32/migration-guide.html).
+If you are going to migrate from v1.x to v2.x, please refer to our [Migration Guide](https://docs.espressif.com/projects/esp-zigbee-sdk/en/latest/esp32/migration-guide/index.html).
 
 ![esp_zigbee_stack](docs/_static/esp_zigbee_sdk.svg)
 
