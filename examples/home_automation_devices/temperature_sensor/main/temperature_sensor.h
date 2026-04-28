@@ -20,8 +20,9 @@
     {                                                   \
         .device_type = EZB_NWK_DEVICE_TYPE_END_DEVICE,  \
         .install_code_policy = false,                   \
-        .zczr_config = {                                \
-            .max_children = 10,                         \
+        .zed_config = {                                 \
+            .ed_timeout = EZB_NWK_ED_TIMEOUT_64MIN,     \
+            .keep_alive = 4000,                         \
         },                                              \
     }
 
