@@ -12,3 +12,7 @@ check_typos:
       fi
   tags:
     - build
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "pipeline"'
+      when: never
+    - when: on_success

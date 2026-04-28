@@ -1,0 +1,15 @@
+sync_test_branch:
+  stage: pre_build
+  image: ${CI_DOCKER_REGISTRY}/esp-env-${DOCKER_ENV_FOR_GENERATE}
+  tags:
+    - build
+  script:
+    - source tools/ci/ci_utils.sh
+    - init_ssh
+    - sync_branch main-ci-test main
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "pipeline"'
+      when: never
+    - if: '$CI_COMMIT_BRANCH == "main"'
+      when: on_success
+    - when: never

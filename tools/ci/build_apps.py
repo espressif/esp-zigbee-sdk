@@ -34,7 +34,6 @@ PYTEST_APPS = {
 
 DEFAULT_IGNORE_WARNING_FILE = Path(__file__).resolve().parent / 'ignore_build_warnings.txt'
 
-
 def _load_ignore_warnings_from_file(filepath: Path) -> List[str]:
     """Load ignore warning regex patterns from file (one per line, skip empty and # lines)."""
     if not filepath.exists():
@@ -47,6 +46,46 @@ def _load_ignore_warnings_from_file(filepath: Path) -> List[str]:
                 patterns.append(line)
     return patterns
 
+def _collect_unignored_log_lines(app: App) -> List[str]:
+    """Lines that idf_build_apps treats as error/warning and not covered by ignore_warning_strs."""
+    log_path = app.build_log_path
+    if not os.path.isfile(log_path):
+        return []
+    collected: List[str] = []
+    seen = set()
+    with open(log_path, encoding='utf-8', errors='replace') as fr:
+        for raw in fr:
+            line = raw.rstrip()
+            if not line:
+                continue
+            is_err_or_warn, ignored = app.is_error_or_warning(line)
+            if is_err_or_warn and not ignored and line not in seen:
+                seen.add(line)
+                collected.append(line)
+    return collected
+
+def _print_failed_builds_summary(apps: List[App]) -> None:
+    try:
+        from idf_build_apps.constants import BuildStatus
+    except ImportError:
+        return
+    failed = [a for a in apps if a.build_status == BuildStatus.FAILED]
+    if not failed:
+        return
+    print('=== CI: failed build(s) summary (exit code will be non-zero) ===')
+    for app in failed:
+        print('---')
+        print('app: {}  target: {}  config: {}'.format(app.name, app.target, app.config_name))
+        print('build_path: {}'.format(app.build_path))
+        print('build_comment: {}'.format(app.build_comment))
+        lines = _collect_unignored_log_lines(app)
+        if lines:
+            print('unignored error/warning lines from log ({}):'.format(len(lines)))
+            for ln in lines:
+                print(ln)
+        else:
+            print('no unignored error/warning lines from log')
+    print('=== end of failed build(s) summary ===')
 
 def _is_pytest_app(app: App) -> bool:
     if app.name in PYTEST_APPS and app.target in PYTEST_APPS[app.name]:
@@ -105,7 +144,8 @@ def main(args: argparse.Namespace) -> None:
         ignore_warning_strs=ignore_warnings,
         copy_sdkconfig=True,
     )
-    print('ret_code:{}'.format(ret_code))
+    if ret_code != 0:
+        _print_failed_builds_summary(apps_for_build)
     sys.exit(ret_code)
 
 

@@ -1,6 +1,5 @@
 export ESP_IDF_HTTP="https://gitlab-ci-token:${CI_JOB_TOKEN}@${ESP_GITLAB}/espressif/esp-idf.git"
 export ESP_ZIGBEE_SDK_HTTP="https://gitlab-ci-token:${CI_JOB_TOKEN}@${ESP_GITLAB}/espressif/esp-zigbee-sdk.git"
-
 shopt -s globstar # Allow ** for recursive matches
 
 function build_ot_rcp() {
@@ -9,6 +8,15 @@ function build_ot_rcp() {
     idf.py set-target esp32h2
     idf.py build
     popd
+}
+
+function init_ssh() {
+    mkdir -p ~/.ssh
+    chmod 700 ~/.ssh
+    echo -n "${GITLAB_KEY}" >~/.ssh/id_rsa_base64
+    base64 --decode --ignore-garbage ~/.ssh/id_rsa_base64 >~/.ssh/id_rsa
+    chmod 600 ~/.ssh/id_rsa
+    echo -e "Host gitlab.espressif.cn\n\tStrictHostKeyChecking no\n" >>~/.ssh/config
 }
 
 function setup_idf() {
@@ -35,12 +43,16 @@ function setup_idf() {
     build_ot_rcp
 }
 
-function setup_esp_zigbee_sdk() {
-    git clone --depth=1 -b ${CI_COMMIT_REF_NAME} ${ESP_ZIGBEE_SDK_HTTP} || git clone --depth=1 -b dev/2.x ${ESP_ZIGBEE_SDK_HTTP}
-    export ESP_ZB_SDK_PATH="${CI_PROJECT_DIR}/esp-zigbee-sdk"
-    pushd esp-zigbee-sdk
-    echo "Current checked out branch: $(git branch --show-current)"
-    popd
+function sync_branch() {
+    local source_branch="$1"
+    local target_branch="$2"
+    git config --global user.email "bot@espressif.com"
+    git config --global user.name "BOT"
+    git remote set-url --push origin "${ZIGBEE_SDK_REPO_URL}"
+    git fetch origin
+    git checkout -B ${source_branch} origin/${source_branch}
+    git reset --hard origin/${target_branch}
+    git push origin ${source_branch}
 }
 
 function build_example() {
@@ -91,6 +103,7 @@ function build_rcp_gateway() {
 }
 
 function update_lib_path() {
+    pushd $CI_PROJECT_DIR
     find examples -type f -path "*/main/idf_component.yml" 2>/dev/null | while read -r f; do
         echo "Processing $f"
         sed -i '/espressif\/esp-zigbee-lib/ a\    path: "${CI_PROJECT_DIR}/components/esp-zigbee-lib"' "$f"
@@ -99,5 +112,20 @@ function update_lib_path() {
         echo "Processing $f"
         sed -i '/espressif\/esp-zigbee-lib/ a\    path: "${CI_PROJECT_DIR}/components/esp-zigbee-lib"' "$f"
     done
+    popd
 }
 
+function prepare_esp_zigbee_lib() {
+    echo "UPSTREAM_JOB_ID: ${UPSTREAM_JOB_ID}"
+    local url="${CI_API_V4_URL}/projects/${UPSTREAM_PROJECT_ID}/jobs/${UPSTREAM_JOB_ID}/artifacts"
+    echo "prepare_esp_zigbee_lib: download artifacts from upstream job ${UPSTREAM_JOB_ID}"
+    pushd ${CI_PROJECT_DIR}
+    curl --location --fail --silent --show-error \
+        --header "JOB-TOKEN: ${CI_JOB_TOKEN}" \
+        "${url}" -o artifacts.zip
+    ls -al
+    unzip -o artifacts.zip
+    cp -rf esp-zigbee-lib/* "${CI_PROJECT_DIR}/components/esp-zigbee-lib/"
+    rm -f artifacts.zip
+    popd
+}
