@@ -2,6 +2,8 @@ workflow:
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
       when: never
+    - if: '$CI_COMMIT_BRANCH == "main-ci-test" && $CI_PIPELINE_SOURCE != "pipeline"'
+      when: never
     - when: always
 
 include:
