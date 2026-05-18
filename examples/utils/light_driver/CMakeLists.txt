@@ -1,5 +1,4 @@
 idf_component_register(SRC_DIRS "src"
                        INCLUDE_DIRS "include"
-                       REQUIRES
-                       led_strip
+                       REQUIRES led_strip
 )

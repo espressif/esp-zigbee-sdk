@@ -8,3 +8,6 @@
 .*warning: unknown kconfig symbol 'ESP_SYSTEM_USE_FRAME_POINTER'.*
 .*warning: unknown kconfig symbol 'ULP_COPROC_ENABLED'.*
 .*warning: unknown kconfig symbol 'ULP_COPROC_RESERVE_MEM'.*
+
+# Ignore warnings for mbedTLS configuarions
+.*warning: unknown kconfig symbol 'MBEDTLS\w+'.*
