@@ -28,8 +28,8 @@
 
 static void rcp_update(void)
 {
-    /* Deinit uart to transfer UART to the serial loader */
     ESP_LOGI(TAG, "Update RCP");
+    /* Stop Zigbee stack during RCP update */
     esp_zigbee_deinit();
     if (esp_rcp_update() != ESP_OK) {
         esp_rcp_mark_image_verified(false);
@@ -37,13 +37,19 @@ static void rcp_update(void)
     esp_restart();
 }
 
-static void rcp_failure_handler(void)
+static void rcp_fatal_failure_handler(void)
 {
 #if CONFIG_ZIGBEE_GW_AUTO_UPDATE_RCP
-    ESP_LOGI(TAG, "RCP failure, re-flashing RCP");
+    ESP_LOGW(TAG, "RCP failure, re-flashing RCP");
     rcp_update();
 #endif
     esp_restart();
+}
+
+static void rcp_failure_handler(void)
+{
+    ESP_LOGW(TAG, "RCP failure, reset RCP");
+    esp_rcp_reset();
 }
 
 esp_err_t esp_zigbee_rcp_update(void)
@@ -89,6 +95,8 @@ esp_err_t esp_zigbee_rcp_init(esp_rcp_update_config_t *config)
     ESP_ERROR_CHECK(esp_rcp_update_init(config));
 #if CONFIG_OPENTHREAD_SPINEL_ONLY
     esp_radio_spinel_register_rcp_failure_handler(rcp_failure_handler, ESP_RADIO_SPINEL_ZIGBEE);
+    esp_radio_spinel_set_compatibility_error_callback(rcp_fatal_failure_handler);
+    esp_radio_spinel_set_coprocessor_reset_failure_callback(rcp_fatal_failure_handler);
 #endif
     return ESP_OK;
 }
@@ -96,6 +104,8 @@ esp_err_t esp_zigbee_rcp_init(esp_rcp_update_config_t *config)
 void esp_zigbee_rcp_deinit(void)
 {
 #if CONFIG_OPENTHREAD_SPINEL_ONLY
+    esp_radio_spinel_set_coprocessor_reset_failure_callback(NULL);
+    esp_radio_spinel_set_compatibility_error_callback(NULL);
     esp_radio_spinel_register_rcp_failure_handler(NULL, ESP_RADIO_SPINEL_ZIGBEE);
 #endif
     esp_rcp_update_deinit();
