@@ -9,9 +9,12 @@
 #include "esp_log.h"
 #include "nvs_flash.h"
 
-#if CONFIG_EXAMPLE_CONNECT_WIFI
+#if CONFIG_EXAMPLE_CONNECT_WIFI || CONFIG_EXAMPLE_CONNECT_ETHERNET
+#include "esp_event.h"
 #include "protocol_examples_common.h"
+#if CONFIG_EXAMPLE_CONNECT_WIFI
 #include "esp_wifi.h"
+#endif
 #endif
 
 #if CONFIG_ZIGBEE_GW_AUTO_UPDATE_RCP
@@ -32,22 +35,32 @@
 
 static const char *TAG = "ZIGBEE_GATEWAY";
 
-static esp_err_t esp_zigbee_connect_wifi(void)
+#if (CONFIG_EXAMPLE_CONNECT_WIFI || CONFIG_EXAMPLE_CONNECT_ETHERNET)
+static esp_err_t esp_zigbee_connect_netif(void)
 {
     esp_err_t ret = ESP_OK;
 #if CONFIG_EXAMPLE_CONNECT_WIFI
     wifi_ps_type_t ps_type = WIFI_PS_NONE;
-    ESP_RETURN_ON_ERROR(esp_netif_init(), TAG, "Failed to initialize network interface");
-    ESP_RETURN_ON_ERROR(esp_event_loop_create_default(), TAG, "Failed to create event loop");
 #if CONFIG_ESP_COEX_SW_COEXIST_ENABLE
-    esp_coex_wifi_i154_enable();
     ps_type = WIFI_PS_MIN_MODEM;
 #endif /* CONFIG_ESP_COEX_SW_COEXIST_ENABLE */
-    ESP_RETURN_ON_ERROR(example_connect(), TAG, "Failed to connect to Wi-Fi");
+#endif /* CONFIG_EXAMPLE_CONNECT_WIFI */
+
+    ESP_RETURN_ON_ERROR(esp_netif_init(), TAG, "Failed to initialize network interface");
+    ESP_RETURN_ON_ERROR(esp_event_loop_create_default(), TAG, "Failed to create event loop");
+
+#if CONFIG_ESP_COEX_SW_COEXIST_ENABLE
+    esp_coex_wifi_i154_enable();
+#endif /* CONFIG_ESP_COEX_SW_COEXIST_ENABLE*/
+
+    ESP_RETURN_ON_ERROR(example_connect(), TAG, "Failed to connect to Network Interface");
+
+#if CONFIG_EXAMPLE_CONNECT_WIFI
     ESP_RETURN_ON_ERROR(esp_wifi_set_ps(ps_type), TAG, "Failed to set power save type for Wi-Fi");
 #endif /* CONFIG_EXAMPLE_CONNECT_WIFI */
     return ret;
 }
+#endif /* (CONFIG_EXAMPLE_CONNECT_WIFI || CONFIG_EXAMPLE_CONNECT_ETHERNET) */
 
 static esp_err_t deferred_driver_init(void)
 {
@@ -214,8 +227,8 @@ static void esp_zigbee_stack_main_task(void *pvParameters)
     ESP_ERROR_CHECK(esp_zigbee_rcp_update());
 #endif
 
-#if CONFIG_EXAMPLE_CONNECT_WIFI
-    ESP_ERROR_CHECK(esp_zigbee_connect_wifi());
+#if (CONFIG_EXAMPLE_CONNECT_WIFI || CONFIG_EXAMPLE_CONNECT_ETHERNET)
+    ESP_ERROR_CHECK(esp_zigbee_connect_netif());
 #endif
 
     ESP_ERROR_CHECK(esp_zigbee_setup_commissioning());
