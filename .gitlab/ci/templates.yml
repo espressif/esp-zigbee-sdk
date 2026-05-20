@@ -41,6 +41,8 @@ include:
   script:
     - update_gateway_wifi_config ${CI_PROJECT_DIR}/examples/zigbee_gateway
     - python tools/ci/build_apps.py ./examples --pytest --ignore_warning
+      --parallel-count ${CI_NODE_TOTAL:-1}
+      --parallel-index ${CI_NODE_INDEX:-1}
 
 .build_pytest_gateway_sdk_example:
   extends:
