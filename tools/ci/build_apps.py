@@ -13,6 +13,7 @@ APPS_BUILD_PER_JOB = 30
 targets_for_gateway = ["esp32c6", "esp32c5"]
 targets_for_generic_apps = ["esp32h2", "esp32c6", "esp32c5"]
 targets_for_ota = ['esp32h2']
+DUAL_CHIP_GATEWAY_TARGETS = {"esp32s3", "esp32p4"}
 PYTEST_APPS = {
     "all_device_types_app": targets_for_generic_apps,
     "light_sleep_end_device": targets_for_generic_apps,
@@ -33,6 +34,7 @@ PYTEST_APPS = {
 }
 
 DEFAULT_IGNORE_WARNING_FILE = Path(__file__).resolve().parent / 'ignore_build_warnings.txt'
+DEFAULT_CONFIG_RULES = ['sdkconfig.defaults=default', 'sdkconfig.ci.*=', '=default']
 
 def _load_ignore_warnings_from_file(filepath: Path) -> List[str]:
     """Load ignore warning regex patterns from file (one per line, skip empty and # lines)."""
@@ -92,6 +94,18 @@ def _is_pytest_app(app: App) -> bool:
         return True
     return False
 
+def _is_dual_chip_gateway_app(app: App) -> bool:
+    return app.name == "zigbee_gateway" and app.target in DUAL_CHIP_GATEWAY_TARGETS
+
+def filter_apps_for_args(apps: List[App], args: argparse.Namespace) -> List[App]:
+    if args.no_pytest:
+        return [app for app in apps if not _is_pytest_app(app) and not _is_dual_chip_gateway_app(app)]
+    if args.pytest:
+        return [app for app in apps if _is_pytest_app(app) and not _is_dual_chip_gateway_app(app)]
+    if args.example:
+        return [app for app in apps if args.example == app.name]
+    return apps[:]
+
 def get_cmake_apps(
         path: str,
         target: str,
@@ -114,17 +128,11 @@ def get_cmake_apps(
     return apps
 
 def main(args: argparse.Namespace) -> None:
-    apps = get_cmake_apps(args.path, args.target, args.config)
+    config_rules = args.config if args.config is not None else DEFAULT_CONFIG_RULES
+    apps = get_cmake_apps(args.path, args.target, config_rules)
     # no_pytest and only_pytest can not be both True
     assert not (args.no_pytest and args.pytest)
-    if args.no_pytest:
-        apps_for_build = [app for app in apps if not _is_pytest_app(app)]
-    elif args.pytest:
-        apps_for_build = [app for app in apps if _is_pytest_app(app)]
-    elif args.example:
-        apps_for_build = [app for app in apps if args.example == app.name]
-    else:
-        apps_for_build = apps[:]
+    apps_for_build = filter_apps_for_args(apps, args)
     assert apps_for_build, 'Found no apps for build'
     print('Found {} apps after filtering'.format(len(apps_for_build)))
     for app in apps_for_build:
@@ -163,14 +171,13 @@ if __name__ == '__main__':
     )
     parser.add_argument(
         '--config',
-        default=['sdkconfig.defaults=default', 'sdkconfig.ci.*=', '=default'],
+        default=None,
         action='append',
-        help='Adds configurations (sdkconfig file names) to build. This can either be '
-             'FILENAME[=NAME] or FILEPATTERN. FILENAME is the name of the sdkconfig file, '
-             'relative to the project directory, to be used. Optional NAME can be specified, '
-             'which can be used as a name of this configuration. FILEPATTERN is the name of '
-             'the sdkconfig file, relative to the project directory, with at most one wildcard. '
-             'The part captured by the wildcard is used as the name of the configuration.',
+        metavar='CONFIG_RULE',
+        help='Sdkconfig configuration rule(s) to build. Repeat to pass multiple rules. '
+             'If omitted, uses: %(const)s. '
+             'Each rule is FILENAME[=NAME] or FILEPATTERN (e.g. sdkconfig.ci.esp32p4=esp32p4).'
+             % {'const': ', '.join(DEFAULT_CONFIG_RULES)},
     )
     parser.add_argument(
         '--parallel-count', default=1, type=int, help='Number of parallel build jobs.'

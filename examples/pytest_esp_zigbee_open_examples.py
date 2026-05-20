@@ -122,10 +122,9 @@ def test_zb_touch_link(dut, count, app_path, erase_all):
 # Case 9: Zigbee gateway test
 @pytest.mark.order(9)
 @pytest.mark.zigbee_multi_dut
-@pytest.mark.parametrize('count, app_path, target, erase_all', [(2, gateway_pytest_build_dir, 'esp32h2|esp32s3', 'y'), ],
-                         indirect=True, )
+@pytest.mark.parametrize('count, app_path, erase_all', [(2, gateway_pytest_build_dir, 'y'), ], indirect=True, )
 @dual_chip_gateway
-def test_zb_gateway(dut, count, app_path, target):
+def test_zb_gateway(dut, count, app_path, erase_all):
     gateway_device = ExampleDevice(dut[1])
     cli = CliDevice(dut[0])
     gateway_device.check_response(MatchPattern.update_the_rcp_version, timeout=30)

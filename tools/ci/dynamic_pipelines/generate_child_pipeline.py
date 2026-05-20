@@ -30,9 +30,12 @@ def generate(idf_and_docker, generate_yaml, build_templates, test_job_template, 
         if test_job_template:
             assert chips, "chips is required when --test_templates is set"
             for chip in chips:
+                # TODO: remove this after esp32p4 is supported in ci
+                if chip == 'esp32p4':
+                    continue
                 needs_target = (
                     f'build_pytest_examples_{idf_version}'
-                    if chip != 'esp32s3'
+                    if chip not in ['esp32s3', 'esp32p4']
                     else f'build_pytest_gateway_{idf_version}'
                 )
                 generate_jobs.append(BuildJob(
