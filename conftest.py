@@ -200,6 +200,19 @@ def junit_properties(
     record_xml_attribute('name', test_case_name)
 
 
+def _run_erase_all_flash() -> None:
+    erase_script = os.path.join(os.path.dirname(__file__), 'tools', 'erash_all.sh')
+    subprocess.run(['bash', erase_script], check=False)
+    time.sleep(1)
+
+
+def pytest_runtest_setup(item: Item) -> None:
+    """
+    Erase before fixture setup, so it runs before pytest-embedded flashes DUT binaries.
+    """
+    _run_erase_all_flash()
+
+
 @pytest.fixture()
 def teardown_fixture(dut):
     """
@@ -211,33 +224,9 @@ def teardown_fixture(dut):
     """
     yield
     # after test, close dut monitor, and do erase flash process
-    serial_port_list = []
     for device in dut:
         device.serial.close()
-        serial_port_list.append(device.serial.port)
-    proc = None
-
-    def erase_flash(serial_port):
-        proc = subprocess.Popen(f'python -m esptool --port {serial_port} erase_flash', shell=True)
-        proc.wait()
-        if proc.returncode != 0:
-            logging.warning(f"Erase failed on {serial_port}: {proc.returncode}")
-            return False
-        return True
-    # Erase flash on all ports, and retry if failed
-    failed_ports = []
-    for serial_port in serial_port_list:
-        logging.info(f'erase flash on serial_port: {serial_port}')
-        if not erase_flash(serial_port):
-            failed_ports.append(serial_port)
-
-    if failed_ports:
-        for port in failed_ports:
-            if not erase_flash(port):
-                logging.warning(f"Failed to erase flash on {port} again")
-    if proc is not None:
-        proc.kill()
-    time.sleep(1)
+    _run_erase_all_flash()
 
 @pytest.fixture(scope='function', autouse=True)
 def erase_esp32s3_port(request):
