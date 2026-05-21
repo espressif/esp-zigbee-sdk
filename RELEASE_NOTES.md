@@ -1,5 +1,48 @@
 # Espressif Zigbee SDK Release Notes
 
+## 22-May-2026
+2.0.1 version release of ESP-ZIGBEE-SDK is based on esp-idf v5.5.4
+
+### Features
+- Added esp-idf v6.0 support
+- Added esp32p4 support
+- Supported broadcasting passive ack
+- Added `ezb_zdo_sys_srv_disc_req()` to support ZDO System_Server_Discovery_req
+- Added APIs for attribute customization:
+  - `ezb_zcl_attr_desc_set_value()`
+  - `ezb_zcl_attr_desc_set_access()`
+  - `ezb_zcl_attr_desc_set_manuf_code()`
+- Added APIs for endpoint customization:
+  - `ezb_af_ep_desc_set_profile_id()`
+  - `ezb_af_ep_desc_get_app_version()`
+  - `ezb_af_ep_desc_set_app_version()`
+  - `ezb_af_ep_desc_get_app_device_id()`
+  - `ezb_af_ep_desc_set_app_device_id()`
+- Added `ezb_af_device_remove_endpoint_desc()` to remove endpoint from device
+- Added `ezb_af_endpoint_remove_cluster_desc()` to remove cluster from endpoint
+- Added `ezb_zcl_cluster_remove_attr_desc()` to remove attribute from cluster
+- Added `ezb_zcl_reporting_info_update_default_interval()` to update the default interval of ZCL reporting information
+
+### Bug Fixes
+- Fixed the time drift when ZCL clusters doing continuous value change
+- Fixed the issue that the device would leave the network unexpectedly when joining legacy coordinator
+- Fixed incorrect signal order when the device performed leaving with rejoin
+- Fixed the issue that the route discovery process would construct routes with asymmetric link
+- Fixed incorrect format of the frame sent by `ezb_zcl_ota_upgrade_query_next_image_cmd_req()`
+- Fixed the memory leak when receive ZDO Mgmt_Leave_req & Mgmt_NWK_Update_req commands
+- Fixed the joining status unalignment after rejoined by BDB initialization
+- Fixed the issues of address conflict detection and resolution
+- Fixed the issue that the frame was not send immediately after the route discovery succeeded
+- Fixed the assertion on router when preparing Link Status frame if it had unauthenticated router child
+- Fixed the crash on joiner device when the Rejoin Response arrived after timeouts
+- Fixed the crash when the device performed leave with rejoin if it was rejoined previously
+
+### Changes
+- Optimized the generation time of Link Status frame to improve the real-time performance
+- Accept ZDO Mgmt_Leave_req command from other routers to remove a child ED from the network
+- Switch crypto backend to PSA implementation
+
+
 ## 16-Apr-2026
 2.0.0 version release of ESP-ZIGBEE-SDK is based on esp-idf v5.5.4
 
