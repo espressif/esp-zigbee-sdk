@@ -45,9 +45,9 @@ single_chip_gateway = mark_chips(
     pytest.mark.esp32c5,
 )
 
-dual_chip_gateway = mark_chips(
-    pytest.mark.esp32s3,
-)
+def dual_chip_gateway(func):
+    func = pytest.mark.dual_chip_gateway(func)
+    return mark_chips(pytest.mark.esp32s3, pytest.mark.esp32p4)(func)
 
 ota_chip_test = mark_chips(
     pytest.mark.esp32h2,

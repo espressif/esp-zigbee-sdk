@@ -3,9 +3,11 @@ export ESP_ZIGBEE_SDK_HTTP="https://gitlab-ci-token:${CI_JOB_TOKEN}@${ESP_GITLAB
 shopt -s globstar # Allow ** for recursive matches
 
 function build_ot_rcp() {
+    local target="$1"
     pushd $CI_PROJECT_DIR/esp-idf/examples/openthread/ot_rcp || exit 1
+    rm -rf build dependencies.lock sdkconfig.old sdkconfig
     echo "CONFIG_OPENTHREAD_NCP_VENDOR_HOOK=y" >> sdkconfig.defaults
-    idf.py set-target esp32h2
+    idf.py set-target ${target}
     idf.py build
     popd
 }
@@ -39,8 +41,6 @@ function setup_idf() {
     ./install.sh
     . ./export.sh
     popd
-
-    build_ot_rcp
 }
 
 function sync_branch() {
@@ -53,21 +53,6 @@ function sync_branch() {
     git checkout -B ${source_branch} origin/${source_branch}
     git reset --hard origin/${target_branch}
     git push origin ${source_branch}
-}
-
-function build_example() {
-    # Arguments:
-    # $1 -> example_dir: The path to the example directory to be built
-    # $@ -> subsequent arguments: List of target platforms (e.g., esp32c6, esp32s3, etc.)
-    local example_dir="$1"
-    shift
-    pushd $example_dir || exit 1
-    for target in "$@"; do
-        echo "build example: ${example_dir} for target: ${target}"
-        idf.py -B build_${target}_default set-target ${target}
-        idf.py -B build_${target}_default build
-    done
-    popd
 }
 
 function update_gateway_wifi_config() {
@@ -83,22 +68,18 @@ function update_gateway_wifi_config() {
     popd
 }
 
-function build_rcp_gateway() {
+function build_example() {
     # Arguments:
-    # $1 -> gateway_dir: Path to the Zigbee gateway example directory
-    # $2 -> update_rcp: Boolean flag ("true" or "false") to enable RCP update configuration
-    local gateway_dir="$1"
-    local update_rcp="$2"
-    update_gateway_wifi_config $gateway_dir
-
-    pushd $gateway_dir
-    if [ "$update_rcp" == "true" ]; then
-        sed -i '/^CONFIG_ZIGBEE_GW_AUTO_UPDATE_RCP=.*/d' $gateway_dir/sdkconfig.defaults
-        echo 'CONFIG_ZIGBEE_GW_AUTO_UPDATE_RCP=y' >> $gateway_dir/sdkconfig.defaults
-    fi
-    echo 'CONFIG_ESP_TASK_WDT_CHECK_IDLE_TASK_CPU0=n' >> $gateway_dir/sdkconfig.defaults
-    echo 'CONFIG_ESP_TASK_WDT_CHECK_IDLE_TASK_CPU1=n' >> $gateway_dir/sdkconfig.defaults
-    build_example $gateway_dir esp32s3
+    # $1 -> example_dir: The path to the example directory to be built
+    # $@ -> subsequent arguments: List of target platforms (e.g., esp32c6, esp32s3, etc.)
+    local example_dir="$1"
+    shift
+    pushd $example_dir || exit 1
+    for target in "$@"; do
+        echo "build example: ${example_dir} for target: ${target}"
+        idf.py -B build_${target}_default set-target ${target}
+        idf.py -B build_${target}_default build
+    done
     popd
 }
 

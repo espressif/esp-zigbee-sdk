@@ -45,8 +45,6 @@ Some of the reference hardware used in development examples are listed below:
 
 ## Supported ESP-IDF versions
 
-**Note:** The SDK can not be used with ESP-IDF v6.0+ yet.
-
 The SDK is recommended to be used with [ESP-IDF v5.5.4](https://github.com/espressif/esp-idf/tree/v5.5.4). Please check
 [Compatibility file on ESP-IDF master](https://github.com/espressif/esp-idf/blob/master/COMPATIBILITY.md) for the support
 status of the SoCs.

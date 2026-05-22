@@ -1,25 +1,19 @@
 # Documentation: .gitlab/ci/README.md#manifest-file-to-control-the-buildtest-apps
 
+.config_base: &config_base
+  disable:
+    - if: IDF_TARGET not in ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c5", "esp32c6", "esp32h2", "esp32p4"]
+      reason: "Only build supported targets"
+
 .config_radio_native_targets: &config_radio_native_targets
+  << : *config_base
   enable:
     - if: SOC_IEEE802154_SUPPORTED == 1
-    - if: IDF_TARGET in ["esp32c6", "esp32h2"]
-    - if: IDF_TARGET == "esp32c5" and (IDF_VERSION >= "v5.5" or IDF_VERSION == "master")
-      temporary: true
-      reason: esp32c5 is only supported in IDF v5.5+
 
 .config_rcp_host_targets: &config_rcp_host_targets
+  << : *config_base
   enable:
-    - if: IDF_TARGET in ["esp32", "esp32s2", "esp32c3", "esp32s3", "esp32c6"]
-      temporary: true
-      reason: the other targets are not tested yet
-    - if: IDF_TARGET == "esp32c5" and (IDF_VERSION >= "v5.5" or IDF_VERSION == "master")
-      temporary: true
-      reason: esp32c5 is only supported in IDF v5.5+
-
-.example_no_build: &example_no_build
-  disable:
-    - if: INCLUDE_DEFAULT == 1
+    - if: SOC_IEEE802154_SUPPORTED == 0 or SOC_WIFI_SUPPORTED == 1
 
 examples/zigbee_gateway:
   <<: *config_rcp_host_targets

@@ -4,6 +4,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+#include "mbedtls/version.h"
+
+#if (MBEDTLS_VERSION_NUMBER < 0x04000000)
+
 #include "mbedtls/aes.h"
 
 #if CONFIG_MBEDTLS_HARDWARE_AES
@@ -39,4 +43,6 @@ int mbedtls_aes_crypt_ecb(mbedtls_aes_context *ctx, int mode, const unsigned cha
     return esp_aes_crypt_ecb(ctx, mode, input, output);
 }
 
-#endif
+#endif /* CONFIG_MBEDTLS_HARDWARE_AES */
+
+#endif /* MBEDTLS_VERSION_NUMBER < 0x04000000 */

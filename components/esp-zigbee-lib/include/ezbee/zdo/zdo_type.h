@@ -60,6 +60,7 @@ enum ezb_zdo_req_cmd_id_e {
     EZB_ZDO_CMD_ACTIVE_EP_REQ   = 0x0005U, /*!< Active Endpoints Request */
     EZB_ZDO_CMD_MATCH_DESC_REQ  = 0x0006U, /*!< Match Descriptor Request */
     EZB_ZDO_CMD_DEVICE_ANNCE    = 0x0013U, /*!< Device Announce */
+    EZB_ZDO_CMD_SYS_SRV_DISC_REQ = 0x0015U, /*!< System Service Discovery Request */
     EZB_ZDO_CMD_PARENT_ANNCE    = 0x001fU, /*!< Parent Announce */
     // End Device Bind, Bind, Unbind, and Bind Management Client Service Command IDs
     EZB_ZDO_CMD_BIND_REQ   = 0x0021U, /*!< Bind Request */
@@ -91,6 +92,7 @@ enum ezb_zdo_rsp_cmd_id_e {
     EZB_ZDO_CMD_SIMPLE_DESC_RSP  = 0x8004U, /*!< Simple Descriptor Response */
     EZB_ZDO_CMD_ACTIVE_EP_RSP    = 0x8005U, /*!< Active Endpoints Response */
     EZB_ZDO_CMD_MATCH_DESC_RSP   = 0x8006U, /*!< Match Descriptor Response */
+    EZB_ZDO_CMD_SYS_SRV_DISC_RSP = 0x8015U, /*!< System Service Discovery Response */
     EZB_ZDO_CMD_PARENT_ANNCE_RSP = 0x801fU, /*!< Parent Announce Response */
     // End Device Bind, Unbind, and Bind Management Server Service Response Command IDs
     EZB_ZDO_CMD_BIND_RSP   = 0x8021U, /*!< Bind Response */

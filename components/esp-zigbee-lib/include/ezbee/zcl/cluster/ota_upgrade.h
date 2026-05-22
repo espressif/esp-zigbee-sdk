@@ -404,7 +404,8 @@ ezb_err_t ezb_zcl_ota_upgrade_image_notify_cmd_req(const ezb_zcl_ota_upgrade_ima
 /**
  * @brief Add an OTA image file to the OTA server.
  *
- * This function adds an OTA image file to the OTA server, making it available for OTA upgrades.
+ * This function adds an OTA image file to the OTA server.
+ * Please ensure it remains available until it is removed from the OTA server via ezb_zcl_ota_upgrade_remove_ota_file().
  *
  * @param ep_id Endpoint ID of the OTA server.
  * @param image Pointer to the image data (complete OTA file, including header).
@@ -416,9 +417,6 @@ ezb_zcl_ota_file_handle_t ezb_zcl_ota_upgrade_add_ota_file(uint8_t ep_id, const 
 
 /**
  * @brief Remove an OTA file from the OTA server.
- *
- * This function removes an OTA file previously added by
- * ezb_zcl_ota_upgrade_add_ota_file() from the OTA server.
  *
  * @param ep_id Endpoint ID of the OTA server.
  * @param ota_file Handle of the OTA file (@ref ezb_zcl_ota_file_handle_t) to be removed.

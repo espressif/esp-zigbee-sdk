@@ -51,18 +51,14 @@ static esp_err_t esp_deep_sleep_weakup_config(void)
     struct timeval now;
     gettimeofday(&now, NULL);
     int sleep_time_ms = (int)((now.tv_sec - s_sleep_time.tv_sec) * 1000 + (now.tv_usec - s_sleep_time.tv_usec) / 1000);
-    esp_sleep_wakeup_cause_t cause = esp_sleep_get_wakeup_cause();
-    switch (cause) {
-    case ESP_SLEEP_WAKEUP_TIMER:
-        ESP_LOGI(TAG, "Wake up from timer, deep sleep for %d milliseconds", sleep_time_ms);
-        break;
-    case ESP_SLEEP_WAKEUP_EXT1:
+
+    uint32_t causes = esp_sleep_get_wakeup_causes();
+    if (causes & BIT(ESP_SLEEP_WAKEUP_EXT1)) {
         ESP_LOGI(TAG, "Wake up from GPIO, deep sleep for %d milliseconds", sleep_time_ms);
-        break;
-    case ESP_SLEEP_WAKEUP_UNDEFINED:
-    default:
+    } else if (causes & BIT(ESP_SLEEP_WAKEUP_TIMER)) {
+        ESP_LOGI(TAG, "Wake up from timer, deep sleep for %d milliseconds", sleep_time_ms);
+    } else {
         ESP_LOGI(TAG, "Wake up from unknown cause, deep sleep for %d milliseconds", sleep_time_ms);
-        break;
     }
 
     ESP_RETURN_ON_ERROR(esp_sleep_enable_timer_wakeup((uint64_t)DEEP_SLEEP_TIME_SLEEP_SEC * 1000000), TAG,

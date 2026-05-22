@@ -48,9 +48,18 @@ include:
   extends:
     - .build_example_template
   script:
+    # build rcp gateway for esp32s3
+    - build_ot_rcp esp32h2
+    - python tools/ci/build_apps.py ./examples --target esp32s3 --example zigbee_gateway --ignore_warning
+    - mv ${CI_PROJECT_DIR}/esp-idf/examples/openthread/ot_rcp/build ${CI_PROJECT_DIR}/esp-idf/examples/openthread/ot_rcp/build_esp32h2_default
+    # build rcp gateway for esp32p4
+    - |
+      if [[ "${IDF_VERSION}" == "master" || "${IDF_VERSION}" > "v5.3" ]]; then
+        build_ot_rcp esp32c6
+        python tools/ci/build_apps.py ./examples --target esp32p4 --example zigbee_gateway --ignore_warning
+        mv ${CI_PROJECT_DIR}/esp-idf/examples/openthread/ot_rcp/build ${CI_PROJECT_DIR}/esp-idf/examples/openthread/ot_rcp/build_esp32c6_default
+      fi
     - build_example ${CI_PROJECT_DIR}/examples/all_device_types_app esp32h2
-    # true means enable rcp update
-    - build_rcp_gateway ${CI_PROJECT_DIR}/examples/zigbee_gateway true
 
 .pytest_template_base:
   stage: target_test
@@ -69,5 +78,12 @@ include:
     - .pytest_template_base
   script:
     - pip install -r tools/ci/requirements-pytest.txt
+    # prepare rcp for gateway
+    - |
+      if [ "${CHIP}" == "esp32s3" ]; then
+          mv ${CI_PROJECT_DIR}/esp-idf/examples/openthread/ot_rcp/build_esp32h2_default ${CI_PROJECT_DIR}/esp-idf/examples/openthread/ot_rcp/build
+      elif [ "${CHIP}" == "esp32p4" ]; then
+          mv ${CI_PROJECT_DIR}/esp-idf/examples/openthread/ot_rcp/build_esp32c6_default ${CI_PROJECT_DIR}/esp-idf/examples/openthread/ot_rcp/build
+      fi
     - find examples/ -name "pytest_*.py" | xargs pytest --target ${CHIP} -m zigbee_multi_dut
 

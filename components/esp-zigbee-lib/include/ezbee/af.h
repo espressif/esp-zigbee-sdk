@@ -71,6 +71,24 @@ typedef enum {
 } ezb_af_node_power_source_level_t;
 
 /**
+ * @brief Enumeration of server mask for AF Node Descriptor
+ */
+enum ezb_af_server_mask_s {
+    EZB_AF_SERVER_MASK_PRIMARY_TC = 0x0001U, /*!< Bit 0, Primary Trust Center */
+    EZB_AF_SERVER_MASK_BACKUP_TC  = 0x0002U, /*!< Bit 1, Backup Trust Center */
+    EZB_AF_SERVER_MASK_DEPRECATED = 0x003CU, /*!< Bit 2..5, Deprecated */
+    EZB_AF_SERVER_MASK_NWK_MGR    = 0x0040U, /*!< Bit 6, Network Manager */
+    EZB_AF_SERVER_MASK_RESERVED   = 0x0180U, /*!< Bit 7..8, Reserved */
+    EZB_AF_SERVER_MASK_STACK_REV  = 0xFE00U, /*!< Bit 9..15, Stack Revision */
+};
+
+/**
+ * @brief Server mask of Application Framework
+ * @anchor ezb_af_server_mask_t
+ */
+typedef uint16_t ezb_af_server_mask_t;
+
+/**
  * @brief Structure to define Zigbee AF Node Power Descriptor.
  */
 union ezb_af_node_power_desc_u {
@@ -303,6 +321,15 @@ void ezb_af_free_device_desc(ezb_af_device_desc_t dev_desc);
 ezb_err_t ezb_af_device_add_endpoint_desc(ezb_af_device_desc_t dev_desc, ezb_af_ep_desc_t ep_desc);
 
 /**
+ * @brief Remove an endpoint descriptor from a Zigbee device descriptor.
+ *
+ * @param dev_desc Pointer to the device descriptor.
+ * @param ep_id    Endpoint ID is used to identify the endpoint to remove.
+ * @return Error code.
+ */
+ezb_af_ep_desc_t ezb_af_device_remove_endpoint_desc(ezb_af_device_desc_t dev_desc, uint8_t ep_id);
+
+/**
  * @brief Get an endpoint descriptor from a Zigbee device descriptor.
  *
  * This function retrieves an endpoint descriptor from a device descriptor based on the specified endpoint ID.
@@ -355,6 +382,17 @@ void ezb_af_free_endpoint_desc(ezb_af_ep_desc_t ep_desc);
 ezb_err_t ezb_af_endpoint_add_cluster_desc(ezb_af_ep_desc_t ep_desc, ezb_zcl_cluster_desc_t cluster_desc);
 
 /**
+ * @brief Remove a cluster descriptor from a Zigbee endpoint descriptor.
+ *
+ * @param ep_desc      Pointer to the endpoint descriptor.
+ * @param cluster_id   Cluster ID is used to identify the cluster to remove.
+ * @param role_mask    Role mask is used to identify the role of the cluster to remove.
+ * @param manuf_code   Manufacturer code is used to identify the manufacturer of the cluster to remove.
+ * @return Pointer to the cluster descriptor removed on success, NULL if cluster is not found.
+ */
+ezb_zcl_cluster_desc_t ezb_af_endpoint_remove_cluster_desc(ezb_af_ep_desc_t ep_desc, uint16_t cluster_id, uint8_t role_mask, uint16_t manuf_code);
+
+/**
  * @brief Create a gateway endpoint descriptor.
  *
  * This function allocates and initializes a new gateway endpoint descriptor structure using the provided configuration.
@@ -379,6 +417,49 @@ uint8_t ezb_af_ep_desc_get_ep_id(const ezb_af_ep_desc_t ep_desc);
  * @return The application profile ID (e.g., 0x0104 for Home Automation), or 0 if ep_desc is invalid.
  */
 uint16_t ezb_af_ep_desc_get_profile_id(const ezb_af_ep_desc_t ep_desc);
+
+/**
+ * @brief Set the profile ID of a Zigbee endpoint descriptor.
+ *
+ * @param ep_desc Pointer to the endpoint descriptor.
+ * @param profile_id The application profile ID to set.
+ * @return Error code
+ */
+ezb_err_t ezb_af_ep_desc_set_profile_id(ezb_af_ep_desc_t ep_desc, uint16_t profile_id);
+
+/**
+ * @brief Get the application version of a Zigbee endpoint descriptor.
+ *
+ * @param ep_desc Pointer to the endpoint descriptor. Must not be NULL.
+ * @return The application version, or 0 if ep_desc is invalid.
+ */
+uint8_t ezb_af_ep_desc_get_app_version(const ezb_af_ep_desc_t ep_desc);
+
+/**
+ * @brief Set the application version of a Zigbee endpoint descriptor.
+ *
+ * @param ep_desc Pointer to the endpoint descriptor. Must not be NULL.
+ * @param app_version The application version to set.
+ * @return Error code
+ */
+ezb_err_t ezb_af_ep_desc_set_app_version(ezb_af_ep_desc_t ep_desc, uint8_t app_version);
+
+/**
+ * @brief Get the application device ID of a Zigbee endpoint descriptor.
+ *
+ * @param ep_desc Pointer to the endpoint descriptor. Must not be NULL.
+ * @return The application device ID, or 0 if ep_desc is invalid.
+ */
+uint16_t ezb_af_ep_desc_get_app_device_id(const ezb_af_ep_desc_t ep_desc);
+
+/**
+ * @brief Set the application device ID of a Zigbee endpoint descriptor.
+ *
+ * @param ep_desc Pointer to the endpoint descriptor. Must not be NULL.
+ * @param app_device_id The application device ID to set.
+ * @return Error code
+ */
+ezb_err_t ezb_af_ep_desc_set_app_device_id(ezb_af_ep_desc_t ep_desc, uint16_t app_device_id);
 
 /**
  * @brief Get the simple descriptor of a Zigbee endpoint descriptor.

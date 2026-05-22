@@ -45,8 +45,10 @@ ESPPORT6 = os.getenv('ESPPORT6')
 ESPPORT7 = os.getenv('ESPPORT7')
 ESPPORT8 = os.getenv('ESPPORT8')
 ESPPORT9 = os.getenv('ESPPORT9')
+ESPPORT10 = os.getenv('ESPPORT10')
 
 PORT_MAPPING = {'esp32s3': [ESPPORT3],
+                'esp32p4': [ESPPORT10],
                 'esp32h2': [ESPPORT1, ESPPORT2],
                 'esp32c6': [ESPPORT4, ESPPORT5],
                 'esp32c5': [ESPPORT6, ESPPORT7],}
@@ -64,14 +66,21 @@ def pytest_generate_tests(metafunc):
 
     targets = []
     ports = []
-    # Fix the device port for the dual-chip gateway
+    # Dual-chip gateway: CLI on esp32h2, gateway on esp32s3 (WiFi) or esp32p4 (Ethernet).
+    # Per-DUT target/config must be pipe-separated; --target selects the gateway variant only.
     if 'dual_chip_gateway' in all_target_marks:
-        ports = [PORT_MAPPING_GATEWAY['esp32h2'][0], PORT_MAPPING_GATEWAY['esp32h2'][1], PORT_MAPPING_GATEWAY['esp32s3'][0]]
+        if target_option == 'esp32p4':
+            ports = [PORT_MAPPING['esp32h2'][0], PORT_MAPPING['esp32p4'][0]]
+            dut_targets = 'esp32h2|esp32p4'
+        else:
+            ports = [PORT_MAPPING['esp32h2'][0], PORT_MAPPING['esp32s3'][0]]
+            dut_targets = 'esp32h2|esp32s3'
         if not all(isinstance(p, str) and p.strip() for p in ports):
-            raise ValueError(f'Environment variable for target {targets} port is not set')
+            raise ValueError(f'Environment variable for target {target_option} port is not set')
         port_str = '|'.join(ports)
-        logging.info(f"port: {port_str}")
+        logging.info(f"port: {port_str}, target: {dut_targets}")
         metafunc.parametrize('port', [port_str], indirect=True)
+        metafunc.parametrize('target', [dut_targets], indirect=True)
         return
     # target string e.g. 'esp32h2|esp32h2'
     for mark in metafunc.definition.iter_markers(name='parametrize'):

@@ -306,7 +306,7 @@ static void sleep_debug_timer_cb(TimerHandle_t xTimer)
     ESP_EARLY_LOGI(TAG, "sleep_flags 0x%08lx, trigger: 0x%08lx", s_sleep_ctx.sleep_flags, s_sleep_ctx.wakeup_triggers);
     ESP_EARLY_LOGI(TAG, "PMU_SLEEP_PD_TOP: %s", (s_sleep_ctx.sleep_flags & PMU_SLEEP_PD_TOP) ? "True" : "False");
     ESP_EARLY_LOGI(TAG, "PMU_SLEEP_PD_MODEM: %s", (s_sleep_ctx.sleep_flags & PMU_SLEEP_PD_MODEM) ? "True" : "False");
-    ESP_EARLY_LOGI(TAG, "Wakeup source: %d", esp_sleep_get_wakeup_cause());
+    ESP_EARLY_LOGI(TAG, "Wakeup source: 0x%04x", esp_sleep_get_wakeup_causes());
 }
 #endif /* CONFIG_ESP_SLEEP_DEBUG */
 

@@ -432,6 +432,44 @@ typedef struct ezb_zdo_node_desc_req_s {
 } ezb_zdo_node_desc_req_t;
 
 /**
+ * @brief Fields of the ZDP System Server Discovery Request
+ */
+ typedef struct ezb_zdp_sys_srv_disc_req_field_s {
+     uint16_t server_mask; /*!< The server mask will be used to match the remote device's node descriptor server mask, see @ref
+                              ezb_af_server_mask_t */
+} ezb_zdp_sys_srv_disc_req_field_t;
+
+/**
+ * @brief Fields of the ZDP System Server Discovery Response
+ */
+typedef struct ezb_zdp_sys_srv_disc_rsp_field_s {
+    uint8_t  status;      /*!< The status of the system service discovery request, see @ref ezb_zdp_status_t */
+    uint16_t server_mask; /*!< The matching bits between SystemServiceDiscovery Request and remote's node descriptor server mask field. */
+} ezb_zdp_sys_srv_disc_rsp_field_t;
+
+/**
+ * @brief Structure for ZDO System Server Discovery Request Result
+ */
+typedef struct ezb_zdo_sys_srv_disc_req_result_s {
+    ezb_err_t                         error; /*!< Error code of the system service discovery request operation */
+    ezb_zdp_sys_srv_disc_rsp_field_t *rsp;   /*!< Pointer to the system service discovery response field, NULL if error occurred */
+} ezb_zdo_sys_srv_disc_req_result_t;
+
+/**
+ * @brief A callback to handle the result of ZDO System Server Discovery Request
+ */
+typedef void (*ezb_zdo_sys_srv_disc_req_callback_t)(const ezb_zdo_sys_srv_disc_req_result_t *result, void *user_ctx);
+
+/**
+ * @brief Structure for ZDO System Server Discovery Request
+ */
+typedef struct ezb_zdo_sys_srv_disc_req_s {
+    ezb_zdp_sys_srv_disc_req_field_t    field;        /*!< Fields of the system service discovery request */
+    ezb_zdo_sys_srv_disc_req_callback_t cb;           /*!< User callback for result of ZDO System Server Discovery Request */
+    void                                *user_ctx;    /*!< User argument of request will be passed to user callback */
+} ezb_zdo_sys_srv_disc_req_t;
+
+/**
  * @brief Send a ZDO NWK_addr_req command.
  *
  * The NWK_addr_req is generated from a Local Device wishing to inquire as to the 16-bit address of the Remote Device based on
@@ -524,6 +562,17 @@ ezb_err_t ezb_zdo_device_annce_req(const ezb_zdo_device_annce_req_t *req);
  * @return Error code, see @ref ezb_err_t
  */
 ezb_err_t ezb_zdo_parent_annce_req(const ezb_zdo_parent_annce_req_t *req);
+
+/**
+ * @brief Send a ZDO System_Server_Discovery_req command.
+ *
+ * The System_Server_Discovery_req is generated from a Local Device wishing to discover the location of a particular system server or
+ *  servers as indicated by the ServerMask parameter.
+ * @param[in] req A structure used to configure the fields of the System_Server_Discovery_req command, see @ref ezb_zdo_sys_srv_disc_req_s
+ *
+ * @return Error code, see @ref ezb_err_t
+ */
+ezb_err_t ezb_zdo_sys_srv_disc_req(const ezb_zdo_sys_srv_disc_req_t *req);
 
 #ifdef __cplusplus
 } /*  extern "C" */
