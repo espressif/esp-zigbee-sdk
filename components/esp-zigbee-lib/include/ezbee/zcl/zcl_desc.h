@@ -166,6 +166,15 @@ uint16_t ezb_zcl_attr_desc_get_value_size(ezb_zcl_attr_desc_t attr_desc);
 ezb_err_t ezb_zcl_attr_desc_get_value(ezb_zcl_attr_desc_t attr_desc, void *value);
 
 /**
+ * @brief Set the value of a Zigbee attribute descriptor.
+ *
+ * @param attr_desc Pointer to the attribute descriptor.
+ * @param value     Pointer to the attribute value.
+ * @return Error code.
+ */
+ezb_err_t ezb_zcl_attr_desc_set_value(ezb_zcl_attr_desc_t attr_desc, const void *value);
+
+/**
  * @brief Get the data type of a Zigbee attribute descriptor.
  *
  * @param attr_desc Pointer to the attribute descriptor. Must not be NULL.
@@ -183,12 +192,30 @@ ezb_zcl_attr_type_t ezb_zcl_attr_desc_get_type(ezb_zcl_attr_desc_t attr_desc);
 ezb_zcl_attr_access_t ezb_zcl_attr_desc_get_access(ezb_zcl_attr_desc_t attr_desc);
 
 /**
+ * @brief Set the access control flags of a Zigbee attribute descriptor.
+ *
+ * @param attr_desc Pointer to the attribute descriptor.
+ * @param access    Access control flags. See @ref ezb_zcl_attr_access_t.
+ * @return Error code.
+ */
+ezb_err_t ezb_zcl_attr_desc_set_access(ezb_zcl_attr_desc_t attr_desc, ezb_zcl_attr_access_t access);
+
+/**
  * @brief Get the manufacturer code of a Zigbee attribute descriptor.
  *
  * @param attr_desc Pointer to the attribute descriptor. Must not be NULL.
  * @return The manufacturer code. Returns @ref EZB_ZCL_STD_MANUF_CODE if invalid.
  */
 uint16_t ezb_zcl_attr_desc_get_manuf_code(ezb_zcl_attr_desc_t attr_desc);
+
+/**
+ * @brief Set the manufacturer code of a Zigbee attribute descriptor.
+ *
+ * @param attr_desc Pointer to the attribute descriptor.
+ * @param manuf_code Manufacturer code.
+ * @return Error code.
+ */
+ezb_err_t ezb_zcl_attr_desc_set_manuf_code(ezb_zcl_attr_desc_t attr_desc, uint16_t manuf_code);
 
 /**
  * @brief Get an attribute descriptor from a cluster descriptor.
@@ -235,6 +262,16 @@ void ezb_zcl_free_attr_desc(ezb_zcl_attr_desc_t attr_desc);
  * @return Error code.
  */
 ezb_err_t ezb_zcl_cluster_add_attr_desc(ezb_zcl_cluster_desc_t cluster_desc, ezb_zcl_attr_desc_t attr_desc);
+
+/**
+ * @brief Remove an attribute descriptor from a Zigbee cluster descriptor.
+ *
+ * @param cluster_desc Pointer to the cluster descriptor.
+ * @param attr_id      Attribute identifier is used to identify the attribute to remove.
+ * @param manuf_code   Manufacturer code is used to identify the manufacturer of the attribute to remove.
+ * @return Pointer to the attribute descriptor removed on success, NULL if attribute is not found.
+ */
+ ezb_zcl_attr_desc_t ezb_zcl_cluster_remove_attr_desc(ezb_zcl_cluster_desc_t cluster_desc, uint16_t attr_id, uint16_t manuf_code);
 
 /**
  * @brief Add a manufacturer-specific attribute to a Zigbee cluster descriptor.

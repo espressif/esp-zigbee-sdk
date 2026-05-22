@@ -34,6 +34,11 @@ typedef struct ezb_crypto_context_s {
 } ezb_crypto_context_t;
 
 /**
+ * @brief Initialize the crypto module.
+ */
+void ezb_plat_crypto_init(void);
+
+/**
  * @brief Initialize the AES operation.
  *
  * @param[in] context Context for AES operation.

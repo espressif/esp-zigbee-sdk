@@ -185,7 +185,7 @@ typedef struct ezb_zdp_nwk_mgmt_nwk_update_req_field_s {
     uint8_t  scan_duration; /*!< Duration of each channel scan in seconds */
     uint8_t  scan_count;    /*!< Number of scans to perform on each channel */
     uint8_t  nwk_update_id; /*!< Network update identifier, should be incremented for each update */
-    uint8_t  nwk_mgmt_addr; /*!< Network manager address (0x00 = use default) */
+    ezb_shortaddr_t nwk_mgmt_addr; /*!< Network manager address (0x0000 = use default) */
 } ezb_zdp_nwk_mgmt_nwk_update_req_field_t;
 
 /**

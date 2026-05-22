@@ -64,6 +64,16 @@ enum {
 };
 
 /**
+ * Defines constants that are used to indicate different radio capabilities..
+ */
+enum {
+    EZB_RADIO_CAPS_NONE             = 0,       /*!< Radio supports no capability. */
+    EZB_RADIO_CAPS_ACK_TIMEOUT      = 1U << 0, /*!< Radio supports Ack timeout event. */
+    EZB_RADIO_CAPS_TRANSMIT_RETRIES = 1U << 1, /*!< Radio supports tx retry logic with collision avoidance (CSMA). */
+    EZB_RADIO_CAPS_CSMA_BACKOFF     = 1U << 2, /*!< Radio supports CSMA backoff for frame tx (but no retry). */
+};
+
+/**
  * @brief Represents an IEEE 802.15.4 radio frame.
  */
 typedef struct ezb_radio_frame_s {
@@ -343,6 +353,14 @@ ezb_err_t ezb_plat_radio_clear_src_match_entry(uint8_t *addr, bool is_short);
  *
  */
 void ezb_plat_radio_clear_src_match_entries(bool is_short);
+
+/**
+ * @brief Get the radio capabilities.
+ *
+ * @return The mask of radio supported capabilities.
+ *
+ */
+uint16_t ezb_plat_radio_get_capabilities(void);
 
 #ifdef __cplusplus
 } /*  extern "C" */
