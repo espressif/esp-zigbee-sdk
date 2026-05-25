@@ -18,6 +18,7 @@ menu "Zigbee Example Configuration"
         default 15 if ZB_EXAMPLE_CHANNEL_CI_ASSIGNMENT && IDF_TARGET_ESP32C5
         default 17 if ZB_EXAMPLE_CHANNEL_CI_ASSIGNMENT && IDF_TARGET_ESP32P4
         default 19 if ZB_EXAMPLE_CHANNEL_CI_ASSIGNMENT && IDF_TARGET_ESP32S3
+        default 21 if ZB_EXAMPLE_CHANNEL_CI_ASSIGNMENT && IDF_TARGET_ESP32S31
         default 13
         help
             Primary Zigbee channel the example forms/joins on. When
@@ -31,6 +32,7 @@ menu "Zigbee Example Configuration"
         default 0x00008000 if ZB_EXAMPLE_CHANNEL_CI_ASSIGNMENT && IDF_TARGET_ESP32C5
         default 0x00020000 if ZB_EXAMPLE_CHANNEL_CI_ASSIGNMENT && IDF_TARGET_ESP32P4
         default 0x00080000 if ZB_EXAMPLE_CHANNEL_CI_ASSIGNMENT && IDF_TARGET_ESP32S3
+        default 0x00200000 if ZB_EXAMPLE_CHANNEL_CI_ASSIGNMENT && IDF_TARGET_ESP32S31
         default 0x07FFF800
         help
             Secondary (fallback) Zigbee channel mask. When ZB_EXAMPLE_CHANNEL_CI_ASSIGNMENT

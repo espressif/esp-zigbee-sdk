@@ -38,11 +38,15 @@ generic_chips_zigbee_test = mark_chips(
     pytest.mark.esp32h2,
     pytest.mark.esp32c6,
     pytest.mark.esp32c5,
+    pytest.mark.esp32s31,
+    pytest.mark.esp32h4,
+    pytest.mark.esp32h21,
 )
 
 single_chip_gateway = mark_chips(
     pytest.mark.esp32c6,
     pytest.mark.esp32c5,
+    pytest.mark.esp32s31,
 )
 
 def dual_chip_gateway(func):

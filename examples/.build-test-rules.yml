@@ -2,7 +2,7 @@
 
 .config_base: &config_base
   disable:
-    - if: IDF_TARGET not in ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c5", "esp32c6", "esp32h2", "esp32p4"]
+    - if: IDF_TARGET not in ["esp32", "esp32s2", "esp32s3", "esp32c3", "esp32c5", "esp32c6", "esp32h2", "esp32p4", "esp32s31", "esp32h4", "esp32h21"]
       reason: "Only build supported targets"
 
 .config_radio_native_targets: &config_radio_native_targets
@@ -32,7 +32,9 @@ examples/home_automation_devices/thermostat:
 
 examples/home_automation_devices/temperature_sensor:
   <<: *config_radio_native_targets
-
+  disable+:
+    - if: IDF_TARGET == "esp32h21"
+      reason: "Only build supported targets, skip build esp32h21 now"
 examples/home_automation_devices/color_dimmable_light:
   <<: *config_radio_native_targets
 
@@ -47,6 +49,9 @@ examples/home_automation_devices/on_off_switch:
 
 examples/sleepy_devices/deep_sleep_end_device:
   <<: *config_radio_native_targets
+  disable+:
+    - if: IDF_TARGET == "esp32h4"
+      reason: "Only build supported targets, skip build esp32h4 now"
 
 examples/sleepy_devices/light_sleep_end_device:
   <<: *config_radio_native_targets
