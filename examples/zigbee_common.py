@@ -79,9 +79,9 @@ def expect_decorator(pattern, timeout=5):
 
 class ExampleDevice:
 
-    def __init__(self, dut):
+    def __init__(self, dut, channel=None):
         self.dut = dut
-        self.channel = ZigbeeCIConstants.channel
+        self.channel = channel if channel is not None else ZigbeeCIConstants.get_channel(dut.target)
         self.short_address = None
         self.pan_id = None
         self.extended_pan_id = None
@@ -177,9 +177,9 @@ class ExampleDevice:
 
 class CliDevice:
 
-    def __init__(self, dut):
+    def __init__(self, dut, channel=None):
         self.dut = dut
-        self.channel_id = ZigbeeCIConstants.channel
+        self.channel_id = channel if channel is not None else ZigbeeCIConstants.get_channel(dut.target)
         self.short_address = None
         self.ieee_address = None
         self.pan_id = None

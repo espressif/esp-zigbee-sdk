@@ -32,49 +32,29 @@ from pytest_embedded.plugin import multi_dut_argument, multi_dut_fixture
 from pytest_embedded.utils import find_by_suffix
 import time
 import subprocess
-import copy
 
 DEFAULT_SDKCONFIG = 'default'
 
+# Each runner exposes only one chip type, so the DUTs are assigned ESPPORT1, ESPPORT2 in order.
 ESPPORT1 = os.getenv('ESPPORT1')
 ESPPORT2 = os.getenv('ESPPORT2')
-ESPPORT3 = os.getenv('ESPPORT3')
-ESPPORT4 = os.getenv('ESPPORT4')
-ESPPORT5 = os.getenv('ESPPORT5')
-ESPPORT6 = os.getenv('ESPPORT6')
-ESPPORT7 = os.getenv('ESPPORT7')
-ESPPORT8 = os.getenv('ESPPORT8')
-ESPPORT9 = os.getenv('ESPPORT9')
-ESPPORT10 = os.getenv('ESPPORT10')
+ESP_PORTS = [ESPPORT1, ESPPORT2]
 
-PORT_MAPPING = {'esp32s3': [ESPPORT3],
-                'esp32p4': [ESPPORT10],
-                'esp32h2': [ESPPORT1, ESPPORT2],
-                'esp32c6': [ESPPORT4, ESPPORT5],
-                'esp32c5': [ESPPORT6, ESPPORT7],}
-PORT_MAPPING_GATEWAY = {'esp32s3': [ESPPORT8],
-                        'esp32h2': [ESPPORT1, ESPPORT9]}
 
 def pytest_generate_tests(metafunc):
     logging.info(f"Generating test for: {metafunc.function.__name__}")
-    port_mapping = copy.deepcopy(PORT_MAPPING)
 
     target_option = metafunc.config.getoption('target')
     all_target_marks = {m.name for m in metafunc.definition.own_markers}
     if target_option not in all_target_marks:
         return
 
-    targets = []
-    ports = []
-    # Dual-chip gateway: CLI on esp32h2, gateway on esp32s3 (WiFi) or esp32p4 (Ethernet).
-    # Per-DUT target/config must be pipe-separated; --target selects the gateway variant only.
+    # Dual-chip gateway: dut[0]=CLI (esp32h2, ESPPORT1), dut[1]=gateway (ACM, ESPPORT2).
+    # --target selects the gateway variant only: esp32p4 (Ethernet) or esp32s3 (WiFi).
     if 'dual_chip_gateway' in all_target_marks:
-        if target_option == 'esp32p4':
-            ports = [PORT_MAPPING['esp32h2'][0], PORT_MAPPING['esp32p4'][0]]
-            dut_targets = 'esp32h2|esp32p4'
-        else:
-            ports = [PORT_MAPPING['esp32h2'][0], PORT_MAPPING['esp32s3'][0]]
-            dut_targets = 'esp32h2|esp32s3'
+        gateway_target = 'esp32p4' if target_option == 'esp32p4' else 'esp32s3'
+        ports = [ESPPORT1, ESPPORT2]
+        dut_targets = f'esp32h2|{gateway_target}'
         if not all(isinstance(p, str) and p.strip() for p in ports):
             raise ValueError(f'Environment variable for target {target_option} port is not set')
         port_str = '|'.join(ports)
@@ -82,35 +62,26 @@ def pytest_generate_tests(metafunc):
         metafunc.parametrize('port', [port_str], indirect=True)
         metafunc.parametrize('target', [dut_targets], indirect=True)
         return
-    # target string e.g. 'esp32h2|esp32h2'
+
+    # Same-chip tests: the DUT number is declared via `count`; assign ESPPORT1, ESPPORT2 in order.
+    count = None
     for mark in metafunc.definition.iter_markers(name='parametrize'):
-        if not mark.args:
-            continue
-        arg_names = [name.strip() for name in mark.args[0].split(',')]
-        param_values = mark.args[1][0]
-        if 'target' not in arg_names:
-            count_index = arg_names.index('count')
-            count_val = param_values[count_index]
-            targets = [target_option] * count_val
-        else:
-            target_index = arg_names.index('target')
-            target_string = param_values[target_index]
-            targets = target_string.split('|')
-    if not targets:
-        raise ValueError(f'No targets get from marks')
-    for t in targets:
-        if t not in port_mapping:
-            raise ValueError(f'Target {t} not found in PORT_MAPPING')
-        if not port_mapping[t]:
-            raise ValueError(f'No available ports left for target {t}')
-        port = port_mapping[t].pop(0)
-        if not port:
-            raise ValueError(f'Environment variable for target {t} port is not set')
-        ports.append(port)
+        arg_names = [name.strip() for name in mark.args[0].split(',')] if mark.args else []
+        if 'count' in arg_names:
+            count = mark.args[1][0][arg_names.index('count')]
+            break
+    if not count:
+        raise ValueError('No `count` found in parametrize marks')
+    if count > len(ESP_PORTS):
+        raise ValueError(f'Need {count} ports but only {len(ESP_PORTS)} are configured')
+    ports = ESP_PORTS[:count]
+    if not all(isinstance(p, str) and p.strip() for p in ports):
+        raise ValueError(f'Environment variable for target {target_option} port is not set')
 
     port_str = '|'.join(ports)
     logging.info(f"port: {port_str}")
     metafunc.parametrize('port', [port_str], indirect=True)
+
 
 ##################
 # Help Functions #
@@ -209,19 +180,6 @@ def junit_properties(
     record_xml_attribute('name', test_case_name)
 
 
-def _run_erase_all_flash() -> None:
-    erase_script = os.path.join(os.path.dirname(__file__), 'tools', 'erash_all.sh')
-    subprocess.run(['bash', erase_script], check=False)
-    time.sleep(1)
-
-
-def pytest_runtest_setup(item: Item) -> None:
-    """
-    Erase before fixture setup, so it runs before pytest-embedded flashes DUT binaries.
-    """
-    _run_erase_all_flash()
-
-
 @pytest.fixture()
 def teardown_fixture(dut):
     """
@@ -233,21 +191,33 @@ def teardown_fixture(dut):
     """
     yield
     # after test, close dut monitor, and do erase flash process
+    serial_port_list = []
     for device in dut:
         device.serial.close()
-    _run_erase_all_flash()
+        serial_port_list.append(device.serial.port)
+    proc = None
 
-@pytest.fixture(scope='function', autouse=True)
-def erase_esp32s3_port(request):
-    """
-    Ensures ESP32-S3 is idle to avoid flashing issues on ESP32-H2.
-    """
-    if PORT_MAPPING_GATEWAY['esp32s3'][0]:
-        try:
-            subprocess.run(['python', '-m', 'esptool', '--port', PORT_MAPPING_GATEWAY['esp32s3'][0], 'erase_flash'], check=True)
-        except subprocess.CalledProcessError as e:
-            logging.info(f"Failed to erase ESP32S3 port {PORT_MAPPING_GATEWAY['esp32s3'][0]}: {e}")
+    def erase_flash(serial_port):
+        proc = subprocess.Popen(f'python -m esptool --port {serial_port} erase_flash', shell=True)
+        proc.wait()
+        if proc.returncode != 0:
+            logging.warning(f"Erase failed on {serial_port}: {proc.returncode}")
+            return False
+        return True
+    # Erase flash on all ports, and retry if failed
+    failed_ports = []
+    for serial_port in serial_port_list:
+        logging.info(f'erase flash on serial_port: {serial_port}')
+        if not erase_flash(serial_port):
+            failed_ports.append(serial_port)
 
+    if failed_ports:
+        for port in failed_ports:
+            if not erase_flash(port):
+                logging.warning(f"Failed to erase flash on {port} again")
+    if proc is not None:
+        proc.kill()
+    time.sleep(1)
 
 ##################
 # Hook functions #

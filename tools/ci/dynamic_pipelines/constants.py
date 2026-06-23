@@ -16,6 +16,12 @@ class EzDevCiCons:
 
     }
 
+    supported_since = {
+        "esp32c5": "v5.5.2",
+        # esp32p4 rev>3.0
+        "esp32p4": "v5.5.4",
+    }
+
     PATH_PROJECT = os.environ.get('CI_PROJECT_DIR', os.getcwd())
 
     PATH_TEMPLATE = '.gitlab/ci/templates.yml'

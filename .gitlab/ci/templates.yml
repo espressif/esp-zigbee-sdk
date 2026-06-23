@@ -71,7 +71,7 @@ include:
     expire_in: 4 days
   tags:
     - ${CHIP}
-    - zigbee_multi_dut
+    - zigbee_ci_test
 
 .pytest_sdk_example:
   extends:
@@ -85,5 +85,5 @@ include:
       elif [ "${CHIP}" == "esp32p4" ]; then
           mv ${CI_PROJECT_DIR}/esp-idf/examples/openthread/ot_rcp/build_esp32c6_default ${CI_PROJECT_DIR}/esp-idf/examples/openthread/ot_rcp/build
       fi
-    - find examples/ -name "pytest_*.py" | xargs pytest --target ${CHIP} -m zigbee_multi_dut
+    - find examples/ -name "pytest_*.py" | xargs pytest --target ${CHIP}
 

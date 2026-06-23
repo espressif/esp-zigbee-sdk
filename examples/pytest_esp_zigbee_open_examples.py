@@ -48,7 +48,6 @@ data_producer_pytest_build_dir = DATA_PRODUCER_CURRENT_DIR + '|' + DATA_CONSUMER
 # case 5: Zigbee customized devices test
 
 @pytest.mark.order(5)
-@pytest.mark.zigbee_multi_dut
 @pytest.mark.parametrize('count, app_path, erase_all', [(2, data_producer_pytest_build_dir, 'y'), ], indirect=True, )
 @generic_chips_zigbee_test
 def test_zb_customized_devices(dut, count, app_path, erase_all):
@@ -61,7 +60,6 @@ def test_zb_customized_devices(dut, count, app_path, erase_all):
 
 # Case 6: Zigbee ota test
 @pytest.mark.order(6)
-@pytest.mark.zigbee_multi_dut
 @pytest.mark.parametrize('count, app_path, erase_all', [(2, ota_pytest_build_dir, 'y'), ], indirect=True, )
 @ota_chip_test
 def test_zb_ota(dut, count, app_path, erase_all):
@@ -87,7 +85,6 @@ def test_zb_ota(dut, count, app_path, erase_all):
 
 # Case 7: Zigbee light sleep test
 @pytest.mark.order(7)
-@pytest.mark.zigbee_multi_dut
 @pytest.mark.parametrize('count, app_path, erase_all, config', [(2, sleep_pytest_build_dir, 'y', 'enable_debug'), ], indirect=True, )
 @generic_chips_zigbee_test
 def test_zb_sleep(dut, count, app_path, erase_all):
@@ -106,7 +103,6 @@ def test_zb_sleep(dut, count, app_path, erase_all):
 
 # Case 8: Zigbee touchlink test
 @pytest.mark.order(8)
-@pytest.mark.zigbee_multi_dut
 @pytest.mark.parametrize('count, app_path, erase_all', [(2, touchlink_pytest_build_dir, 'y'), ], indirect=True, )
 @generic_chips_zigbee_test
 def test_zb_touch_link(dut, count, app_path, erase_all):
@@ -121,12 +117,11 @@ def test_zb_touch_link(dut, count, app_path, erase_all):
 
 # Case 9: Zigbee gateway test
 @pytest.mark.order(9)
-@pytest.mark.zigbee_multi_dut
 @pytest.mark.parametrize('count, app_path, erase_all', [(2, gateway_pytest_build_dir, 'y'), ], indirect=True, )
 @dual_chip_gateway
 def test_zb_gateway(dut, count, app_path, erase_all):
     gateway_device = ExampleDevice(dut[1])
-    cli = CliDevice(dut[0])
+    cli = CliDevice(dut[0], channel=gateway_device.channel)
     gateway_device.check_response(MatchPattern.update_the_rcp_version, timeout=30)
     gateway_device.check_response(MatchPattern.initialize_zigbee_stack, timeout=20)
     gateway_device.get_example_device_network_info(coordinator=True)
@@ -140,7 +135,6 @@ def test_zb_gateway(dut, count, app_path, erase_all):
 
 # Case 10: Zigbee deep sleep test
 @pytest.mark.order(10)
-@pytest.mark.zigbee_multi_dut
 @pytest.mark.parametrize('count, app_path, erase_all', [(2, deep_sleep_pytest_build_dir, 'y'), ], indirect=True, )
 @generic_chips_zigbee_test
 def test_zb_deep_sleep(dut, count, app_path, erase_all):
@@ -162,7 +156,6 @@ def test_zb_deep_sleep(dut, count, app_path, erase_all):
 
 # Case 11: Zigbee HA dimmable light test
 @pytest.mark.order(11)
-@pytest.mark.zigbee_multi_dut
 @pytest.mark.parametrize('count, app_path, erase_all', [(2, ha_dimmable_light_pytest_build_dir, 'y'), ], indirect=True, )
 @generic_chips_zigbee_test
 def test_zb_ha_dimmable_light(dut, count, app_path, erase_all):
@@ -176,7 +169,6 @@ def test_zb_ha_dimmable_light(dut, count, app_path, erase_all):
 
 # Case 12: Zigbee HA on off light test
 @pytest.mark.order(12)
-@pytest.mark.zigbee_multi_dut
 @pytest.mark.parametrize('count, app_path, erase_all', [(2, ha_on_off_light_pytest_build_dir, 'y'), ], indirect=True, )
 @generic_chips_zigbee_test
 def test_zb_ha_on_off_light(dut, count, app_path, erase_all):
@@ -190,7 +182,6 @@ def test_zb_ha_on_off_light(dut, count, app_path, erase_all):
 
 # Case 13: Zigbee HA thermostat test
 @pytest.mark.order(13)
-@pytest.mark.zigbee_multi_dut
 @pytest.mark.parametrize('count, app_path, erase_all', [(2, ha_thermostat_pytest_build_dir, 'y'), ], indirect=True, )
 @generic_chips_zigbee_test
 def test_zb_ha_thermostat(dut, count, app_path, erase_all):

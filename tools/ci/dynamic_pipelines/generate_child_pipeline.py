@@ -12,6 +12,14 @@ from models import BuildJob
 from utils import dump_jobs_to_yaml
 from constants import EzDevCiCons
 
+def check_chip_supported(chip, idf_version):
+    if chip not in EzDevCiCons.supported_since or idf_version == "master":
+        return True
+    if idf_version < EzDevCiCons.supported_since[chip]:
+        return False
+    else:
+        return True
+
 
 def generate(idf_and_docker, generate_yaml, build_templates, test_job_template, chips, manual_pytest):
     generate_jobs = []
@@ -30,8 +38,7 @@ def generate(idf_and_docker, generate_yaml, build_templates, test_job_template, 
         if test_job_template:
             assert chips, "chips is required when --test_templates is set"
             for chip in chips:
-                # TODO: remove this after esp32p4 is supported in ci
-                if chip == 'esp32p4':
+                if not check_chip_supported(chip, idf_version):
                     continue
                 needs_target = (
                     f'build_pytest_examples_{idf_version}'

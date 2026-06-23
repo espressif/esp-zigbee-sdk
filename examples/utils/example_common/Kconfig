@@ -1,0 +1,40 @@
+menu "Zigbee Example Configuration"
+
+    config ZB_EXAMPLE_CHANNEL_CI_ASSIGNMENT
+        bool "Select per-chip channel for examples in CI"
+        default n
+        help
+            When enabled, the default values of ZB_EXAMPLE_PRIMARY_CHANNEL and
+            ZB_EXAMPLE_SECONDARY_CHANNEL_MASK follow the build target, so that
+            concurrent CI test runs of different chip families do not interfere
+            with each other over the air. Intended for CI; the values below can
+            still be overridden via menuconfig.
+
+    config ZB_EXAMPLE_PRIMARY_CHANNEL
+        int "Zigbee Example Primary Channel"
+        range 11 26
+        default 11 if ZB_EXAMPLE_CHANNEL_CI_ASSIGNMENT && IDF_TARGET_ESP32H2
+        default 13 if ZB_EXAMPLE_CHANNEL_CI_ASSIGNMENT && IDF_TARGET_ESP32C6
+        default 15 if ZB_EXAMPLE_CHANNEL_CI_ASSIGNMENT && IDF_TARGET_ESP32C5
+        default 17 if ZB_EXAMPLE_CHANNEL_CI_ASSIGNMENT && IDF_TARGET_ESP32P4
+        default 19 if ZB_EXAMPLE_CHANNEL_CI_ASSIGNMENT && IDF_TARGET_ESP32S3
+        default 13
+        help
+            Primary Zigbee channel the example forms/joins on. When
+            ZB_EXAMPLE_CHANNEL_CI_ASSIGNMENT is enabled the default follows the build
+            target (per-chip RF isolation); otherwise it defaults to 13.
+
+    config ZB_EXAMPLE_SECONDARY_CHANNEL_MASK
+        hex "Zigbee Example Secondary Channel Mask"
+        default 0x00000800 if ZB_EXAMPLE_CHANNEL_CI_ASSIGNMENT && IDF_TARGET_ESP32H2
+        default 0x00002000 if ZB_EXAMPLE_CHANNEL_CI_ASSIGNMENT && IDF_TARGET_ESP32C6
+        default 0x00008000 if ZB_EXAMPLE_CHANNEL_CI_ASSIGNMENT && IDF_TARGET_ESP32C5
+        default 0x00020000 if ZB_EXAMPLE_CHANNEL_CI_ASSIGNMENT && IDF_TARGET_ESP32P4
+        default 0x00080000 if ZB_EXAMPLE_CHANNEL_CI_ASSIGNMENT && IDF_TARGET_ESP32S3
+        default 0x07FFF800
+        help
+            Secondary (fallback) Zigbee channel mask. When ZB_EXAMPLE_CHANNEL_CI_ASSIGNMENT
+            is enabled the default is the single per-chip channel mask (RF
+            isolation); otherwise it defaults to all channels (0x07FFF800).
+
+endmenu

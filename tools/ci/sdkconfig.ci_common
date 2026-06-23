@@ -1,0 +1,7 @@
+# CI-only: activate per-chip Zigbee channel for RF isolation.
+#
+# This file is injected into every example build by tools/ci/build_apps.py
+# (via sdkconfig_defaults). It is intentionally NOT part of any example's own
+# sdkconfig.defaults, so normal (non-CI) user builds keep ZB_EXAMPLE_CHANNEL_CI_ASSIGNMENT
+# disabled and use the default channel.
+CONFIG_ZB_EXAMPLE_CHANNEL_CI_ASSIGNMENT=y

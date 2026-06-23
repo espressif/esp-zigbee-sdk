@@ -1,3 +1,21 @@
+import re
+import pathlib
+
+_CHANNEL_KCONFIG = (
+    pathlib.Path(__file__).parent / 'utils' / 'example_common' / 'Kconfig'
+)
+
+
+def load_channel_map():
+    # Parse the per-chip CI channels from the example_common Kconfig, which is
+    # the single source of truth (ZB_EXAMPLE_PRIMARY_CHANNEL per-chip defaults).
+    text = _CHANNEL_KCONFIG.read_text()
+    pattern = re.compile(
+        r'default\s+(\d+)\s+if\s+ZB_EXAMPLE_CHANNEL_CI_ASSIGNMENT\s*&&\s*IDF_TARGET_(ESP32\w+)'
+    )
+    return {match.group(2).lower(): int(match.group(1)) for match in pattern.finditer(text)}
+
+
 class ZigbeeCIConstants:
     default_id = ['0x0000', '0xffff']
     invalid_device_addr = ['0xfff8', '0xfff9', '0xfffa', '0xfffb', '0xfffc', '0xfffd', '0xfffe', '0xffff']
@@ -6,6 +24,11 @@ class ZigbeeCIConstants:
     channel_min = 11
     channel_max = 26
     channel = 13
+    channel_map = load_channel_map()
+
+    @classmethod
+    def get_channel(cls, target):
+        return cls.channel_map.get(target, cls.channel)
     ota_total_package = '501070'
     ota_version = '0x10022000'
     image_type = '0x0001'
@@ -25,7 +48,7 @@ class MatchPattern:
     nwk_address = 'nwk address: (0x[0-9a-fA-F]{4})'
     form_success = 'Formed network successfully'
     device_commission = 'New device commissioned or rejoined'
-    joined_network = ('Joined network successfully PAN ID\(0x[0-9a-fA-F]{4},\s*EXT:\s*(0x[a-fA-F0-9]+)\),\s*Channel\((\d+)\),\s*Short Address\((0x[0-9a-fA-F]{4})\)')
+    joined_network = (r'Joined network successfully PAN ID\(0x[0-9a-fA-F]{4},\s*EXT:\s*(0x[a-fA-F0-9]+)\),\s*Channel\((\d+)\),\s*Short Address\((0x[0-9a-fA-F]{4})\)')
     active_ep = r'active ep: \[\d+, (\d+)]'
     status = r'status:\s*(\d+)'
     empty_binding_table = r'\|Dst_E\|(?!.*\|\s*0\s*\|)'

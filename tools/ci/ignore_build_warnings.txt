@@ -9,3 +9,6 @@
 
 # Ignore warnings for mbedTLS configuarions
 .*warning: unknown kconfig symbol 'MBEDTLS\w+'.*
+
+# Ignore warnings for all_device_type_apps
+.*warning: unknown kconfig symbol 'ZB_EXAMPLE_CHANNEL_CI_ASSIGNMENT'.*

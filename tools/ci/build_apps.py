@@ -35,6 +35,7 @@ PYTEST_APPS = {
 
 DEFAULT_IGNORE_WARNING_FILE = Path(__file__).resolve().parent / 'ignore_build_warnings.txt'
 DEFAULT_CONFIG_RULES = ['sdkconfig.defaults=default', 'sdkconfig.ci.*=', '=default']
+SDKCONFIG_CI_COMMON = Path(__file__).resolve().parent / 'sdkconfig.ci_common'
 
 def _load_ignore_warnings_from_file(filepath: Path) -> List[str]:
     """Load ignore warning regex patterns from file (one per line, skip empty and # lines)."""
@@ -110,6 +111,7 @@ def get_cmake_apps(
         path: str,
         target: str,
         config_rules_str: List[str],
+        sdkconfig_defaults_str: str,
 ) -> List[App]:
     current_working_dir = Path.cwd()
     manifest_files = str(current_working_dir / path / '.build-test-rules.yml')
@@ -122,6 +124,7 @@ def get_cmake_apps(
         target=target,
         build_dir='build_@t_@w',
         config_rules_str=config_rules_str,
+        sdkconfig_defaults=sdkconfig_defaults_str,
         check_warnings=True,
         manifest_files=manifest_files,
     )
@@ -129,7 +132,8 @@ def get_cmake_apps(
 
 def main(args: argparse.Namespace) -> None:
     config_rules = args.config if args.config is not None else DEFAULT_CONFIG_RULES
-    apps = get_cmake_apps(args.path, args.target, config_rules)
+    sdkconfig_defaults_str = ';'.join(['sdkconfig.defaults', str(SDKCONFIG_CI_COMMON)])
+    apps = get_cmake_apps(args.path, args.target, config_rules, sdkconfig_defaults_str)
     # no_pytest and only_pytest can not be both True
     assert not (args.no_pytest and args.pytest)
     apps_for_build = filter_apps_for_args(apps, args)
