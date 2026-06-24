@@ -143,7 +143,7 @@ static void zcl_ota_upgrade_client_progress_handler(ezb_zcl_ota_upgrade_client_p
                     break;
                 }
             }
-        } while (ret == EZB_ERR_NOT_FINISHED);
+        } while (ret == ESP_ERR_NOT_FINISHED);
         ret = ESP_OK;
         break;
     case EZB_ZCL_OTA_UPGRADE_PROGRESS_CHECK:
