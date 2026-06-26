@@ -15,7 +15,6 @@ cli_build_dir = CLI_CURRENT_DIR_CLIENT + '|' + CLI_CURRENT_DIR_CLIENT
 
 # Case 1: Zigbee network connection
 @pytest.mark.order(1)
-@pytest.mark.zigbee_multi_dut
 @pytest.mark.parametrize('count, app_path, erase_all', [(2, cli_build_dir, 'y'), ], indirect=True, )
 @generic_chips_zigbee_test
 def test_zb_cli_zb_connection(dut, count, app_path, erase_all) -> None:
@@ -37,7 +36,6 @@ def test_zb_cli_zb_connection(dut, count, app_path, erase_all) -> None:
 
 # Case 2: Zigbee network finding-binding
 @pytest.mark.order(2)
-@pytest.mark.zigbee_multi_dut
 @pytest.mark.parametrize('count, app_path, erase_all', [(2, cli_build_dir, 'y'), ], indirect=True, )
 @generic_chips_zigbee_test
 def test_zb_cli_zc_finding_binding(dut, count, app_path, erase_all) -> None:
@@ -88,7 +86,6 @@ def test_zb_cli_zc_finding_binding(dut, count, app_path, erase_all) -> None:
 
 # Case 3: Zigbee network ZCL command
 @pytest.mark.order(3)
-@pytest.mark.zigbee_multi_dut
 @pytest.mark.parametrize('count, app_path, erase_all', [(2, cli_build_dir, 'y'), ], indirect=True, )
 @generic_chips_zigbee_test
 def test_zb_cli_zcl_command(dut, count, app_path, erase_all) -> None:
@@ -133,7 +130,6 @@ def test_zb_cli_zcl_command(dut, count, app_path, erase_all) -> None:
 
 # #Case 4: Zigbee network leaving
 @pytest.mark.order(4)
-@pytest.mark.zigbee_multi_dut
 @pytest.mark.parametrize('count, app_path, erase_all', [(2, cli_build_dir, 'y'), ], indirect=True, )
 @generic_chips_zigbee_test
 def test_zb_cli_zc_check_leaving(dut, count, app_path, erase_all) -> None:
