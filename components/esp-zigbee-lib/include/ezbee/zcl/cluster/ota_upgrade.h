@@ -44,6 +44,16 @@ extern "C" {
 #define EZB_ZCL_OTA_UPGRADE_DEFAULT_UPGRADE_TIME 0xffffffffU
 
 /**
+ * @brief Default retry number for the OTA download failure.
+ */
+#define EZB_ZCL_OTA_UPGRADE_DEFAULT_RETRY 3
+
+/**
+ * @brief Default timeout in milliseconds for the OTA download failure.
+ */
+#define EZB_ZCL_OTA_UPGRADE_DEFAULT_TIMEOUT 5000
+
+/**
  * @brief Enumeration for the ZCL OTA Upgrade status codes.
  */
 enum {
@@ -456,6 +466,17 @@ ezb_err_t ezb_zcl_ota_upgrade_set_download_block_size(uint8_t ep_id, uint8_t all
  * @return Error code.
  */
 ezb_err_t ezb_zcl_ota_upgrade_set_hw_version(uint8_t ep_id, uint16_t hw_version);
+
+/**
+ * @brief Set the retry number and timeout for downloading OTA image on OTA client.
+ *
+ * @param ep_id   Endpoint ID of the OTA client.
+ * @param retry   The number of retries for the OTA download failure.
+ * @param timeout The timeout in milliseconds.
+ *
+ * @return Error code.
+ */
+ezb_err_t ezb_zcl_ota_upgrade_set_download_retry(uint8_t ep_id, uint8_t retry, uint32_t timeout);
 
 #ifdef __cplusplus
 } /* extern "C" */

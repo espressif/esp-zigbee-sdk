@@ -25,13 +25,13 @@ typedef void *ezb_zcl_reporting_info_t;
 /**
  * @brief Find ZCL reporting information.
  *
- * @param ep_id Endpoint ID to which the reporting information belongs.
- * @param cluster_id Cluster ID used to match the reporting information.
- * @param role Cluster role used to match the reporting information.
- * @param attr_id Attribute ID used to match the reporting information.
- * @param manuf_code Manufacturer code used to match the reporting information.
+ * @param[in] ep_id      The identifier of the endpoint to which the reporting information belongs.
+ * @param[in] cluster_id The identifier of the cluster to which the reporting information belongs.
+ * @param[in] role       The role of the cluster to which the reporting information belongs.
+ * @param[in] attr_id    The identifier of the attribute to which the reporting information belongs.
+ * @param[in] manuf_code The manufacturer code to which the reporting information belongs.
  *
- * @return Matching reporting information handle. EZB_ZCL_INVALID_REPORTING_INFO if not found.
+ * @return The handle of the matching reporting information. EZB_ZCL_INVALID_REPORTING_INFO if not found.
  */
 ezb_zcl_reporting_info_t ezb_zcl_reporting_info_find(uint8_t  ep_id,
                                                      uint16_t cluster_id,
@@ -42,27 +42,27 @@ ezb_zcl_reporting_info_t ezb_zcl_reporting_info_find(uint8_t  ep_id,
 /**
  * @brief Start ZCL attribute reporting.
  *
- * @param info The handle of the reporting information.
- * @return ezb_err_t Error code.
+ * @param[in] info The handle of the reporting information.
+ * @return The error code. See @ref ezb_err_t.
  */
 ezb_err_t ezb_zcl_reporting_start_attr_report(ezb_zcl_reporting_info_t info);
 
 /**
  * @brief Stop ZCL attribute reporting.
  *
- * @param info The handle of the reporting information.
- * @return ezb_err_t Error code.
+ * @param[in] info The handle of the reporting information.
+ * @return The error code. See @ref ezb_err_t.
  */
 ezb_err_t ezb_zcl_reporting_stop_attr_report(ezb_zcl_reporting_info_t info);
 
 /**
  * @brief Update ZCL attribute reporting.
  *
- * @param info The handle of the reporting information.
- * @param min_interval Minimum reporting interval is set to (in seconds).
- * @param max_interval Maximum reporting interval is set to (in seconds).
- * @param delta Reportable change is set to.
- * @return ezb_err_t Error code.
+ * @param[in] info         Handle of the reporting information.
+ * @param[in] min_interval Minimum reporting interval in seconds.
+ * @param[in] max_interval Maximum reporting interval in seconds.
+ * @param[in] delta        Reportable change value.
+ * @return The error code. See @ref ezb_err_t.
  */
 ezb_err_t ezb_zcl_reporting_info_update(ezb_zcl_reporting_info_t       info,
                                         uint16_t                       min_interval,
@@ -72,10 +72,10 @@ ezb_err_t ezb_zcl_reporting_info_update(ezb_zcl_reporting_info_t       info,
 /**
  * @brief Update ZCL attribute reporting default interval.
  *
- * @param info The handle of the reporting information.
- * @param def_min_interval Default minimum reporting interval is set to (in seconds).
- * @param def_max_interval Default maximum reporting interval is set to (in seconds).
- * @return ezb_err_t Error code.
+ * @param[in] info             Handle of the reporting information.
+ * @param[in] def_min_interval Default minimum reporting interval in seconds.
+ * @param[in] def_max_interval Default maximum reporting interval in seconds.
+ * @return The error code. See @ref ezb_err_t.
  */
 ezb_err_t ezb_zcl_reporting_info_update_default_interval(ezb_zcl_reporting_info_t info,
                                                          uint16_t                 def_min_interval,
@@ -84,8 +84,8 @@ ezb_err_t ezb_zcl_reporting_info_update_default_interval(ezb_zcl_reporting_info_
 /**
  * @brief Remove ZCL attribute reporting.
  *
- * @param info The handle of the reporting information.
- * @return ezb_err_t Error code.
+ * @param[in] info The handle of the reporting information.
+ * @return The error code. See @ref ezb_err_t.
  */
 ezb_err_t ezb_zcl_reporting_info_remove(ezb_zcl_reporting_info_t info);
 

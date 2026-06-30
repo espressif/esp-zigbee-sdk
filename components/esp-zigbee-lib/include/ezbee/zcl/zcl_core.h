@@ -443,27 +443,27 @@ enum ezb_zcl_core_action_callback_id_e {
 
 /**
  * @brief The type of the ZCL core action callback identifier.
+ * @anchor ezb_zcl_core_action_callback_id_t
  */
 typedef uint32_t ezb_zcl_core_action_callback_id_t;
 
 /**
- * @brief A raw ZCL frame, triggered when a raw ZCL frame is received.
+ * @brief A raw received ZCL frame.
  */
 typedef struct ezb_zcl_raw_frame_s {
-    ezb_zcl_cmd_hdr_t *header;         /*!< The header of the raw ZCL frame. */
-    uint16_t           payload_length; /*!< The payload length of the raw ZCL frame. */
-    uint8_t           *payload;        /*!< The payload of the raw ZCL frame. */
+    ezb_zcl_cmd_hdr_t *header;         /*!< Header of the raw ZCL frame. See @ref ezb_zcl_cmd_hdr_s. */
+    uint16_t           payload_length; /*!< Length of the payload of the raw ZCL frame. */
+    uint8_t           *payload;        /*!< Pointer to the payload of the raw ZCL frame. */
 } ezb_zcl_raw_frame_t;
 
 /**
  * @brief A callback for ZCL core action, triggered when ZCL command needs to be notified to the application.
  *
- * This callback is invoked by the ZCL stack when a command is received or a response
- * is received for a previously sent command. The message structure type depends on
- * the callback_id parameter.
+ * This callback is invoked by the ZCL stack when a command is received or a response is received for a previously sent command.
+ * The message structure type depends on the @p callback_id parameter.
  *
- * @param callback_id  The action callback identifier. See @ref ezb_zcl_core_action_callback_id_e.
- * @param message      Pointer to the message data. The structure type depends on callback_id.
+ * @param[in]     callback_id The action callback identifier. See @ref ezb_zcl_core_action_callback_id_e.
+ * @param[in,out] message     Message data. The structure type depends on @p callback_id.
  */
 typedef void (*ezb_zcl_core_action_callback_t)(ezb_zcl_core_action_callback_id_t callback_id, void *message);
 
@@ -474,7 +474,7 @@ typedef void (*ezb_zcl_core_action_callback_t)(ezb_zcl_core_action_callback_id_t
  * are received or responses are received. Only one callback handler can be registered
  * at a time. Register NULL to unregister the current handler.
  *
- * @param cb Function pointer to the action callback handler, or NULL to unregister.
+ * @param[in] cb The function pointer to the action callback handler, or NULL to unregister.
  */
 void ezb_zcl_core_action_handler_register(ezb_zcl_core_action_callback_t cb);
 
@@ -484,8 +484,8 @@ void ezb_zcl_core_action_handler_register(ezb_zcl_core_action_callback_t cb);
  * This callback is invoked by the ZCL stack when a raw ZCL frame is received. The callback
  * is used to notify the application about the raw ZCL frame.
  *
- * @param raw_frame Pointer to the raw ZCL frame.
- * @return True if the raw ZCL frame is processed successfully and the stack should drop this frame, false otherwise.
+ * @param[in] raw_frame The pointer to the raw ZCL frame.
+ * @return true if the raw ZCL frame is processed successfully and the stack should drop this frame, false otherwise.
  */
 typedef bool (*ezb_zcl_raw_frame_callback_t)(const ezb_zcl_raw_frame_t *raw_frame);
 
@@ -495,7 +495,7 @@ typedef bool (*ezb_zcl_raw_frame_callback_t)(const ezb_zcl_raw_frame_t *raw_fram
  * This function registers a callback handler that will be invoked when a raw ZCL frame is received.
  * Only one callback handler can be registered at a time. Register NULL to unregister the current handler.
  *
- * @param cb Function pointer to the raw frame callback handler, or NULL to unregister.
+ * @param[in] cb The function pointer to the raw frame callback handler, or NULL to unregister.
  */
 void ezb_zcl_raw_command_handler_register(ezb_zcl_raw_frame_callback_t cb);
 

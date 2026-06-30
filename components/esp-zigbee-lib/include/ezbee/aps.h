@@ -111,6 +111,7 @@ typedef struct ezb_apsde_data_ind_s {
     uint8_t security_status;    /*!< UNSECURED if the ASDU was received without any security. SECURED_NWK_KEY if the received ASDU was secured with the NWK key. */
     uint8_t key_index;          /*!< This value is only valid when SecurityStatus is set to SECURED_LINK_KEY.*/
     uint8_t lqi;                /*!< The link quality indication delivered by the NLDE.*/
+    int8_t rssi;                /*!< The received signal strength indication (RSSI) of the ASDU. */
 
     uint16_t asdu_length;       /*!< The number of octets comprising the ASDU being indicated by the APSDE.*/
     uint8_t *asdu;              /*!< The set of octets comprising the ASDU being indicated by the APSDE. */

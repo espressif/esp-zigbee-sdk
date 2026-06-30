@@ -69,7 +69,7 @@ typedef struct ezb_zdp_nwk_addr_req_field_s {
  * This structure is used for both NWK_addr and IEEE_addr responses.
  */
 typedef struct ezb_zdp_addr_rsp_field_s {
-    uint8_t          status;                  /*!< Status of the address request, see @ref ezb_zdp_status_t */
+    uint8_t          status;                  /*!< Status of the address request. See @ref ezb_zdp_status_t */
     ezb_extaddr_t    ieee_addr_remote_dev;    /*!< IEEE (64-bit) address of the remote device */
     ezb_shortaddr_t  nwk_addr_remote_dev;     /*!< Network (16-bit) address of the remote device */
     uint8_t          num_assoc_dev;           /*!< Total number of associated devices (children) of the remote device */
@@ -133,9 +133,6 @@ typedef void (*ezb_zdo_ieee_addr_req_callback_t)(const ezb_zdo_ieee_addr_req_res
 
 /**
  * @brief Structure for ZDO IEEE Address Request
- *
- * This structure contains all parameters needed to send an IEEE address request to find
- * the 64-bit IEEE address corresponding to a known network address.
  */
 typedef struct ezb_zdo_ieee_addr_req_s {
     ezb_shortaddr_t                  dst_nwk_addr; /*!< Network address of the destination device to receive the request */
@@ -148,7 +145,7 @@ typedef struct ezb_zdo_ieee_addr_req_s {
  * @brief Structure for ZDP Simple Descriptor Response
  */
 typedef struct ezb_zdp_simple_desc_rsp_field_s {
-    uint8_t              status;               /*!< Status of the simple descriptor request, see @ref ezb_zdp_status_t */
+    uint8_t              status;               /*!< Status of the simple descriptor request. See @ref ezb_zdp_status_t */
     ezb_shortaddr_t      nwk_addr_of_interest; /*!< Network address of the device that was queried */
     uint8_t              length;               /*!< Length of the simple descriptor in bytes */
     ezb_af_simple_desc_t desc;                 /*!< Simple descriptor containing endpoint information */
@@ -177,9 +174,6 @@ typedef void (*ezb_zdo_simple_desc_req_callback_t)(const ezb_zdo_simple_desc_req
 
 /**
  * @brief Structure for ZDO Simple Descriptor Request
- *
- * This structure contains all parameters needed to send a simple descriptor request to get
- * information about a specific endpoint on a remote device.
  */
 typedef struct ezb_zdo_simple_desc_req_s {
     ezb_shortaddr_t                    dst_nwk_addr; /*!< Network address of the destination device to receive the request */
@@ -193,7 +187,7 @@ typedef struct ezb_zdo_simple_desc_req_s {
  */
 typedef struct ezb_zdp_match_desc_req_field_s {
     ezb_shortaddr_t nwk_addr_of_interest; /*!< Network address of the device to query */
-    uint16_t        profile_id;           /*!< Profile ID to match at the destination, see @ref ezb_af_profile_id_t */
+    uint16_t profile_id; /*!< Identifier of the application profile to match at the destination. See @ref ezb_af_profile_id_t */
     uint8_t         num_in_clusters;      /*!< Number of input clusters (server clusters) in the cluster_list */
     uint8_t         num_out_clusters;     /*!< Number of output clusters (client clusters) in the cluster_list */
     uint16_t       *cluster_list; /*!< Pointer to array of cluster IDs. First num_in_clusters entries are input clusters,
@@ -205,7 +199,7 @@ typedef struct ezb_zdp_match_desc_req_field_s {
  * @brief Structure for ZDP Match Descriptor Response
  */
 typedef struct ezb_zdp_match_desc_rsp_field_s {
-    ezb_zdp_status_t status;               /*!< Status of the match descriptor request, see @ref ezb_zdp_status_t */
+    ezb_zdp_status_t status;               /*!< Status of the match descriptor request. See @ref ezb_zdp_status_t */
     ezb_shortaddr_t  nwk_addr_of_interest; /*!< Network address of the device that was queried */
     uint8_t          match_length;         /*!< Number of endpoints on the remote device that match the request criteria */
     uint8_t         *match_list;           /*!< Pointer to array of endpoint numbers (uint8_t) that match the criteria */
@@ -226,9 +220,6 @@ typedef void (*ezb_zdo_match_desc_req_callback_t)(const ezb_zdo_match_desc_req_r
 
 /**
  * @brief Structure for ZDO Match Descriptor Request
- *
- * This structure contains all parameters needed to send a match descriptor request to find
- * endpoints on a remote device that support specific clusters.
  */
 typedef struct ezb_zdo_match_desc_req_s {
     ezb_shortaddr_t                   dst_nwk_addr; /*!< Network address of the destination device to receive the request */
@@ -242,8 +233,6 @@ typedef struct ezb_zdo_match_desc_req_s {
 
 /**
  * @brief Fields of the ZDP Simple Request Command
- *
- * This is a base structure used for simple requests that only need a network address.
  */
 typedef struct ezb_zdp_simple_req_field_s {
     ezb_shortaddr_t nwk_addr_of_interest; /*!< Network address of the device to query */
@@ -251,8 +240,6 @@ typedef struct ezb_zdp_simple_req_field_s {
 
 /**
  * @brief Fields of the ZDP Active Endpoints Request Command
- *
- * The active endpoints request uses the same fields as the simple request.
  */
 typedef ezb_zdp_simple_req_field_t ezb_zdp_active_ep_req_field_t;
 
@@ -260,7 +247,7 @@ typedef ezb_zdp_simple_req_field_t ezb_zdp_active_ep_req_field_t;
  * @brief Structure for ZDP Active Endpoints Response
  */
 typedef struct ezb_zdp_active_ep_rsp_field_s {
-    ezb_zdp_status_t status;               /*!< Status of the active endpoints request, see @ref ezb_zdp_status_t */
+    ezb_zdp_status_t status;               /*!< Status of the active endpoints request. See @ref ezb_zdp_status_t */
     ezb_shortaddr_t  nwk_addr_of_interest; /*!< Network address of the device that was queried */
     uint8_t          active_ep_count;      /*!< Number of active endpoints on the remote device */
     uint8_t         *active_ep_list;       /*!< Pointer to array of active endpoint numbers (uint8_t) */
@@ -281,9 +268,6 @@ typedef void (*ezb_zdo_active_ep_req_callback_t)(const ezb_zdo_active_ep_req_res
 
 /**
  * @brief Structure for ZDO Active Endpoints Request
- *
- * This structure contains all parameters needed to send an active endpoints request to get
- * a list of all active endpoints on a remote device.
  */
 typedef struct ezb_zdo_active_ep_req_s {
     ezb_shortaddr_t                  dst_nwk_addr; /*!< Network address of the destination device to receive the request */
@@ -294,8 +278,6 @@ typedef struct ezb_zdo_active_ep_req_s {
 
 /**
  * @brief Fields of the ZDP Power Descriptor Request Command
- *
- * The power descriptor request uses the same fields as the simple request.
  */
 typedef ezb_zdp_simple_req_field_t ezb_zdp_power_desc_req_field_t;
 
@@ -303,7 +285,7 @@ typedef ezb_zdp_simple_req_field_t ezb_zdp_power_desc_req_field_t;
  * @brief Structure for ZDP Power Descriptor Response
  */
 typedef struct ezb_zdp_power_desc_rsp_field_s {
-    ezb_zdp_status_t         status;               /*!< Status of the power descriptor request, see @ref ezb_zdp_status_t */
+    ezb_zdp_status_t         status;               /*!< Status of the power descriptor request. See @ref ezb_zdp_status_t */
     ezb_shortaddr_t          nwk_addr_of_interest; /*!< Network address of the device that was queried */
     ezb_af_node_power_desc_t power_desc; /*!< Power descriptor containing power characteristics of the remote device */
 } ezb_zdp_power_desc_rsp_field_t;
@@ -323,9 +305,6 @@ typedef void (*ezb_zdo_power_desc_req_callback_t)(const ezb_zdo_power_desc_req_r
 
 /**
  * @brief Structure for ZDO Power Descriptor Request
- *
- * This structure contains all parameters needed to send a power descriptor request to get
- * power characteristics of a remote device.
  */
 typedef struct ezb_zdo_power_desc_req_s {
     ezb_shortaddr_t                   dst_nwk_addr; /*!< Network address of the destination device to receive the request */
@@ -380,7 +359,7 @@ typedef void (*ezb_zdo_parent_annce_req_callback_t)(const ezb_zdo_parent_annce_r
  * @brief Structure for ZDO Parent Announcement Request
  */
 typedef struct ezb_zdo_parent_annce_req_s {
-    ezb_shortaddr_t                     dst_nwk_addr; /*!< NWK address that request sent to */
+    ezb_shortaddr_t                     dst_nwk_addr; /*!< Network address of the destination device to receive the request */
     ezb_zdo_parent_annce_req_callback_t cb;           /*!< User callback for result of ZDO Parent Announcement Request，
                                                            If the request is broadcast, the callback may be invoked multiple
                                                            times to report different responses, with the NULL response indicating
@@ -390,8 +369,6 @@ typedef struct ezb_zdo_parent_annce_req_s {
 
 /**
  * @brief Fields of the ZDP Node Descriptor Request Command
- *
- * The node descriptor request uses the same fields as the simple request.
  */
 typedef ezb_zdp_simple_req_field_t ezb_zdp_node_desc_req_field_t;
 
@@ -399,7 +376,7 @@ typedef ezb_zdp_simple_req_field_t ezb_zdp_node_desc_req_field_t;
  * @brief Structure for ZDP Node Descriptor Response
  */
 typedef struct ezb_zdp_node_desc_rsp_field_s {
-    ezb_zdp_status_t   status;               /*!< Status of the node descriptor request, see @ref ezb_zdp_status_t */
+    ezb_zdp_status_t   status;               /*!< Status of the node descriptor request. See @ref ezb_zdp_status_t */
     ezb_shortaddr_t    nwk_addr_of_interest; /*!< Network address of the device that was queried */
     ezb_af_node_desc_t node_desc;            /*!< Node descriptor containing device capabilities and characteristics */
     /** TODO: add TLVs */
@@ -420,9 +397,6 @@ typedef void (*ezb_zdo_node_desc_req_callback_t)(const ezb_zdo_node_desc_req_res
 
 /**
  * @brief Structure for ZDO Node Descriptor Request
- *
- * This structure contains all parameters needed to send a node descriptor request to get
- * device capabilities and characteristics of a remote device.
  */
 typedef struct ezb_zdo_node_desc_req_s {
     ezb_shortaddr_t                  dst_nwk_addr; /*!< Network address of the destination device to receive the request */
@@ -435,16 +409,16 @@ typedef struct ezb_zdo_node_desc_req_s {
  * @brief Fields of the ZDP System Server Discovery Request
  */
  typedef struct ezb_zdp_sys_srv_disc_req_field_s {
-     uint16_t server_mask; /*!< The server mask will be used to match the remote device's node descriptor server mask, see @ref
-                              ezb_af_server_mask_t */
+     uint16_t server_mask; /*!< Server mask used to match the remote device's node descriptor server mask. See @ref
+                                ezb_af_server_mask_t. */
 } ezb_zdp_sys_srv_disc_req_field_t;
 
 /**
  * @brief Fields of the ZDP System Server Discovery Response
  */
 typedef struct ezb_zdp_sys_srv_disc_rsp_field_s {
-    uint8_t  status;      /*!< The status of the system service discovery request, see @ref ezb_zdp_status_t */
-    uint16_t server_mask; /*!< The matching bits between SystemServiceDiscovery Request and remote's node descriptor server mask field. */
+    uint8_t  status;      /*!< Status of the system service discovery request. See @ref ezb_zdp_status_t. */
+    uint16_t server_mask; /*!< Matching bits between SystemServiceDiscovery Request and remote's node descriptor server mask field. */
 } ezb_zdp_sys_srv_disc_rsp_field_t;
 
 /**
@@ -464,9 +438,9 @@ typedef void (*ezb_zdo_sys_srv_disc_req_callback_t)(const ezb_zdo_sys_srv_disc_r
  * @brief Structure for ZDO System Server Discovery Request
  */
 typedef struct ezb_zdo_sys_srv_disc_req_s {
-    ezb_zdp_sys_srv_disc_req_field_t    field;        /*!< Fields of the system service discovery request */
-    ezb_zdo_sys_srv_disc_req_callback_t cb;           /*!< User callback for result of ZDO System Server Discovery Request */
-    void                                *user_ctx;    /*!< User argument of request will be passed to user callback */
+    ezb_zdp_sys_srv_disc_req_field_t    field;     /*!< Fields of the system service discovery request */
+    ezb_zdo_sys_srv_disc_req_callback_t cb;        /*!< User callback for result of ZDO System Server Discovery Request */
+    void                                *user_ctx; /*!< User argument of request will be passed to user callback */
 } ezb_zdo_sys_srv_disc_req_t;
 
 /**
@@ -474,9 +448,10 @@ typedef struct ezb_zdo_sys_srv_disc_req_s {
  *
  * The NWK_addr_req is generated from a Local Device wishing to inquire as to the 16-bit address of the Remote Device based on
  * its known IEEE address.
- * @param[in] req A structure used to configure the fields of the NWK_addr_req command, see @ref ezb_zdo_nwk_addr_req_t
  *
- * @return Error code, see @ref ezb_err_t
+ * @param[in] req The pointer to the ZDO network address request. See @ref ezb_zdo_nwk_addr_req_t
+ *
+ * @return The error code. See @ref ezb_err_t
  */
 ezb_err_t ezb_zdo_nwk_addr_req(const ezb_zdo_nwk_addr_req_t *req);
 
@@ -485,9 +460,10 @@ ezb_err_t ezb_zdo_nwk_addr_req(const ezb_zdo_nwk_addr_req_t *req);
  *
  * The IEEE_addr_req is generated from a Local Device wishing to inquire as to the 64-bit IEEE address of the Remote
  * Device based on their known 16-bit address.
- * @param[in] req A structure used to configure the fields of the IEEE_addr_req command, see @ref ezb_zdo_ieee_addr_req_t
  *
- * @return Error code, see @ref ezb_err_t
+ * @param[in] req The pointer to the ZDO IEEE address request. See @ref ezb_zdo_ieee_addr_req_t
+ *
+ * @return The error code. See @ref ezb_err_t
  */
 ezb_err_t ezb_zdo_ieee_addr_req(const ezb_zdo_ieee_addr_req_t *req);
 
@@ -496,9 +472,10 @@ ezb_err_t ezb_zdo_ieee_addr_req(const ezb_zdo_ieee_addr_req_t *req);
  *
  * The Simple_Desc_req command is generated from a local device wishing to inquire as to the simple descriptor of a remote
  * device on a specified endpoint.
- * @param[in] req A structure used to configure the fields of the Simple_Desc_req command, see @ref ezb_zdo_simple_desc_req_t
  *
- * @return Error code, see @ref ezb_err_t
+ * @param[in] req The pointer to the ZDO simple descriptor request. See @ref ezb_zdo_simple_desc_req_t
+ *
+ * @return The error code. See @ref ezb_err_t
  */
 ezb_err_t ezb_zdo_simple_desc_req(const ezb_zdo_simple_desc_req_t *req);
 
@@ -507,9 +484,10 @@ ezb_err_t ezb_zdo_simple_desc_req(const ezb_zdo_simple_desc_req_t *req);
  *
  * The Match_Desc_req command is generated from a local device wishing to find remote devices supporting a specific simple
  * descriptor match criterion.
- * @param[in] req A structure used to configure the fields of the Match_Desc_req command, see @ref ezb_zdo_match_desc_req_t
  *
- * @return Error code, see @ref ezb_err_t
+ * @param[in] req The pointer to the ZDO match descriptor request. See @ref ezb_zdo_match_desc_req_t
+ *
+ * @return The error code. See @ref ezb_err_t
  */
 ezb_err_t ezb_zdo_match_desc_req(const ezb_zdo_match_desc_req_t *req);
 
@@ -518,9 +496,10 @@ ezb_err_t ezb_zdo_match_desc_req(const ezb_zdo_match_desc_req_t *req);
  *
  * The Active_EP_req command is generated from a local device wishing to acquire the list of endpoints on a remote device with
  * simple descriptors.
- * @param[in] req A structure used to configure the fields of the Active_EP_req command, see @ref ezb_zdo_active_ep_req_t
  *
- * @return Error code, see @ref ezb_err_t
+ * @param[in] req The pointer to the ZDO active endpoints request. See @ref ezb_zdo_active_ep_req_t
+ *
+ * @return The error code. See @ref ezb_err_t
  */
 ezb_err_t ezb_zdo_active_ep_req(const ezb_zdo_active_ep_req_t *req);
 
@@ -528,9 +507,10 @@ ezb_err_t ezb_zdo_active_ep_req(const ezb_zdo_active_ep_req_t *req);
  * @brief Send a ZDO Power_Desc_req command.
  *
  * The Power_Desc_req command is generated from a local device wishing to inquire as to the power descriptor of a remote device.
- * @param[in] req A structure used to configure the fields of the Power_Desc_req command, see @ref ezb_zdo_power_desc_req_t
  *
- * @return Error code, see @ref ezb_err_t
+ * @param[in] req The pointer to the ZDO power descriptor request. See @ref ezb_zdo_power_desc_req_t
+ *
+ * @return The error code. See @ref ezb_err_t
  */
 ezb_err_t ezb_zdo_power_desc_req(const ezb_zdo_power_desc_req_t *req);
 
@@ -538,9 +518,10 @@ ezb_err_t ezb_zdo_power_desc_req(const ezb_zdo_power_desc_req_t *req);
  * @brief Send a ZDO Node_Desc_req command.
  *
  * The Node_Desc_req command is generated from a local device wishing to inquire as to the node descriptor of a remote device.
- * @param[in] req A structure used to configure the fields of the Node_Desc_req command, see @ref ezb_zdo_node_desc_req_t
  *
- * @return Error code, see @ref ezb_err_t
+ * @param[in] req The pointer to the ZDO node descriptor request. See @ref ezb_zdo_node_desc_req_t
+ *
+ * @return The error code. See @ref ezb_err_t
  */
 ezb_err_t ezb_zdo_node_desc_req(const ezb_zdo_node_desc_req_t *req);
 
@@ -548,9 +529,10 @@ ezb_err_t ezb_zdo_node_desc_req(const ezb_zdo_node_desc_req_t *req);
  * @brief Announce the existence of the Zigbee network to the network.
  *
  * The Device_Annce_req command is generated from a local device wishing to announce itself to the network.
- * @param[in] req A structure used to configure the fields of the Device_Annce_req command, see @ref ezb_zdo_device_annce_req_t
+ *
+ * @param[in] req The pointer to the ZDO device announcement request. See @ref ezb_zdo_device_annce_req_t
 
- * @return Error code, see @ref ezb_err_t
+ * @return The error code. See @ref ezb_err_t
  */
 ezb_err_t ezb_zdo_device_annce_req(const ezb_zdo_device_annce_req_t *req);
 
@@ -558,8 +540,10 @@ ezb_err_t ezb_zdo_device_annce_req(const ezb_zdo_device_annce_req_t *req);
  * @brief Announce the existence of the Zigbee network to the parent device.
  *
  * The Parent_Annce_req command is generated from a local device wishing to announce itself to the parent device.
- * @param[in] req A structure used to configure the fields of the Parent_Annce_req command, see @ref ezb_zdo_parent_annce_req_t
- * @return Error code, see @ref ezb_err_t
+ *
+ * @param[in] req The pointer to the ZDO parent announcement request. See @ref ezb_zdo_parent_annce_req_t
+ *
+ * @return The error code. See @ref ezb_err_t
  */
 ezb_err_t ezb_zdo_parent_annce_req(const ezb_zdo_parent_annce_req_t *req);
 
@@ -568,9 +552,10 @@ ezb_err_t ezb_zdo_parent_annce_req(const ezb_zdo_parent_annce_req_t *req);
  *
  * The System_Server_Discovery_req is generated from a Local Device wishing to discover the location of a particular system server or
  *  servers as indicated by the ServerMask parameter.
- * @param[in] req A structure used to configure the fields of the System_Server_Discovery_req command, see @ref ezb_zdo_sys_srv_disc_req_s
  *
- * @return Error code, see @ref ezb_err_t
+ * @param[in] req The pointer to the ZDO system server discovery request. See @ref ezb_zdo_sys_srv_disc_req_s
+ *
+ * @return The error code. See @ref ezb_err_t
  */
 ezb_err_t ezb_zdo_sys_srv_disc_req(const ezb_zdo_sys_srv_disc_req_t *req);
 

@@ -67,6 +67,7 @@ enum ezb_zdo_req_cmd_id_e {
     EZB_ZDO_CMD_UNBIND_REQ = 0x0022U, /*!< Unbind Request */
     // @brief Network Management Client Services Command IDs
     EZB_ZDO_CMD_MGMT_LQI_REQ            = 0x0031U, /*!< Mgmt_Lqi_req */
+    EZB_ZDO_CMD_MGMT_RTG_REQ            = 0x0032U, /*!< Mgmt_Rtg_req */
     EZB_ZDO_CMD_MGMT_BIND_REQ           = 0x0033U, /*!< Mgmt_Bind_req */
     EZB_ZDO_CMD_MGMT_LEAVE_REQ          = 0x0034U, /*!< Mgmt_Leave_req */
     EZB_ZDO_CMD_MGMT_PERMIT_JOINING_REQ = 0x0036U, /*!< Mgmt_Permit_Joining_req */
