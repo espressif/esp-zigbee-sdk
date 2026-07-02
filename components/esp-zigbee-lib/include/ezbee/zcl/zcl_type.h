@@ -74,8 +74,8 @@ extern "C" {
  */
 typedef enum ezb_zcl_attribute_reporting_status_e
 {
-    EZB_ZCL_AR_STATUS_PENDING  = 0x00U,  /**< Pending. */
-    EZB_ZCL_AR_STATUS_COMPLETE = 0x01U  /**< Attribute Reporting Complete. */
+    EZB_ZCL_AR_STATUS_PENDING  = 0x00U,  /*!< Pending. */
+    EZB_ZCL_AR_STATUS_COMPLETE = 0x01U   /*!< Attribute reporting complete. */
 } ezb_zcl_attribute_reporting_status_t;
 
 /** @brief Attribute ID for the global AttributeReportingStatus attribute. */
@@ -448,6 +448,11 @@ enum ezb_zcl_cluster_id_e {
     EZB_ZCL_CLUSTER_ID_DIAGNOSTICS                = 0x0b05U, /*!< Home Automation Diagnostics */
     EZB_ZCL_CLUSTER_ID_TOUCHLINK_COMMISSIONING    = 0x1000U, /*!< Touchlink commissioning */
 };
+
+/**
+ * @brief Represents the cluster identifier of ZCL cluster
+ * @anchor ezb_zcl_cluster_id_t
+ */
 typedef uint16_t ezb_zcl_cluster_id_t;
 
 #define EZB_ZCL_CUSTOM_CLUSTER_ID_MIN_VAL 0x8000U /*!< Minimum value for custom cluster IDs. */

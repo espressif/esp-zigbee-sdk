@@ -107,9 +107,9 @@ typedef ezb_zcl_device_temp_config_cluster_server_config_t ezb_zcl_device_temp_c
 /**
  * @brief Add an attribute to an device_temp_config cluster descriptor.
  *
- * @param cluster_desc Pointer to the device_temp_config cluster descriptor, see ezb_zcl_cluster_desc_t.
- * @param attr_id      Attribute identifier.
- * @param value        Pointer to the attribute value.
+ * @param[in] cluster_desc The device_temp_config cluster descriptor.
+ * @param[in] attr_id      The identifier of the attribute to be added to @p cluster_desc.
+ * @param[in] value        The pointer to the initial value of the attribute.
  * @return Error code.
  */
 ezb_err_t ezb_zcl_device_temp_config_cluster_desc_add_attr(ezb_zcl_cluster_desc_t cluster_desc,
@@ -119,10 +119,11 @@ ezb_err_t ezb_zcl_device_temp_config_cluster_desc_add_attr(ezb_zcl_cluster_desc_
 /**
  * @brief Create an device_temp_config cluster descriptor.
  *
- * @param cluster_cfg  Pointer to the device_temp_config cluster configuration structure, refer to
- * ezb_zcl_device_temp_config_cluster_server_config_t or ezb_zcl_device_temp_config_cluster_client_config_t or NULL (default
- * config)
- * @param role_mask Role mask (server/client).
+ * @param[in] cluster_cfg  The pointer to the device_temp_config cluster configuration structure.
+                           Use ezb_zcl_device_temp_config_cluster_server_config_t for EZB_ZCL_CLUSTER_SERVER,
+                           use ezb_zcl_device_temp_config_cluster_client_config_t for EZB_ZCL_CLUSTER_CLIENT,
+                           or use NULL for default configuration of the stack based on the @p role_mask.
+ * @param[in] role_mask    The role of the cluster to create.
  * @return Created cluster descriptor.
  */
 ezb_zcl_cluster_desc_t ezb_zcl_device_temp_config_create_cluster_desc(const void *cluster_cfg, uint8_t role_mask);
@@ -130,14 +131,14 @@ ezb_zcl_cluster_desc_t ezb_zcl_device_temp_config_create_cluster_desc(const void
 /**
  * @brief Initialize the DeviceTempConfig cluster client role for a given endpoint.
  *
- * @param ep_id Endpoint ID.
+ * @param[in] ep_id The identifier of the endpoint hosting the cluster that needs initialization.
  */
 void ezb_zcl_device_temp_config_cluster_client_init(uint8_t ep_id);
 
 /**
  * @brief Initialize the DeviceTempConfig cluster server role for a given endpoint.
  *
- * @param ep_id Endpoint ID.
+ * @param[in] ep_id The identifier of the endpoint hosting the cluster that needs de-initialization.
  */
 void ezb_zcl_device_temp_config_cluster_server_init(uint8_t ep_id);
 

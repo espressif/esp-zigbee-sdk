@@ -18,6 +18,7 @@
  * - Permit joining requests to control device joining
  * - Network update requests to scan and update network parameters
  * - Binding table management requests to query binding information
+ * - Routing table management requests to query routing information
  *
  * All requests use a unified structure that includes the destination address,
  * request fields, callback function, and user context.
@@ -42,8 +43,6 @@ typedef struct ezb_zdp_nwk_mgmt_lqi_req_field_s {
 
 /**
  * @brief Structure for ZDP Network Management Link Quality Indicator (LQI) Neighbor Table Entry
- *
- * This structure represents a single entry in the neighbor table, containing information about a neighboring device.
  */
 typedef struct ezb_zdp_nwk_mgmt_lqi_neighbor_table_entry_s {
     ezb_extpanid_t  extended_pan_id;     /*!< Extended PAN ID */
@@ -63,7 +62,7 @@ typedef struct ezb_zdp_nwk_mgmt_lqi_neighbor_table_entry_s {
  * @brief Structure for ZDP Network Management Link Quality Indicator (LQI) Response
  */
 typedef struct ezb_zdp_nwk_mgmt_lqi_rsp_field_s {
-    uint8_t status;                    /*!< Status of the LQI request, see @ref ezb_zdp_status_t */
+    uint8_t status;                    /*!< Status of the LQI request. See @ref ezb_zdp_status_t. */
     uint8_t neighbor_table_entries;    /*!< Total number of entries in the neighbor table */
     uint8_t start_index;               /*!< Starting index of the entries returned in this response */
     uint8_t neighbor_table_list_count; /*!< Number of neighbor table entries in this response */
@@ -88,23 +87,77 @@ typedef void (*ezb_zdo_nwk_mgmt_lqi_req_callback_t)(const ezb_zdo_nwk_mgmt_lqi_r
  */
 typedef struct ezb_zdo_nwk_mgmt_lqi_req_s {
     ezb_shortaddr_t                     dst_nwk_addr; /*!< NWK address that request sent to */
-    ezb_zdp_nwk_mgmt_lqi_req_field_t    field;        /*!< The fields of the LQI request */
+    ezb_zdp_nwk_mgmt_lqi_req_field_t    field;        /*!< Fields of the LQI request */
     ezb_zdo_nwk_mgmt_lqi_req_callback_t cb;           /*!< User callback for result of ZDO Network Management LQI Request */
     void                               *user_ctx;     /*!< User argument of request will be passed to user callback */
 } ezb_zdo_nwk_mgmt_lqi_req_t;
 
 /**
+ * @brief Fields of the ZDP Network Management Routing Table Request Command
+ */
+typedef struct ezb_zdp_nwk_mgmt_rtg_req_field_s {
+    uint8_t start_index; /*!< Starting index in the routing table for the requested entries */
+} ezb_zdp_nwk_mgmt_rtg_req_field_t;
+
+/**
+ * @brief Structure for ZDP Network Management Routing Table Entry
+ */
+typedef struct ezb_zdp_nwk_mgmt_routing_table_entry_s {
+    ezb_shortaddr_t dst_addr;                  /*!< Network address of the destination device */
+    uint8_t         route_status : 3;          /*!< Route status. See @ref ezb_nwk_route_state_t */
+    bool            memory_constrained : 1;    /*!< true if the route is a memory-constrained many-to-one route */
+    bool            many_to_one : 1;           /*!< true if the destination is a many-to-one concentrator */
+    bool            route_record_required : 1; /*!< true if a route record command should be sent before data */
+    uint8_t         reserved : 2;              /*!< Reserved field */
+    ezb_shortaddr_t next_hop_addr;             /*!< Network address of the next hop toward the destination */
+} ezb_zdp_nwk_mgmt_routing_table_entry_t;
+
+/**
+ * @brief Structure for ZDP Network Management Routing Table Response
+ */
+typedef struct ezb_zdp_nwk_mgmt_rtg_rsp_field_s {
+    uint8_t                                 status; /*!< Status of the routing table request. See @ref ezb_zdp_status_t */
+    uint8_t                                 routing_table_entries; /*!< Total number of entries in the routing table */
+    uint8_t                                 start_index; /*!< Starting index of the entries returned in this response */
+    uint8_t                                 routing_table_list_count; /*!< Number of routing table entries in this response */
+    ezb_zdp_nwk_mgmt_routing_table_entry_t *routing_table_list;       /*!< Pointer to array of routing table entries */
+} ezb_zdp_nwk_mgmt_rtg_rsp_field_t;
+
+/**
+ * @brief Structure for ZDO Network Management Routing Table Request Result
+ */
+typedef struct ezb_zdo_nwk_mgmt_rtg_req_result_s {
+    ezb_err_t                         error; /*!< Error code of the routing table request operation */
+    ezb_zdp_nwk_mgmt_rtg_rsp_field_t *rsp;   /*!< Pointer to the routing table response field, NULL if error occurred */
+} ezb_zdo_nwk_mgmt_rtg_req_result_t;
+
+/**
+ * @brief A callback to handle the result of ZDO Network Management Routing Table Request
+ */
+typedef void (*ezb_zdo_nwk_mgmt_rtg_req_callback_t)(const ezb_zdo_nwk_mgmt_rtg_req_result_t *result, void *user_ctx);
+
+/**
+ * @brief Structure for ZDO Network Management Routing Table Request
+ */
+typedef struct ezb_zdo_nwk_mgmt_rtg_req_s {
+    ezb_shortaddr_t                     dst_nwk_addr; /*!< NWK address that request sent to */
+    ezb_zdp_nwk_mgmt_rtg_req_field_t    field;        /*!< Fields of the routing table request */
+    ezb_zdo_nwk_mgmt_rtg_req_callback_t cb; /*!< User callback for result of ZDO Network Management Routing Table Request */
+    void                               *user_ctx; /*!< User argument of request will be passed to user callback */
+} ezb_zdo_nwk_mgmt_rtg_req_t;
+
+/**
  * @brief Structure for ZDP Network Management Leave Response
  */
 typedef struct ezb_zdp_nwk_mgmt_leave_rsp_field_s {
-    uint8_t status; /*!< Status of the leave operation, see @ref ezb_zdp_status_t */
+    uint8_t status; /*!< Status of the leave operation. See @ref ezb_zdp_status_t */
 } ezb_zdp_nwk_mgmt_leave_rsp_field_t;
 
 /**
  * @brief Structure for ZDO Network Management Leave Request Result
  */
 typedef struct ezb_zdo_nwk_mgmt_leave_req_result_s {
-    ezb_err_t                           error; /*!< Error code of the request operation */
+    ezb_err_t                           error; /*!< Error code of the leave request operation */
     ezb_zdp_nwk_mgmt_leave_rsp_field_t *rsp;   /*!< Pointer to the leave response field, NULL if error occurred */
 } ezb_zdo_nwk_mgmt_leave_req_result_t;
 
@@ -113,8 +166,8 @@ typedef struct ezb_zdo_nwk_mgmt_leave_req_result_s {
  */
 typedef struct ezb_zdp_nwk_mgmt_leave_req_field_s {
     ezb_extaddr_t device_addr;     /*!< IEEE address of the device to be removed from the network */
-    bool          remove_children; /*!< If true, remove all children of the device; if false, reassign children */
-    bool          rejoin;          /*!< If true, the device is allowed to rejoin the network */
+    bool          remove_children; /*!< true to remove all children of the device, false to reassign children. */
+    bool          rejoin;          /*!< true if the device is required to rejoin the network, false otherwise. */
 } ezb_zdp_nwk_mgmt_leave_req_field_t;
 
 /**
@@ -127,7 +180,7 @@ typedef void (*ezb_zdo_nwk_mgmt_leave_req_callback_t)(const ezb_zdo_nwk_mgmt_lea
  */
 typedef struct ezb_zdo_nwk_mgmt_leave_req_s {
     ezb_shortaddr_t                       dst_nwk_addr; /*!< NWK address that request sent to */
-    ezb_zdp_nwk_mgmt_leave_req_field_t    field;        /*!< The fields of the leave request */
+    ezb_zdp_nwk_mgmt_leave_req_field_t    field;        /*!< Fields of the leave request */
     ezb_zdo_nwk_mgmt_leave_req_callback_t cb;           /*!< User callback for result of ZDO Network Management Leave Request */
     void                                 *user_ctx;     /*!< User argument of request will be passed to user callback */
 } ezb_zdo_nwk_mgmt_leave_req_t;
@@ -148,7 +201,7 @@ typedef struct ezb_zdp_nwk_mgmt_permit_joining_req_field_s {
  * @brief Structure for ZDP Network Management Permit Joining Response
  */
 typedef struct ezb_zdp_nwk_mgmt_permit_joining_rsp_field_s {
-    uint8_t status; /*!< Status of the permit joining operation, see @ref ezb_zdp_status_t */
+    uint8_t status; /*!< Status of the permit joining operation. See @ref ezb_zdp_status_t */
 } ezb_zdp_nwk_mgmt_permit_joining_rsp_field_t;
 
 /**
@@ -170,8 +223,8 @@ typedef void (*ezb_zdo_nwk_mgmt_permit_joining_req_callback_t)(const ezb_zdo_nwk
  * @brief Structure for ZDO Network Management Permit Joining Request
  */
 typedef struct ezb_zdo_nwk_mgmt_permit_joining_req_s {
-    uint16_t                                    dst_nwk_addr; /*!< NWK address that request sent to */
-    ezb_zdp_nwk_mgmt_permit_joining_req_field_t field;        /*!< The fields of the permit joining request */
+    uint16_t                                    dst_nwk_addr; /*!< Network address of the destination device to receive the request */
+    ezb_zdp_nwk_mgmt_permit_joining_req_field_t field;        /*!< Fields of the permit joining request */
     ezb_zdo_nwk_mgmt_permit_joining_req_callback_t cb;        /*!< User callback for result of ZDO Network Management
                                                                    Permit Joining Request */
     void *user_ctx; /*!< User argument of request will be passed to user callback */
@@ -190,11 +243,9 @@ typedef struct ezb_zdp_nwk_mgmt_nwk_update_req_field_s {
 
 /**
  * @brief Structure for ZDP Network Management Network Update Notify
- *
- * This structure is returned as a notification when a network update operation completes.
  */
 typedef struct ezb_zdp_nwk_mgmt_nwk_update_notify_field_s {
-    uint8_t  status;                      /*!< Status of the network update operation, see @ref ezb_zdp_status_t */
+    uint8_t  status;                      /*!< Status of the network update operation. See @ref ezb_zdp_status_t */
     uint32_t scanned_channels;            /*!< Bitmask of channels that were scanned */
     uint16_t total_transmissions;         /*!< Total number of transmissions performed during scanning */
     uint16_t transmissions_failure;       /*!< Number of failed transmissions during scanning */
@@ -206,7 +257,7 @@ typedef struct ezb_zdp_nwk_mgmt_nwk_update_notify_field_s {
  * @brief Structure for ZDO Network Management Network Update Request Result
  */
 typedef struct ezb_zdo_nwk_mgmt_nwk_update_req_result_s {
-    ezb_err_t                                   error; /*!< Error code of the request operation */
+    ezb_err_t                                   error; /*!< Error code of the network update request operation */
     ezb_zdp_nwk_mgmt_nwk_update_notify_field_t *rsp;   /*!< Pointer to the network update notify field,
                                                             NULL if error occurred */
 } ezb_zdo_nwk_mgmt_nwk_update_req_result_t;
@@ -221,8 +272,8 @@ typedef void (*ezb_zdo_nwk_mgmt_nwk_update_req_callback_t)(const ezb_zdo_nwk_mgm
  * @brief Structure for ZDO Network Management Network Update Request
  */
 typedef struct ezb_zdo_nwk_mgmt_nwk_update_req_s {
-    uint16_t                                dst_nwk_addr; /*!< NWK address that request sent to */
-    ezb_zdp_nwk_mgmt_nwk_update_req_field_t field;        /*!< The fields of the network update request */
+    uint16_t                                dst_nwk_addr; /*!< Network address of the destination device to receive the request */
+    ezb_zdp_nwk_mgmt_nwk_update_req_field_t field;        /*!< Fields of the network update request */
     ezb_zdo_nwk_mgmt_nwk_update_req_callback_t cb;        /*!< User callback for result of ZDO Network Management
                                                                Network Update Request, If the request is broadcast,
                                                                the callback may be invoked multiple times to report
@@ -242,26 +293,26 @@ typedef struct ezb_zdp_nwk_mgmt_bind_req_field_s {
  * @brief Structure for ZDP Network Management Binding Table Entry
  */
 typedef struct ezb_zdp_nwk_mgmt_bind_table_entry_s {
-    ezb_extaddr_t src_addr;      /*!< The IEEE address for the source*/
-    uint8_t       src_ep;        /*!< The source endpoint for the binding entry */
-    uint16_t      cluster_id;    /*!< The identifier of the cluster on the source device that is bound to the destination. */
-    uint8_t       dst_addr_mode; /*!< The addressing mode for the destination address used in this command.
+    ezb_extaddr_t src_addr;      /*!< IEEE address of the source device. */
+    uint8_t       src_ep;        /*!< Identifier of the source endpoint for the binding entry. */
+    uint16_t      cluster_id;    /*!< Identifier of the cluster on the source device that is bound to the destination. */
+    uint8_t       dst_addr_mode; /*!< Addressing mode for the destination address used in this command.
                                     Valid values:
                                     - 0x00 = reserved
                                     - 0x01 = 16-bit group address (DstAddress and DstEndp not present)
                                     - 0x02 = reserved
                                     - 0x03 = 64-bit extended address (DstAddress and DstEndp present)
                                     - 0x04 - 0xff = reserved */
-    ezb_addr_t dst_addr; /*!< The address of the destination device. The format of this field is determined by the value of
+    ezb_addr_t dst_addr; /*!< Address of the destination device. The format of this field is determined by the value of
                              DstAddrMode. */
-    uint8_t dst_ep;      /*!< The endpoint of the destination device. */
+    uint8_t dst_ep;      /*!< Endpoint of the destination device. */
 } ezb_zdp_nwk_mgmt_bind_table_entry_t;
 
 /**
  * @brief Structure for ZDP Network Management Binding Table Response
  */
 typedef struct ezb_zdp_nwk_mgmt_bind_rsp_field_s {
-    uint8_t                              status; /*!< Status of the binding table request, see @ref ezb_zdp_status_t */
+    uint8_t                              status; /*!< Status of the binding table request. See @ref ezb_zdp_status_t */
     uint8_t                              binding_table_entries; /*!< Total number of entries in the binding table */
     uint8_t                              start_index;           /*!< Starting index of the entries returned in this response */
     uint8_t                              binding_table_list_count; /*!< Number of binding table entries in this response */
@@ -272,7 +323,7 @@ typedef struct ezb_zdp_nwk_mgmt_bind_rsp_field_s {
  * @brief Structure for ZDO Network Management Binding Table Request Result
  */
 typedef struct ezb_zdo_nwk_mgmt_bind_req_result_s {
-    ezb_err_t                          error; /*!< Error code of the request operation */
+    ezb_err_t                          error; /*!< Error code of the binding table request operation */
     ezb_zdp_nwk_mgmt_bind_rsp_field_t *rsp;   /*!< Pointer to the binding table response field, NULL if error occurred */
 } ezb_zdo_nwk_mgmt_bind_req_result_t;
 
@@ -285,63 +336,77 @@ typedef void (*ezb_zdo_nwk_mgmt_bind_req_callback_t)(const ezb_zdo_nwk_mgmt_bind
  * @brief Structure for ZDO Network Management Binding Table Request
  */
 typedef struct ezb_zdo_nwk_mgmt_bind_req_s {
-    uint16_t                             dst_nwk_addr; /*!< NWK address that request sent to */
-    ezb_zdp_nwk_mgmt_bind_req_field_t    field;        /*!< The fields of the binding request */
+    uint16_t                             dst_nwk_addr; /*!< Network address of the destination device to receive the request */
+    ezb_zdp_nwk_mgmt_bind_req_field_t    field;        /*!< Fields of the binding request */
     ezb_zdo_nwk_mgmt_bind_req_callback_t cb;           /*!< User callback for result of ZDO Network Management Binding
                                                             Table Request */
     void                                *user_ctx; /*!< User argument of request will be passed to user callback */
 } ezb_zdo_nwk_mgmt_bind_req_t;
 
 /**
- * @brief Send a ZDO Network Management Link Quality Indicator (LQI) Request
+ * @brief Send a Mgmt_Lqi_req command.
  *
- * The LQI_req command is generated from a local device wishing to inquire as to the Link Quality Indicator (LQI) of a remote
+ * The Mgmt_Lqi_req command is generated from a local device wishing to inquire as to the Link Quality Indicator (LQI) of a remote
  * device.
- * @param[in] req A structure used to configure the fields of the LQI_req command, see @ref ezb_zdo_nwk_mgmt_lqi_req_t
  *
- * @return Error code, see @ref ezb_err_t
+ * @param[in] req The pointer to the ZDO network management LQI request. See @ref ezb_zdo_nwk_mgmt_lqi_req_t
+ *
+ * @return The error code. See @ref ezb_err_t
  */
 ezb_err_t ezb_zdo_nwk_mgmt_lqi_req(const ezb_zdo_nwk_mgmt_lqi_req_t *req);
 
 /**
- * @brief Send a ZDO Network Management Leave Request
+ * @brief Send a Mgmt_Rtg_req command.
  *
- * The Leave_req command is generated from a local device wishing to leave a network.
- * @param[in] req A structure used to configure the fields of the Leave_req command, see @ref ezb_zdo_nwk_mgmt_leave_req_t
+ * The Mgmt_Rtg_req command is generated from a local device wishing to inquire as to the routing table of a remote device.
  *
- * @return Error code, see @ref ezb_err_t
+ * @param[in] req The pointer to the ZDO network management routing table request. See @ref ezb_zdo_nwk_mgmt_rtg_req_t
+ *
+ * @return The error code. See @ref ezb_err_t
+ */
+ezb_err_t ezb_zdo_nwk_mgmt_rtg_req(const ezb_zdo_nwk_mgmt_rtg_req_t *req);
+
+/**
+ * @brief Send a Mgmt_Leave_req command.
+ *
+ * The Mgmt_Leave_req command is generated from a local device wishing to leave a network.
+ *
+ * @param[in] req The pointer to the ZDO network management leave request. See @ref ezb_zdo_nwk_mgmt_leave_req_t
+ *
+ * @return The error code. See @ref ezb_err_t
  */
 ezb_err_t ezb_zdo_nwk_mgmt_leave_req(const ezb_zdo_nwk_mgmt_leave_req_t *req);
 
 /**
- * @brief Send a ZDO Network Management Permit Joining Request
+ * @brief Send a Mgmt_Permit_Joining_req command.
  *
- * The Permit_Joining_req command is generated from a local device wishing to permit joining a network.
- * @param[in] req A structure used to configure the fields of the Permit_Joining_req command, see @ref
- * ezb_zdo_nwk_mgmt_permit_joining_req_t
+ * The Mgmt_Permit_Joining_req command is generated from a local device wishing to permit joining a network.
  *
- * @return Error code, see @ref ezb_err_t
+ * @param[in] req The pointer to the ZDO network management permit joining request. See @ref ezb_zdo_nwk_mgmt_permit_joining_req_t
+ *
+ * @return The error code. See @ref ezb_err_t
  */
 ezb_err_t ezb_zdo_nwk_mgmt_permit_joining_req(const ezb_zdo_nwk_mgmt_permit_joining_req_t *req);
 
 /**
- * @brief Send a ZDO Network Management Network Update Request
+ * @brief Send a Mgmt_Network_Update_req command.
  *
- * The Network_Update_req command is generated from a local device wishing to update a network.
- * @param[in] req A structure used to configure the fields of the Network_Update_req command, see @ref
- * ezb_zdo_nwk_mgmt_nwk_update_req_t
+ * The Mgmt_Network_Update_req command is generated from a local device wishing to update a network.
  *
- * @return Error code, see @ref ezb_err_t
+ * @param[in] req The pointer to the ZDO network management network update request. See @ref ezb_zdo_nwk_mgmt_nwk_update_req_t
+ *
+ * @return The error code. See @ref ezb_err_t
  */
 ezb_err_t ezb_zdo_nwk_mgmt_nwk_update_req(const ezb_zdo_nwk_mgmt_nwk_update_req_t *req);
 
 /**
- * @brief Send a ZDO Network Management Binding Table Request
+ * @brief Send a Mgmt_Bind_req command.
  *
  * The Mgmt_Bind_req command is generated from a local device wishing to retrieve a binding table from a remote device.
- * @param[in] req A structure used to configure the fields of the Mgmt_Bind_req command, see @ref ezb_zdo_nwk_mgmt_bind_req_t
  *
- * @return Error code, see @ref ezb_err_t
+ * @param[in] req The pointer to the ZDO network management binding table request. See @ref ezb_zdo_nwk_mgmt_bind_req_t
+ *
+ * @return The error code. See @ref ezb_err_t
  */
 ezb_err_t ezb_zdo_nwk_mgmt_bind_req(const ezb_zdo_nwk_mgmt_bind_req_t *req);
 

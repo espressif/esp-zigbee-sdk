@@ -127,9 +127,9 @@ typedef ezb_zcl_analog_output_cluster_server_config_t ezb_zcl_analog_output_clus
 /**
  * @brief Add an attribute to an analog_output cluster descriptor.
  *
- * @param cluster_desc Pointer to the analog_output cluster descriptor, see ezb_zcl_cluster_desc_t.
- * @param attr_id      Attribute identifier.
- * @param value        Pointer to the attribute value.
+ * @param[in] cluster_desc The analog_output cluster descriptor.
+ * @param[in] attr_id      The identifier of the attribute to be added to @p cluster_desc.
+ * @param[in] value        The pointer to the initial value of the attribute.
  * @return Error code.
  */
 ezb_err_t ezb_zcl_analog_output_cluster_desc_add_attr(ezb_zcl_cluster_desc_t cluster_desc, uint16_t attr_id, const void *value);
@@ -137,9 +137,11 @@ ezb_err_t ezb_zcl_analog_output_cluster_desc_add_attr(ezb_zcl_cluster_desc_t clu
 /**
  * @brief Create an analog_output cluster descriptor.
  *
- * @param cluster_cfg  Pointer to the analog_output cluster configuration structure, refer to
- * ezb_zcl_analog_output_cluster_server_config_t or ezb_zcl_analog_output_cluster_client_config_t or NULL (default config)
- * @param role_mask Role mask (server/client).
+ * @param[in] cluster_cfg  The pointer to the analog_output cluster configuration structure.
+                           Use ezb_zcl_analog_output_cluster_server_config_t for EZB_ZCL_CLUSTER_SERVER,
+                           use ezb_zcl_analog_output_cluster_client_config_t for EZB_ZCL_CLUSTER_CLIENT,
+                           or use NULL for default configuration of the stack based on the @p role_mask.
+ * @param[in] role_mask    The role of the cluster to create.
  * @return Created cluster descriptor.
  */
 ezb_zcl_cluster_desc_t ezb_zcl_analog_output_create_cluster_desc(const void *cluster_cfg, uint8_t role_mask);
@@ -147,14 +149,14 @@ ezb_zcl_cluster_desc_t ezb_zcl_analog_output_create_cluster_desc(const void *clu
 /**
  * @brief Initialize the AnalogOutput cluster client role for a given endpoint.
  *
- * @param ep_id Endpoint ID.
+ * @param[in] ep_id The identifier of the endpoint hosting the cluster that needs initialization.
  */
 void ezb_zcl_analog_output_cluster_client_init(uint8_t ep_id);
 
 /**
  * @brief Initialize the AnalogOutput cluster server role for a given endpoint.
  *
- * @param ep_id Endpoint ID.
+ * @param[in] ep_id The identifier of the endpoint hosting the cluster that needs de-initialization.
  */
 void ezb_zcl_analog_output_cluster_server_init(uint8_t ep_id);
 

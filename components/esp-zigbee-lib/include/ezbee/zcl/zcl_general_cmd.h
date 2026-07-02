@@ -59,17 +59,17 @@ typedef struct ezb_zcl_write_attr_cmd_s {
  * @note For analog attributes, reportable_change specifies the minimum delta to trigger a report.
  */
 typedef struct ezb_zcl_config_report_record_s {
-    uint8_t  direction; /*!< Reporting direction: @ref EZB_ZCL_REPORTING_SEND (0) or @ref EZB_ZCL_REPORTING_RECV (1). */
-    uint16_t attr_id;   /*!< Attribute ID to configure reporting. */
+    uint8_t  direction; /*!< Reporting direction, either @ref EZB_ZCL_REPORTING_SEND or @ref EZB_ZCL_REPORTING_RECV. */
+    uint16_t attr_id;   /*!< Identifier of the attribute to configure reporting. */
     union {
         struct {
-            uint8_t  attr_type;    /*!< Attribute data type. See @ref ezb_zcl_attr_type_t. */
+            uint8_t  attr_type;    /*!< Type of the attribute. See @ref ezb_zcl_attr_type_t. */
             uint16_t min_interval; /*!< Minimum reporting interval in seconds (0x0001-0xFFFE). Use 0 for immediate reporting. */
             uint16_t max_interval; /*!< Maximum reporting interval in seconds (0x0001-0xFFFE). Use 0xFFFF to disable periodic
                                       reporting. */
             ezb_zcl_attr_variable_t
                 reportable_change; /*!< Minimum change to attribute value that triggers a report.
-                                        Required for analog attributes. attributes. Must match attr_type size. */
+                                        Required for analog attributes. Must match attr_type size. */
         } client;                  /*!< Client-side reporting configuration (server reports to client). */
         struct {
             uint16_t timeout; /*!< Timeout period in seconds for server-side reporting (0x0001-0xFFFE). */
@@ -80,39 +80,39 @@ typedef struct ezb_zcl_config_report_record_s {
 /**
  * @brief Structure for ZCL configure reporting command request.
  *
- * Used to construct a ZCL configure reporting command.
+ * This structure is used to construct a ZCL configure reporting command.
  */
 typedef struct ezb_zcl_config_report_cmd_s {
-    ezb_zcl_cmd_ctrl_t cmd_ctrl; /*!< Command control, see @ref ezb_zcl_cmd_ctrl_s */
+    ezb_zcl_cmd_ctrl_t cmd_ctrl; /*!< Command control structure. See @ref ezb_zcl_cmd_ctrl_s. */
     struct {
         uint16_t                        record_number; /*!< Number of report configuration records in the record_field array. */
-        ezb_zcl_config_report_record_t *record_field;  /*!< Array of report configuration records,
-                                                            @ref ezb_zcl_config_report_record_s */
-    } payload;                                         /*!< Payload containing report configuration records. */
+        ezb_zcl_config_report_record_t *record_field;  /*!< Array of report configuration records.
+                                                            See @ref ezb_zcl_config_report_record_s. */
+    } payload;                                         /*!< Command payload containing report configuration records. */
 } ezb_zcl_config_report_cmd_t;
 
 /**
  * @brief Structure for a single read report configuration record.
  *
- * Used in ZCL read report configuration command.
+ * This structure is used to construct a single read report configuration record.
  */
 typedef struct ezb_zcl_read_report_config_record_s {
-    uint8_t report_direction; /*!< Report direction of this attribute, @ref EZB_ZCL_REPORTING_SEND
-                                   or @ref EZB_ZCL_REPORTING_RECV */
-    uint16_t attr_id;         /*!< Attribute ID to report. */
+    uint8_t report_direction; /*!< Reporting direction for this attribute,
+                                   either @ref EZB_ZCL_REPORTING_SEND or @ref EZB_ZCL_REPORTING_RECV. */
+    uint16_t attr_id;         /*!< Identifier of the attribute to report. */
 } ezb_zcl_read_report_config_record_t;
 
 /**
  * @brief Structure for ZCL read report configuration command request.
  *
- * Used to construct a ZCL read report configuration command.
+ * This structure is used to construct a ZCL read report configuration command.
  */
 typedef struct ezb_zcl_read_report_config_cmd_s {
-    ezb_zcl_cmd_ctrl_t cmd_ctrl; /*!< Command control, see @ref ezb_zcl_cmd_ctrl_s */
+    ezb_zcl_cmd_ctrl_t cmd_ctrl; /*!< Command control structure. See @ref ezb_zcl_cmd_ctrl_s. */
     struct {
         uint16_t                             record_number; /*!< Number of attribute records in the record_field array. */
-        ezb_zcl_read_report_config_record_t *record_field;  /*!< Array of attribute records,
-                                                                 @ref ezb_zcl_read_report_config_record_s */
+        ezb_zcl_read_report_config_record_t *record_field;  /*!< Array of attribute records.
+                                                                 See @ref ezb_zcl_read_report_config_record_s. */
     } payload;                                              /*!< Payload containing attribute records. */
 } ezb_zcl_read_report_config_cmd_t;
 
@@ -129,7 +129,7 @@ typedef struct ezb_zcl_read_report_config_cmd_s {
 typedef struct ezb_zcl_report_attr_cmd_s {
     ezb_zcl_cmd_ctrl_t cmd_ctrl; /*!< Command control structure. See @ref ezb_zcl_cmd_ctrl_s. */
     struct {
-        uint16_t attr_id; /*!< Attribute ID to report. This triggers reporting for this attribute
+        uint16_t attr_id; /*!< Identifier of the attribute to report. This triggers reporting for this attribute
                               and any other attributes configured for consolidated reporting. */
     } payload;            /*!< Command payload for attribute reporting. */
 } ezb_zcl_report_attr_cmd_t;
@@ -144,7 +144,7 @@ typedef struct ezb_zcl_report_attr_cmd_s {
 typedef struct ezb_zcl_disc_attr_cmd_s {
     ezb_zcl_cmd_ctrl_t cmd_ctrl; /*!< Command control structure. See @ref ezb_zcl_cmd_ctrl_s. */
     struct {
-        uint16_t start_attr_id;   /*!< The attribute identifier at which to begin discovery. */
+        uint16_t start_attr_id;   /*!< Identifier of the attribute at which to begin discovery. */
         uint8_t  max_attr_number; /*!< Maximum number of attribute identifiers to return (1-255). */
     } payload;                    /*!< Command payload for attribute discovery. */
 } ezb_zcl_disc_attr_cmd_t;
@@ -159,9 +159,9 @@ typedef struct ezb_zcl_disc_attr_cmd_s {
 typedef struct ezb_zcl_disc_cmd_cmd_s {
     ezb_zcl_cmd_ctrl_t cmd_ctrl; /*!< Command control structure. See @ref ezb_zcl_cmd_ctrl_s. */
     struct {
-        uint8_t  is_recv;        /*!< Set to 1 to discover received commands, 0 to discover generated commands. */
-        uint16_t start_cmd_id;   /*!< The command identifier at which to begin discovery (0x00-0xFF). */
-        uint8_t  max_cmd_number; /*!< Maximum number of command identifiers to return (1-255). */
+        uint8_t  is_recv;        /*!< Command direction: 1 for received commands, 0 for generated commands. */
+        uint16_t start_cmd_id;   /*!< Identifier of the command at which to begin discovery. */
+        uint8_t  max_cmd_number; /*!< Maximum number of commands to return. */
     } payload;                   /*!< Command payload for command discovery. */
 } ezb_zcl_disc_cmd_cmd_t;
 
@@ -174,7 +174,7 @@ typedef struct ezb_zcl_default_rsp_cmd_s {
     ezb_zcl_cmd_ctrl_t cmd_ctrl; /*!< Command control structure. See @ref ezb_zcl_cmd_ctrl_s. */
     struct {
         uint8_t tsn;         /*!< Transaction sequence number. */
-        uint8_t rsp_to_cmd;  /*!< Command ID to which this is a response. */
+        uint8_t rsp_to_cmd;  /*!< Identifier of the command to which this is a response. */
         uint8_t status_code; /*!< Status code of the response. See @ref ezb_zcl_status_t. */
     } payload;               /*!< Command payload for default response. */
 } ezb_zcl_default_rsp_cmd_t;
@@ -190,9 +190,9 @@ typedef struct ezb_zcl_default_rsp_cmd_s {
  *       when the message is processed. Copy the value if you need to retain it.
  */
 typedef struct ezb_zcl_read_attr_rsp_variable_s {
-    uint16_t attr_id;    /*!< Attribute ID that was read. */
+    uint16_t attr_id;    /*!< Identifier of the attribute that was read. */
     uint8_t  status;     /*!< Status of the read operation. See @ref ezb_zcl_status_t. */
-    uint8_t  attr_type;  /*!< Data type of the attribute. See @ref ezb_zcl_attr_type_t. Only valid if status is SUCCESS. */
+    uint8_t  attr_type;  /*!< Type of the attribute. See @ref ezb_zcl_attr_type_t. Only valid if status is SUCCESS. */
     void    *attr_value; /*!< Pointer to the attribute value buffer. Only valid if status is SUCCESS. */
     struct ezb_zcl_read_attr_rsp_variable_s *next; /*!< Pointer to the next variable in the response list, or NULL if last. */
 } ezb_zcl_read_attr_rsp_variable_t;
@@ -205,17 +205,14 @@ typedef struct ezb_zcl_read_attr_rsp_variable_s {
  * for each requested attribute.
  */
 typedef struct ezb_zcl_cmd_read_attr_rsp_message_s {
-    ezb_zcl_message_info_t info; /*!< Common information about the received message.
-                                          See @ref ezb_zcl_message_info_s. */
+    ezb_zcl_message_info_t info; /*!< Common information about the received response. See @ref ezb_zcl_message_info_s. */
     struct {
-        const ezb_zcl_cmd_hdr_t *header;             /*!< ZCL command header information.
-                                                          See @ref ezb_zcl_cmd_hdr_s. */
-        ezb_zcl_read_attr_rsp_variable_t *variables; /*!< Linked list of attribute response variables.
-                                                           Each variable contains one attribute's read result. */
+        const ezb_zcl_cmd_hdr_t          *header;    /*!< ZCL command header information. See @ref ezb_zcl_cmd_hdr_s. */
+        ezb_zcl_read_attr_rsp_variable_t *variables; /*!< Linked list of attribute response variables. Each variable contains
+                                                        one attribute's read result. */
     } in;                                            /*!< Input data from the received response. */
     struct {
-        ezb_zcl_status_t result; /*!< Status of processing in application. Set this to indicate how the application processed
-                                    the response. */
+        ezb_zcl_status_t result; /*!< Status of processing in application. See @ref ezb_zcl_status_t. */
     } out;                       /*!< Output data to be returned to the ZCL stack. */
 } ezb_zcl_cmd_read_attr_rsp_message_t;
 
@@ -249,8 +246,7 @@ typedef struct ezb_zcl_cmd_write_attr_rsp_message_s {
             *variables; /*!< Linked list of write response variables. Each variable contains one attribute's write result. */
     } in;               /*!< Input data from the received response. */
     struct {
-        ezb_zcl_status_t result; /*!< Status of processing in application. Set this to indicate how the application processed
-                                    the response. */
+        ezb_zcl_status_t result; /*!< Status of processing in application. See @ref ezb_zcl_status_t. */
     } out;                       /*!< Output data to be returned to the ZCL stack. */
 } ezb_zcl_cmd_write_attr_rsp_message_t;
 
@@ -268,8 +264,8 @@ typedef struct ezb_zcl_config_report_rsp_variable_s {
     uint8_t direction; /*!< Reporting direction: @ref EZB_ZCL_REPORTING_SEND or @ref EZB_ZCL_REPORTING_RECV. Only present if
                           status is not SUCCESS. */
     uint16_t attr_id;  /*!< Attribute ID for the report. Only present if status is not SUCCESS. */
-    struct ezb_zcl_config_report_rsp_variable_s
-        *next; /*!< Pointer to the next variable in the response list, or NULL if last. */
+    struct ezb_zcl_config_report_rsp_variable_s *next; /*!< Pointer to the next variable in the response list,
+                                                            or NULL if it is the last variable. */
 } ezb_zcl_config_report_rsp_variable_t;
 
 /**
@@ -287,8 +283,7 @@ typedef struct ezb_zcl_cmd_config_report_rsp_message_s {
                                                              contains one attribute's configuration result. */
     } in;                                                /*!< Input data from the received response. */
     struct {
-        ezb_zcl_status_t result; /*!< Status of processing in application. Set this to indicate how the application processed
-                                    the response. */
+        ezb_zcl_status_t result; /*!< Status of processing in application. See @ref ezb_zcl_status_t. */
     } out;                       /*!< Output data to be returned to the ZCL stack. */
 } ezb_zcl_cmd_config_report_rsp_message_t;
 
@@ -302,27 +297,23 @@ typedef struct ezb_zcl_cmd_config_report_rsp_message_s {
  * @note If status is not EZB_ZCL_STATUS_SUCCESS, the union fields are omitted.
  */
 typedef struct ezb_zcl_read_report_config_rsp_variable_s {
-    ezb_zcl_status_t status;    /*!< Status of the read report configuration operation. See @ref ezb_zcl_status_t. */
-    uint8_t          direction; /*!< Reporting direction: @ref EZB_ZCL_REPORTING_SEND or @ref EZB_ZCL_REPORTING_RECV. */
-    uint16_t         attr_id;   /*!< Attribute ID for the report. */
+    ezb_zcl_status_t status; /*!< Status of the read report configuration operation. See @ref ezb_zcl_status_t. */
+    uint8_t  direction; /*!< Reporting direction, either @ref EZB_ZCL_REPORTING_SEND or @ref EZB_ZCL_REPORTING_RECV. */
+    uint16_t attr_id;   /*!< Identifier of the attribute for the report. */
     union {
         struct {
-            uint8_t attr_type;     /*!< Attribute data type. See @ref ezb_zcl_attr_type_t. Only valid if status is SUCCESS and
-                                      direction is SEND. */
-            uint16_t min_interval; /*!< Minimum reporting interval in seconds. Only valid if status is SUCCESS and direction is
-                                      SEND. */
-            uint16_t max_interval; /*!< Maximum reporting interval in seconds. Only valid if status is SUCCESS and direction is
-                                      SEND. */
-            ezb_zcl_attr_variable_t delta; /*!< Minimum change to attribute value that triggers a report. Only valid for analog
-                                        attributes if status is SUCCESS and direction is SEND. */
-        } client;                          /*!< Client-side reporting configuration (server reports to client). */
+            uint8_t attr_type; /*!< Type of the attribute. See @ref ezb_zcl_attr_type_t. Only valid if status is SUCCESS and
+                                  direction is SEND. */
+            uint16_t                min_interval; /*!< Minimum reporting interval in seconds. */
+            uint16_t                max_interval; /*!< Maximum reporting interval in seconds. */
+            ezb_zcl_attr_variable_t delta;        /*!< Minimum change to attribute value that triggers a report. */
+        } client;                                  /*!< Reporting configuration when the direction is @ref EZB_ZCL_REPORTING_SEND. */
         struct {
-            uint16_t timeout; /*!< Timeout period in seconds for server-side reporting. Only valid if status is SUCCESS and
-                                 direction is RECV. */
-        } server;             /*!< Server-side reporting configuration (client receives reports from server). */
+            uint16_t timeout; /*!< Timeout period in seconds. */
+        } server;             /*!< Reporting configuration when the direction is @ref EZB_ZCL_REPORTING_RECV. */
     };                        /*!< Union of reporting configuration for client or server. */
     struct ezb_zcl_read_report_config_rsp_variable_s *next; /*!< Pointer to the next variable in the response list,
-                                                                  or NULL if last. */
+                                                                 or NULL if it is the last variable. */
 } ezb_zcl_read_report_config_rsp_variable_t;
 
 /**
@@ -340,8 +331,7 @@ typedef struct ezb_zcl_cmd_read_report_config_rsp_message_s {
                                                                   variable contains one attribute's reporting configuration. */
     } in;                                                     /*!< Input data from the received response. */
     struct {
-        ezb_zcl_status_t result; /*!< Status of processing in application. Set this to indicate how the application processed
-                                    the response. */
+        ezb_zcl_status_t result; /*!< Status of processing in application. See @ref ezb_zcl_status_t. */
     } out;                       /*!< Output data to be returned to the ZCL stack. */
 } ezb_zcl_cmd_read_report_config_rsp_message_t;
 
@@ -356,10 +346,11 @@ typedef struct ezb_zcl_cmd_read_report_config_rsp_message_s {
  *       when the message is processed. Copy the value if you need to retain it.
  */
 typedef struct ezb_zcl_report_attr_variable_s {
-    uint16_t attr_id;                            /*!< Attribute ID being reported. */
-    uint8_t  attr_type;                          /*!< Data type of the attribute. See @ref ezb_zcl_attr_type_t. */
+    uint16_t attr_id;                            /*!< Identifier of the attribute being reported. */
+    uint8_t  attr_type;                          /*!< Type of the attribute. See @ref ezb_zcl_attr_type_t. */
     void    *attr_value;                         /*!< Pointer to the attribute value buffer. The size depends on attr_type. */
-    struct ezb_zcl_report_attr_variable_s *next; /*!< Pointer to the next variable in the report list, or NULL if last. */
+    struct ezb_zcl_report_attr_variable_s *next; /*!< Pointer to the next variable in the report list,
+                                                      or NULL if it is the last variable. */
 } ezb_zcl_report_attr_variable_t;
 
 /**
@@ -372,14 +363,12 @@ typedef struct ezb_zcl_report_attr_variable_s {
 typedef struct ezb_zcl_cmd_report_attr_message_s {
     ezb_zcl_message_info_t info; /*!< Common information about the received report. See @ref ezb_zcl_message_info_s. */
     struct {
-        const ezb_zcl_cmd_hdr_t *header; /*!< ZCL command header information. See @ref ezb_zcl_cmd_hdr_s. */
-        ezb_zcl_report_attr_variable_t
-            *variables; /*!< Linked list of report attribute variables. Each variable contains one reported attribute. */
-    } in;               /*!< Input data from the received report. */
+        const ezb_zcl_cmd_hdr_t        *header;    /*!< ZCL command header information. See @ref ezb_zcl_cmd_hdr_s. */
+        ezb_zcl_report_attr_variable_t *variables; /*!< Linked list of report attribute variables. */
+    } in;                                          /*!< Input data from the received report. */
     struct {
-        ezb_zcl_status_t
-            result; /*!< Status of processing in application. Set this to indicate how the application processed the report. */
-    } out;          /*!< Output data to be returned to the ZCL stack. */
+        ezb_zcl_status_t result; /*!< Status of processing in application. See @ref ezb_zcl_status_t. */
+    } out;                       /*!< Output data to be returned to the ZCL stack. */
 } ezb_zcl_cmd_report_attr_message_t;
 
 /**
@@ -389,9 +378,10 @@ typedef struct ezb_zcl_cmd_report_attr_message_s {
  * response. Multiple attributes are linked together in a list.
  */
 typedef struct ezb_zcl_disc_attr_variable_s {
-    uint16_t                             attr_id;   /*!< Attribute ID discovered. */
-    uint8_t                              attr_type; /*!< Data type of the attribute. See @ref ezb_zcl_attr_type_t. */
-    struct ezb_zcl_disc_attr_variable_s *next;      /*!< Pointer to the next variable in the discovery list, or NULL if last. */
+    uint16_t                             attr_id;   /*!< Identifier of the attribute discovered. */
+    uint8_t                              attr_type; /*!< Type of the attribute. See @ref ezb_zcl_attr_type_t. */
+    struct ezb_zcl_disc_attr_variable_s *next;      /*!< Pointer to the next variable in the discovery list,
+                                                         or NULL if it is the last variable. */
 } ezb_zcl_disc_attr_variable_t;
 
 /**
@@ -404,15 +394,14 @@ typedef struct ezb_zcl_disc_attr_variable_s {
 typedef struct ezb_zcl_cmd_discover_attributes_rsp_message_s {
     ezb_zcl_message_info_t info; /*!< Common information about the received response. See @ref ezb_zcl_message_info_s. */
     struct {
-        const ezb_zcl_cmd_hdr_t *header; /*!< ZCL command header information. See @ref ezb_zcl_cmd_hdr_s. */
-        uint8_t is_completed; /*!< Set to 1 if all attributes have been discovered, 0 if more attributes exist beyond the
-                                 returned list. */
-        ezb_zcl_disc_attr_variable_t
-            *variables; /*!< Linked list of discovered attribute variables. Each variable contains one discovered attribute. */
-    } in;               /*!< Input data from the received response. */
+        const ezb_zcl_cmd_hdr_t *header;         /*!< ZCL command header information. See @ref ezb_zcl_cmd_hdr_s. */
+        uint8_t                  is_completed;   /*!< Discovery is completed,
+                                                     1 if all attributes have been discovered,
+                                                     0 if more attributes exist beyond the returned list. */
+        ezb_zcl_disc_attr_variable_t *variables; /*!< Linked list of discovered attribute variables. */
+    } in;                                        /*!< Input data from the received response. */
     struct {
-        ezb_zcl_status_t result; /*!< Status of processing in application. Set this to indicate how the application processed
-                                    the response. */
+        ezb_zcl_status_t result; /*!< Status of processing in application. See @ref ezb_zcl_status_t. */
     } out;                       /*!< Output data to be returned to the ZCL stack. */
 } ezb_zcl_cmd_discover_attributes_rsp_message_t;
 
@@ -423,8 +412,9 @@ typedef struct ezb_zcl_cmd_discover_attributes_rsp_message_s {
  * Multiple commands are linked together in a list.
  */
 typedef struct ezb_zcl_disc_cmd_variable_s {
-    uint8_t                             cmd_id; /*!< Command ID discovered (0x00-0xFF). */
-    struct ezb_zcl_disc_cmd_variable_s *next;   /*!< Pointer to the next variable in the discovery list, or NULL if last. */
+    uint8_t                             cmd_id; /*!< Identifier of the command discovered. */
+    struct ezb_zcl_disc_cmd_variable_s *next;   /*!< Pointer to the next variable in the discovery list,
+                                                     or NULL if it is the last variable. */
 } ezb_zcl_disc_cmd_variable_t;
 
 /**
@@ -437,16 +427,15 @@ typedef struct ezb_zcl_disc_cmd_variable_s {
 typedef struct ezb_zcl_cmd_discover_commands_rsp_message_s {
     ezb_zcl_message_info_t info; /*!< Common information about the received response. See @ref ezb_zcl_message_info_s. */
     struct {
-        const ezb_zcl_cmd_hdr_t *header;        /*!< ZCL command header information. See @ref ezb_zcl_cmd_hdr_s. */
-        uint8_t                  is_recv;       /*!< Set to 1 if discovering received commands, 0 for generated commands. */
-        uint8_t                  is_completed;  /*!< Set to 1 if all commands have been discovered, 0 if more commands exist
-                                                     beyond the returned list. */
-        ezb_zcl_disc_cmd_variable_t *variables; /*!< Linked list of discovered command variables. Each variable contains
-                                                     one discovered command ID. */
+        const ezb_zcl_cmd_hdr_t *header;  /*!< ZCL command header information. See @ref ezb_zcl_cmd_hdr_s. */
+        uint8_t                  is_recv;      /*!< Command direction: 1 for received commands, 0 for generated commands. */
+        uint8_t                  is_completed; /*!< Discovery is completed,
+                                                    1 if all commands have been discovered,
+                                                    0 if more commands exist beyond the returned list. */
+        ezb_zcl_disc_cmd_variable_t *variables; /*!< Linked list of discovered command variables. */
     } in;                                       /*!< Input data from the received response. */
     struct {
-        ezb_zcl_status_t result; /*!< Status of processing in application. Set this to indicate how the application processed
-                                    the response. */
+        ezb_zcl_status_t result; /*!< Status of processing in application. See @ref ezb_zcl_status_t. */
     } out;                       /*!< Output data to be returned to the ZCL stack. */
 } ezb_zcl_cmd_discover_commands_rsp_message_t;
 
@@ -461,25 +450,20 @@ typedef struct ezb_zcl_cmd_default_rsp_message_s {
     ezb_zcl_message_info_t info; /*!< Common information about the received response. See @ref ezb_zcl_message_info_s. */
     struct {
         const ezb_zcl_cmd_hdr_t *header;      /*!< ZCL command header information. See @ref ezb_zcl_cmd_hdr_s. */
-        uint8_t                  rsp_to_cmd;  /*!< Command ID (0x00-0xFF) to which this is a response. */
+        uint8_t                  rsp_to_cmd;  /*!< Identifier of the command to which this is a response. */
         uint8_t                  status_code; /*!< Status code of the response. See @ref ezb_zcl_status_t. */
     } in;                                     /*!< Input data from the received default response. */
     struct {
-        ezb_zcl_status_t result; /*!< Status of processing in application. Set this to indicate how the application processed
-                                    the response. */
+        ezb_zcl_status_t result; /*!< Status of processing in application. See @ref ezb_zcl_status_t. */
     } out;                       /*!< Output data to be returned to the ZCL stack. */
 } ezb_zcl_cmd_default_rsp_message_t;
 
 /**
  * @brief Send a ZCL read attribute command request.
  *
- * This function sends a read attribute command to read one or more attributes
- * from a cluster on a remote device. The response will be delivered via the
- * callback specified in cmd_req->cmd_ctrl.cnf_ctx.
+ * This function sends a read attribute command to read one or more attributes from a cluster on a remote device.
  *
- * @param cmd_req Pointer to the read attribute command structure. Must not be NULL.
- *                    The structure must be properly initialized with valid endpoint IDs,
- *                    cluster ID, and attribute IDs.
+ * @param[in] cmd_req The pointer to the read attribute command structure. See @ref ezb_zcl_read_attr_cmd_s.
  * @return Error code.
  */
 ezb_err_t ezb_zcl_read_attr_cmd_req(const ezb_zcl_read_attr_cmd_t *cmd_req);
@@ -487,12 +471,9 @@ ezb_err_t ezb_zcl_read_attr_cmd_req(const ezb_zcl_read_attr_cmd_t *cmd_req);
 /**
  * @brief Send a ZCL write attribute command request.
  *
- * This function sends a write attribute command to write one or more attributes
- * to a cluster on a remote device. The response will be delivered via the
- * callback specified in cmd_req->cmd_ctrl.cnf_ctx.
+ * This function sends a write attribute command to write one or more attributes to a cluster on a remote device.
  *
- * @param cmd_req Pointer to the write attribute command structure. Must not be NULL.
- *                    Each attribute's value must match its specified data type and size.
+ * @param[in] cmd_req The pointer to the write attribute command structure. See @ref ezb_zcl_write_attr_cmd_s.
  * @return Error code.
  */
 ezb_err_t ezb_zcl_write_attr_cmd_req(const ezb_zcl_write_attr_cmd_t *cmd_req);
@@ -500,12 +481,9 @@ ezb_err_t ezb_zcl_write_attr_cmd_req(const ezb_zcl_write_attr_cmd_t *cmd_req);
 /**
  * @brief Send a ZCL configure reporting command request.
  *
- * This function sends a configure reporting command to configure automatic
- * attribute reporting for one or more attributes. The response will be
- * delivered via the callback specified in cmd_req->cmd_ctrl.cnf_ctx.
+ * This function sends a configure reporting command to configure automatic attribute reporting for one or more attributes.
  *
- * @param cmd_req Pointer to the configure report command structure. Must not be NULL.
- *                    Each record must have valid direction, attr_id, and appropriate union fields.
+ * @param[in] cmd_req The pointer to the configure report command structure. See @ref ezb_zcl_config_report_cmd_s.
  * @return Error code.
  */
 ezb_err_t ezb_zcl_config_report_cmd_req(const ezb_zcl_config_report_cmd_t *cmd_req);
@@ -513,12 +491,10 @@ ezb_err_t ezb_zcl_config_report_cmd_req(const ezb_zcl_config_report_cmd_t *cmd_r
 /**
  * @brief Send a ZCL read reporting configuration command request.
  *
- * This function sends a read reporting configuration command to query the current
- * reporting configuration for one or more attributes. The response will be
- * delivered via the callback specified in cmd_req->cmd_ctrl.cnf_ctx.
+ * This function sends a read reporting configuration command to query the current reporting configuration for one or more
+ * attributes.
  *
- * @param cmd_req Pointer to the read report configuration command structure. Must not be NULL.
- *                    Each record must specify direction and attr_id.
+ * @param[in] cmd_req The pointer to the read report configuration command structure. See @ref ezb_zcl_read_report_config_cmd_s.
  * @return Error code.
  */
 ezb_err_t ezb_zcl_read_report_config_cmd_req(const ezb_zcl_read_report_config_cmd_t *cmd_req);
@@ -526,12 +502,10 @@ ezb_err_t ezb_zcl_read_report_config_cmd_req(const ezb_zcl_read_report_config_cm
 /**
  * @brief Send a ZCL report attribute command request.
  *
- * This function sends an unsolicited report attribute command to report the current
- * value of one or more attributes. This is typically used by servers to notify
- * clients of attribute value changes.
+ * This function sends an unsolicited report attribute command to report the current value of one or more attributes. This is
+ * typically used by servers to notify clients of attribute value changes.
  *
- * @param cmd_req Pointer to the report attribute command structure. Must not be NULL.
- *                    The attribute ID must be valid and the attribute must support reporting.
+ * @param[in] cmd_req The pointer to the report attribute command structure. See @ref ezb_zcl_report_attr_cmd_s.
  * @return Error code.
  */
 ezb_err_t ezb_zcl_report_attr_cmd_req(const ezb_zcl_report_attr_cmd_t *cmd_req);
@@ -539,12 +513,9 @@ ezb_err_t ezb_zcl_report_attr_cmd_req(const ezb_zcl_report_attr_cmd_t *cmd_req);
 /**
  * @brief Send a ZCL discover attributes command request.
  *
- * This function sends a discover attributes command to query a remote device for
- * the attributes it supports in a cluster. The response will be delivered via
- * the callback specified in cmd_req->cmd_ctrl.cnf_ctx.
+ * This function sends a discover attributes command to query a remote device for the attributes it supports in a cluster.
  *
- * @param cmd_req Pointer to the discover attributes command structure. Must not be NULL.
- *                    The start_attr_id and max_attr_number must be set appropriately.
+ * @param[in] cmd_req The pointer to the discover attributes command structure. See @ref ezb_zcl_disc_attr_cmd_s.
  * @return Error code.
  */
 ezb_err_t ezb_zcl_disc_attr_cmd_req(const ezb_zcl_disc_attr_cmd_t *cmd_req);
@@ -552,12 +523,10 @@ ezb_err_t ezb_zcl_disc_attr_cmd_req(const ezb_zcl_disc_attr_cmd_t *cmd_req);
 /**
  * @brief Send a ZCL discover commands command request.
  *
- * This function sends a discover commands command to query a remote device for
- * the commands it supports (received or generated) in a cluster. The response
- * will be delivered via the callback specified in cmd_req->cmd_ctrl.cnf_ctx.
+ * This function sends a discover commands command to query a remote device for the commands it supports (received or generated)
+ * in a cluster.
  *
- * @param cmd_req Pointer to the discover commands command structure. Must not be NULL.
- *                    The is_recv, start_cmd_id, and max_cmd_number must be set appropriately.
+ * @param[in] cmd_req The pointer to the discover commands command structure. See @ref ezb_zcl_disc_cmd_cmd_s.
  * @return Error code.
  */
 ezb_err_t ezb_zcl_disc_cmd_cmd_req(const ezb_zcl_disc_cmd_cmd_t *cmd_req);
@@ -567,7 +536,7 @@ ezb_err_t ezb_zcl_disc_cmd_cmd_req(const ezb_zcl_disc_cmd_cmd_t *cmd_req);
  *
  * This function sends a ZCL default response command to respond a command.
  *
- * @param cmd_req Pointer to the default response command structure, @ref ezb_zcl_default_rsp_cmd_s.
+ * @param[in] cmd_req The pointer to the default response command structure. See @ref ezb_zcl_default_rsp_cmd_s.
  * @return Error code.
  */
 ezb_err_t ezb_zcl_default_rsp_cmd_req(const ezb_zcl_default_rsp_cmd_t *cmd_req);

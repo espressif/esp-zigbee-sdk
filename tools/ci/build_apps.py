@@ -10,8 +10,8 @@ from pathlib import Path
 from idf_build_apps import App, build_apps, find_apps, setup_logging
 
 APPS_BUILD_PER_JOB = 30
-targets_for_gateway = ["esp32c6", "esp32c5"]
-targets_for_generic_apps = ["esp32h2", "esp32c6", "esp32c5"]
+targets_for_gateway = ["esp32c6", "esp32c5", "esp32s31"]
+targets_for_generic_apps = ["esp32h2", "esp32c6", "esp32c5", "esp32s31", "esp32h4", "esp32h21"]
 targets_for_ota = ['esp32h2']
 DUAL_CHIP_GATEWAY_TARGETS = {"esp32s3", "esp32p4"}
 PYTEST_APPS = {

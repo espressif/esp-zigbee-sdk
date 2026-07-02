@@ -1,5 +1,38 @@
 # Espressif Zigbee SDK Release Notes
 
+## 30-June-2026
+2.0.2 version release of ESP-ZIGBEE-SDK is based on esp-idf v5.5.4
+
+### Features
+- Added esp32s31 support for preview
+- Added esp32h4 support for preview
+- Added esp32h21 support for preview
+- Added configurable retry and timeout in downloading process of OTA Upgrade client
+- Added support for broadcasting network key
+- Added support for ZDO Mgmt_Rtg_req/rsp commands
+
+### Bug Fixes
+- Fixed unexpected wake-up on SED every 10s when using a larger keepalive interval
+- Fixed unexpected frame filtering by incorrect extended address set to remote radio (RCP)
+- Fixed error handling of ZDO IEEE_addr_req and NWK_addr_req
+- Fixed error handling of ZDO Simple_Desc_req and Match_Desc_req
+- Fixed error handling of ZDO Bind_req, Unbind_req and Mgmt_Bind_req
+- Fixed the issue in FanControl cluster that writing to some attributes always failed
+- Fixed the issue that `ezb_nwk_set_max_children()` did not take effect
+- Fixed incorrect Mac interface ID used by SED for data polling when rejoining
+- Fixed missing joined status when joining to legacy coordinator
+- Fixed unalignment of power source bit in MAC capability and the node power descriptor
+- Fixed missing app message of WindowCovering cluster when LIFT/TILT movement commands are received
+- Fixed the crash when a device left and joined to another coordinator in centralized network
+- Fixed incorrect network encryption of the retransmitted APS SwitchKey command
+- Fixed converse limit check on CurrentPositionLift/Tilt in WindowCovering cluster
+
+### Changes
+- Use current PAN ID as the source PAN ID of MAC DataRequest command
+- Enhance the security of APS commands
+- Respond the APS commands with ACK if requested
+
+
 ## 22-May-2026
 2.0.1 version release of ESP-ZIGBEE-SDK is based on esp-idf v5.5.4
 
