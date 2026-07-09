@@ -41,6 +41,21 @@ typedef struct ezb_zcl_identify_trigger_effect_cmd_s {
 } ezb_zcl_identify_trigger_effect_cmd_t;
 
 /**
+ * @brief Message for the ZCL Identify Query response.
+ */
+typedef struct ezb_zcl_identify_query_rsp_message_s {
+    ezb_zcl_message_info_t info; /*!< Basic information about the ZCL message. */
+    struct {
+        const ezb_zcl_cmd_hdr_t *header; /*!< ZCL command header information.
+                                              See @ref ezb_zcl_cmd_hdr_s. */
+        uint16_t timeout;                /*!< Identify time in seconds. */
+    } in;                                /*!< Input: parsed fields from the response. */
+    struct {
+        ezb_zcl_status_t result; /*!< Status of processing in application. */
+    } out;                       /*!< Output: result to send back. */
+} ezb_zcl_identify_query_rsp_message_t;
+
+/**
  * @brief Message for the ZCL Identify TriggerEffect request.
  */
 typedef struct ezb_zcl_identify_effect_message_s {
