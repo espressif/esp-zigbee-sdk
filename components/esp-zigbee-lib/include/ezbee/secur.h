@@ -164,6 +164,18 @@ ezb_err_t ezb_secur_set_network_key(const uint8_t *key);
 ezb_err_t ezb_secur_get_network_key(uint8_t *key);
 
 /**
+ * @brief Switch the network key of current Zigbee network used by local device.
+ *
+ * @param[in] key      A 16-byte security network key to be switched.
+ * @param[in] key_seq  The sequence number associated with the network key.
+ *
+ * @return
+ *      - EZB_ERR_NONE: Success
+ *      - Otherwise: Failure
+ */
+ezb_err_t ezb_secur_switch_network_key(const uint8_t *key, uint8_t key_seq);
+
+/**
  * @brief Broadcast a new network key to the network.
  *
  * @param[in] key      A 16-byte security network key to be broadcast.

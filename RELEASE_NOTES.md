@@ -1,5 +1,21 @@
 # Espressif Zigbee SDK Release Notes
 
+## 10-Jul-2026
+2.0.3 version release of ESP-ZIGBEE-SDK is based on esp-idf v5.5.4
+
+### Features
+- Added `ezb_secur_switch_network_key()` to support network key switch on local device
+- Added `EZB_ZCL_CORE_IDENTIFY_QUERY_RSP_CB_ID` to indicate the receiving of ZCL IdentifyQueryRsp
+
+### Bug Fixes
+- Fixed the issue that ZCL responses always require default response
+- Fixed the missing of common data dataset when the network was recovered from preset parameters
+
+### Change
+- Network leave request from local device would always succeed
+  regardless of the transmission status of NWK Leave frame
+
+
 ## 30-June-2026
 2.0.2 version release of ESP-ZIGBEE-SDK is based on esp-idf v5.5.4
 

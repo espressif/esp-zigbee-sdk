@@ -72,6 +72,11 @@ enum ezb_zcl_core_action_callback_id_e {
      */
     EZB_ZCL_CORE_MANUF_SPEC_CMD_CB_ID,
 
+    /** A callback ID triggered when a ZCL Identify IdentifyQueryResponse command is received.
+     * see @ref ezb_zcl_identify_query_rsp_message_s.
+     */
+    EZB_ZCL_CORE_IDENTIFY_QUERY_RSP_CB_ID,
+
     /** A callback ID triggered when a ZCL Identify IdentifyEffect command is received.
      * see @ref ezb_zcl_identify_effect_message_s.
      */
