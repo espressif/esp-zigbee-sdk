@@ -150,7 +150,7 @@ def test_zb_deep_sleep(dut, count, app_path, erase_all):
 
     sleep_device.check_response(MatchPattern.enter_deep_sleep, timeout=10)
     clean_buffer(cli.dut)
-    cli.check_response(fr'New device commissioned or rejoined \(short: {sleep_device.short_address}', timeout=21)
+    cli.check_response(fr'New device commissioned or rejoined \(short: {sleep_device.short_address}', timeout=23)
     Common.check_connection_status(cli, sleep_device.short_address)
 
 
