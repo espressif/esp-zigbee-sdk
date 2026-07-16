@@ -147,10 +147,11 @@ def test_zb_deep_sleep(dut, count, app_path, erase_all):
     sleep_device.get_example_device_network_info(coordinator=False, timeout=60)
     Common.check_network_matched(cli.network_info, sleep_device.network_info)
     Common.check_connection_status(cli, sleep_device.short_address)
-
     sleep_device.check_response(MatchPattern.enter_deep_sleep, timeout=10)
+    # after sleep device reboot
     clean_buffer(cli.dut)
-    cli.check_response(fr'New device commissioned or rejoined \(short: {sleep_device.short_address}', timeout=23)
+    sleep_device.check_response(MatchPattern.enter_deep_sleep_delayed, timeout=23)
+    time.sleep(0.5)
     Common.check_connection_status(cli, sleep_device.short_address)
 
 
