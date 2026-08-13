@@ -203,6 +203,20 @@ ezb_err_t ezb_secur_broadcast_network_key(const uint8_t *key, uint8_t key_seq);
  */
 ezb_err_t ezb_secur_broadcast_switch_network_key(uint8_t key_seq);
 
+/**
+ * @brief Set whether rejoins using the well-known key are allowed on the Zigbee network.
+ *
+ * @param[in] allow True to allow rejoins using the well-known key, false to disallow them.
+ */
+void ezb_secur_tcpol_set_allow_rejoins_with_well_known_key(bool allow);
+
+/**
+ * @brief Get whether rejoins using the well-known key are allowed on the Zigbee network.
+ *
+ * @return - True: if rejoins using the well-known key are allowed; false otherwise.
+ */
+bool ezb_secur_tcpol_get_allow_rejoins_with_well_known_key(void);
+
 #ifdef __cplusplus
 } /*  extern "C" */
 #endif

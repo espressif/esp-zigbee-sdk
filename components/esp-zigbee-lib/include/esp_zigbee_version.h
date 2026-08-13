@@ -30,7 +30,7 @@
  * The patch version of the SDK.
  */
 #ifndef ESP_ZIGBEE_VER_PATCH
-#define ESP_ZIGBEE_VER_PATCH 3
+#define ESP_ZIGBEE_VER_PATCH 4
 #endif
 
 /**

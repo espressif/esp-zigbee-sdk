@@ -206,7 +206,10 @@ uint32_t ezb_nwk_get_frame_counter(void);
  * @brief Enable/Disable Rx when device is in IDLE state.
  * @anchor ezb_nwk_set_rx_on_when_idle
  *
- * @param[in] rx_on True - Rx remains on during idle periods, False - Rx is put to sleep during idle periods.
+ * @note Please DO NOT change this value after the device is joined the network.
+ *
+ * @param[in] rx_on True  - Rx remains on during idle periods,
+ *                  False - Rx is put to sleep during idle periods.
  */
 void ezb_nwk_set_rx_on_when_idle(bool rx_on);
 

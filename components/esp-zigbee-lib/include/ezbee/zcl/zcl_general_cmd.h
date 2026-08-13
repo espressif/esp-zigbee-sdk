@@ -222,12 +222,10 @@ typedef struct ezb_zcl_cmd_read_attr_rsp_message_s {
  * This structure represents the result of writing one attribute in a write
  * attribute response. Multiple attributes are linked together in a list.
  *
- * @note If status is EZB_ZCL_STATUS_SUCCESS, the attr_id field is omitted
- *       (set to 0xFFFF) to save space in the response.
  */
 typedef struct ezb_zcl_write_attr_rsp_variable_s {
     ezb_zcl_status_t status;  /*!< Status of the write operation. See @ref ezb_zcl_status_t. */
-    uint16_t         attr_id; /*!< Attribute ID that was written. Only present if status is not SUCCESS. */
+    uint16_t         attr_id; /*!< Attribute ID that was written. If status is SUCCESS, this field is assigned to 0xFFFF. */
     struct ezb_zcl_write_attr_rsp_variable_s *next; /*!< Pointer to the next variable in the response list, or NULL if last. */
 } ezb_zcl_write_attr_rsp_variable_t;
 
@@ -242,8 +240,11 @@ typedef struct ezb_zcl_cmd_write_attr_rsp_message_s {
     ezb_zcl_message_info_t info; /*!< Common information about the received response. See @ref ezb_zcl_message_info_s. */
     struct {
         const ezb_zcl_cmd_hdr_t *header; /*!< ZCL command header information. See @ref ezb_zcl_cmd_hdr_s. */
-        ezb_zcl_write_attr_rsp_variable_t
-            *variables; /*!< Linked list of write response variables. Each variable contains one attribute's write result. */
+        ezb_zcl_write_attr_rsp_variable_t *variables; /*!< The variables contain the results of the Write Attribute operation.
+                                                           If all attributes in the Write Attribute request are written
+                                                           successfully, only one variable with SUCCESS status and attr_id 0xFFFF
+                                                           is contained. Otherwise, the variables contain the attributes that
+                                                           failed to be written. */
     } in;               /*!< Input data from the received response. */
     struct {
         ezb_zcl_status_t result; /*!< Status of processing in application. See @ref ezb_zcl_status_t. */
@@ -256,14 +257,12 @@ typedef struct ezb_zcl_cmd_write_attr_rsp_message_s {
  * This structure represents the result of configuring reporting for one attribute
  * in a configure reporting response. Multiple attributes are linked together in a list.
  *
- * @note If status is EZB_ZCL_STATUS_SUCCESS, the direction and attr_id fields
- *       are omitted (set to 0xFF and 0xFFFF respectively) to save space.
  */
 typedef struct ezb_zcl_config_report_rsp_variable_s {
     uint8_t status;    /*!< Status of the configure report operation. See @ref ezb_zcl_status_t. */
-    uint8_t direction; /*!< Reporting direction: @ref EZB_ZCL_REPORTING_SEND or @ref EZB_ZCL_REPORTING_RECV. Only present if
-                          status is not SUCCESS. */
-    uint16_t attr_id;  /*!< Attribute ID for the report. Only present if status is not SUCCESS. */
+    uint8_t direction; /*!< Reporting direction: @ref EZB_ZCL_REPORTING_SEND or @ref EZB_ZCL_REPORTING_RECV.
+                            If status is SUCCESS, this field is assigned to 0xFF. */
+    uint16_t attr_id;  /*!< Attribute ID for the report. If status is SUCCESS, this field is assigned to 0xFFFF. */
     struct ezb_zcl_config_report_rsp_variable_s *next; /*!< Pointer to the next variable in the response list,
                                                             or NULL if it is the last variable. */
 } ezb_zcl_config_report_rsp_variable_t;
@@ -279,8 +278,11 @@ typedef struct ezb_zcl_cmd_config_report_rsp_message_s {
     ezb_zcl_message_info_t info; /*!< Common information about the received response. See @ref ezb_zcl_message_info_s. */
     struct {
         const ezb_zcl_cmd_hdr_t              *header;    /*!< ZCL command header information. See @ref ezb_zcl_cmd_hdr_s. */
-        ezb_zcl_config_report_rsp_variable_t *variables; /*!< Linked list of configure report response variables. Each variable
-                                                             contains one attribute's configuration result. */
+        ezb_zcl_config_report_rsp_variable_t *variables; /*!< The variables contain the results of the Configure Reporting
+                                                              operation. If all records in the Configure Reporting request are
+                                                              configured successfully, only one variable with SUCCESS status,
+                                                              direction 0xFF, and attr_id 0xFFFF is contained. Otherwise, the
+                                                              variables contain the records that failed to be configured. */
     } in;                                                /*!< Input data from the received response. */
     struct {
         ezb_zcl_status_t result; /*!< Status of processing in application. See @ref ezb_zcl_status_t. */

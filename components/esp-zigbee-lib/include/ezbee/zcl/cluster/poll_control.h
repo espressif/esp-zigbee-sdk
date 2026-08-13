@@ -63,6 +63,7 @@ typedef struct ezb_zcl_poll_control_check_in_message_s {
     } in;                                /*!< Input: parsed fields from the request. */
     struct {
         ezb_zcl_status_t result;            /*!< Status of processing in application. */
+        bool             start_fast_poll;   /*!< Start fast poll. */
         uint16_t         fast_poll_timeout; /*!< Fast poll timeout (quarter-seconds). */
     } out;                                  /*!< Output: result to send back. */
 } ezb_zcl_poll_control_check_in_message_t;
