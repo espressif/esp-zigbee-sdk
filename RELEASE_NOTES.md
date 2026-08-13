@@ -1,5 +1,39 @@
 # Espressif Zigbee SDK Release Notes
 
+## 14-Aug-2026
+2.0.4 version release of ESP-ZIGBEE-SDK is based on esp-idf v5.5.4
+
+## Features
+- Added `esp_zigbee_stop()` to gracefully stop the Zigbee stack and exit the main loop.
+- Added `ezb_bdb_set_router_rejoin_required()` to control whether the rejoin process is
+  required for router during BDB commissioning initialization.
+- Added APIs to configure whether the Trust Center allows rejoins using the well-known key
+  - `ezb_secur_tcpol_set_allow_rejoins_with_well_known_key()`
+  - `ezb_secur_tcpol_get_allow_rejoins_with_well_known_key()`.
+- Added support for MAC indirect message retransmission.
+- Added support for MAC source address matching table management.
+- Added support for handling ZCL OTA `Image Notify` command containing only the jitter payload.
+- Added support to enable/disable device via ZCL Basic cluster "DeviceEnabled" attribute.
+
+## Bug Fixes
+- Fixed the crash when allocating message buffers after the buffer pool is increased via `ezb_config_memory()`.
+- Fixed the issue that "PanCoordinator" bit would lost after the coordinator reboots.
+- Fixed the issue in ZCL Poll Control client cluster where an incorrect binding check would fail the check-in operation.
+- Fixed the issue in ZCL OTA Upgrade cluster where the OTA process was interrupted when
+  the response to an OTA Upgrade Request received before the APS ACK.
+- Fixed the incorrect minimum/maximum definitions of "MeasuredValue" attribute in ZCL PM2.5 cluster.
+- Fixed the incorrect multi-record format of ZCL general commands WriteAttributesResponse and ConfigureReportingResponse.
+- Fixed the issue in Touchlink where the invalid PAN ID in NetworkStartResponse would be used if no PAN was found during network commissioning.
+
+## Changes
+- Restrict the device type setting for RFD build.
+- Filter non-Zigbee beacons during network active scan.
+- Changed default NVS partition name from "zb_storage" to "nvs".
+- Use current PAN ID as the source PAN ID of Mac AssociationResponse command.
+- The Poll Control client is now required to determine whether fast poll should be started through
+  `ezb_zcl_poll_control_check_in_message_t`.
+- ZED now permits TC to remove itself from the network via ZDO Mgmt_Leave_req.
+
 ## 10-Jul-2026
 2.0.3 version release of ESP-ZIGBEE-SDK is based on esp-idf v5.5.4
 
@@ -183,7 +217,7 @@
 1.6.4 version release of ESP-ZIGBEE-SDK is based on esp-idf v5.3.2
 
 ### Features
-- Added support to trigger the ZCL general command response callback of cluster server direction 
+- Added support to trigger the ZCL general command response callback of cluster server direction
 
 ### Bug Fixes
 - Fixed the APS fragment hang issue when multiple fragment frames are scheduled before the previous fragment transaction is completed
@@ -290,7 +324,7 @@
 ### Changes
 - Updated esp-zboss-lib to v1.6.0
 - Updated esp-zigbee-lib to v1.6.0
-- Added the `manuf_specific`, `direction`, `dis_default_resp` and `manuf_code` options to ZCL general commands. 
+- Added the `manuf_specific`, `direction`, `dis_default_resp` and `manuf_code` options to ZCL general commands.
 
 ### Breaking Changes
 - Removed the `esp_zigbee_cli` support
@@ -671,7 +705,7 @@
 - Closes: https://github.com/espressif/esp-zigbee-sdk/issues/142
 
 ### Bug Fixes
-- Fixed zcl level transition time callback 
+- Fixed zcl level transition time callback
 - Fixed zigbee touchlink device information request
 - Fixed zigbee broadcast table size
 
@@ -774,7 +808,7 @@
 ### Features
 - Update esp-zboss-lib to v1.0.1
 - Support the effect of level control and on/off cluster
-- Support to scan all touchlink channels 
+- Support to scan all touchlink channels
 - Optimize the Zigbee OTA examples
 - Update the Zigbee OTA README.md
 - Closes: https://github.com/espressif/esp-zigbee-sdk/issues/100
