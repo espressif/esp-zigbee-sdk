@@ -40,13 +40,29 @@ typedef struct ezb_zcl_pm2_5_measurement_cluster_server_config_s {
 } ezb_zcl_pm2_5_measurement_cluster_server_config_t;
 
 /** @brief Default value of MeasuredValue in PM2_5Measurement cluster */
-#define EZB_ZCL_PM2_5_MEASUREMENT_MEASURED_VALUE_DEFAULT_VALUE (0x00)
+#define EZB_ZCL_PM2_5_MEASUREMENT_MEASURED_VALUE_DEFAULT_VALUE (EZB_ZCL_VALUE_NaN)
 
 /** @brief Minimum value of MeasuredValue in PM2_5Measurement cluster */
-#define EZB_ZCL_PM2_5_MEASUREMENT_MEASURED_VALUE_MIN_VALUE (MinMeasuredValue)
+#define EZB_ZCL_PM2_5_MEASUREMENT_MEASURED_VALUE_MIN_VALUE (0.0f)
 
 /** @brief Maximum value of MeasuredValue in PM2_5Measurement cluster */
-#define EZB_ZCL_PM2_5_MEASUREMENT_MEASURED_VALUE_MAX_VALUE (MaxMeasuredValue)
+#define EZB_ZCL_PM2_5_MEASUREMENT_MEASURED_VALUE_MAX_VALUE (1.0f)
+/** @brief Default value of MinMeasuredValue in PM2_5Measurement cluster */
+#define EZB_ZCL_PM2_5_MEASUREMENT_MIN_MEASURED_VALUE_DEFAULT_VALUE (EZB_ZCL_VALUE_NaN)
+
+/** @brief Minimum value of MinMeasuredValue in PM2_5Measurement cluster */
+#define EZB_ZCL_PM2_5_MEASUREMENT_MIN_MEASURED_VALUE_MIN_VALUE (0.0f)
+
+/** @brief Maximum value of MinMeasuredValue in PM2_5Measurement cluster */
+#define EZB_ZCL_PM2_5_MEASUREMENT_MIN_MEASURED_VALUE_MAX_VALUE (1.0f)
+/** @brief Default value of MaxMeasuredValue in PM2_5Measurement cluster */
+#define EZB_ZCL_PM2_5_MEASUREMENT_MAX_MEASURED_VALUE_DEFAULT_VALUE (EZB_ZCL_VALUE_NaN)
+
+/** @brief Minimum value of MaxMeasuredValue in PM2_5Measurement cluster */
+#define EZB_ZCL_PM2_5_MEASUREMENT_MAX_MEASURED_VALUE_MIN_VALUE (0.0f)
+
+/** @brief Maximum value of MaxMeasuredValue in PM2_5Measurement cluster */
+#define EZB_ZCL_PM2_5_MEASUREMENT_MAX_MEASURED_VALUE_MAX_VALUE (1.0f)
 
 typedef ezb_zcl_pm2_5_measurement_cluster_server_config_t ezb_zcl_pm2_5_measurement_cluster_config_t;
 

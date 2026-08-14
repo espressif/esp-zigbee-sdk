@@ -12,7 +12,7 @@
 #define MAX_CHILDREN                    10          /* the max amount of connected devices */
 #define INSTALLCODE_POLICY_ENABLE       false       /* enable the install code policy for security */
 
-#define ESP_ZIGBEE_NVS_PART_NAME     "zb_storage"
+#define ESP_ZIGBEE_STORAGE_PARTITION_NAME "nvs"
 #define ESP_ZIGBEE_ALL_CHANNELS_MASK (0x07FFF800U)
 
 #define ESP_ZIGBEE_ZR_CONFIG()                                          \
@@ -35,7 +35,7 @@
 
 #define ESP_ZIGBEE_DEFAULT_PLATFORM_CONFIG()                            \
     {                                                                   \
-        .storage_partition_name = ESP_ZIGBEE_NVS_PART_NAME,             \
+        .storage_partition_name = ESP_ZIGBEE_STORAGE_PARTITION_NAME,    \
         .radio_config           = ESP_ZIGBEE_DEFAULT_RADIO_CONFIG(),    \
     }
 

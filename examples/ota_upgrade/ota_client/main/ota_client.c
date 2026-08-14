@@ -293,7 +293,6 @@ void app_main(void)
 {
     ESP_LOGW(TAG, "ESP Zigbee OTA example (0x%"PRIx32") is running", (uint32_t)ESP_OTA_FILE_VERSION);
     ESP_ERROR_CHECK(nvs_flash_init());
-    ESP_ERROR_CHECK(nvs_flash_init_partition(ESP_ZIGBEE_STORAGE_PARTITION_NAME));
     ESP_LOGI(TAG, "Start ESP Zigbee Stack");
     xTaskCreate(esp_zigbee_stack_main_task, "Zigbee_main", 4096, NULL, 5, NULL);
 }

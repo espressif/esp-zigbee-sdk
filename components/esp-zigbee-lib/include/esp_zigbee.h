@@ -161,8 +161,21 @@ esp_err_t esp_zigbee_start(bool autostart);
 bool esp_zigbee_is_started(void);
 
 /**
+ * @brief Stop the Zigbee function.
+ * @anchor esp_zigbee_stop
+ *
+ * @note This function will exit the mainloop of ESP-Zigbee.
+ *
+ * @return ESP_OK if the stop request is accepted, or the stack is not running, error code otherwise.
+ *
+ */
+esp_err_t esp_zigbee_stop(void);
+
+/**
  * @brief Launch the mainloop of ESP-Zigbee.
  * @anchor esp_zigbee_launch_mainloop
+ *
+ * @note The @ref esp_zigbee_stop API can be used to exit the mainloop.
  *
  * @return ESP_OK on success, error code otherwise.
  *

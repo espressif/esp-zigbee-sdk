@@ -332,7 +332,7 @@ void ezb_plat_radio_set_src_match(bool enable);
  *          EZB_ERR_NO_MEM  No available entry in the source match table.
  *
  */
-ezb_err_t ezb_plat_radio_add_src_match_entry(uint8_t *addr, bool is_short);
+ezb_err_t ezb_plat_radio_add_src_match_entry(const uint8_t *addr, bool is_short);
 
 /**
  * @brief Remove a address from the source address match table.
@@ -344,7 +344,7 @@ ezb_err_t ezb_plat_radio_add_src_match_entry(uint8_t *addr, bool is_short);
  *          EZB_ERR_NOT_FOUND   The address is not in source address match table.
  *
  */
-ezb_err_t ezb_plat_radio_clear_src_match_entry(uint8_t *addr, bool is_short);
+ezb_err_t ezb_plat_radio_clear_src_match_entry(const uint8_t *addr, bool is_short);
 
 /**
  * @brief Clear the the short/extended source address match table.

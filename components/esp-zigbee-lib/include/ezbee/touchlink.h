@@ -69,7 +69,8 @@ typedef void (*ezb_touchlink_identify_callback_t)(uint16_t duration);
 /**
  * @brief Register a callback for Touchlink query.
  *
- * @param cb The callback function.
+ * @param cb The callback function, which is used to control the Touchlink commissioning process by returning the
+ * action permission. Any action not permitted will terminate touchlink process.
  *
  * @return Error code.
  */

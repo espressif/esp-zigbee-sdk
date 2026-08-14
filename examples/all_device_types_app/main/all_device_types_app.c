@@ -168,7 +168,6 @@ static void zb_stack_main_task(void *pvParameters)
 void app_main(void)
 {
     ESP_ERROR_CHECK(nvs_flash_init());
-    ESP_ERROR_CHECK(nvs_flash_init_partition(ESP_ZIGBEE_NVS_PART_NAME));
     ESP_ERROR_CHECK(esp_zb_console_init());
     xTaskCreate(zb_stack_main_task, "Zigbee_main", 4096, NULL, 5, NULL);
     ESP_LOGI(TAG, "Start ESP Zigbee Console");

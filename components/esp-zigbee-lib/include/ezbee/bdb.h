@@ -228,6 +228,14 @@ void ezb_bdb_reset_via_local_action(void);
  */
 bool ezb_bdb_is_factory_new(void);
 
+/**
+ * @brief Set if rejoin process is required for router when performing initialization of BDB commissioning.
+ *
+ * @param[in] required True if rejoin is required
+ *                     False if router rejoin is not required
+ */
+void ezb_bdb_set_router_rejoin_required(bool required);
+
 #ifdef __cplusplus
 } /*  extern "C" */
 #endif

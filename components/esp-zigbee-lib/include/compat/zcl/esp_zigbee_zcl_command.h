@@ -3517,9 +3517,8 @@ void esp_zb_zcl_scenes_table_show(uint8_t endpoint);
 /**
  * @brief Set the size of the scene table for ZCL scenes.
  *
- * The scene table is shared by all endpoints with the Scenes cluster and is stored as non-volatile data
- * in the `zb_storage` partition. This API MUST be called before esp_zb_device_register() and can only be
- * invoked once during device startup.
+ * The scene table is shared by all endpoints with the Scenes cluster and is stored as non-volatile data.
+ * This API MUST be called before esp_zb_device_register() and can only be invoked once during device startup.
  *
  * @param[in] size The maximum number of scenes the scene table can store.
  * @return
