@@ -17,7 +17,7 @@
 #endif
 #endif
 
-#if CONFIG_ZIGBEE_GW_AUTO_UPDATE_RCP
+#if CONFIG_AUTO_UPDATE_RCP
 #include "zigbee_rcp.h"
 #endif
 
@@ -216,14 +216,14 @@ static void esp_zigbee_stack_main_task(void *pvParameters)
 {
     esp_zigbee_config_t zigbee_config = ESP_ZIGBEE_DEFAULT_CONFIG();
 
-#if CONFIG_ZIGBEE_GW_AUTO_UPDATE_RCP
+#if CONFIG_AUTO_UPDATE_RCP
     esp_rcp_update_config_t rcp_config = ESP_ZIGBEE_RCP_CONFIG();
     ESP_ERROR_CHECK(esp_zigbee_rcp_init(&rcp_config));
 #endif
 
     ESP_ERROR_CHECK(esp_zigbee_init(&zigbee_config));
 
-#if CONFIG_ZIGBEE_GW_AUTO_UPDATE_RCP
+#if CONFIG_AUTO_UPDATE_RCP
     ESP_ERROR_CHECK(esp_zigbee_rcp_update());
 #endif
 
@@ -241,7 +241,7 @@ static void esp_zigbee_stack_main_task(void *pvParameters)
 
     esp_zigbee_deinit();
 
-#if CONFIG_ZIGBEE_GW_AUTO_UPDATE_RCP
+#if CONFIG_AUTO_UPDATE_RCP
     esp_zigbee_rcp_deinit();
 #endif
 

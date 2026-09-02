@@ -19,14 +19,14 @@ The Wi-Fi based ESP Zigbee Gateway consists of two SoCs:
 
 The ESP Zigbee gateway board provides an integrated module of an ESP32-S3 SoC and an ESP32-H2 RCP.
 
-![br_dev_kit](../../docs/_static/esp-thread-border-router-board.png)
+![br_dev_kit](images/esp-zigbee-gateway-board.webp)
 
 The two SoCs are connected with following interfaces:
 * UART for serial communication
 * RESET and BOOT pins for RCP Update
 * 3-Wires PTA for RF coexistence
 
-No jumper wires needed. No `idf.py menuconfig` under menu "ESP Zigbee gateway rcp update" configure to change.
+No jumper wires needed. No `idf.py menuconfig` under menu "OpenThread rcp update" configure to change.
 
 #### Standalone Modules
 
@@ -48,7 +48,7 @@ Other pin number is also available for user to configure if needed.
 
 The following image shows an example connection between ESP32 DevKitC and ESP32-H2 DevKitC:
 
-![Zigbee_gateway](zigbee-gateway-esp32-esp32h2.jpg)
+![Zigbee_gateway](images/esp-zigbee-standalone-modules.webp)
 
 ## Erase the NVRAM
 
@@ -87,7 +87,7 @@ E(523) OPENTHREAD:[C] P-SpinelDrive-: Software reset co-processor successfully
 I (573) ESP_ZIGBEE_RCP: Running RCP version: openthread-esp32/fcae32885b029-b945928d7; esp32h2;  2026-03-11 02:30:22 UTC
 ```
 
-- If `CONFIG_ZIGBEE_GW_AUTO_UPDATE_RCP` is enabled and the version does not match the stored one, the board will automatically update the RCP using the stored version.
+- If `CONFIG_AUTO_UPDATE_RCP` is enabled and the version does not match the stored one, the board will automatically update the RCP using the stored version.
 
 - After confirming that the remote radio is functioning properly, the board will connect to Wi-Fi as configured in menuconfig.
 ```
