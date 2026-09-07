@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2024 Espressif Systems (Shanghai) CO LTD
+ * SPDX-FileCopyrightText: 2024-2026 Espressif Systems (Shanghai) CO LTD
  *
  * SPDX-License-Identifier: Apache-2.0
  */
@@ -24,6 +24,22 @@ static esp_err_t radio_spinel_uart_deinit(const esp_radio_spinel_uart_config_t *
 
 static esp_err_t radio_spinel_uart_init_port(const esp_radio_spinel_uart_config_t *config)
 {
+#ifndef CONFIG_ESP_CONSOLE_UART
+    // If UART console is used, UART vfs devices should be registered during startup.
+    // Otherwise we need to register them here.
+    char uart_path[16];
+    snprintf(uart_path, sizeof(uart_path), "/dev/uart/%d", config->port);
+    bool is_uart_registered = (access(uart_path, F_OK) == 0);
+    if (!is_uart_registered) {
+        // If UART vfs devices are registered, we will failed to open the directory
+#if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(5, 3, 0)
+        uart_vfs_dev_register();
+#else
+        esp_vfs_dev_uart_register();
+#endif
+    }
+#endif
+
     ESP_RETURN_ON_ERROR(uart_param_config(config->port, &(config->uart_config)), TAG,
                         "Failed to config uart parameters");
     ESP_RETURN_ON_ERROR(
@@ -83,11 +99,12 @@ static esp_err_t radio_spinel_deinit_uart(const esp_radio_spinel_uart_config_t *
 
 esp_err_t esp_zigbee_radio_spinel_config_uart(const esp_radio_spinel_uart_config_t *uart_config)
 {
-    if (esp_radio_spinel_uart_interface_enable(uart_config, radio_spinel_init_uart, radio_spinel_deinit_uart,
-                                               ESP_RADIO_SPINEL_ZIGBEE) != ESP_OK) {
+    esp_err_t ret = esp_radio_spinel_uart_interface_enable(uart_config, radio_spinel_init_uart, radio_spinel_deinit_uart,
+                                                           ESP_RADIO_SPINEL_ZIGBEE);
+    if (ret != ESP_OK) {
         ESP_LOGE(TAG, "Spinel UART interface enable failed");
     } else {
         ESP_LOGI(TAG, "Spinel UART interface enable successfully");
     }
-    return ESP_OK;
+    return ret;
 }
