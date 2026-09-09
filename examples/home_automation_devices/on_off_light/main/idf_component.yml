@@ -9,5 +9,3 @@ dependencies:
     path: "../../../utils/example_common"
   light_driver:
     path: "../../../utils/light_driver"
-  alarm_timer:
-    path: "../../../utils/alarm_timer"

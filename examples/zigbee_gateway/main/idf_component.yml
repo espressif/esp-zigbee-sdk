@@ -10,7 +10,5 @@ dependencies:
     path: "../../utils/example_common"
   light_driver:
     path: "../../utils/light_driver"
-  alarm_timer:
-    path: "../../utils/alarm_timer"
   protocol_examples_common:
     path: "${IDF_PATH}/examples/common_components/protocol_examples_common"

@@ -11,5 +11,3 @@ dependencies:
     path: "../../../utils/temp_sensor_driver"
   switch_driver:
     path: "../../../utils/switch_driver"
-  alarm_timer:
-    path: "../../../utils/alarm_timer"

@@ -7,5 +7,3 @@ dependencies:
     version: ">=2.0.0"
   example_common:
     path: "../../../utils/example_common"
-  alarm_timer:
-    path: "../../../utils/alarm_timer"
