@@ -29,7 +29,7 @@ class ZigbeeCIConstants:
     @classmethod
     def get_channel(cls, target):
         return cls.channel_map.get(target, cls.channel)
-    ota_total_package = '501070'
+    ota_total_package = '517054'
     ota_version = '0x10022000'
     image_type = '0x0001'
     manufacturer_code = '0x131b'
