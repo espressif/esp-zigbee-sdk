@@ -249,6 +249,8 @@ esp_err_t esp_zigbee_create_zha_on_off_light_with_ota_client_device(void)
     ezb_af_endpoint_add_cluster_desc(ep_desc, ezb_zcl_identify_create_cluster_desc(NULL, EZB_ZCL_CLUSTER_SERVER));
 
     ota_client_desc = ezb_zcl_ota_upgrade_create_cluster_desc(&client_default_cfg, EZB_ZCL_CLUSTER_CLIENT);
+    ESP_ERROR_CHECK(ezb_zcl_ota_upgrade_cluster_desc_add_attr(ota_client_desc, EZB_ZCL_ATTR_OTA_UPGRADE_CURRENT_FILE_VERSION_ID,
+                                                              &(uint32_t){ESP_OTA_FILE_VERSION}));
     ESP_ERROR_CHECK(ezb_af_endpoint_add_cluster_desc(ep_desc, ota_client_desc));
     ESP_ERROR_CHECK(ezb_af_device_add_endpoint_desc(dev_desc, ep_desc));
     ESP_ERROR_CHECK(ezb_af_device_desc_register(dev_desc));
