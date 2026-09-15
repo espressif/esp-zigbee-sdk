@@ -1,14 +1,22 @@
 /*
  * SPDX-FileCopyrightText: 2026 Espressif Systems (Shanghai) CO LTD
  *
- * SPDX-License-Identifier: CC0-1.0
+ * SPDX-License-Identifier: LicenseRef-Included
+ *
+ * Zigbee Gateway Example
+ *
+ * This example code is in the Public Domain (or CC0 licensed, at your option.)
+ *
+ * Unless required by applicable law or agreed to in writing, this
+ * software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ * CONDITIONS OF ANY KIND, either express or implied.
  */
 
 #include <string.h>
 #include "esp_log.h"
 #include "esp_check.h"
 #include "sdkconfig.h"
-#if CONFIG_ZIGBEE_GW_AUTO_UPDATE_RCP
+#if CONFIG_AUTO_UPDATE_RCP
 #include "esp_rcp_update.h"
 #include "esp_spiffs.h"
 #endif
@@ -24,7 +32,7 @@
 
 #define TAG "ZIGBEE_RCP"
 
-#if CONFIG_ZIGBEE_GW_AUTO_UPDATE_RCP
+#if CONFIG_AUTO_UPDATE_RCP
 
 static void rcp_update(void)
 {
@@ -39,7 +47,7 @@ static void rcp_update(void)
 
 static void rcp_fatal_failure_handler(void)
 {
-#if CONFIG_ZIGBEE_GW_AUTO_UPDATE_RCP
+#if CONFIG_AUTO_UPDATE_RCP
     ESP_LOGW(TAG, "RCP failure, re-flashing RCP");
     rcp_update();
 #endif
@@ -57,7 +65,7 @@ esp_err_t esp_zigbee_rcp_update(void)
     char rcp_version[ESP_ZIGBEE_RCP_VERSION_MAX_SIZE] = {0};
     ESP_RETURN_ON_ERROR(esp_radio_spinel_rcp_version_get(rcp_version, ESP_RADIO_SPINEL_ZIGBEE), TAG,
                         "Failed to get rcp version from radio spinel");
-#if (CONFIG_ZIGBEE_GW_AUTO_UPDATE_RCP)
+#if (CONFIG_AUTO_UPDATE_RCP)
     char storage_rcp_version[ESP_ZIGBEE_RCP_VERSION_MAX_SIZE] = {0};
     if (esp_rcp_load_version_in_storage(storage_rcp_version, sizeof(storage_rcp_version)) == ESP_OK) {
         if (strcmp(storage_rcp_version, rcp_version)) {
@@ -78,14 +86,18 @@ esp_err_t esp_zigbee_rcp_update(void)
 
 static esp_err_t spiffs_init(void)
 {
-    esp_vfs_spiffs_conf_t rcp_fw_conf = {
-        .base_path = "/rcp_fw", .partition_label = "rcp_fw", .max_files = 10, .format_if_mount_failed = false};
-    return esp_vfs_spiffs_register(&rcp_fw_conf);
+  esp_vfs_spiffs_conf_t rcp_fw_conf = {
+      .base_path = "/" CONFIG_RCP_PARTITION_NAME,
+      .partition_label = CONFIG_RCP_PARTITION_NAME,
+      .max_files = 10,
+      .format_if_mount_failed = false,
+  };
+  return esp_vfs_spiffs_register(&rcp_fw_conf);
 }
 
 static void spiffs_deinit(void)
 {
-    esp_vfs_spiffs_unregister("rcp_fw");
+  esp_vfs_spiffs_unregister(CONFIG_RCP_PARTITION_NAME);
 }
 
 esp_err_t esp_zigbee_rcp_init(esp_rcp_update_config_t *config)

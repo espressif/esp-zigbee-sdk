@@ -2,7 +2,6 @@
 dependencies:
   ## Required IDF version
   espressif/esp_rcp_update: "~1.6.0"
-  espressif/esp-serial-flasher: "~1.11.0"
   idf:
     version: ">=5.2"
   espressif/esp-zigbee-lib:
@@ -11,7 +10,5 @@ dependencies:
     path: "../../utils/example_common"
   light_driver:
     path: "../../utils/light_driver"
-  alarm_timer:
-    path: "../../utils/alarm_timer"
   protocol_examples_common:
     path: "${IDF_PATH}/examples/common_components/protocol_examples_common"

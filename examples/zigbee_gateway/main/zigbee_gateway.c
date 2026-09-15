@@ -1,7 +1,15 @@
 /*
  * SPDX-FileCopyrightText: 2021-2026 Espressif Systems (Shanghai) CO LTD
  *
- * SPDX-License-Identifier: CC0-1.0
+ * SPDX-License-Identifier: LicenseRef-Included
+ *
+ * Zigbee Gateway Example
+ *
+ * This example code is in the Public Domain (or CC0 licensed, at your option.)
+ *
+ * Unless required by applicable law or agreed to in writing, this
+ * software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ * CONDITIONS OF ANY KIND, either express or implied.
  */
 
 #include "esp_check.h"
@@ -17,7 +25,7 @@
 #endif
 #endif
 
-#if CONFIG_ZIGBEE_GW_AUTO_UPDATE_RCP
+#if CONFIG_AUTO_UPDATE_RCP
 #include "zigbee_rcp.h"
 #endif
 
@@ -216,14 +224,14 @@ static void esp_zigbee_stack_main_task(void *pvParameters)
 {
     esp_zigbee_config_t zigbee_config = ESP_ZIGBEE_DEFAULT_CONFIG();
 
-#if CONFIG_ZIGBEE_GW_AUTO_UPDATE_RCP
+#if CONFIG_AUTO_UPDATE_RCP
     esp_rcp_update_config_t rcp_config = ESP_ZIGBEE_RCP_CONFIG();
     ESP_ERROR_CHECK(esp_zigbee_rcp_init(&rcp_config));
 #endif
 
     ESP_ERROR_CHECK(esp_zigbee_init(&zigbee_config));
 
-#if CONFIG_ZIGBEE_GW_AUTO_UPDATE_RCP
+#if CONFIG_AUTO_UPDATE_RCP
     ESP_ERROR_CHECK(esp_zigbee_rcp_update());
 #endif
 
@@ -241,7 +249,7 @@ static void esp_zigbee_stack_main_task(void *pvParameters)
 
     esp_zigbee_deinit();
 
-#if CONFIG_ZIGBEE_GW_AUTO_UPDATE_RCP
+#if CONFIG_AUTO_UPDATE_RCP
     esp_zigbee_rcp_deinit();
 #endif
 

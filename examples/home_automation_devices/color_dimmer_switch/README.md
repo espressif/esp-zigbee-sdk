@@ -1,5 +1,5 @@
-| Supported Targets | ESP32-H2 | ESP32-C6 | ESP32-C5 |
-| ----------------- | -------- | -------- | -------- |
+| Supported Targets | ESP32-H2 | ESP32-C6 | ESP32-C5 | ESP32-H21 | ESP32-H4 | ESP32-S31 |
+| ----------------- | -------- | -------- | -------- | --------- | -------- | --------- |
 # Light Switch Example 
 
 This example demonstrates how to configure a Home Automation color dimmer switch on a Zigbee router.

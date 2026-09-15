@@ -1,7 +1,15 @@
 /*
  * SPDX-FileCopyrightText: 2022-2026 Espressif Systems (Shanghai) CO LTD
  *
- * SPDX-License-Identifier: CC0-1.0
+ * SPDX-License-Identifier: LicenseRef-Included
+ *
+ * Zigbee Gateway Example
+ *
+ * This example code is in the Public Domain (or CC0 licensed, at your option.)
+ *
+ * Unless required by applicable law or agreed to in writing, this
+ * software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ * CONDITIONS OF ANY KIND, either express or implied.
  */
 
 #pragma once
@@ -16,9 +24,9 @@
 #define ESP_MANUFACTURER_NAME "\x09""ESPRESSIF"
 #define ESP_MODEL_IDENTIFIER "\x07"CONFIG_IDF_TARGET
 
-#if defined(CONFIG_ZIGBEE_GW_RCP_CHIP_ESP32C6)
+#if defined(CONFIG_ZB_GW_RCP_CHIP_ESP32C6)
 #define ESP_ZIGBEE_RCP_TARGET_CHIP ESP32C6_CHIP
-#elif defined(CONFIG_ZIGBEE_GW_RCP_CHIP_ESP32H2)
+#elif defined(CONFIG_ZB_GW_RCP_CHIP_ESP32H2)
 #define ESP_ZIGBEE_RCP_TARGET_CHIP ESP32H2_CHIP
 #else
 #define ESP_ZIGBEE_RCP_TARGET_CHIP ESP_UNKNOWN_CHIP
@@ -42,22 +50,22 @@
         },                                                           \
     }
 #else
-#define ESP_ZIGBEE_UART_CONFIG()                        \
-    {                                                   \
-        .port = 1,                                      \
-        .uart_config =                                  \
-            {                                           \
-                .baud_rate = 460800,                    \
-                .data_bits = UART_DATA_8_BITS,          \
-                .parity = UART_PARITY_DISABLE,          \
-                .stop_bits = UART_STOP_BITS_1,          \
-                .flow_ctrl = UART_HW_FLOWCTRL_DISABLE,  \
-                .rx_flow_ctrl_thresh = 0,               \
-                .source_clk = UART_SCLK_DEFAULT,        \
-            },                                          \
-        .rx_pin = CONFIG_PIN_TO_RCP_TX,                 \
-        .tx_pin = CONFIG_PIN_TO_RCP_RX,                 \
-    }
+#define ESP_ZIGBEE_UART_CONFIG()                     \
+  {                                                  \
+      .port = 1,                                     \
+      .uart_config =                                 \
+          {                                          \
+              .baud_rate = 460800,                   \
+              .data_bits = UART_DATA_8_BITS,         \
+              .parity = UART_PARITY_DISABLE,         \
+              .stop_bits = UART_STOP_BITS_1,         \
+              .flow_ctrl = UART_HW_FLOWCTRL_DISABLE, \
+              .rx_flow_ctrl_thresh = 0,              \
+              .source_clk = UART_SCLK_DEFAULT,       \
+          },                                         \
+      .rx_pin = CONFIG_DEFAULT_PIN_TO_RCP_TX,        \
+      .tx_pin = CONFIG_DEFAULT_PIN_TO_RCP_RX,        \
+  }
 
 #define ESP_ZIGBEE_PLATFORM_CONFIG()                                 \
     {                                                                \
@@ -75,16 +83,16 @@
         .platform_config = ESP_ZIGBEE_PLATFORM_CONFIG(), \
     };
 
-#define ESP_ZIGBEE_RCP_CONFIG()                     \
-    {                                               \
-        .rcp_type = RCP_TYPE_UART,                  \
-        .uart_rx_pin = CONFIG_PIN_TO_RCP_TX,        \
-        .uart_tx_pin = CONFIG_PIN_TO_RCP_RX,        \
-        .uart_port = 1,                             \
-        .uart_baudrate = 115200,                    \
-        .reset_pin = CONFIG_PIN_TO_RCP_RESET,       \
-        .boot_pin = CONFIG_PIN_TO_RCP_BOOT,         \
-        .update_baudrate = 460800,                  \
-        .firmware_dir = "/rcp_fw/ot_rcp",           \
-        .target_chip = ESP_ZIGBEE_RCP_TARGET_CHIP,  \
-    }
+#define ESP_ZIGBEE_RCP_CONFIG()                                \
+  {                                                            \
+      .rcp_type = RCP_TYPE_UART,                               \
+      .uart_rx_pin = CONFIG_DEFAULT_PIN_TO_RCP_TX,             \
+      .uart_tx_pin = CONFIG_DEFAULT_PIN_TO_RCP_RX,             \
+      .uart_port = 1,                                          \
+      .uart_baudrate = 115200,                                 \
+      .reset_pin = CONFIG_DEFAULT_PIN_TO_RCP_RESET,            \
+      .boot_pin = CONFIG_DEFAULT_PIN_TO_RCP_BOOT,              \
+      .update_baudrate = 460800,                               \
+      .firmware_dir = "/" CONFIG_RCP_PARTITION_NAME "/ot_rcp", \
+      .target_chip = ESP_ZIGBEE_RCP_TARGET_CHIP,               \
+  }
