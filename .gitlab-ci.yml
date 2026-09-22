@@ -1,10 +1,16 @@
 workflow:
   rules:
+
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-      when: never
-    - if: '$CI_COMMIT_BRANCH == "main-ci-test" && $CI_PIPELINE_SOURCE != "pipeline"'
-      when: never
-    - when: always
+
+    - if: '$CI_PIPELINE_SOURCE =~ /^(pipeline|parent_pipeline|trigger|api|web|schedule)$/'
+
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+
+    - if: '$CI_COMMIT_BRANCH =~ /^release\//'
+    - if: '$CI_COMMIT_TAG'
+    
+    - when: never
 
 include:
   - '.gitlab/ci/common.yml'

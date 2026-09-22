@@ -1,6 +1,11 @@
 include:
   - '.gitlab/ci/common.yml'
 
+workflow:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "parent_pipeline"'
+    - when: never
+
 .common_before_scripts: &common_before_scripts
   - source tools/ci/ci_utils.sh
   - setup_idf
