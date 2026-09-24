@@ -130,6 +130,25 @@ The data model APIs are redesigned to make the hierarchy of the ZCL data model c
       - :cpp:func:`ezb_zcl_set_attr_value`
 
 
+The default manufacturer code that identifies a standard (non-manufacturer-specific) attribute has changed.
+In v1.x, use ``ESP_ZB_ZCL_ATTR_NON_MANUFACTURER_SPECIFIC`` (``0xFFFF``), in v2.x, use ``EZB_ZCL_STD_MANUF_CODE``
+(``0x0000``). The value ``0xFFFF`` is reserved as wildcard of manufacturer code.
+
+.. list-table:: **Non-Manufacturer-Specific Attribute Manufacturer Code**
+    :header-rows: 1
+    :align: center
+
+    * -
+      - v1.x
+      - v2.x
+    * - Macro
+      - ``ESP_ZB_ZCL_ATTR_NON_MANUFACTURER_SPECIFIC``
+      - ``EZB_ZCL_STD_MANUF_CODE``
+    * - Value
+      - ``0xFFFF``
+      - ``0x0000``
+
+
 ZCL Commands
 ^^^^^^^^^^^^
 
