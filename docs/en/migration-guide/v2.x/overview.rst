@@ -77,12 +77,20 @@ Previously in ESP Zigbee SDK v1.x, the persistent data is stored as raw blob dat
 ESP Zigbee SDK v2.x, the persistent data would be stored in the NVS storage partition. It is critical for the old product
 to be able to upgrade to the new SDK without losing the persistent data. The migration is done by the following steps:
 
-1. Determine the NVS storage partition used for ESP Zigbee SDK v2.x. If there is no NVS storage partition on the old product,
-   a runtime partition can be created and shall be maintained by the application.
-2. Read the old NVRAM data, convert and write to the new NVS storage.
-3. Erase the old partition.
+1. Determine the NVS storage partition used for ESP Zigbee SDK v2.x.
 
-.. note::
+  - If there is enough space of NVS storage partition on the old product, it could be used directly.
+    The new Zigbee data is going to be store in "zigbee" namespace and will not affect the existing
+    data in the partition.
+  - If there is no NVS storage partition on the old product, a runtime partition can be created and
+    shall be maintained by the application.
+  - Update the partition table via OTA is also supported with restrictions. See
+    `partitions_ota <https://github.com/espressif/esp-idf/tree/master/examples/system/ota/partitions_ota>`_.
 
-   The entire migration solution is under preparation. If you have an urgent request, please contact us via
-   `technical-inquiries <https://www.espressif.com/en/contact-us/technical-inquiries>`_.
+2. Read the old NVRAM data, convert and write to the new NVS storage by :cpp:func:`esp_zigbee_nvram_migrate`.
+
+3. Manage the state of migration, skip the migration step when reboot if it has been done.
+
+4. Optionally erase the old partition.
+
+For more details, please refer to :example:`nvram_migration <nvram_migration/>`.
