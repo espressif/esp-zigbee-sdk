@@ -6,7 +6,7 @@ generate_child_pipeline:
   extends:
     - .rules_generate_build_test
   stage: pre_build
-  image: ${CI_DOCKER_REGISTRY}/esp-env-${DOCKER_ENV_FOR_GENERATE}
+  image: ${CI_REGISTRY}/ci/images/idf-${DOCKER_ENV_FOR_GENERATE}
   artifacts:
     paths:
       - child_pipeline_default.yml

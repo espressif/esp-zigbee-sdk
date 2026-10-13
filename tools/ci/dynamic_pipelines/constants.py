@@ -6,14 +6,13 @@ class EzDevCiCons:
     """Constants for ESP-Zigbee-Dev CI configuration"""
 
     IDF_DOCKER = {
-        'v5.1.6': ['v5.1:1', 'v5.1:1'],
-        'v5.2.6': ['v5.2:2', 'v5.2:2'],
-        'v5.3.5': ['v5.3:1', 'v5.3:1'],
-        'v5.4.3': ['v5.4:2', 'v5.4:2'],
-        'v5.5.4': ['v5.5:3', 'v5.5:2'],
-        'master': ['v6.0:3', 'v6.0:2'],
-        'v6.0': ['v6.0:3', 'v6.0:2'],
-        'v6.1': ['v6.1:1', 'v6.0:2'],
+        'v5.2.6': ['v5.2:1', 'v5.2-target-test:1'],
+        'v5.3.5': ['v5.3:1', 'v5.3-target-test:1'],
+        'v5.4.3': ['v5.4:1', 'v5.4-target-test:1'],
+        'v5.5.4': ['v5.5:1', 'v5.5-target-test:1'],
+        'master': ['v6.2:2', 'v6.2-target-test:1'],
+        'v6.0': ['v6.0:1', 'v6.0-target-test:1'],
+        'v6.1': ['v6.1:1', 'v6.1-target-test:1'],
 
     }
 

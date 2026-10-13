@@ -17,7 +17,7 @@ workflow:
   stage: build
   before_script:
     - *common_before_scripts
-  image: ${CI_DOCKER_REGISTRY}/esp-env-${DOCKER_ENV_VERSION}
+  image: ${CI_REGISTRY}/ci/images/idf-${DOCKER_ENV_VERSION}
   artifacts:
     paths:
       - "**/build*/*.bin"
@@ -70,7 +70,7 @@ workflow:
   stage: build
   before_script:
     - *common_before_scripts
-  image: ${CI_DOCKER_REGISTRY}/esp-env-${DOCKER_ENV_VERSION}
+  image: ${CI_REGISTRY}/ci/images/idf-${DOCKER_ENV_VERSION}
   script:
     - python tools/ci/build_apps.py ./examples --target esp32s31 --ignore_warning
     - python tools/ci/build_apps.py ./examples --target esp32h4 --ignore_warning
@@ -80,7 +80,7 @@ workflow:
 
 .pytest_template_base:
   stage: target_test
-  image: ${CI_DOCKER_REGISTRY}/target-test-env-${DOCKER_ENV_VERSION}
+  image: ${CI_REGISTRY}/ci/images/idf-${DOCKER_ENV_VERSION}
   artifacts:
     paths:
       - "pytest_embedded_log/"

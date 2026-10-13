@@ -1,5 +1,5 @@
 check_typos:
-  image: ${CI_DOCKER_REGISTRY}/esp-env-${DOCKER_ENV_FOR_GENERATE}
+  image: ${CI_REGISTRY}/ci/images/idf-${DOCKER_ENV_FOR_GENERATE}
   stage: pre_build
   script:
     - pip install codespell

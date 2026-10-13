@@ -1,6 +1,6 @@
 sync_test_branch:
   stage: pre_build
-  image: ${CI_DOCKER_REGISTRY}/esp-env-${DOCKER_ENV_FOR_GENERATE}
+  image: ${CI_REGISTRY}/ci/images/idf-${DOCKER_ENV_FOR_GENERATE}
   tags:
     - build
   script:
