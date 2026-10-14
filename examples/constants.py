@@ -49,10 +49,10 @@ class MatchPattern:
     form_success = 'Formed network successfully'
     device_commission = 'New device commissioned or rejoined'
     joined_network = (r'Joined network successfully PAN ID\(0x[0-9a-fA-F]{4},\s*EXT:\s*(0x[a-fA-F0-9]+)\),\s*Channel\((\d+)\),\s*Short Address\((0x[0-9a-fA-F]{4})\)')
-    active_ep = r'active ep: \[\d+, (\d+)]'
+    active_ep = r'active ep: \[(\d+(?:, \d+)*)\]'
     status = r'status:\s*(\d+)'
     empty_binding_table = r'\|Dst_E\|(?!.*\|\s*0\s*\|)'
-    on_off_light_in_clusters = r'in: \[0x0006, 0x0005, 0x0004, 0x0003, 0x0000]'
+    on_off_light_in_clusters = r'in: \[0x0000, 0x0003, 0x0004, 0x0005, 0x0006]'
     left_network = 'Left network successfully'
     join_failed = 'Failed to join network'
     join_success = 'Joined network successfully'

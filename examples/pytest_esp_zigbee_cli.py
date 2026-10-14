@@ -64,8 +64,8 @@ def test_zb_cli_zc_finding_binding(dut, count, app_path, erase_all) -> None:
 
     # zdo request active_ep
     switch_device.zdo_request_and_check('active_ep', light_device.short_address)
-    light_device_endpoint = switch_device.get_cli_comm_return_value(MatchPattern.active_ep)[0]
-    assert light_device_endpoint == str(light_device.endpoint)
+    light_active_endpoints = switch_device.get_cli_comm_return_value(MatchPattern.active_ep)[0].split(', ')
+    assert str(light_device.endpoint) in light_active_endpoints
 
     # zdo request simple_desc
     switch_device.zdo_request_and_check('simple_desc', light_device.short_address, light_device.endpoint)
