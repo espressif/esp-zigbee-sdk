@@ -3,6 +3,8 @@ menu "Zigbee"
     config ZB_ENABLED
         bool "Zigbee Enable"
         default n
+        select MBEDTLS_AES_C
+        select MBEDTLS_CCM_C
         help
             Select this option to enable Zigbee and show the submenu with Zigbee configuration choices.
 
