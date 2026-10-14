@@ -1,9 +1,57 @@
 # Espressif Zigbee SDK Release Notes
 
+## 16-Oct-2026
+2.0.5 version release of ESP-ZIGBEE-SDK is based on esp-idf v5.5.4
+
+### Features
+
+- Added PIN code and user status management commands with their responses for ZCL Door Lock cluster:
+  - `ezb_zcl_door_lock_set_pin_code_cmd_req()`
+  - `ezb_zcl_door_lock_get_pin_code_cmd_req()`
+  - `ezb_zcl_door_lock_clear_pin_code_cmd_req()`
+  - `ezb_zcl_door_lock_clear_all_pin_codes_cmd_req()`
+  - `ezb_zcl_door_lock_set_user_status_cmd_req()`
+  - `ezb_zcl_door_lock_get_user_status_cmd_req()`
+  - `ezb_zcl_door_lock_operation_event_notif_cmd_req()`
+- Added support for persisting values of ZCL attribute with `EZB_ZCL_ATTR_ACCESS_PERSISTENT`.
+- Added support to set value of different length for attributes with composite type.
+- Added support to enable/disable the default response for automatic attribute reporting.
+- Added support to add external ota files via `ezb_zcl_ota_upgrade_add_external_ota_file()`.
+- Added support for PAN ID conflict detection/resolution.
+- Added support for retry of data polling in network layer.
+- Added `EZB_ZDO_SIGNAL_PARENT_LOST` signal to indicate that the ZED failed to
+  keepalive for EdTimeout duration.
+- Added support for transmitting and handling Mac data frames with FP bit set.
+- Added support of NVRAM migration from v1.x.
+
+### Bug Fixes
+- Fixed the incorrect attribute range checks of ZCL PM2.5 cluster.
+- Fixed the crash during the EZB_ZCL_OTA_UPGRADE_PROGRESS_FINISH process on the OTA Upgrade client.
+- Fixed the incorrect ZCL level transition when handling ON/OFF commands without a value change.
+- Fixed the incorrect ordering of attribute id in the ZclDiscAttrRsp.
+- Fixed the issue where ZCL attribute reporting could not be rescheduled after
+  an automatic reporting failure.
+- Fixed the unexpected attributes included in ZCL general command responses when
+  manufacturer-specific attributes exist.
+- Fixed the memory leak when handling groupcast frames.
+- Fixed the issues when changing network channel.
+- Fixed the radio spinel failure caused by unregistered VFS for UART.
+
+### Changes
+- Extended BDB initialization process to try secure rejoin and TC rejoin on all the network channel,
+  and BDB primary/secondary change set to recover the network.
+- Remove the prerequisite that ZCL data model APIs shall after `esp_zigbee_int()`.
+- Clear the ZCL reporting info from dataset for inactive attributes.
+- Optimize the time of ZCL data model registration via `ezb_af_device_desc_register()`
+  when there are numerous reportable attributes.
+- Change the `EZB_NWK_NETWORK_STATUS_PARENT_LINK_FAILURE` of `EZB_NWK_SIGNAL_NETWORK_STATUS` signal
+  to indicate that the ZED failed to transmit to or poll from its parent.
+
+
 ## 14-Aug-2026
 2.0.4 version release of ESP-ZIGBEE-SDK is based on esp-idf v5.5.4
 
-## Features
+### Features
 - Added `esp_zigbee_stop()` to gracefully stop the Zigbee stack and exit the main loop.
 - Added `ezb_bdb_set_router_rejoin_required()` to control whether the rejoin process is
   required for router during BDB commissioning initialization.
@@ -15,7 +63,7 @@
 - Added support for handling ZCL OTA `Image Notify` command containing only the jitter payload.
 - Added support to enable/disable device via ZCL Basic cluster "DeviceEnabled" attribute.
 
-## Bug Fixes
+### Bug Fixes
 - Fixed the crash when allocating message buffers after the buffer pool is increased via `ezb_config_memory()`.
 - Fixed the issue that "PanCoordinator" bit would lost after the coordinator reboots.
 - Fixed the issue in ZCL Poll Control client cluster where an incorrect binding check would fail the check-in operation.
@@ -25,7 +73,7 @@
 - Fixed the incorrect multi-record format of ZCL general commands WriteAttributesResponse and ConfigureReportingResponse.
 - Fixed the issue in Touchlink where the invalid PAN ID in NetworkStartResponse would be used if no PAN was found during network commissioning.
 
-## Changes
+### Changes
 - Restrict the device type setting for RFD build.
 - Filter non-Zigbee beacons during network active scan.
 - Changed default NVS partition name from "zb_storage" to "nvs".
