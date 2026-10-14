@@ -10,6 +10,12 @@ workflow:
     - if: '$CI_COMMIT_BRANCH =~ /^release\//'
     - if: '$CI_COMMIT_TAG'
     
+    - if: '$CI_PIPELINE_SOURCE == "push" && $CI_OPEN_MERGE_REQUESTS'
+      when: never
+
+    - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH'
+      auto_cancel:
+        on_new_commit: interruptible
     - when: never
 
 include:
@@ -18,3 +24,16 @@ include:
   - '.gitlab/ci/generate_build_test_jobs.yml'
   - '.gitlab/ci/docs.yml'
   - '.gitlab/ci/check_typos.yml'
+
+branch_ci_gate:
+  stage: .pre
+  tags:
+    - host_test
+  interruptible: true
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH && $CI_COMMIT_BRANCH !~ /^release\//'
+      when: manual
+      allow_failure: false
+    - when: never
+  script:
+    - echo "Branch push CI approved"
