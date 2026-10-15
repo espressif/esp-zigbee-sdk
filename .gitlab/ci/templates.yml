@@ -71,10 +71,11 @@ workflow:
   before_script:
     - *common_before_scripts
   image: ${CI_REGISTRY}/ci/images/idf-${DOCKER_ENV_VERSION}
+  parallel:
+    matrix:
+      - TARGET: [esp32s31, esp32h4, esp32h21]
   script:
-    - python tools/ci/build_apps.py ./examples --target esp32s31 --ignore_warning
-    - python tools/ci/build_apps.py ./examples --target esp32h4 --ignore_warning
-    - python tools/ci/build_apps.py ./examples --target esp32h21 --ignore_warning
+    - python tools/ci/build_apps.py ./examples --target ${TARGET} --ignore_warning
   tags:
     - build
 
