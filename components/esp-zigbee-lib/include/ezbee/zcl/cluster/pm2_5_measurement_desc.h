@@ -46,7 +46,7 @@ typedef struct ezb_zcl_pm2_5_measurement_cluster_server_config_s {
 #define EZB_ZCL_PM2_5_MEASUREMENT_MEASURED_VALUE_MIN_VALUE (0.0f)
 
 /** @brief Maximum value of MeasuredValue in PM2_5Measurement cluster */
-#define EZB_ZCL_PM2_5_MEASUREMENT_MEASURED_VALUE_MAX_VALUE (1.0f)
+#define EZB_ZCL_PM2_5_MEASUREMENT_MEASURED_VALUE_MAX_VALUE (1000.0f)
 /** @brief Default value of MinMeasuredValue in PM2_5Measurement cluster */
 #define EZB_ZCL_PM2_5_MEASUREMENT_MIN_MEASURED_VALUE_DEFAULT_VALUE (EZB_ZCL_VALUE_NaN)
 
@@ -54,7 +54,7 @@ typedef struct ezb_zcl_pm2_5_measurement_cluster_server_config_s {
 #define EZB_ZCL_PM2_5_MEASUREMENT_MIN_MEASURED_VALUE_MIN_VALUE (0.0f)
 
 /** @brief Maximum value of MinMeasuredValue in PM2_5Measurement cluster */
-#define EZB_ZCL_PM2_5_MEASUREMENT_MIN_MEASURED_VALUE_MAX_VALUE (1.0f)
+#define EZB_ZCL_PM2_5_MEASUREMENT_MIN_MEASURED_VALUE_MAX_VALUE (1000.0f)
 /** @brief Default value of MaxMeasuredValue in PM2_5Measurement cluster */
 #define EZB_ZCL_PM2_5_MEASUREMENT_MAX_MEASURED_VALUE_DEFAULT_VALUE (EZB_ZCL_VALUE_NaN)
 
@@ -62,7 +62,7 @@ typedef struct ezb_zcl_pm2_5_measurement_cluster_server_config_s {
 #define EZB_ZCL_PM2_5_MEASUREMENT_MAX_MEASURED_VALUE_MIN_VALUE (0.0f)
 
 /** @brief Maximum value of MaxMeasuredValue in PM2_5Measurement cluster */
-#define EZB_ZCL_PM2_5_MEASUREMENT_MAX_MEASURED_VALUE_MAX_VALUE (1.0f)
+#define EZB_ZCL_PM2_5_MEASUREMENT_MAX_MEASURED_VALUE_MAX_VALUE (1000.0f)
 
 typedef ezb_zcl_pm2_5_measurement_cluster_server_config_t ezb_zcl_pm2_5_measurement_cluster_config_t;
 
@@ -98,14 +98,31 @@ ezb_zcl_cluster_desc_t ezb_zcl_pm2_5_measurement_create_cluster_desc(const void 
 void ezb_zcl_pm2_5_measurement_cluster_client_init(uint8_t ep_id);
 
 /**
- * @brief Initialize the PM2_5Measurement cluster server role for a given endpoint.
+ * @brief De-initialize the PM2_5Measurement cluster client role for a given endpoint.
  *
  * @param[in] ep_id The identifier of the endpoint hosting the cluster that needs de-initialization.
  */
+void ezb_zcl_pm2_5_measurement_cluster_client_deinit(uint8_t ep_id);
+
+/**
+ * @brief Initialize the PM2_5Measurement cluster server role for a given endpoint.
+ *
+ * @param[in] ep_id The identifier of the endpoint hosting the cluster that needs initialization.
+ */
 void ezb_zcl_pm2_5_measurement_cluster_server_init(uint8_t ep_id);
 
-#define EZB_ZCL_CLUSTER_ID_PM2_5_MEASUREMENT_CLIENT_ROLE_INIT ezb_zcl_pm2_5_measurement_cluster_client_init
-#define EZB_ZCL_CLUSTER_ID_PM2_5_MEASUREMENT_SERVER_ROLE_INIT ezb_zcl_pm2_5_measurement_cluster_server_init
+/**
+ * @brief De-initialize the PM2_5Measurement cluster server role for a given endpoint.
+ *
+ * @param[in] ep_id The identifier of the endpoint hosting the cluster that needs de-initialization.
+ */
+void ezb_zcl_pm2_5_measurement_cluster_server_deinit(uint8_t ep_id);
+
+#define EZB_ZCL_CLUSTER_ID_PM2_5_MEASUREMENT_CLIENT_ROLE_INIT   ezb_zcl_pm2_5_measurement_cluster_client_init
+#define EZB_ZCL_CLUSTER_ID_PM2_5_MEASUREMENT_CLIENT_ROLE_DEINIT ezb_zcl_pm2_5_measurement_cluster_client_deinit
+
+#define EZB_ZCL_CLUSTER_ID_PM2_5_MEASUREMENT_SERVER_ROLE_INIT   ezb_zcl_pm2_5_measurement_cluster_server_init
+#define EZB_ZCL_CLUSTER_ID_PM2_5_MEASUREMENT_SERVER_ROLE_DEINIT ezb_zcl_pm2_5_measurement_cluster_server_deinit
 
 #ifdef __cplusplus
 } /*  extern "C" */

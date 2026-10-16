@@ -81,6 +81,17 @@ ezb_err_t ezb_zcl_reporting_info_update_default_interval(ezb_zcl_reporting_info_
                                                          uint16_t                 def_min_interval,
                                                          uint16_t                 def_max_interval);
 
+
+/**
+ * @brief Configure whether ZCL attribute reporting is sent with default response or not.
+ *
+ * @param[in] info        Handle of the reporting information.
+ * @param[in] dis_def_rsp Whether to disable the default response. Defaults to false.
+ *
+ * @return The error code. See @ref ezb_err_t.
+ */
+ezb_err_t ezb_zcl_reporting_info_set_dis_def_rsp(ezb_zcl_reporting_info_t info, bool dis_def_rsp);
+
 /**
  * @brief Remove ZCL attribute reporting.
  *

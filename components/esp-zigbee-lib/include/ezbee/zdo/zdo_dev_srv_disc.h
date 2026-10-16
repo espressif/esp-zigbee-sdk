@@ -336,18 +336,18 @@ typedef struct ezb_zdo_device_annce_req_s {
 /**
  * @brief Field for ZDP Parent Announcement Response
  */
-typedef struct ezb_zdp_device_annce_rsp_field_s {
+typedef struct ezb_zdp_parent_annce_rsp_field_s {
     uint8_t        status;          /*!< The status of the Parent_annce command. */
     uint8_t        num_of_children; /*!< The number of ChildInfo structures contained in the message. */
     ezb_extaddr_t *child_info;      /*!< Extended address for child */
-} ezb_zdp_device_annce_rsp_field_t;
+} ezb_zdp_parent_annce_rsp_field_t;
 
 /**
  * @brief Structure for ZDP Parent Announcement Request Result
  */
 typedef struct ezb_zdo_parent_annce_req_result_s {
     ezb_err_t                         error; /*!< Error code of the power descriptor request operation */
-    ezb_zdp_device_annce_rsp_field_t *rsp;   /*!< Pointer to the power descriptor response field, NULL if error occurred */
+    ezb_zdp_parent_annce_rsp_field_t *rsp;   /*!< Pointer to the power descriptor response field, NULL if error occurred */
 } ezb_zdo_parent_annce_req_result_t;
 
 /**

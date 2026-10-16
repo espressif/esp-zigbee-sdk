@@ -16,7 +16,7 @@ extern "C" {
 /**
  * @brief Maximum image block size in bytes.
  */
-#define EZB_ZCL_OTA_UPGRADE_MAX_BLOCK_SIZE 254U
+#define EZB_ZCL_OTA_UPGRADE_MAX_BLOCK_SIZE 0xFFU
 
 /**
  * @brief Default image block size in bytes when not configured.
@@ -393,17 +393,6 @@ typedef struct {
 } ezb_zcl_ota_upgrade_image_block_rsp_payload_t;
 
 /**
- * @brief Type for the OTA upgrade file.
- * @anchor ezb_zcl_ota_file_handle_t
- */
-typedef void *ezb_zcl_ota_file_handle_t;
-
-/**
- * @brief Invalid OTA file handle.
- */
-#define EZB_ZCL_OTA_FILE_INVALID_HANDLE NULL
-
-/**
  * @brief Send ZCL OTA Upgrade ImageNotify command request.
  *
  * @param cmd_req Pointer to the ImageNotify command request structure, @ref ezb_zcl_ota_upgrade_image_notify_cmd_s.
@@ -413,26 +402,53 @@ ezb_err_t ezb_zcl_ota_upgrade_image_notify_cmd_req(const ezb_zcl_ota_upgrade_ima
 
 /**
  * @brief Add an OTA image file to the OTA server.
+ * @anchor ezb_zcl_ota_upgrade_add_ota_file
  *
- * This function adds an OTA image file to the OTA server.
- * Please ensure it remains available until it is removed from the OTA server via ezb_zcl_ota_upgrade_remove_ota_file().
+ * This function provides a raw pointer method for supplying the OTA image to the OTA server.
  *
- * @param ep_id Endpoint ID of the OTA server.
- * @param image Pointer to the image data (complete OTA file, including header).
- * @param image_size Size of the image in bytes.
+ * The image data must remain valid until the OTA file is removed from the OTA server by calling
+ * @ref ezb_zcl_ota_upgrade_remove_ota_file.
  *
- * @return Handle of the OTA file (@ref ezb_zcl_ota_file_handle_t).
+ * @param ep_id      Endpoint ID of the OTA server.
+ * @param image      Pointer to the OTA file image.
+ * @param image_size Size of the OTA image in bytes.
+ *
+ * @return Handle of the OTA file @ref ezb_zcl_ota_file_handle_t or EZB_ZCL_OTA_FILE_INVALID_HANDLE on failure.
  */
 ezb_zcl_ota_file_handle_t ezb_zcl_ota_upgrade_add_ota_file(uint8_t ep_id, const void *image, uint32_t image_size);
 
 /**
- * @brief Remove an OTA file from the OTA server.
+ * @brief Add an external OTA image file to the OTA server.
+ * @anchor ezb_zcl_ota_upgrade_add_external_ota_file
  *
- * @param ep_id Endpoint ID of the OTA server.
- * @param ota_file Handle of the OTA file (@ref ezb_zcl_ota_file_handle_t) to be removed.
+ * This function provides a callback method for supplying OTA image data to the OTA server on demand.
+ * The application is responsible for reading the requested portion of the OTA image through @p ota_file.read.
  *
+ * @param ep_id    Endpoint ID of the OTA server.
+ * @param ota_file External OTA file, @ref ezb_zcl_ota_file_t.
+ *
+ * @return Handle of the OTA file @ref ezb_zcl_ota_file_handle_t or EZB_ZCL_OTA_FILE_INVALID_HANDLE on failure.
  */
-void ezb_zcl_ota_upgrade_remove_ota_file(uint8_t ep_id, ezb_zcl_ota_file_handle_t ota_file);
+ezb_zcl_ota_file_handle_t ezb_zcl_ota_upgrade_add_external_ota_file(uint8_t ep_id, ezb_zcl_ota_file_t ota_file);
+
+/**
+ * @brief Find a OTA file handle by the OTA file ID.
+ * @anchor ezb_zcl_ota_upgrade_find_file_handle
+ *
+ * @param ep_id       Endpoint ID of the OTA server.
+ * @param user_handle User handle of the OTA file, @ref ezb_zcl_ota_file_user_handle_t.
+ * @return Handle of the OTA file @ref ezb_zcl_ota_file_handle_t or EZB_ZCL_OTA_FILE_INVALID_HANDLE on failure.
+ */
+ezb_zcl_ota_file_handle_t ezb_zcl_ota_upgrade_find_file_handle(uint8_t ep_id, ezb_zcl_ota_file_user_handle_t user_handle);
+
+/**
+ * @brief Remove an OTA file from the OTA server.
+ * @anchor ezb_zcl_ota_upgrade_remove_ota_file
+ *
+ * @param ep_id  Endpoint ID of the OTA server.
+ * @param handle Handle of the OTA file @ref ezb_zcl_ota_file_handle_t to be removed.
+ */
+void ezb_zcl_ota_upgrade_remove_ota_file(uint8_t ep_id, ezb_zcl_ota_file_handle_t handle);
 
 /**
  * @brief Send ZCL OTA Upgrade Query Next Image Request command request.

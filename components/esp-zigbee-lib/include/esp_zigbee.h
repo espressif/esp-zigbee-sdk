@@ -239,6 +239,32 @@ esp_err_t esp_zigbee_err_to_esp(ezb_err_t error);
 __attribute__((__noreturn__))
 void esp_zigbee_factory_reset(void);
 
+/**
+ * @brief NVRAM migration configuration.
+ *
+ * A NULL field indicates the default value.
+ */
+typedef struct esp_zigbee_nvram_mig_config_s {
+    const char *source_partition_name;      /*!< Legacy NVRAM FAT partition. Default: "zb_storage" */
+    const char *destination_partition_name; /*!< ESP Zigbee NVS partition. Default: "nvs" */
+    const ezb_extaddr_t *ieee_addr;         /*!< Optional IEEE address to use for migration. Default: Mac address */
+} esp_zigbee_nvram_mig_config_t;
+
+/**
+ * @brief Migrate legacy NVRAM datasets into NVS datasets storage.
+ *
+ * @note This function MUST be called after initializing the destination NVS partition and
+ *       before @ref esp_zigbee_init.
+ *
+ * @note This function never touches the source partition. The persistence of a completed
+ *       migration should be managed by the application.
+ *
+ * @param[in] config Migration configuration, or NULL for defaults.
+ *
+ * @return ESP_OK on success, error code otherwise.
+ */
+esp_err_t esp_zigbee_nvram_migrate(const esp_zigbee_nvram_mig_config_t *config);
+
 #ifdef __cplusplus
 } /*  extern "C" */
 #endif
