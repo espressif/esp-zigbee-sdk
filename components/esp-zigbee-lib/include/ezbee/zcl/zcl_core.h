@@ -156,6 +156,71 @@ enum ezb_zcl_core_action_callback_id_e {
      */
     EZB_ZCL_CORE_DOOR_LOCK_UNLOCK_DOOR_RSP_CB_ID,
 
+    /** A callback ID triggered when a ZCL DoorLock SetPINCode command is received.
+     * see @ref ezb_zcl_door_lock_set_pin_code_message_s.
+     */
+    EZB_ZCL_CORE_DOOR_LOCK_SET_PIN_CODE_CB_ID,
+
+    /** A callback ID triggered when a ZCL DoorLock GetPINCode command is received.
+     * see @ref ezb_zcl_door_lock_get_pin_code_message_s.
+     */
+    EZB_ZCL_CORE_DOOR_LOCK_GET_PIN_CODE_CB_ID,
+
+    /** A callback ID triggered when a ZCL DoorLock ClearPINCode command is received.
+     * see @ref ezb_zcl_door_lock_clear_pin_code_message_s.
+     */
+    EZB_ZCL_CORE_DOOR_LOCK_CLEAR_PIN_CODE_CB_ID,
+
+    /** A callback ID triggered when a ZCL DoorLock ClearAllPINCodes command is received.
+     * see @ref ezb_zcl_door_lock_clear_all_pin_codes_message_s.
+     */
+    EZB_ZCL_CORE_DOOR_LOCK_CLEAR_ALL_PIN_CODES_CB_ID,
+
+    /** A callback ID triggered when a ZCL DoorLock SetUserStatus command is received.
+     * see @ref ezb_zcl_door_lock_set_user_status_message_s.
+     */
+    EZB_ZCL_CORE_DOOR_LOCK_SET_USER_STATUS_CB_ID,
+
+    /** A callback ID triggered when a ZCL DoorLock GetUserStatus command is received.
+     * see @ref ezb_zcl_door_lock_get_user_status_message_s.
+     */
+    EZB_ZCL_CORE_DOOR_LOCK_GET_USER_STATUS_CB_ID,
+
+    /** A callback ID triggered when a ZCL DoorLock SetPINCodeResponse command is received.
+     * see @ref ezb_zcl_door_lock_cmd_status_rsp_message_s.
+     */
+    EZB_ZCL_CORE_DOOR_LOCK_SET_PIN_CODE_RSP_CB_ID,
+
+    /** A callback ID triggered when a ZCL DoorLock GetPINCodeResponse command is received.
+     * see @ref ezb_zcl_door_lock_get_pin_code_rsp_message_s.
+     */
+    EZB_ZCL_CORE_DOOR_LOCK_GET_PIN_CODE_RSP_CB_ID,
+
+    /** A callback ID triggered when a ZCL DoorLock ClearPINCodeResponse command is received.
+     * see @ref ezb_zcl_door_lock_cmd_status_rsp_message_s.
+     */
+    EZB_ZCL_CORE_DOOR_LOCK_CLEAR_PIN_CODE_RSP_CB_ID,
+
+    /** A callback ID triggered when a ZCL DoorLock ClearAllPINCodesResponse command is received.
+     * see @ref ezb_zcl_door_lock_cmd_status_rsp_message_s.
+     */
+    EZB_ZCL_CORE_DOOR_LOCK_CLEAR_ALL_PIN_CODES_RSP_CB_ID,
+
+    /** A callback ID triggered when a ZCL DoorLock SetUserStatusResponse command is received.
+     * see @ref ezb_zcl_door_lock_cmd_status_rsp_message_s.
+     */
+    EZB_ZCL_CORE_DOOR_LOCK_SET_USER_STATUS_RSP_CB_ID,
+
+    /** A callback ID triggered when a ZCL DoorLock GetUserStatusResponse command is received.
+     * see @ref ezb_zcl_door_lock_get_user_status_rsp_message_s.
+     */
+    EZB_ZCL_CORE_DOOR_LOCK_GET_USER_STATUS_RSP_CB_ID,
+
+    /** A callback ID triggered when a ZCL DoorLock OperationEventNotification command is received.
+     * see @ref ezb_zcl_door_lock_operation_event_notif_message_s.
+     */
+    EZB_ZCL_CORE_DOOR_LOCK_OPERATION_EVENT_NOTIF_CB_ID,
+
     /** A callback ID triggered when a ZCL WindowCovering Movement command is received.
      * see @ref ezb_zcl_window_covering_movement_message_s.
      */

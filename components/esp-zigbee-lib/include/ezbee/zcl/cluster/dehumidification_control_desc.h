@@ -161,14 +161,31 @@ ezb_zcl_cluster_desc_t ezb_zcl_dehumidification_control_create_cluster_desc(cons
 void ezb_zcl_dehumidification_control_cluster_client_init(uint8_t ep_id);
 
 /**
- * @brief Initialize the DehumidificationControl cluster server role for a given endpoint.
+ * @brief De-initialize the DehumidificationControl cluster client role for a given endpoint.
  *
  * @param[in] ep_id The identifier of the endpoint hosting the cluster that needs de-initialization.
  */
+void ezb_zcl_dehumidification_control_cluster_client_deinit(uint8_t ep_id);
+
+/**
+ * @brief Initialize the DehumidificationControl cluster server role for a given endpoint.
+ *
+ * @param[in] ep_id The identifier of the endpoint hosting the cluster that needs initialization.
+ */
 void ezb_zcl_dehumidification_control_cluster_server_init(uint8_t ep_id);
 
-#define EZB_ZCL_CLUSTER_ID_DEHUMIDIFICATION_CONTROL_CLIENT_ROLE_INIT ezb_zcl_dehumidification_control_cluster_client_init
-#define EZB_ZCL_CLUSTER_ID_DEHUMIDIFICATION_CONTROL_SERVER_ROLE_INIT ezb_zcl_dehumidification_control_cluster_server_init
+/**
+ * @brief De-initialize the DehumidificationControl cluster server role for a given endpoint.
+ *
+ * @param[in] ep_id The identifier of the endpoint hosting the cluster that needs de-initialization.
+ */
+void ezb_zcl_dehumidification_control_cluster_server_deinit(uint8_t ep_id);
+
+#define EZB_ZCL_CLUSTER_ID_DEHUMIDIFICATION_CONTROL_CLIENT_ROLE_INIT   ezb_zcl_dehumidification_control_cluster_client_init
+#define EZB_ZCL_CLUSTER_ID_DEHUMIDIFICATION_CONTROL_CLIENT_ROLE_DEINIT ezb_zcl_dehumidification_control_cluster_client_deinit
+
+#define EZB_ZCL_CLUSTER_ID_DEHUMIDIFICATION_CONTROL_SERVER_ROLE_INIT   ezb_zcl_dehumidification_control_cluster_server_init
+#define EZB_ZCL_CLUSTER_ID_DEHUMIDIFICATION_CONTROL_SERVER_ROLE_DEINIT ezb_zcl_dehumidification_control_cluster_server_deinit
 
 #ifdef __cplusplus
 } /*  extern "C" */

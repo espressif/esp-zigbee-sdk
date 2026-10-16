@@ -52,7 +52,7 @@ typedef enum {
 #define EZB_ZCL_OTA_FILE_VERSION_GET_APP_RELEASE(v)   ((v >> 24) & 0xff) /*!< App release. */
 #define EZB_ZCL_OTA_FILE_VERSION_GET_APP_BUILD(v)     ((v >> 16) & 0xff) /*!< App build. */
 #define EZB_ZCL_OTA_FILE_VERSION_GET_STACK_RELEASE(v) ((v >> 8) & 0xff)  /*!< Stack release. */
-#define EZB_ZCL_OTA_FILE_VERSION_GET_STACK_BUILD(v)   ((v)&0xff)         /*!< Stack build. */
+#define EZB_ZCL_OTA_FILE_VERSION_GET_STACK_BUILD(v)   ((v) & 0xff)       /*!< Stack build. */
 
 /**
  * @brief Set the ZCL OTA File file version components.
@@ -202,6 +202,51 @@ typedef struct ezb_zcl_ota_file_header_optional_s {
     uint16_t      minimum_hardware_version;    /*!< Minimum hardware version. */
     uint16_t      maximum_hardware_version;    /*!< Maximum hardware version. */
 } EZB_PACKED_END ezb_zcl_ota_file_header_optional_t;
+
+/**
+ * @brief Type of the user defined handle for the OTA upgrade file.
+ * @anchor ezb_zcl_ota_file_user_handle_t
+ */
+typedef union {
+    intptr_t fd; /*!< File descriptor. */
+    void    *fp; /*!< File pointer. */
+} ezb_zcl_ota_file_user_handle_t;
+
+/**
+ * @brief Handle of the OTA upgrade file.
+ * @anchor ezb_zcl_ota_file_handle_t
+ */
+typedef void *ezb_zcl_ota_file_handle_t;
+
+/**
+ * @brief Invalid OTA file handle.
+ */
+#define EZB_ZCL_OTA_FILE_INVALID_HANDLE NULL
+
+/**
+ * @brief Callback for reading OTA image data from an OTA file.
+ * @anchor ezb_zcl_ota_file_read_t
+ *
+ * @param[in]  user_handle User handle for the OTA file, @ref ezb_zcl_ota_file_user_handle_t.
+ * @param[in]  offset      Offset from which to read the OTA image data.
+ * @param[out] buffer      Buffer to store the OTA image data.
+ * @param[in]  length      Number of bytes to read into @p buffer.
+ *
+ * @return Number of bytes read, which MUST be less than or equal to @p length.
+ */
+typedef uint8_t (*ezb_zcl_ota_file_read_cb_t)(ezb_zcl_ota_file_user_handle_t user_handle,
+                                              uint32_t                       offset,
+                                              void                          *buffer,
+                                              uint8_t                        length);
+
+/**
+ * @brief OTA upgrade file.
+ * @anchor ezb_zcl_ota_file_t
+ */
+typedef struct {
+    ezb_zcl_ota_file_user_handle_t user_handle; /*!< User handle to the OTA file. */
+    ezb_zcl_ota_file_read_cb_t     read;        /*!< Read image data from the OTA file. */
+} ezb_zcl_ota_file_t;
 
 #ifdef __cplusplus
 } /* extern "C" */

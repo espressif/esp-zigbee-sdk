@@ -166,6 +166,18 @@ enum ezb_app_signal_type_e {
     */
     EZB_ZDO_SIGNAL_DEVICE_AUTHORIZED = EZB_APP_SIGNAL(EZB_APP_SIGNAL_GROUP_ZDO, 0x08),
 
+    /**
+    * Overview:
+    * - Indicates that the parent has been lost.
+    *
+    * When generated:
+    * - Upon the keepalive process never succeeding during a full ED_TIMEOUT period.
+    *
+    * Payload:
+    * - None
+    */
+    EZB_ZDO_SIGNAL_PARENT_LOST = EZB_APP_SIGNAL(EZB_APP_SIGNAL_GROUP_ZDO, 0x09),
+
     /*
      * Start of BDB signals
      */

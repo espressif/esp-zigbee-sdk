@@ -231,77 +231,77 @@ typedef enum {
 /** @brief Maximum value of MeasurementType in ElectricalMeasurement cluster */
 #define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASUREMENT_TYPE_MAX_VALUE (0xffffffff)
 /** @brief Default value of DCVoltage in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_VOLTAGE_DEFAULT_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_VOLTAGE_DEFAULT_VALUE ((int16_t)0x8000)
 
 /** @brief Minimum value of DCVoltage in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_VOLTAGE_MIN_VALUE (0x8001)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_VOLTAGE_MIN_VALUE ((int16_t)0x8001)
 
 /** @brief Maximum value of DCVoltage in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_VOLTAGE_MAX_VALUE (0x7fff)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_VOLTAGE_MAX_VALUE ((int16_t)0x7fff)
 /** @brief Default value of DCVoltageMinValue in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_VOLTAGE_MIN_VALUE_DEFAULT_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_VOLTAGE_MIN_VALUE_DEFAULT_VALUE ((int16_t)0x8000)
 
 /** @brief Minimum value of DCVoltageMinValue in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_VOLTAGE_MIN_VALUE_MIN_VALUE (0x8001)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_VOLTAGE_MIN_VALUE_MIN_VALUE ((int16_t)0x8001)
 
 /** @brief Maximum value of DCVoltageMinValue in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_VOLTAGE_MIN_VALUE_MAX_VALUE (0x7fff)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_VOLTAGE_MIN_VALUE_MAX_VALUE ((int16_t)0x7fff)
 /** @brief Default value of DCVoltageMaxValue in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_VOLTAGE_MAX_VALUE_DEFAULT_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_VOLTAGE_MAX_VALUE_DEFAULT_VALUE ((int16_t)0x8000)
 
 /** @brief Minimum value of DCVoltageMaxValue in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_VOLTAGE_MAX_VALUE_MIN_VALUE (0x8001)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_VOLTAGE_MAX_VALUE_MIN_VALUE ((int16_t)0x8001)
 
 /** @brief Maximum value of DCVoltageMaxValue in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_VOLTAGE_MAX_VALUE_MAX_VALUE (0x7fff)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_VOLTAGE_MAX_VALUE_MAX_VALUE ((int16_t)0x7fff)
 /** @brief Default value of DCCurrent in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_CURRENT_DEFAULT_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_CURRENT_DEFAULT_VALUE ((int16_t)0x8000)
 
 /** @brief Minimum value of DCCurrent in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_CURRENT_MIN_VALUE (0x8001)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_CURRENT_MIN_VALUE ((int16_t)0x8001)
 
 /** @brief Maximum value of DCCurrent in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_CURRENT_MAX_VALUE (0x7fff)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_CURRENT_MAX_VALUE ((int16_t)0x7fff)
 /** @brief Default value of DCCurrentMinValue in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_CURRENT_MIN_VALUE_DEFAULT_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_CURRENT_MIN_VALUE_DEFAULT_VALUE ((int16_t)0x8000)
 
 /** @brief Minimum value of DCCurrentMinValue in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_CURRENT_MIN_VALUE_MIN_VALUE (0x8001)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_CURRENT_MIN_VALUE_MIN_VALUE ((int16_t)0x8001)
 
 /** @brief Maximum value of DCCurrentMinValue in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_CURRENT_MIN_VALUE_MAX_VALUE (0x7fff)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_CURRENT_MIN_VALUE_MAX_VALUE ((int16_t)0x7fff)
 /** @brief Default value of DCCurrentMaxValue in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_CURRENT_MAX_VALUE_DEFAULT_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_CURRENT_MAX_VALUE_DEFAULT_VALUE ((int16_t)0x8000)
 
 /** @brief Minimum value of DCCurrentMaxValue in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_CURRENT_MAX_VALUE_MIN_VALUE (0x8001)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_CURRENT_MAX_VALUE_MIN_VALUE ((int16_t)0x8001)
 
 /** @brief Maximum value of DCCurrentMaxValue in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_CURRENT_MAX_VALUE_MAX_VALUE (0x7fff)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_CURRENT_MAX_VALUE_MAX_VALUE ((int16_t)0x7fff)
 /** @brief Default value of DCPower in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_POWER_DEFAULT_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_POWER_DEFAULT_VALUE ((int16_t)0x8000)
 
 /** @brief Minimum value of DCPower in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_POWER_MIN_VALUE (0x8001)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_POWER_MIN_VALUE ((int16_t)0x8001)
 
 /** @brief Maximum value of DCPower in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_POWER_MAX_VALUE (0x7fff)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_POWER_MAX_VALUE ((int16_t)0x7fff)
 /** @brief Default value of DCPowerMinValue in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_POWER_MIN_VALUE_DEFAULT_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_POWER_MIN_VALUE_DEFAULT_VALUE ((int16_t)0x8000)
 
 /** @brief Minimum value of DCPowerMinValue in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_POWER_MIN_VALUE_MIN_VALUE (0x8001)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_POWER_MIN_VALUE_MIN_VALUE ((int16_t)0x8001)
 
 /** @brief Maximum value of DCPowerMinValue in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_POWER_MIN_VALUE_MAX_VALUE (0x7fff)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_POWER_MIN_VALUE_MAX_VALUE ((int16_t)0x7fff)
 /** @brief Default value of DCPowerMaxValue in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_POWER_MAX_VALUE_DEFAULT_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_POWER_MAX_VALUE_DEFAULT_VALUE ((int16_t)0x8000)
 
 /** @brief Minimum value of DCPowerMaxValue in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_POWER_MAX_VALUE_MIN_VALUE (0x8001)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_POWER_MAX_VALUE_MIN_VALUE ((int16_t)0x8001)
 
 /** @brief Maximum value of DCPowerMaxValue in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_POWER_MAX_VALUE_MAX_VALUE (0x7fff)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_POWER_MAX_VALUE_MAX_VALUE ((int16_t)0x7fff)
 /** @brief Default value of DCVoltageMultiplier in ElectricalMeasurement cluster */
 #define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_VOLTAGE_MULTIPLIER_DEFAULT_VALUE (0x0001)
 
@@ -363,16 +363,16 @@ typedef enum {
 #define EZB_ZCL_ELECTRICAL_MEASUREMENT_NEUTRAL_CURRENT_DEFAULT_VALUE (0xffff)
 
 /** @brief Minimum value of TotalActivePower in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_TOTAL_ACTIVE_POWER_MIN_VALUE (0xff800001)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_TOTAL_ACTIVE_POWER_MIN_VALUE ((int32_t)0xff800001)
 
 /** @brief Maximum value of TotalActivePower in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_TOTAL_ACTIVE_POWER_MAX_VALUE (0x007fffff)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_TOTAL_ACTIVE_POWER_MAX_VALUE ((int32_t)0x007fffff)
 
 /** @brief Minimum value of TotalReactivePower in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_TOTAL_REACTIVE_POWER_MIN_VALUE (0xff800001)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_TOTAL_REACTIVE_POWER_MIN_VALUE ((int32_t)0xff800001)
 
 /** @brief Maximum value of TotalReactivePower in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_TOTAL_REACTIVE_POWER_MAX_VALUE (0x007fffff)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_TOTAL_REACTIVE_POWER_MAX_VALUE ((int32_t)0x007fffff)
 
 /** @brief Minimum value of TotalApparentPower in ElectricalMeasurement cluster */
 #define EZB_ZCL_ELECTRICAL_MEASUREMENT_TOTAL_APPARENT_POWER_MIN_VALUE (0x00000000)
@@ -380,101 +380,101 @@ typedef enum {
 /** @brief Maximum value of TotalApparentPower in ElectricalMeasurement cluster */
 #define EZB_ZCL_ELECTRICAL_MEASUREMENT_TOTAL_APPARENT_POWER_MAX_VALUE (0xffffffff)
 /** @brief Default value of Measured1stHarmonicCurrent in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED1ST_HARMONIC_CURRENT_DEFAULT_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED1ST_HARMONIC_CURRENT_DEFAULT_VALUE ((int16_t)0x8000)
 
 /** @brief Minimum value of Measured1stHarmonicCurrent in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED1ST_HARMONIC_CURRENT_MIN_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED1ST_HARMONIC_CURRENT_MIN_VALUE ((int16_t)0x8000)
 
 /** @brief Maximum value of Measured1stHarmonicCurrent in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED1ST_HARMONIC_CURRENT_MAX_VALUE (0x7fff)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED1ST_HARMONIC_CURRENT_MAX_VALUE ((int16_t)0x7fff)
 /** @brief Default value of Measured3rdHarmonicCurrent in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED3RD_HARMONIC_CURRENT_DEFAULT_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED3RD_HARMONIC_CURRENT_DEFAULT_VALUE ((int16_t)0x8000)
 
 /** @brief Minimum value of Measured3rdHarmonicCurrent in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED3RD_HARMONIC_CURRENT_MIN_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED3RD_HARMONIC_CURRENT_MIN_VALUE ((int16_t)0x8000)
 
 /** @brief Maximum value of Measured3rdHarmonicCurrent in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED3RD_HARMONIC_CURRENT_MAX_VALUE (0x7fff)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED3RD_HARMONIC_CURRENT_MAX_VALUE ((int16_t)0x7fff)
 /** @brief Default value of Measured5thHarmonicCurrent in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED5TH_HARMONIC_CURRENT_DEFAULT_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED5TH_HARMONIC_CURRENT_DEFAULT_VALUE ((int16_t)0x8000)
 
 /** @brief Minimum value of Measured5thHarmonicCurrent in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED5TH_HARMONIC_CURRENT_MIN_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED5TH_HARMONIC_CURRENT_MIN_VALUE ((int16_t)0x8000)
 
 /** @brief Maximum value of Measured5thHarmonicCurrent in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED5TH_HARMONIC_CURRENT_MAX_VALUE (0x7fff)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED5TH_HARMONIC_CURRENT_MAX_VALUE ((int16_t)0x7fff)
 /** @brief Default value of Measured7thHarmonicCurrent in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED7TH_HARMONIC_CURRENT_DEFAULT_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED7TH_HARMONIC_CURRENT_DEFAULT_VALUE ((int16_t)0x8000)
 
 /** @brief Minimum value of Measured7thHarmonicCurrent in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED7TH_HARMONIC_CURRENT_MIN_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED7TH_HARMONIC_CURRENT_MIN_VALUE ((int16_t)0x8000)
 
 /** @brief Maximum value of Measured7thHarmonicCurrent in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED7TH_HARMONIC_CURRENT_MAX_VALUE (0x7fff)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED7TH_HARMONIC_CURRENT_MAX_VALUE ((int16_t)0x7fff)
 /** @brief Default value of Measured9thHarmonicCurrent in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED9TH_HARMONIC_CURRENT_DEFAULT_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED9TH_HARMONIC_CURRENT_DEFAULT_VALUE ((int16_t)0x8000)
 
 /** @brief Minimum value of Measured9thHarmonicCurrent in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED9TH_HARMONIC_CURRENT_MIN_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED9TH_HARMONIC_CURRENT_MIN_VALUE ((int16_t)0x8000)
 
 /** @brief Maximum value of Measured9thHarmonicCurrent in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED9TH_HARMONIC_CURRENT_MAX_VALUE (0x7fff)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED9TH_HARMONIC_CURRENT_MAX_VALUE ((int16_t)0x7fff)
 /** @brief Default value of Measured11thHarmonicCurrent in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED11TH_HARMONIC_CURRENT_DEFAULT_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED11TH_HARMONIC_CURRENT_DEFAULT_VALUE ((int16_t)0x8000)
 
 /** @brief Minimum value of Measured11thHarmonicCurrent in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED11TH_HARMONIC_CURRENT_MIN_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED11TH_HARMONIC_CURRENT_MIN_VALUE ((int16_t)0x8000)
 
 /** @brief Maximum value of Measured11thHarmonicCurrent in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED11TH_HARMONIC_CURRENT_MAX_VALUE (0x7fff)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED11TH_HARMONIC_CURRENT_MAX_VALUE ((int16_t)0x7fff)
 /** @brief Default value of MeasuredPhase1stHarmonicCurrent in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED_PHASE1ST_HARMONIC_CURRENT_DEFAULT_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED_PHASE1ST_HARMONIC_CURRENT_DEFAULT_VALUE ((int16_t)0x8000)
 
 /** @brief Minimum value of MeasuredPhase1stHarmonicCurrent in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED_PHASE1ST_HARMONIC_CURRENT_MIN_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED_PHASE1ST_HARMONIC_CURRENT_MIN_VALUE ((int16_t)0x8000)
 
 /** @brief Maximum value of MeasuredPhase1stHarmonicCurrent in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED_PHASE1ST_HARMONIC_CURRENT_MAX_VALUE (0x7fff)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED_PHASE1ST_HARMONIC_CURRENT_MAX_VALUE ((int16_t)0x7fff)
 /** @brief Default value of MeasuredPhase3rdHarmonicCurrent in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED_PHASE3RD_HARMONIC_CURRENT_DEFAULT_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED_PHASE3RD_HARMONIC_CURRENT_DEFAULT_VALUE ((int16_t)0x8000)
 
 /** @brief Minimum value of MeasuredPhase3rdHarmonicCurrent in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED_PHASE3RD_HARMONIC_CURRENT_MIN_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED_PHASE3RD_HARMONIC_CURRENT_MIN_VALUE ((int16_t)0x8000)
 
 /** @brief Maximum value of MeasuredPhase3rdHarmonicCurrent in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED_PHASE3RD_HARMONIC_CURRENT_MAX_VALUE (0x7fff)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED_PHASE3RD_HARMONIC_CURRENT_MAX_VALUE ((int16_t)0x7fff)
 /** @brief Default value of MeasuredPhase5thHarmonicCurrent in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED_PHASE5TH_HARMONIC_CURRENT_DEFAULT_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED_PHASE5TH_HARMONIC_CURRENT_DEFAULT_VALUE ((int16_t)0x8000)
 
 /** @brief Minimum value of MeasuredPhase5thHarmonicCurrent in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED_PHASE5TH_HARMONIC_CURRENT_MIN_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED_PHASE5TH_HARMONIC_CURRENT_MIN_VALUE ((int16_t)0x8000)
 
 /** @brief Maximum value of MeasuredPhase5thHarmonicCurrent in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED_PHASE5TH_HARMONIC_CURRENT_MAX_VALUE (0x7fff)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED_PHASE5TH_HARMONIC_CURRENT_MAX_VALUE ((int16_t)0x7fff)
 /** @brief Default value of MeasuredPhase7thHarmonicCurrent in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED_PHASE7TH_HARMONIC_CURRENT_DEFAULT_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED_PHASE7TH_HARMONIC_CURRENT_DEFAULT_VALUE ((int16_t)0x8000)
 
 /** @brief Minimum value of MeasuredPhase7thHarmonicCurrent in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED_PHASE7TH_HARMONIC_CURRENT_MIN_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED_PHASE7TH_HARMONIC_CURRENT_MIN_VALUE ((int16_t)0x8000)
 
 /** @brief Maximum value of MeasuredPhase7thHarmonicCurrent in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED_PHASE7TH_HARMONIC_CURRENT_MAX_VALUE (0x7fff)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED_PHASE7TH_HARMONIC_CURRENT_MAX_VALUE ((int16_t)0x7fff)
 /** @brief Default value of MeasuredPhase9thHarmonicCurrent in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED_PHASE9TH_HARMONIC_CURRENT_DEFAULT_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED_PHASE9TH_HARMONIC_CURRENT_DEFAULT_VALUE ((int16_t)0x8000)
 
 /** @brief Minimum value of MeasuredPhase9thHarmonicCurrent in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED_PHASE9TH_HARMONIC_CURRENT_MIN_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED_PHASE9TH_HARMONIC_CURRENT_MIN_VALUE ((int16_t)0x8000)
 
 /** @brief Maximum value of MeasuredPhase9thHarmonicCurrent in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED_PHASE9TH_HARMONIC_CURRENT_MAX_VALUE (0x7fff)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED_PHASE9TH_HARMONIC_CURRENT_MAX_VALUE ((int16_t)0x7fff)
 /** @brief Default value of MeasuredPhase11thHarmonicCurrent in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED_PHASE11TH_HARMONIC_CURRENT_DEFAULT_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED_PHASE11TH_HARMONIC_CURRENT_DEFAULT_VALUE ((int16_t)0x8000)
 
 /** @brief Minimum value of MeasuredPhase11thHarmonicCurrent in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED_PHASE11TH_HARMONIC_CURRENT_MIN_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED_PHASE11TH_HARMONIC_CURRENT_MIN_VALUE ((int16_t)0x8000)
 
 /** @brief Maximum value of MeasuredPhase11thHarmonicCurrent in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED_PHASE11TH_HARMONIC_CURRENT_MAX_VALUE (0x7fff)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_MEASURED_PHASE11TH_HARMONIC_CURRENT_MAX_VALUE ((int16_t)0x7fff)
 /** @brief Default value of ACFrequencyMultiplier in ElectricalMeasurement cluster */
 #define EZB_ZCL_ELECTRICAL_MEASUREMENT_AC_FREQUENCY_MULTIPLIER_DEFAULT_VALUE (0x0001)
 
@@ -511,37 +511,37 @@ typedef enum {
 #define EZB_ZCL_ELECTRICAL_MEASUREMENT_HARMONIC_CURRENT_MULTIPLIER_DEFAULT_VALUE (0x00)
 
 /** @brief Minimum value of HarmonicCurrentMultiplier in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_HARMONIC_CURRENT_MULTIPLIER_MIN_VALUE (0x81)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_HARMONIC_CURRENT_MULTIPLIER_MIN_VALUE ((int8_t)0x81)
 
 /** @brief Maximum value of HarmonicCurrentMultiplier in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_HARMONIC_CURRENT_MULTIPLIER_MAX_VALUE (0x7f)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_HARMONIC_CURRENT_MULTIPLIER_MAX_VALUE ((int8_t)0x7f)
 /** @brief Default value of PhaseHarmonicCurrentMultiplier in ElectricalMeasurement cluster */
 #define EZB_ZCL_ELECTRICAL_MEASUREMENT_PHASE_HARMONIC_CURRENT_MULTIPLIER_DEFAULT_VALUE (0x00)
 
 /** @brief Minimum value of PhaseHarmonicCurrentMultiplier in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_PHASE_HARMONIC_CURRENT_MULTIPLIER_MIN_VALUE (0x81)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_PHASE_HARMONIC_CURRENT_MULTIPLIER_MIN_VALUE ((int8_t)0x81)
 
 /** @brief Maximum value of PhaseHarmonicCurrentMultiplier in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_PHASE_HARMONIC_CURRENT_MULTIPLIER_MAX_VALUE (0x7f)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_PHASE_HARMONIC_CURRENT_MULTIPLIER_MAX_VALUE ((int8_t)0x7f)
 /** @brief Default value of LineCurrent in ElectricalMeasurement cluster */
 #define EZB_ZCL_ELECTRICAL_MEASUREMENT_LINE_CURRENT_DEFAULT_VALUE (0xffff)
 
 /** @brief Default value of ActiveCurrent in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_CURRENT_DEFAULT_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_CURRENT_DEFAULT_VALUE ((int16_t)0x8000)
 
 /** @brief Minimum value of ActiveCurrent in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_CURRENT_MIN_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_CURRENT_MIN_VALUE ((int16_t)0x8000)
 
 /** @brief Maximum value of ActiveCurrent in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_CURRENT_MAX_VALUE (0x7fff)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_CURRENT_MAX_VALUE ((int16_t)0x7fff)
 /** @brief Default value of ReactiveCurrent in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_REACTIVE_CURRENT_DEFAULT_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_REACTIVE_CURRENT_DEFAULT_VALUE ((int16_t)0x8000)
 
 /** @brief Minimum value of ReactiveCurrent in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_REACTIVE_CURRENT_MIN_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_REACTIVE_CURRENT_MIN_VALUE ((int16_t)0x8000)
 
 /** @brief Maximum value of ReactiveCurrent in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_REACTIVE_CURRENT_MAX_VALUE (0x7fff)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_REACTIVE_CURRENT_MAX_VALUE ((int16_t)0x7fff)
 /** @brief Default value of RMSVoltage in ElectricalMeasurement cluster */
 #define EZB_ZCL_ELECTRICAL_MEASUREMENT_RMS_VOLTAGE_DEFAULT_VALUE (0xffff)
 
@@ -561,37 +561,37 @@ typedef enum {
 #define EZB_ZCL_ELECTRICAL_MEASUREMENT_RMS_CURRENT_MAX_VALUE_DEFAULT_VALUE (0xffff)
 
 /** @brief Default value of ActivePower in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_POWER_DEFAULT_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_POWER_DEFAULT_VALUE ((int16_t)0x8000)
 
 /** @brief Minimum value of ActivePower in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_POWER_MIN_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_POWER_MIN_VALUE ((int16_t)0x8000)
 
 /** @brief Maximum value of ActivePower in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_POWER_MAX_VALUE (0x7fff)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_POWER_MAX_VALUE ((int16_t)0x7fff)
 /** @brief Default value of ActivePowerMinValue in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_POWER_MIN_VALUE_DEFAULT_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_POWER_MIN_VALUE_DEFAULT_VALUE ((int16_t)0x8000)
 
 /** @brief Minimum value of ActivePowerMinValue in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_POWER_MIN_VALUE_MIN_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_POWER_MIN_VALUE_MIN_VALUE ((int16_t)0x8000)
 
 /** @brief Maximum value of ActivePowerMinValue in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_POWER_MIN_VALUE_MAX_VALUE (0x7fff)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_POWER_MIN_VALUE_MAX_VALUE ((int16_t)0x7fff)
 /** @brief Default value of ActivePowerMaxValue in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_POWER_MAX_VALUE_DEFAULT_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_POWER_MAX_VALUE_DEFAULT_VALUE ((int16_t)0x8000)
 
 /** @brief Minimum value of ActivePowerMaxValue in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_POWER_MAX_VALUE_MIN_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_POWER_MAX_VALUE_MIN_VALUE ((int16_t)0x8000)
 
 /** @brief Maximum value of ActivePowerMaxValue in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_POWER_MAX_VALUE_MAX_VALUE (0x7fff)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_POWER_MAX_VALUE_MAX_VALUE ((int16_t)0x7fff)
 /** @brief Default value of ReactivePower in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_REACTIVE_POWER_DEFAULT_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_REACTIVE_POWER_DEFAULT_VALUE ((int16_t)0x8000)
 
 /** @brief Minimum value of ReactivePower in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_REACTIVE_POWER_MIN_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_REACTIVE_POWER_MIN_VALUE ((int16_t)0x8000)
 
 /** @brief Maximum value of ReactivePower in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_REACTIVE_POWER_MAX_VALUE (0x7fff)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_REACTIVE_POWER_MAX_VALUE ((int16_t)0x7fff)
 /** @brief Default value of ApparentPower in ElectricalMeasurement cluster */
 #define EZB_ZCL_ELECTRICAL_MEASUREMENT_APPARENT_POWER_DEFAULT_VALUE (0xffff)
 
@@ -599,10 +599,10 @@ typedef enum {
 #define EZB_ZCL_ELECTRICAL_MEASUREMENT_POWER_FACTOR_DEFAULT_VALUE (0x00)
 
 /** @brief Minimum value of PowerFactor in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_POWER_FACTOR_MIN_VALUE (0xc0)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_POWER_FACTOR_MIN_VALUE ((int8_t)0xc0)
 
 /** @brief Maximum value of PowerFactor in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_POWER_FACTOR_MAX_VALUE (0x64)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_POWER_FACTOR_MAX_VALUE ((int8_t)0x64)
 /** @brief Default value of AverageRMSVoltageMeasurementPeriod in ElectricalMeasurement cluster */
 #define EZB_ZCL_ELECTRICAL_MEASUREMENT_AVERAGE_RMS_VOLTAGE_MEASUREMENT_PERIOD_DEFAULT_VALUE (0x0000)
 
@@ -676,111 +676,111 @@ typedef enum {
 #define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_OVERLOAD_ALARMS_MASK_DEFAULT_VALUE (0x00)
 
 /** @brief Default value of DCVoltageOverload in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_VOLTAGE_OVERLOAD_DEFAULT_VALUE (0xffff)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_VOLTAGE_OVERLOAD_DEFAULT_VALUE ((int16_t)0xffff)
 
 /** @brief Minimum value of DCVoltageOverload in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_VOLTAGE_OVERLOAD_MIN_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_VOLTAGE_OVERLOAD_MIN_VALUE ((int16_t)0x8000)
 
 /** @brief Maximum value of DCVoltageOverload in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_VOLTAGE_OVERLOAD_MAX_VALUE (0x7fff)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_VOLTAGE_OVERLOAD_MAX_VALUE ((int16_t)0x7fff)
 /** @brief Default value of DCCurrentOverload in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_CURRENT_OVERLOAD_DEFAULT_VALUE (0xffff)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_CURRENT_OVERLOAD_DEFAULT_VALUE ((int16_t)0xffff)
 
 /** @brief Minimum value of DCCurrentOverload in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_CURRENT_OVERLOAD_MIN_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_CURRENT_OVERLOAD_MIN_VALUE ((int16_t)0x8000)
 
 /** @brief Maximum value of DCCurrentOverload in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_CURRENT_OVERLOAD_MAX_VALUE (0x7fff)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_DC_CURRENT_OVERLOAD_MAX_VALUE ((int16_t)0x7fff)
 /** @brief Default value of ACAlarmsMask in ElectricalMeasurement cluster */
 #define EZB_ZCL_ELECTRICAL_MEASUREMENT_AC_ALARMS_MASK_DEFAULT_VALUE (0x0000)
 
 /** @brief Default value of ACVoltageOverload in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_AC_VOLTAGE_OVERLOAD_DEFAULT_VALUE (0xffff)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_AC_VOLTAGE_OVERLOAD_DEFAULT_VALUE ((int16_t)0xffff)
 
 /** @brief Minimum value of ACVoltageOverload in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_AC_VOLTAGE_OVERLOAD_MIN_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_AC_VOLTAGE_OVERLOAD_MIN_VALUE ((int16_t)0x8000)
 
 /** @brief Maximum value of ACVoltageOverload in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_AC_VOLTAGE_OVERLOAD_MAX_VALUE (0x7fff)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_AC_VOLTAGE_OVERLOAD_MAX_VALUE ((int16_t)0x7fff)
 /** @brief Default value of ACCurrentOverload in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_AC_CURRENT_OVERLOAD_DEFAULT_VALUE (0xffff)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_AC_CURRENT_OVERLOAD_DEFAULT_VALUE ((int16_t)0xffff)
 
 /** @brief Minimum value of ACCurrentOverload in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_AC_CURRENT_OVERLOAD_MIN_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_AC_CURRENT_OVERLOAD_MIN_VALUE ((int16_t)0x8000)
 
 /** @brief Maximum value of ACCurrentOverload in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_AC_CURRENT_OVERLOAD_MAX_VALUE (0x7fff)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_AC_CURRENT_OVERLOAD_MAX_VALUE ((int16_t)0x7fff)
 /** @brief Default value of ACActivePowerOverload in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_AC_ACTIVE_POWER_OVERLOAD_DEFAULT_VALUE (0xffff)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_AC_ACTIVE_POWER_OVERLOAD_DEFAULT_VALUE ((int16_t)0xffff)
 
 /** @brief Minimum value of ACActivePowerOverload in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_AC_ACTIVE_POWER_OVERLOAD_MIN_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_AC_ACTIVE_POWER_OVERLOAD_MIN_VALUE ((int16_t)0x8000)
 
 /** @brief Maximum value of ACActivePowerOverload in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_AC_ACTIVE_POWER_OVERLOAD_MAX_VALUE (0x7fff)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_AC_ACTIVE_POWER_OVERLOAD_MAX_VALUE ((int16_t)0x7fff)
 /** @brief Default value of ACReactivePowerOverload in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_AC_REACTIVE_POWER_OVERLOAD_DEFAULT_VALUE (0xffff)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_AC_REACTIVE_POWER_OVERLOAD_DEFAULT_VALUE ((int16_t)0xffff)
 
 /** @brief Minimum value of ACReactivePowerOverload in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_AC_REACTIVE_POWER_OVERLOAD_MIN_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_AC_REACTIVE_POWER_OVERLOAD_MIN_VALUE ((int16_t)0x8000)
 
 /** @brief Maximum value of ACReactivePowerOverload in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_AC_REACTIVE_POWER_OVERLOAD_MAX_VALUE (0x7fff)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_AC_REACTIVE_POWER_OVERLOAD_MAX_VALUE ((int16_t)0x7fff)
 
 /** @brief Minimum value of AverageRMSOverVoltage in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_AVERAGE_RMS_OVER_VOLTAGE_MIN_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_AVERAGE_RMS_OVER_VOLTAGE_MIN_VALUE ((int16_t)0x8000)
 
 /** @brief Maximum value of AverageRMSOverVoltage in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_AVERAGE_RMS_OVER_VOLTAGE_MAX_VALUE (0x7fff)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_AVERAGE_RMS_OVER_VOLTAGE_MAX_VALUE ((int16_t)0x7fff)
 
 /** @brief Minimum value of AverageRMSUnderVoltage in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_AVERAGE_RMS_UNDER_VOLTAGE_MIN_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_AVERAGE_RMS_UNDER_VOLTAGE_MIN_VALUE ((int16_t)0x8000)
 
 /** @brief Maximum value of AverageRMSUnderVoltage in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_AVERAGE_RMS_UNDER_VOLTAGE_MAX_VALUE (0x7fff)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_AVERAGE_RMS_UNDER_VOLTAGE_MAX_VALUE ((int16_t)0x7fff)
 
 /** @brief Minimum value of RMSExtremeOverVoltage in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_RMS_EXTREME_OVER_VOLTAGE_MIN_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_RMS_EXTREME_OVER_VOLTAGE_MIN_VALUE ((int16_t)0x8000)
 
 /** @brief Maximum value of RMSExtremeOverVoltage in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_RMS_EXTREME_OVER_VOLTAGE_MAX_VALUE (0x7fff)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_RMS_EXTREME_OVER_VOLTAGE_MAX_VALUE ((int16_t)0x7fff)
 
 /** @brief Minimum value of RMSExtremeUnderVoltage in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_RMS_EXTREME_UNDER_VOLTAGE_MIN_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_RMS_EXTREME_UNDER_VOLTAGE_MIN_VALUE ((int16_t)0x8000)
 
 /** @brief Maximum value of RMSExtremeUnderVoltage in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_RMS_EXTREME_UNDER_VOLTAGE_MAX_VALUE (0x7fff)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_RMS_EXTREME_UNDER_VOLTAGE_MAX_VALUE ((int16_t)0x7fff)
 
 /** @brief Minimum value of RMSVoltageSag in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_RMS_VOLTAGE_SAG_MIN_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_RMS_VOLTAGE_SAG_MIN_VALUE ((int16_t)0x8000)
 
 /** @brief Maximum value of RMSVoltageSag in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_RMS_VOLTAGE_SAG_MAX_VALUE (0x7fff)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_RMS_VOLTAGE_SAG_MAX_VALUE ((int16_t)0x7fff)
 
 /** @brief Minimum value of RMSVoltageSwell in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_RMS_VOLTAGE_SWELL_MIN_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_RMS_VOLTAGE_SWELL_MIN_VALUE ((int16_t)0x8000)
 
 /** @brief Maximum value of RMSVoltageSwell in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_RMS_VOLTAGE_SWELL_MAX_VALUE (0x7fff)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_RMS_VOLTAGE_SWELL_MAX_VALUE ((int16_t)0x7fff)
 /** @brief Default value of LineCurrentPhB in ElectricalMeasurement cluster */
 #define EZB_ZCL_ELECTRICAL_MEASUREMENT_LINE_CURRENT_PH_B_DEFAULT_VALUE (0xffff)
 
 /** @brief Default value of ActiveCurrentPhB in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_CURRENT_PH_B_DEFAULT_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_CURRENT_PH_B_DEFAULT_VALUE ((int16_t)0x8000)
 
 /** @brief Minimum value of ActiveCurrentPhB in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_CURRENT_PH_B_MIN_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_CURRENT_PH_B_MIN_VALUE ((int16_t)0x8000)
 
 /** @brief Maximum value of ActiveCurrentPhB in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_CURRENT_PH_B_MAX_VALUE (0x7fff)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_CURRENT_PH_B_MAX_VALUE ((int16_t)0x7fff)
 /** @brief Default value of ReactiveCurrentPhB in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_REACTIVE_CURRENT_PH_B_DEFAULT_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_REACTIVE_CURRENT_PH_B_DEFAULT_VALUE ((int16_t)0x8000)
 
 /** @brief Minimum value of ReactiveCurrentPhB in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_REACTIVE_CURRENT_PH_B_MIN_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_REACTIVE_CURRENT_PH_B_MIN_VALUE ((int16_t)0x8000)
 
 /** @brief Maximum value of ReactiveCurrentPhB in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_REACTIVE_CURRENT_PH_B_MAX_VALUE (0x7fff)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_REACTIVE_CURRENT_PH_B_MAX_VALUE ((int16_t)0x7fff)
 /** @brief Default value of RMSVoltagePhB in ElectricalMeasurement cluster */
 #define EZB_ZCL_ELECTRICAL_MEASUREMENT_RMS_VOLTAGE_PH_B_DEFAULT_VALUE (0xffff)
 
@@ -800,37 +800,37 @@ typedef enum {
 #define EZB_ZCL_ELECTRICAL_MEASUREMENT_RMS_CURRENT_MAX_PH_B_DEFAULT_VALUE (0xffff)
 
 /** @brief Default value of ActivePowerPhB in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_POWER_PH_B_DEFAULT_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_POWER_PH_B_DEFAULT_VALUE ((int16_t)0x8000)
 
 /** @brief Minimum value of ActivePowerPhB in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_POWER_PH_B_MIN_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_POWER_PH_B_MIN_VALUE ((int16_t)0x8000)
 
 /** @brief Maximum value of ActivePowerPhB in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_POWER_PH_B_MAX_VALUE (0x7fff)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_POWER_PH_B_MAX_VALUE ((int16_t)0x7fff)
 /** @brief Default value of ActivePowerMinPhB in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_POWER_MIN_PH_B_DEFAULT_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_POWER_MIN_PH_B_DEFAULT_VALUE ((int16_t)0x8000)
 
 /** @brief Minimum value of ActivePowerMinPhB in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_POWER_MIN_PH_B_MIN_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_POWER_MIN_PH_B_MIN_VALUE ((int16_t)0x8000)
 
 /** @brief Maximum value of ActivePowerMinPhB in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_POWER_MIN_PH_B_MAX_VALUE (0x7fff)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_POWER_MIN_PH_B_MAX_VALUE ((int16_t)0x7fff)
 /** @brief Default value of ActivePowerMaxPhB in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_POWER_MAX_PH_B_DEFAULT_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_POWER_MAX_PH_B_DEFAULT_VALUE ((int16_t)0x8000)
 
 /** @brief Minimum value of ActivePowerMaxPhB in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_POWER_MAX_PH_B_MIN_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_POWER_MAX_PH_B_MIN_VALUE ((int16_t)0x8000)
 
 /** @brief Maximum value of ActivePowerMaxPhB in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_POWER_MAX_PH_B_MAX_VALUE (0x7fff)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_POWER_MAX_PH_B_MAX_VALUE ((int16_t)0x7fff)
 /** @brief Default value of ReactivePowerPhB in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_REACTIVE_POWER_PH_B_DEFAULT_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_REACTIVE_POWER_PH_B_DEFAULT_VALUE ((int16_t)0x8000)
 
 /** @brief Minimum value of ReactivePowerPhB in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_REACTIVE_POWER_PH_B_MIN_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_REACTIVE_POWER_PH_B_MIN_VALUE ((int16_t)0x8000)
 
 /** @brief Maximum value of ReactivePowerPhB in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_REACTIVE_POWER_PH_B_MAX_VALUE (0x7fff)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_REACTIVE_POWER_PH_B_MAX_VALUE ((int16_t)0x7fff)
 /** @brief Default value of ApparentPowerPhB in ElectricalMeasurement cluster */
 #define EZB_ZCL_ELECTRICAL_MEASUREMENT_APPARENT_POWER_PH_B_DEFAULT_VALUE (0xffff)
 
@@ -838,10 +838,10 @@ typedef enum {
 #define EZB_ZCL_ELECTRICAL_MEASUREMENT_POWER_FACTOR_PH_B_DEFAULT_VALUE (0x00)
 
 /** @brief Minimum value of PowerFactorPhB in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_POWER_FACTOR_PH_B_MIN_VALUE (0xc0)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_POWER_FACTOR_PH_B_MIN_VALUE ((int8_t)0xc0)
 
 /** @brief Maximum value of PowerFactorPhB in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_POWER_FACTOR_PH_B_MAX_VALUE (0x64)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_POWER_FACTOR_PH_B_MAX_VALUE ((int8_t)0x64)
 /** @brief Default value of AverageRMSVoltageMeasurementPeriodPhB in ElectricalMeasurement cluster */
 #define EZB_ZCL_ELECTRICAL_MEASUREMENT_AVERAGE_RMS_VOLTAGE_MEASUREMENT_PERIOD_PH_B_DEFAULT_VALUE (0x0000)
 
@@ -867,21 +867,21 @@ typedef enum {
 #define EZB_ZCL_ELECTRICAL_MEASUREMENT_LINE_CURRENT_PH_C_DEFAULT_VALUE (0xffff)
 
 /** @brief Default value of ActiveCurrentPhC in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_CURRENT_PH_C_DEFAULT_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_CURRENT_PH_C_DEFAULT_VALUE ((int16_t)0x8000)
 
 /** @brief Minimum value of ActiveCurrentPhC in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_CURRENT_PH_C_MIN_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_CURRENT_PH_C_MIN_VALUE ((int16_t)0x8000)
 
 /** @brief Maximum value of ActiveCurrentPhC in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_CURRENT_PH_C_MAX_VALUE (0x7fff)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_CURRENT_PH_C_MAX_VALUE ((int16_t)0x7fff)
 /** @brief Default value of ReactiveCurrentPhC in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_REACTIVE_CURRENT_PH_C_DEFAULT_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_REACTIVE_CURRENT_PH_C_DEFAULT_VALUE ((int16_t)0x8000)
 
 /** @brief Minimum value of ReactiveCurrentPhC in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_REACTIVE_CURRENT_PH_C_MIN_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_REACTIVE_CURRENT_PH_C_MIN_VALUE ((int16_t)0x8000)
 
 /** @brief Maximum value of ReactiveCurrentPhC in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_REACTIVE_CURRENT_PH_C_MAX_VALUE (0x7fff)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_REACTIVE_CURRENT_PH_C_MAX_VALUE ((int16_t)0x7fff)
 /** @brief Default value of RMSVoltagePhC in ElectricalMeasurement cluster */
 #define EZB_ZCL_ELECTRICAL_MEASUREMENT_RMS_VOLTAGE_PH_C_DEFAULT_VALUE (0xffff)
 
@@ -901,37 +901,37 @@ typedef enum {
 #define EZB_ZCL_ELECTRICAL_MEASUREMENT_RMS_CURRENT_MAX_PH_C_DEFAULT_VALUE (0xffff)
 
 /** @brief Default value of ActivePowerPhC in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_POWER_PH_C_DEFAULT_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_POWER_PH_C_DEFAULT_VALUE ((int16_t)0x8000)
 
 /** @brief Minimum value of ActivePowerPhC in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_POWER_PH_C_MIN_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_POWER_PH_C_MIN_VALUE ((int16_t)0x8000)
 
 /** @brief Maximum value of ActivePowerPhC in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_POWER_PH_C_MAX_VALUE (0x7fff)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_POWER_PH_C_MAX_VALUE ((int16_t)0x7fff)
 /** @brief Default value of ActivePowerMinPhC in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_POWER_MIN_PH_C_DEFAULT_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_POWER_MIN_PH_C_DEFAULT_VALUE ((int16_t)0x8000)
 
 /** @brief Minimum value of ActivePowerMinPhC in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_POWER_MIN_PH_C_MIN_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_POWER_MIN_PH_C_MIN_VALUE ((int16_t)0x8000)
 
 /** @brief Maximum value of ActivePowerMinPhC in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_POWER_MIN_PH_C_MAX_VALUE (0x7fff)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_POWER_MIN_PH_C_MAX_VALUE ((int16_t)0x7fff)
 /** @brief Default value of ActivePowerMaxPhC in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_POWER_MAX_PH_C_DEFAULT_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_POWER_MAX_PH_C_DEFAULT_VALUE ((int16_t)0x8000)
 
 /** @brief Minimum value of ActivePowerMaxPhC in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_POWER_MAX_PH_C_MIN_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_POWER_MAX_PH_C_MIN_VALUE ((int16_t)0x8000)
 
 /** @brief Maximum value of ActivePowerMaxPhC in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_POWER_MAX_PH_C_MAX_VALUE (0x7fff)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_ACTIVE_POWER_MAX_PH_C_MAX_VALUE ((int16_t)0x7fff)
 /** @brief Default value of ReactivePowerPhC in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_REACTIVE_POWER_PH_C_DEFAULT_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_REACTIVE_POWER_PH_C_DEFAULT_VALUE ((int16_t)0x8000)
 
 /** @brief Minimum value of ReactivePowerPhC in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_REACTIVE_POWER_PH_C_MIN_VALUE (0x8000)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_REACTIVE_POWER_PH_C_MIN_VALUE ((int16_t)0x8000)
 
 /** @brief Maximum value of ReactivePowerPhC in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_REACTIVE_POWER_PH_C_MAX_VALUE (0x7fff)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_REACTIVE_POWER_PH_C_MAX_VALUE ((int16_t)0x7fff)
 /** @brief Default value of ApparentPowerPhC in ElectricalMeasurement cluster */
 #define EZB_ZCL_ELECTRICAL_MEASUREMENT_APPARENT_POWER_PH_C_DEFAULT_VALUE (0xffff)
 
@@ -939,10 +939,10 @@ typedef enum {
 #define EZB_ZCL_ELECTRICAL_MEASUREMENT_POWER_FACTOR_PH_C_DEFAULT_VALUE (0x00)
 
 /** @brief Minimum value of PowerFactorPhC in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_POWER_FACTOR_PH_C_MIN_VALUE (0xc0)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_POWER_FACTOR_PH_C_MIN_VALUE ((int8_t)0xc0)
 
 /** @brief Maximum value of PowerFactorPhC in ElectricalMeasurement cluster */
-#define EZB_ZCL_ELECTRICAL_MEASUREMENT_POWER_FACTOR_PH_C_MAX_VALUE (0x64)
+#define EZB_ZCL_ELECTRICAL_MEASUREMENT_POWER_FACTOR_PH_C_MAX_VALUE ((int8_t)0x64)
 /** @brief Default value of AverageRMSVoltageMeasurementPeriodPhC in ElectricalMeasurement cluster */
 #define EZB_ZCL_ELECTRICAL_MEASUREMENT_AVERAGE_RMS_VOLTAGE_MEASUREMENT_PERIOD_PH_C_DEFAULT_VALUE (0x0000)
 
@@ -1015,14 +1015,31 @@ ezb_zcl_cluster_desc_t ezb_zcl_electrical_measurement_create_cluster_desc(const 
 void ezb_zcl_electrical_measurement_cluster_client_init(uint8_t ep_id);
 
 /**
- * @brief Initialize the ElectricalMeasurement cluster server role for a given endpoint.
+ * @brief De-initialize the ElectricalMeasurement cluster client role for a given endpoint.
  *
  * @param[in] ep_id The identifier of the endpoint hosting the cluster that needs de-initialization.
  */
+void ezb_zcl_electrical_measurement_cluster_client_deinit(uint8_t ep_id);
+
+/**
+ * @brief Initialize the ElectricalMeasurement cluster server role for a given endpoint.
+ *
+ * @param[in] ep_id The identifier of the endpoint hosting the cluster that needs initialization.
+ */
 void ezb_zcl_electrical_measurement_cluster_server_init(uint8_t ep_id);
 
-#define EZB_ZCL_CLUSTER_ID_ELECTRICAL_MEASUREMENT_CLIENT_ROLE_INIT ezb_zcl_electrical_measurement_cluster_client_init
-#define EZB_ZCL_CLUSTER_ID_ELECTRICAL_MEASUREMENT_SERVER_ROLE_INIT ezb_zcl_electrical_measurement_cluster_server_init
+/**
+ * @brief De-initialize the ElectricalMeasurement cluster server role for a given endpoint.
+ *
+ * @param[in] ep_id The identifier of the endpoint hosting the cluster that needs de-initialization.
+ */
+void ezb_zcl_electrical_measurement_cluster_server_deinit(uint8_t ep_id);
+
+#define EZB_ZCL_CLUSTER_ID_ELECTRICAL_MEASUREMENT_CLIENT_ROLE_INIT   ezb_zcl_electrical_measurement_cluster_client_init
+#define EZB_ZCL_CLUSTER_ID_ELECTRICAL_MEASUREMENT_CLIENT_ROLE_DEINIT ezb_zcl_electrical_measurement_cluster_client_deinit
+
+#define EZB_ZCL_CLUSTER_ID_ELECTRICAL_MEASUREMENT_SERVER_ROLE_INIT   ezb_zcl_electrical_measurement_cluster_server_init
+#define EZB_ZCL_CLUSTER_ID_ELECTRICAL_MEASUREMENT_SERVER_ROLE_DEINIT ezb_zcl_electrical_measurement_cluster_server_deinit
 
 #ifdef __cplusplus
 } /*  extern "C" */

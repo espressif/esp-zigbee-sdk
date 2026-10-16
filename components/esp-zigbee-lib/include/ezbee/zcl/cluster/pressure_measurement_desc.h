@@ -54,7 +54,7 @@ typedef struct ezb_zcl_pressure_measurement_cluster_server_config_s {
 #define EZB_ZCL_PRESSURE_MEASUREMENT_MIN_MEASURED_VALUE_MIN_VALUE ((int16_t)0x8001)
 
 /** @brief Maximum value of MinMeasuredValue in PressureMeasurement cluster */
-#define EZB_ZCL_PRESSURE_MEASUREMENT_MIN_MEASURED_VALUE_MAX_VALUE (0x7ffe)
+#define EZB_ZCL_PRESSURE_MEASUREMENT_MIN_MEASURED_VALUE_MAX_VALUE ((int16_t)0x7ffe)
 /** @brief Default value of MaxMeasuredValue in PressureMeasurement cluster */
 #define EZB_ZCL_PRESSURE_MEASUREMENT_MAX_MEASURED_VALUE_DEFAULT_VALUE ((int16_t)0x8000)
 
@@ -62,7 +62,7 @@ typedef struct ezb_zcl_pressure_measurement_cluster_server_config_s {
 #define EZB_ZCL_PRESSURE_MEASUREMENT_MAX_MEASURED_VALUE_MIN_VALUE ((int16_t)0x8002)
 
 /** @brief Maximum value of MaxMeasuredValue in PressureMeasurement cluster */
-#define EZB_ZCL_PRESSURE_MEASUREMENT_MAX_MEASURED_VALUE_MAX_VALUE (0x7fff)
+#define EZB_ZCL_PRESSURE_MEASUREMENT_MAX_MEASURED_VALUE_MAX_VALUE ((int16_t)0x7fff)
 
 /** @brief Minimum value of Tolerance in PressureMeasurement cluster */
 #define EZB_ZCL_PRESSURE_MEASUREMENT_TOLERANCE_MIN_VALUE (0x0000)
@@ -79,7 +79,7 @@ typedef struct ezb_zcl_pressure_measurement_cluster_server_config_s {
 #define EZB_ZCL_PRESSURE_MEASUREMENT_MIN_SCALED_VALUE_MIN_VALUE ((int16_t)0x8001)
 
 /** @brief Maximum value of MinScaledValue in PressureMeasurement cluster */
-#define EZB_ZCL_PRESSURE_MEASUREMENT_MIN_SCALED_VALUE_MAX_VALUE (0x7ffe)
+#define EZB_ZCL_PRESSURE_MEASUREMENT_MIN_SCALED_VALUE_MAX_VALUE ((int16_t)0x7ffe)
 /** @brief Default value of MaxScaledValue in PressureMeasurement cluster */
 #define EZB_ZCL_PRESSURE_MEASUREMENT_MAX_SCALED_VALUE_DEFAULT_VALUE ((int16_t)0x8000)
 
@@ -87,7 +87,7 @@ typedef struct ezb_zcl_pressure_measurement_cluster_server_config_s {
 #define EZB_ZCL_PRESSURE_MEASUREMENT_MAX_SCALED_VALUE_MIN_VALUE ((int16_t)0x8002)
 
 /** @brief Maximum value of MaxScaledValue in PressureMeasurement cluster */
-#define EZB_ZCL_PRESSURE_MEASUREMENT_MAX_SCALED_VALUE_MAX_VALUE (0x7fff)
+#define EZB_ZCL_PRESSURE_MEASUREMENT_MAX_SCALED_VALUE_MAX_VALUE ((int16_t)0x7fff)
 
 /** @brief Minimum value of ScaledTolerance in PressureMeasurement cluster */
 #define EZB_ZCL_PRESSURE_MEASUREMENT_SCALED_TOLERANCE_MIN_VALUE (0x0000)
@@ -96,10 +96,10 @@ typedef struct ezb_zcl_pressure_measurement_cluster_server_config_s {
 #define EZB_ZCL_PRESSURE_MEASUREMENT_SCALED_TOLERANCE_MAX_VALUE (0x0800)
 
 /** @brief Minimum value of Scale in PressureMeasurement cluster */
-#define EZB_ZCL_PRESSURE_MEASUREMENT_SCALE_MIN_VALUE (0x81)
+#define EZB_ZCL_PRESSURE_MEASUREMENT_SCALE_MIN_VALUE ((int8_t)0x81)
 
 /** @brief Maximum value of Scale in PressureMeasurement cluster */
-#define EZB_ZCL_PRESSURE_MEASUREMENT_SCALE_MAX_VALUE (0x7f)
+#define EZB_ZCL_PRESSURE_MEASUREMENT_SCALE_MAX_VALUE ((int8_t)0x7f)
 
 typedef ezb_zcl_pressure_measurement_cluster_server_config_t ezb_zcl_pressure_measurement_cluster_config_t;
 
@@ -135,14 +135,31 @@ ezb_zcl_cluster_desc_t ezb_zcl_pressure_measurement_create_cluster_desc(const vo
 void ezb_zcl_pressure_measurement_cluster_client_init(uint8_t ep_id);
 
 /**
- * @brief Initialize the PressureMeasurement cluster server role for a given endpoint.
+ * @brief De-initialize the PressureMeasurement cluster client role for a given endpoint.
  *
  * @param[in] ep_id The identifier of the endpoint hosting the cluster that needs de-initialization.
  */
+void ezb_zcl_pressure_measurement_cluster_client_deinit(uint8_t ep_id);
+
+/**
+ * @brief Initialize the PressureMeasurement cluster server role for a given endpoint.
+ *
+ * @param[in] ep_id The identifier of the endpoint hosting the cluster that needs initialization.
+ */
 void ezb_zcl_pressure_measurement_cluster_server_init(uint8_t ep_id);
 
-#define EZB_ZCL_CLUSTER_ID_PRESSURE_MEASUREMENT_CLIENT_ROLE_INIT ezb_zcl_pressure_measurement_cluster_client_init
-#define EZB_ZCL_CLUSTER_ID_PRESSURE_MEASUREMENT_SERVER_ROLE_INIT ezb_zcl_pressure_measurement_cluster_server_init
+/**
+ * @brief De-initialize the PressureMeasurement cluster server role for a given endpoint.
+ *
+ * @param[in] ep_id The identifier of the endpoint hosting the cluster that needs de-initialization.
+ */
+void ezb_zcl_pressure_measurement_cluster_server_deinit(uint8_t ep_id);
+
+#define EZB_ZCL_CLUSTER_ID_PRESSURE_MEASUREMENT_CLIENT_ROLE_INIT   ezb_zcl_pressure_measurement_cluster_client_init
+#define EZB_ZCL_CLUSTER_ID_PRESSURE_MEASUREMENT_CLIENT_ROLE_DEINIT ezb_zcl_pressure_measurement_cluster_client_deinit
+
+#define EZB_ZCL_CLUSTER_ID_PRESSURE_MEASUREMENT_SERVER_ROLE_INIT   ezb_zcl_pressure_measurement_cluster_server_init
+#define EZB_ZCL_CLUSTER_ID_PRESSURE_MEASUREMENT_SERVER_ROLE_DEINIT ezb_zcl_pressure_measurement_cluster_server_deinit
 
 #ifdef __cplusplus
 } /*  extern "C" */

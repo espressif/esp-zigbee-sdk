@@ -273,53 +273,53 @@ typedef enum {
 #define EZB_ZCL_THERMOSTAT_LOCAL_TEMPERATURE_DEFAULT_VALUE (-1)
 
 /** @brief Minimum value of LocalTemperature in Thermostat cluster */
-#define EZB_ZCL_THERMOSTAT_LOCAL_TEMPERATURE_MIN_VALUE (0x954d)
+#define EZB_ZCL_THERMOSTAT_LOCAL_TEMPERATURE_MIN_VALUE ((int16_t)0x954d)
 
 /** @brief Maximum value of LocalTemperature in Thermostat cluster */
-#define EZB_ZCL_THERMOSTAT_LOCAL_TEMPERATURE_MAX_VALUE (0x7fff)
+#define EZB_ZCL_THERMOSTAT_LOCAL_TEMPERATURE_MAX_VALUE ((int16_t)0x7fff)
 /** @brief Default value of OutdoorTemperature in Thermostat cluster */
 #define EZB_ZCL_THERMOSTAT_OUTDOOR_TEMPERATURE_DEFAULT_VALUE (-1)
 
 /** @brief Minimum value of OutdoorTemperature in Thermostat cluster */
-#define EZB_ZCL_THERMOSTAT_OUTDOOR_TEMPERATURE_MIN_VALUE (0x954d)
+#define EZB_ZCL_THERMOSTAT_OUTDOOR_TEMPERATURE_MIN_VALUE ((int16_t)0x954d)
 
 /** @brief Maximum value of OutdoorTemperature in Thermostat cluster */
-#define EZB_ZCL_THERMOSTAT_OUTDOOR_TEMPERATURE_MAX_VALUE (0x7fff)
+#define EZB_ZCL_THERMOSTAT_OUTDOOR_TEMPERATURE_MAX_VALUE ((int16_t)0x7fff)
 /** @brief Default value of Occupancy in Thermostat cluster */
 #define EZB_ZCL_THERMOSTAT_OCCUPANCY_DEFAULT_VALUE (0x00)
 
 /** @brief Default value of AbsMinHeatSetpointLimit in Thermostat cluster */
-#define EZB_ZCL_THERMOSTAT_ABS_MIN_HEAT_SETPOINT_LIMIT_DEFAULT_VALUE (0x02bc)
+#define EZB_ZCL_THERMOSTAT_ABS_MIN_HEAT_SETPOINT_LIMIT_DEFAULT_VALUE ((int16_t)0x02bc)
 
 /** @brief Minimum value of AbsMinHeatSetpointLimit in Thermostat cluster */
-#define EZB_ZCL_THERMOSTAT_ABS_MIN_HEAT_SETPOINT_LIMIT_MIN_VALUE (0x954d)
+#define EZB_ZCL_THERMOSTAT_ABS_MIN_HEAT_SETPOINT_LIMIT_MIN_VALUE ((int16_t)0x954d)
 
 /** @brief Maximum value of AbsMinHeatSetpointLimit in Thermostat cluster */
-#define EZB_ZCL_THERMOSTAT_ABS_MIN_HEAT_SETPOINT_LIMIT_MAX_VALUE (0x7fff)
+#define EZB_ZCL_THERMOSTAT_ABS_MIN_HEAT_SETPOINT_LIMIT_MAX_VALUE ((int16_t)0x7fff)
 /** @brief Default value of AbsMaxHeatSetpointLimit in Thermostat cluster */
-#define EZB_ZCL_THERMOSTAT_ABS_MAX_HEAT_SETPOINT_LIMIT_DEFAULT_VALUE (0x0bb8)
+#define EZB_ZCL_THERMOSTAT_ABS_MAX_HEAT_SETPOINT_LIMIT_DEFAULT_VALUE ((int16_t)0x0bb8)
 
 /** @brief Minimum value of AbsMaxHeatSetpointLimit in Thermostat cluster */
-#define EZB_ZCL_THERMOSTAT_ABS_MAX_HEAT_SETPOINT_LIMIT_MIN_VALUE (0x954d)
+#define EZB_ZCL_THERMOSTAT_ABS_MAX_HEAT_SETPOINT_LIMIT_MIN_VALUE ((int16_t)0x954d)
 
 /** @brief Maximum value of AbsMaxHeatSetpointLimit in Thermostat cluster */
-#define EZB_ZCL_THERMOSTAT_ABS_MAX_HEAT_SETPOINT_LIMIT_MAX_VALUE (0x7fff)
+#define EZB_ZCL_THERMOSTAT_ABS_MAX_HEAT_SETPOINT_LIMIT_MAX_VALUE ((int16_t)0x7fff)
 /** @brief Default value of AbsMinCoolSetpointLimit in Thermostat cluster */
-#define EZB_ZCL_THERMOSTAT_ABS_MIN_COOL_SETPOINT_LIMIT_DEFAULT_VALUE (0x0640)
+#define EZB_ZCL_THERMOSTAT_ABS_MIN_COOL_SETPOINT_LIMIT_DEFAULT_VALUE ((int16_t)0x0640)
 
 /** @brief Minimum value of AbsMinCoolSetpointLimit in Thermostat cluster */
-#define EZB_ZCL_THERMOSTAT_ABS_MIN_COOL_SETPOINT_LIMIT_MIN_VALUE (0x954d)
+#define EZB_ZCL_THERMOSTAT_ABS_MIN_COOL_SETPOINT_LIMIT_MIN_VALUE ((int16_t)0x954d)
 
 /** @brief Maximum value of AbsMinCoolSetpointLimit in Thermostat cluster */
-#define EZB_ZCL_THERMOSTAT_ABS_MIN_COOL_SETPOINT_LIMIT_MAX_VALUE (0x7fff)
+#define EZB_ZCL_THERMOSTAT_ABS_MIN_COOL_SETPOINT_LIMIT_MAX_VALUE ((int16_t)0x7fff)
 /** @brief Default value of AbsMaxCoolSetpointLimit in Thermostat cluster */
-#define EZB_ZCL_THERMOSTAT_ABS_MAX_COOL_SETPOINT_LIMIT_DEFAULT_VALUE (0x0c80)
+#define EZB_ZCL_THERMOSTAT_ABS_MAX_COOL_SETPOINT_LIMIT_DEFAULT_VALUE ((int16_t)0x0c80)
 
 /** @brief Minimum value of AbsMaxCoolSetpointLimit in Thermostat cluster */
-#define EZB_ZCL_THERMOSTAT_ABS_MAX_COOL_SETPOINT_LIMIT_MIN_VALUE (0x954d)
+#define EZB_ZCL_THERMOSTAT_ABS_MAX_COOL_SETPOINT_LIMIT_MIN_VALUE ((int16_t)0x954d)
 
 /** @brief Maximum value of AbsMaxCoolSetpointLimit in Thermostat cluster */
-#define EZB_ZCL_THERMOSTAT_ABS_MAX_COOL_SETPOINT_LIMIT_MAX_VALUE (0x7fff)
+#define EZB_ZCL_THERMOSTAT_ABS_MAX_COOL_SETPOINT_LIMIT_MAX_VALUE ((int16_t)0x7fff)
 
 /** @brief Minimum value of PICoolingDemand in Thermostat cluster */
 #define EZB_ZCL_THERMOSTAT_PI_COOLING_DEMAND_MIN_VALUE (0x00)
@@ -339,82 +339,82 @@ typedef enum {
 #define EZB_ZCL_THERMOSTAT_LOCAL_TEMPERATURE_CALIBRATION_DEFAULT_VALUE (0x00)
 
 /** @brief Minimum value of LocalTemperatureCalibration in Thermostat cluster */
-#define EZB_ZCL_THERMOSTAT_LOCAL_TEMPERATURE_CALIBRATION_MIN_VALUE (0xe7)
+#define EZB_ZCL_THERMOSTAT_LOCAL_TEMPERATURE_CALIBRATION_MIN_VALUE ((int8_t)0xe7)
 
 /** @brief Maximum value of LocalTemperatureCalibration in Thermostat cluster */
-#define EZB_ZCL_THERMOSTAT_LOCAL_TEMPERATURE_CALIBRATION_MAX_VALUE (0x19)
+#define EZB_ZCL_THERMOSTAT_LOCAL_TEMPERATURE_CALIBRATION_MAX_VALUE ((int8_t)0x19)
 /** @brief Default value of OccupiedCoolingSetpoint in Thermostat cluster */
-#define EZB_ZCL_THERMOSTAT_OCCUPIED_COOLING_SETPOINT_DEFAULT_VALUE (0x0a28)
+#define EZB_ZCL_THERMOSTAT_OCCUPIED_COOLING_SETPOINT_DEFAULT_VALUE ((int16_t)0x0a28)
 
 /** @brief Minimum value of OccupiedCoolingSetpoint in Thermostat cluster */
-#define EZB_ZCL_THERMOSTAT_OCCUPIED_COOLING_SETPOINT_MIN_VALUE (0x954d)
+#define EZB_ZCL_THERMOSTAT_OCCUPIED_COOLING_SETPOINT_MIN_VALUE ((int16_t)0x954d)
 
 /** @brief Maximum value of OccupiedCoolingSetpoint in Thermostat cluster */
-#define EZB_ZCL_THERMOSTAT_OCCUPIED_COOLING_SETPOINT_MAX_VALUE (0x7fff)
+#define EZB_ZCL_THERMOSTAT_OCCUPIED_COOLING_SETPOINT_MAX_VALUE ((int16_t)0x7fff)
 /** @brief Default value of OccupiedHeatingSetpoint in Thermostat cluster */
-#define EZB_ZCL_THERMOSTAT_OCCUPIED_HEATING_SETPOINT_DEFAULT_VALUE (0x07d0)
+#define EZB_ZCL_THERMOSTAT_OCCUPIED_HEATING_SETPOINT_DEFAULT_VALUE ((int16_t)0x07d0)
 
 /** @brief Minimum value of OccupiedHeatingSetpoint in Thermostat cluster */
-#define EZB_ZCL_THERMOSTAT_OCCUPIED_HEATING_SETPOINT_MIN_VALUE (0x954d)
+#define EZB_ZCL_THERMOSTAT_OCCUPIED_HEATING_SETPOINT_MIN_VALUE ((int16_t)0x954d)
 
 /** @brief Maximum value of OccupiedHeatingSetpoint in Thermostat cluster */
-#define EZB_ZCL_THERMOSTAT_OCCUPIED_HEATING_SETPOINT_MAX_VALUE (0x7fff)
+#define EZB_ZCL_THERMOSTAT_OCCUPIED_HEATING_SETPOINT_MAX_VALUE ((int16_t)0x7fff)
 /** @brief Default value of UnoccupiedCoolingSetpoint in Thermostat cluster */
-#define EZB_ZCL_THERMOSTAT_UNOCCUPIED_COOLING_SETPOINT_DEFAULT_VALUE (0x0a28)
+#define EZB_ZCL_THERMOSTAT_UNOCCUPIED_COOLING_SETPOINT_DEFAULT_VALUE ((int16_t)0x0a28)
 
 /** @brief Minimum value of UnoccupiedCoolingSetpoint in Thermostat cluster */
-#define EZB_ZCL_THERMOSTAT_UNOCCUPIED_COOLING_SETPOINT_MIN_VALUE (0x954d)
+#define EZB_ZCL_THERMOSTAT_UNOCCUPIED_COOLING_SETPOINT_MIN_VALUE ((int16_t)0x954d)
 
 /** @brief Maximum value of UnoccupiedCoolingSetpoint in Thermostat cluster */
-#define EZB_ZCL_THERMOSTAT_UNOCCUPIED_COOLING_SETPOINT_MAX_VALUE (0x7fff)
+#define EZB_ZCL_THERMOSTAT_UNOCCUPIED_COOLING_SETPOINT_MAX_VALUE ((int16_t)0x7fff)
 /** @brief Default value of UnoccupiedHeatingSetpoint in Thermostat cluster */
-#define EZB_ZCL_THERMOSTAT_UNOCCUPIED_HEATING_SETPOINT_DEFAULT_VALUE (0x07d0)
+#define EZB_ZCL_THERMOSTAT_UNOCCUPIED_HEATING_SETPOINT_DEFAULT_VALUE ((int16_t)0x07d0)
 
 /** @brief Minimum value of UnoccupiedHeatingSetpoint in Thermostat cluster */
-#define EZB_ZCL_THERMOSTAT_UNOCCUPIED_HEATING_SETPOINT_MIN_VALUE (0x954d)
+#define EZB_ZCL_THERMOSTAT_UNOCCUPIED_HEATING_SETPOINT_MIN_VALUE ((int16_t)0x954d)
 
 /** @brief Maximum value of UnoccupiedHeatingSetpoint in Thermostat cluster */
-#define EZB_ZCL_THERMOSTAT_UNOCCUPIED_HEATING_SETPOINT_MAX_VALUE (0x7fff)
+#define EZB_ZCL_THERMOSTAT_UNOCCUPIED_HEATING_SETPOINT_MAX_VALUE ((int16_t)0x7fff)
 /** @brief Default value of MinHeatSetpointLimit in Thermostat cluster */
-#define EZB_ZCL_THERMOSTAT_MIN_HEAT_SETPOINT_LIMIT_DEFAULT_VALUE (0x02bc)
+#define EZB_ZCL_THERMOSTAT_MIN_HEAT_SETPOINT_LIMIT_DEFAULT_VALUE ((int16_t)0x02bc)
 
 /** @brief Minimum value of MinHeatSetpointLimit in Thermostat cluster */
-#define EZB_ZCL_THERMOSTAT_MIN_HEAT_SETPOINT_LIMIT_MIN_VALUE (0x954d)
+#define EZB_ZCL_THERMOSTAT_MIN_HEAT_SETPOINT_LIMIT_MIN_VALUE ((int16_t)0x954d)
 
 /** @brief Maximum value of MinHeatSetpointLimit in Thermostat cluster */
-#define EZB_ZCL_THERMOSTAT_MIN_HEAT_SETPOINT_LIMIT_MAX_VALUE (0x7fff)
+#define EZB_ZCL_THERMOSTAT_MIN_HEAT_SETPOINT_LIMIT_MAX_VALUE ((int16_t)0x7fff)
 /** @brief Default value of MaxHeatSetpointLimit in Thermostat cluster */
-#define EZB_ZCL_THERMOSTAT_MAX_HEAT_SETPOINT_LIMIT_DEFAULT_VALUE (0x0bb8)
+#define EZB_ZCL_THERMOSTAT_MAX_HEAT_SETPOINT_LIMIT_DEFAULT_VALUE ((int16_t)0x0bb8)
 
 /** @brief Minimum value of MaxHeatSetpointLimit in Thermostat cluster */
-#define EZB_ZCL_THERMOSTAT_MAX_HEAT_SETPOINT_LIMIT_MIN_VALUE (0x954d)
+#define EZB_ZCL_THERMOSTAT_MAX_HEAT_SETPOINT_LIMIT_MIN_VALUE ((int16_t)0x954d)
 
 /** @brief Maximum value of MaxHeatSetpointLimit in Thermostat cluster */
-#define EZB_ZCL_THERMOSTAT_MAX_HEAT_SETPOINT_LIMIT_MAX_VALUE (0x7fff)
+#define EZB_ZCL_THERMOSTAT_MAX_HEAT_SETPOINT_LIMIT_MAX_VALUE ((int16_t)0x7fff)
 /** @brief Default value of MinCoolSetpointLimit in Thermostat cluster */
-#define EZB_ZCL_THERMOSTAT_MIN_COOL_SETPOINT_LIMIT_DEFAULT_VALUE (0x0640)
+#define EZB_ZCL_THERMOSTAT_MIN_COOL_SETPOINT_LIMIT_DEFAULT_VALUE ((int16_t)0x0640)
 
 /** @brief Minimum value of MinCoolSetpointLimit in Thermostat cluster */
-#define EZB_ZCL_THERMOSTAT_MIN_COOL_SETPOINT_LIMIT_MIN_VALUE (0x954d)
+#define EZB_ZCL_THERMOSTAT_MIN_COOL_SETPOINT_LIMIT_MIN_VALUE ((int16_t)0x954d)
 
 /** @brief Maximum value of MinCoolSetpointLimit in Thermostat cluster */
-#define EZB_ZCL_THERMOSTAT_MIN_COOL_SETPOINT_LIMIT_MAX_VALUE (0x7fff)
+#define EZB_ZCL_THERMOSTAT_MIN_COOL_SETPOINT_LIMIT_MAX_VALUE ((int16_t)0x7fff)
 /** @brief Default value of MaxCoolSetpointLimit in Thermostat cluster */
-#define EZB_ZCL_THERMOSTAT_MAX_COOL_SETPOINT_LIMIT_DEFAULT_VALUE (0x0c80)
+#define EZB_ZCL_THERMOSTAT_MAX_COOL_SETPOINT_LIMIT_DEFAULT_VALUE ((int16_t)0x0c80)
 
 /** @brief Minimum value of MaxCoolSetpointLimit in Thermostat cluster */
-#define EZB_ZCL_THERMOSTAT_MAX_COOL_SETPOINT_LIMIT_MIN_VALUE (0x954d)
+#define EZB_ZCL_THERMOSTAT_MAX_COOL_SETPOINT_LIMIT_MIN_VALUE ((int16_t)0x954d)
 
 /** @brief Maximum value of MaxCoolSetpointLimit in Thermostat cluster */
-#define EZB_ZCL_THERMOSTAT_MAX_COOL_SETPOINT_LIMIT_MAX_VALUE (0x7fff)
+#define EZB_ZCL_THERMOSTAT_MAX_COOL_SETPOINT_LIMIT_MAX_VALUE ((int16_t)0x7fff)
 /** @brief Default value of MinSetpointDeadBand in Thermostat cluster */
-#define EZB_ZCL_THERMOSTAT_MIN_SETPOINT_DEAD_BAND_DEFAULT_VALUE (0x19)
+#define EZB_ZCL_THERMOSTAT_MIN_SETPOINT_DEAD_BAND_DEFAULT_VALUE ((int8_t)0x19)
 
 /** @brief Minimum value of MinSetpointDeadBand in Thermostat cluster */
 #define EZB_ZCL_THERMOSTAT_MIN_SETPOINT_DEAD_BAND_MIN_VALUE (0x00)
 
 /** @brief Maximum value of MinSetpointDeadBand in Thermostat cluster */
-#define EZB_ZCL_THERMOSTAT_MIN_SETPOINT_DEAD_BAND_MAX_VALUE (0x19)
+#define EZB_ZCL_THERMOSTAT_MIN_SETPOINT_DEAD_BAND_MAX_VALUE ((int8_t)0x19)
 /** @brief Default value of RemoteSensing in Thermostat cluster */
 #define EZB_ZCL_THERMOSTAT_REMOTE_SENSING_DEFAULT_VALUE (0x00)
 
@@ -474,13 +474,13 @@ typedef enum {
 /** @brief Maximum value of SetpointChangeSource in Thermostat cluster */
 #define EZB_ZCL_THERMOSTAT_SETPOINT_CHANGE_SOURCE_MAX_VALUE (0xff)
 /** @brief Default value of SetpointChangeAmount in Thermostat cluster */
-#define EZB_ZCL_THERMOSTAT_SETPOINT_CHANGE_AMOUNT_DEFAULT_VALUE (0x8000)
+#define EZB_ZCL_THERMOSTAT_SETPOINT_CHANGE_AMOUNT_DEFAULT_VALUE ((int16_t)0x8000)
 
 /** @brief Minimum value of SetpointChangeAmount in Thermostat cluster */
 #define EZB_ZCL_THERMOSTAT_SETPOINT_CHANGE_AMOUNT_MIN_VALUE (0x0000)
 
 /** @brief Maximum value of SetpointChangeAmount in Thermostat cluster */
-#define EZB_ZCL_THERMOSTAT_SETPOINT_CHANGE_AMOUNT_MAX_VALUE (0xffff)
+#define EZB_ZCL_THERMOSTAT_SETPOINT_CHANGE_AMOUNT_MAX_VALUE ((int16_t)0xffff)
 /** @brief Default value of SetpointChangeSourceTimestamp in Thermostat cluster */
 #define EZB_ZCL_THERMOSTAT_SETPOINT_CHANGE_SOURCE_TIMESTAMP_DEFAULT_VALUE (0x00000000)
 
@@ -574,13 +574,13 @@ typedef enum {
 #define EZB_ZCL_THERMOSTAT_AC_LOUVER_POSITION_DEFAULT_VALUE (0x00)
 
 /** @brief Default value of ACCoilTemperature in Thermostat cluster */
-#define EZB_ZCL_THERMOSTAT_AC_COIL_TEMPERATURE_DEFAULT_VALUE (0xffff)
+#define EZB_ZCL_THERMOSTAT_AC_COIL_TEMPERATURE_DEFAULT_VALUE ((int16_t)0xffff)
 
 /** @brief Minimum value of ACCoilTemperature in Thermostat cluster */
-#define EZB_ZCL_THERMOSTAT_AC_COIL_TEMPERATURE_MIN_VALUE (0x954d)
+#define EZB_ZCL_THERMOSTAT_AC_COIL_TEMPERATURE_MIN_VALUE ((int16_t)0x954d)
 
 /** @brief Maximum value of ACCoilTemperature in Thermostat cluster */
-#define EZB_ZCL_THERMOSTAT_AC_COIL_TEMPERATURE_MAX_VALUE (0x7fff)
+#define EZB_ZCL_THERMOSTAT_AC_COIL_TEMPERATURE_MAX_VALUE ((int16_t)0x7fff)
 /** @brief Default value of ACCapacityFormat in Thermostat cluster */
 #define EZB_ZCL_THERMOSTAT_AC_CAPACITY_FORMAT_DEFAULT_VALUE (0x00)
 
@@ -635,14 +635,31 @@ ezb_zcl_cluster_desc_t ezb_zcl_thermostat_create_cluster_desc(const void *cluste
 void ezb_zcl_thermostat_cluster_client_init(uint8_t ep_id);
 
 /**
- * @brief Initialize the Thermostat cluster server role for a given endpoint.
+ * @brief De-initialize the Thermostat cluster client role for a given endpoint.
  *
  * @param[in] ep_id The identifier of the endpoint hosting the cluster that needs de-initialization.
  */
+void ezb_zcl_thermostat_cluster_client_deinit(uint8_t ep_id);
+
+/**
+ * @brief Initialize the Thermostat cluster server role for a given endpoint.
+ *
+ * @param[in] ep_id The identifier of the endpoint hosting the cluster that needs initialization.
+ */
 void ezb_zcl_thermostat_cluster_server_init(uint8_t ep_id);
 
-#define EZB_ZCL_CLUSTER_ID_THERMOSTAT_CLIENT_ROLE_INIT ezb_zcl_thermostat_cluster_client_init
-#define EZB_ZCL_CLUSTER_ID_THERMOSTAT_SERVER_ROLE_INIT ezb_zcl_thermostat_cluster_server_init
+/**
+ * @brief De-initialize the Thermostat cluster server role for a given endpoint.
+ *
+ * @param[in] ep_id The identifier of the endpoint hosting the cluster that needs de-initialization.
+ */
+void ezb_zcl_thermostat_cluster_server_deinit(uint8_t ep_id);
+
+#define EZB_ZCL_CLUSTER_ID_THERMOSTAT_CLIENT_ROLE_INIT   ezb_zcl_thermostat_cluster_client_init
+#define EZB_ZCL_CLUSTER_ID_THERMOSTAT_CLIENT_ROLE_DEINIT ezb_zcl_thermostat_cluster_client_deinit
+
+#define EZB_ZCL_CLUSTER_ID_THERMOSTAT_SERVER_ROLE_INIT   ezb_zcl_thermostat_cluster_server_init
+#define EZB_ZCL_CLUSTER_ID_THERMOSTAT_SERVER_ROLE_DEINIT ezb_zcl_thermostat_cluster_server_deinit
 
 #ifdef __cplusplus
 } /*  extern "C" */

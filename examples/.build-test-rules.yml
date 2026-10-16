@@ -35,6 +35,7 @@ examples/home_automation_devices/temperature_sensor:
   disable+:
     - if: IDF_TARGET == "esp32h21"
       reason: "Only build supported targets, skip build esp32h21 now"
+
 examples/home_automation_devices/color_dimmable_light:
   <<: *config_radio_native_targets
 
@@ -66,4 +67,7 @@ examples/touchlink/touchlink_initiator:
   <<: *config_radio_native_targets
 
 examples/touchlink/touchlink_target:
+  <<: *config_radio_native_targets
+
+examples/nvram_migration:
   <<: *config_radio_native_targets

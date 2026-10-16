@@ -83,14 +83,31 @@ ezb_zcl_cluster_desc_t ezb_zcl_ias_wd_create_cluster_desc(const void *cluster_cf
 void ezb_zcl_ias_wd_cluster_client_init(uint8_t ep_id);
 
 /**
- * @brief Initialize the IasWd cluster server role for a given endpoint.
+ * @brief De-initialize the IasWd cluster client role for a given endpoint.
  *
  * @param[in] ep_id The identifier of the endpoint hosting the cluster that needs de-initialization.
  */
+void ezb_zcl_ias_wd_cluster_client_deinit(uint8_t ep_id);
+
+/**
+ * @brief Initialize the IasWd cluster server role for a given endpoint.
+ *
+ * @param[in] ep_id The identifier of the endpoint hosting the cluster that needs initialization.
+ */
 void ezb_zcl_ias_wd_cluster_server_init(uint8_t ep_id);
 
-#define EZB_ZCL_CLUSTER_ID_IAS_WD_CLIENT_ROLE_INIT ezb_zcl_ias_wd_cluster_client_init
-#define EZB_ZCL_CLUSTER_ID_IAS_WD_SERVER_ROLE_INIT ezb_zcl_ias_wd_cluster_server_init
+/**
+ * @brief De-initialize the IasWd cluster server role for a given endpoint.
+ *
+ * @param[in] ep_id The identifier of the endpoint hosting the cluster that needs de-initialization.
+ */
+void ezb_zcl_ias_wd_cluster_server_deinit(uint8_t ep_id);
+
+#define EZB_ZCL_CLUSTER_ID_IAS_WD_CLIENT_ROLE_INIT   ezb_zcl_ias_wd_cluster_client_init
+#define EZB_ZCL_CLUSTER_ID_IAS_WD_CLIENT_ROLE_DEINIT ezb_zcl_ias_wd_cluster_client_deinit
+
+#define EZB_ZCL_CLUSTER_ID_IAS_WD_SERVER_ROLE_INIT   ezb_zcl_ias_wd_cluster_server_init
+#define EZB_ZCL_CLUSTER_ID_IAS_WD_SERVER_ROLE_DEINIT ezb_zcl_ias_wd_cluster_server_deinit
 
 #ifdef __cplusplus
 } /*  extern "C" */

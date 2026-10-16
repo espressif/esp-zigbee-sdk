@@ -76,14 +76,31 @@ ezb_zcl_cluster_desc_t ezb_zcl_touchlink_commissioning_create_cluster_desc(const
 void ezb_zcl_touchlink_commissioning_cluster_client_init(uint8_t ep_id);
 
 /**
- * @brief Initialize the TouchlinkCommissioning cluster server role for a given endpoint.
+ * @brief De-initialize the TouchlinkCommissioning cluster client role for a given endpoint.
  *
  * @param[in] ep_id The identifier of the endpoint hosting the cluster that needs de-initialization.
  */
+void ezb_zcl_touchlink_commissioning_cluster_client_deinit(uint8_t ep_id);
+
+/**
+ * @brief Initialize the TouchlinkCommissioning cluster server role for a given endpoint.
+ *
+ * @param[in] ep_id The identifier of the endpoint hosting the cluster that needs initialization.
+ */
 void ezb_zcl_touchlink_commissioning_cluster_server_init(uint8_t ep_id);
 
-#define EZB_ZCL_CLUSTER_ID_TOUCHLINK_COMMISSIONING_CLIENT_ROLE_INIT ezb_zcl_touchlink_commissioning_cluster_client_init
-#define EZB_ZCL_CLUSTER_ID_TOUCHLINK_COMMISSIONING_SERVER_ROLE_INIT ezb_zcl_touchlink_commissioning_cluster_server_init
+/**
+ * @brief De-initialize the TouchlinkCommissioning cluster server role for a given endpoint.
+ *
+ * @param[in] ep_id The identifier of the endpoint hosting the cluster that needs de-initialization.
+ */
+void ezb_zcl_touchlink_commissioning_cluster_server_deinit(uint8_t ep_id);
+
+#define EZB_ZCL_CLUSTER_ID_TOUCHLINK_COMMISSIONING_CLIENT_ROLE_INIT   ezb_zcl_touchlink_commissioning_cluster_client_init
+#define EZB_ZCL_CLUSTER_ID_TOUCHLINK_COMMISSIONING_CLIENT_ROLE_DEINIT ezb_zcl_touchlink_commissioning_cluster_client_deinit
+
+#define EZB_ZCL_CLUSTER_ID_TOUCHLINK_COMMISSIONING_SERVER_ROLE_INIT   ezb_zcl_touchlink_commissioning_cluster_server_init
+#define EZB_ZCL_CLUSTER_ID_TOUCHLINK_COMMISSIONING_SERVER_ROLE_DEINIT ezb_zcl_touchlink_commissioning_cluster_server_deinit
 
 #ifdef __cplusplus
 } /*  extern "C" */

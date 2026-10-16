@@ -33,6 +33,7 @@ enum {
     EZB_DATASETS_KEY_ZCL_SCENE_INFO     = 0x000B, /*!< ZCL Scene information. */
     EZB_DATASETS_KEY_ALARM_LOG          = 0x000C, /*!< ZCL Alarms cluster alarm log. */
     EZB_DATASETS_KEY_IAS_ZONE_INFO      = 0x000D, /*!< IAS ACE zone table (CIE enrolled zones). */
+    EZB_DATASETS_KEY_ZCL_ATTR_INFO      = 0x000E, /*!< ZCL Attribute information. */
 };
 
 /**

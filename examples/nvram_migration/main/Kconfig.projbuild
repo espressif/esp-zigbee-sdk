@@ -1,0 +1,12 @@
+menu "Zigbee NVRAM Migration Example"
+
+    config ZB_EXAMPLE_RUNTIME_NVS_PARTITION
+        bool "Using NVS partition added at runtime"
+        default n
+        help
+            When enabled, the NVS partition for Zigbee dataset storage will be created at runtime,
+            instead of the pre-defined one in the partition table. This is useful when the old device
+            does not have a NVS partition or the pre-defined NVS partition does not have enough space
+            for Zigbee dataset storage.
+
+endmenu

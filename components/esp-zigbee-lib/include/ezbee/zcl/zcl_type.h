@@ -363,8 +363,11 @@ typedef uint8_t ezb_zcl_attr_type_t;
 enum ezb_zcl_attr_access_e {
     EZB_ZCL_ATTR_ACCESS_READ      = 0x01U, /*!< Attribute is readable. */
     EZB_ZCL_ATTR_ACCESS_WRITE     = 0x02U, /*!< Attribute is writeable. */
+    /* 0x08 is reserved for internal future use */
     EZB_ZCL_ATTR_ACCESS_REPORTING = 0x04U, /*!< Attribute supports reporting. */
     EZB_ZCL_ATTR_ACCESS_SCENE     = 0x10U, /*!< Attribute is used in scene management. */
+    /* 0x20, 0x40 are reserved for internal use */
+    EZB_ZCL_ATTR_ACCESS_PERSISTENT = 0x80U, /*!< Attribute is stored in the dataset. */
 };
 
 /**
