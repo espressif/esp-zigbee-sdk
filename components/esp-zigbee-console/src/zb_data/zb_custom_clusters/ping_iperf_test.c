@@ -396,7 +396,7 @@ static ezb_zcl_attr_desc_t zb_ping_iperf_get_iperf_attribute_val(uint8_t endpoin
 static ezb_err_t iperf_message_set(const ezb_iperf_req_info_t *info)
 {
     ezb_err_t ret              = EZB_ERR_NONE;
-    iperf_ctx.message_to_iperf = malloc(sizeof(ezb_zcl_custom_cmd_t));
+    iperf_ctx.message_to_iperf = calloc(1, sizeof(ezb_zcl_custom_cmd_t));
     ESP_RETURN_ON_FALSE(iperf_ctx.message_to_iperf, EZB_ERR_FAIL, TAG, "Failed to allocate memory for iperf request data");
     iperf_ctx.message_to_iperf->cmd_ctrl.dst_ep                = info->dst_endpoint;
     iperf_ctx.message_to_iperf->cmd_ctrl.src_ep                = info->src_endpoint;
@@ -419,7 +419,7 @@ static ezb_err_t iperf_message_set(const ezb_iperf_req_info_t *info)
     }
     iperf_ctx.message_to_iperf->data_length = data_len;
     iperf_ctx.iperf_data_len                = data_len;
-    iperf_ctx.message_to_iperf->data        = calloc(1, iperf_ctx.message_to_iperf->data_length);
+    iperf_ctx.message_to_iperf->data        = malloc(iperf_ctx.message_to_iperf->data_length);
     if (iperf_ctx.message_to_iperf->data == NULL) {
         ESP_LOGE(TAG, "Failed to allocate memory for iperf request data");
         free(iperf_ctx.message_to_iperf);
