@@ -34,6 +34,7 @@ INPUT   = \
           $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/bdb.h                                                \
           $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/app_signals.h                                        \
           $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/tasklet.h                                            \
+          $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/diag.h                                               \
           $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/platform/alarm.h                                     \
           $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/platform/crypto.h                                    \
           $(PROJECT_PATH)/components/esp-zigbee-lib/include/ezbee/platform/datasets.h                                  \

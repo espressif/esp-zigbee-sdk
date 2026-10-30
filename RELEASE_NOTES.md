@@ -1,5 +1,39 @@
 # Espressif Zigbee SDK Release Notes
 
+## 30-Oct-2026
+2.1.0 version release of ESP-ZIGBEE-SDK is based on esp-idf v5.5.6
+
+### Features
+- Added support for Zigbee 4.0 (specification version r23)
+  - Support dynamic link key (DLK) on coordinator, router, and end device.
+  - Support sha256 as hash for DLK.
+  - Support pass code as pre-shared key for DLK.
+  - Support APS frame counter challenge.
+- Added `ezb_diag_expose_aps_device_key()` and `EZB_SECUR_SIGNAL_TCLK_READY` for DLK process diagnosis.
+- Added signals for device interview and TC swap out:
+  - `EZB_ZDO_SIGNAL_DEVICE_READY_FOR_INTERVIEW`
+  - `EZB_ZDO_SIGNAL_DEVICE_INTERVIEW_STARTED`
+  - `EZB_SECUR_SIGNAL_TC_SWAPPED`
+- Added APIs to set/get enabled method and secret for DLK:
+  - `ezb_secur_set_kn_method_enabled()`
+  - `ezb_secur_get_kn_method_enabled()`
+  - `ezb_secur_set_kn_secret_enabled()`
+  - `ezb_secur_get_kn_secret_enabled()`
+- Added support for Green Power Proxy Basic(GPPB) on routers.
+- Added support to report `lqa` and `rssi` in `ezb_nwk_active_scan_result_t`.
+- Added support to configure APS group table.
+- Added support for ZCL general command, DiscoveryAttributesExtended.
+
+### Bug Fixes
+- Fixed short address assignment that could assign reserved addresses or the local device's address
+  to another device, causing network joining failures or address conflicts.
+- Fixed the memory leak when the APS ACK to the ZDO command arrives after timeout.
+- Fixed the incorrect app_device_version field in ZDO simple_desc response.
+
+### Changes
+- Change the default Zigbee specification version to r23
+
+
 ## 16-Oct-2026
 2.0.5 version release of ESP-ZIGBEE-SDK is based on esp-idf v5.5.4
 
