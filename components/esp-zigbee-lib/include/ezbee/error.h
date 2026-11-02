@@ -36,6 +36,7 @@ typedef enum {
     EZB_ERR_CATEGORY_APS,     /*!< APS layer error */
     EZB_ERR_CATEGORY_ZDP,     /*!< ZDP error */
     EZB_ERR_CATEGORY_ZCL,     /*!< ZCL layer error */
+    EZB_ERR_CATEGORY_ZGP,     /*!< ZGP layer error */
 
     EZB_ERR_CATEGORY_MAX_NR,  /*!< Total category number */
 } ezb_err_category_t;
@@ -89,6 +90,7 @@ static inline uint8_t ezb_get_err_value(ezb_err_t err)
 #define EZB_ERR_TIMEOUT       EZB_MAKE_ERROR(EZB_ERR_CATEGORY_GENERIC, 0x07) /*!< Operation timed out */
 #define EZB_ERR_ABORT         EZB_MAKE_ERROR(EZB_ERR_CATEGORY_GENERIC, 0x08) /*!< Operation is aborted */
 #define EZB_ERR_BUSY          EZB_MAKE_ERROR(EZB_ERR_CATEGORY_GENERIC, 0x09) /*!< Busy state */
+#define EZB_ERR_EXISTED       EZB_MAKE_ERROR(EZB_ERR_CATEGORY_GENERIC, 0x0A) /*!< Resource is already existed */
 #define EZB_ERR_NOT_FINISHED  EZB_MAKE_ERROR(EZB_ERR_CATEGORY_GENERIC, 0x0C) /*!< Operation is not fully finished */
 #define EZB_ERR_NOT_ALLOWED   EZB_MAKE_ERROR(EZB_ERR_CATEGORY_GENERIC, 0x0D) /*!< Operation is not allowed */
 

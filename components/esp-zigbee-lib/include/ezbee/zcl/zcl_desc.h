@@ -88,7 +88,8 @@ ezb_zcl_cluster_desc_t ezb_zcl_get_cluster_desc(uint8_t ep_id, uint16_t cluster_
 /**
  * @brief Free a Zigbee cluster descriptor.
  *
- * This function frees the memory allocated for a cluster descriptor and all associated attribute descriptors.
+ * This function frees the memory allocated for a cluster descriptor and all associated attribute descriptors. It must not be
+ * called if the cluster descriptor has already been added to an endpoint descriptor.
  *
  * @param[in] cluster_desc Cluster descriptor to free.
  */
@@ -246,7 +247,8 @@ ezb_zcl_attr_desc_t ezb_zcl_create_attr_desc(uint16_t    id,
 /**
  * @brief Free a Zigbee attribute descriptor.
  *
- * This function frees the memory allocated for a attribute descriptor.
+ * This function frees the memory allocated for a attribute descriptor. It must not be called if the attribute descriptor has
+ * already been added to a cluster descriptor.
  *
  * @param[in] attr_desc The attribute descriptor to free.
  */

@@ -22,6 +22,7 @@ typedef enum ezb_app_signal_group_e {
     EZB_APP_SIGNAL_GROUP_ZDO,
     EZB_APP_SIGNAL_GROUP_BDB,
     EZB_APP_SIGNAL_GROUP_NWK,
+    EZB_APP_SIGNAL_GROUP_SECUR,
     EZB_APP_SIGNAL_GROUP_MAX_NR,
 } ezb_app_signal_group_t;
 
@@ -177,6 +178,30 @@ enum ezb_app_signal_type_e {
     * - None
     */
     EZB_ZDO_SIGNAL_PARENT_LOST = EZB_APP_SIGNAL(EZB_APP_SIGNAL_GROUP_ZDO, 0x09),
+
+    /**
+    * Overview:
+    * - Indicates that a new device is ready for Device Interview.
+    *
+    * When generated:
+    * - Upon the new device has completed the dynamic link key negotiation and is ready for Device Interview.
+    *
+    * Payload:
+    * - Refer to ezb_zdo_signal_device_ready_for_interview_params_t
+    */
+    EZB_ZDO_SIGNAL_DEVICE_READY_FOR_INTERVIEW = EZB_APP_SIGNAL(EZB_APP_SIGNAL_GROUP_ZDO, 0x0A),
+
+    /**
+    * Overview:
+    * - Indicates that the device interview has been started (joiner side only).
+    *
+    * When generated:
+    * - Upon the device interview has been started on joiner side.
+    *
+    * Payload:
+    * - None
+    */
+    EZB_ZDO_SIGNAL_DEVICE_INTERVIEW_STARTED = EZB_APP_SIGNAL(EZB_APP_SIGNAL_GROUP_ZDO, 0x0B),
 
     /*
      * Start of BDB signals
@@ -354,6 +379,35 @@ enum ezb_app_signal_type_e {
     */
     EZB_NWK_SIGNAL_PERMIT_JOIN_STATUS = EZB_APP_SIGNAL(EZB_APP_SIGNAL_GROUP_NWK, 0x04),
 
+    /*
+     * Start of Security signals
+     */
+
+    /**
+    * Overview:
+    * - Indicates that previous Trust Center has been swapped out.
+    *
+    * When generated:
+    * - When a Trust Center Swap-out is detected (on joiner side).
+    *
+    * Payload:
+    * - None
+    */
+    EZB_SECUR_SIGNAL_TC_SWAPPED = EZB_APP_SIGNAL(EZB_APP_SIGNAL_GROUP_SECUR, 0x00),
+
+    /**
+    * Overview:
+    * - Indicates that unverified TCLK has been created by key negotiation (Debug only).
+    *
+    * When generated:
+    * - When ZdoSecurityStartKeyNegotiationReq is received on trust center side.
+    * - When ZdoSecurityStartKeyNegotiationRsp is received on joiner side.
+    *
+    * Payload:
+    * - Refer to ezb_secur_signal_tclk_ready_params_t
+    */
+    EZB_SECUR_SIGNAL_TCLK_READY = EZB_APP_SIGNAL(EZB_APP_SIGNAL_GROUP_SECUR, 0x80),
+
     EZB_APP_SIGNAL_END,
 };
 
@@ -411,6 +465,7 @@ typedef uint8_t ezb_zdo_upddev_status_t;
  enum ezb_zdo_auth_type_e {
     EZB_ZDO_AUTH_TYPE_LEGACY = 0,       /*!< Legacy authorization type, pre-R21 */
     EZB_ZDO_AUTH_TYPE_TCLK,             /*!< Authorized by Static Trust Center Link Key Exchange */
+    EZB_ZDO_AUTH_TYPE_DLK,              /*!< Authorized by Dynamic Link Key Exchange */
 };
 
 /**
@@ -488,6 +543,14 @@ typedef struct ezb_zdo_signal_device_unavailable_params_s {
 } ezb_zdo_signal_device_unavailable_params_t;
 
 /**
+ * @brief The payload of EZB_ZDO_SIGNAL_DEVICE_READY_FOR_INTERVIEW signal
+ */
+typedef struct ezb_zdo_signal_device_ready_for_interview_params_s {
+    ezb_extaddr_t device_addr;      /*!< Extended address of the device */
+    ezb_shortaddr_t short_addr;     /*!< Short address of the device */
+} ezb_zdo_signal_device_ready_for_interview_params_t;
+
+/**
  * @brief The payload of BDB signals
  */
 typedef struct ezb_bdb_signal_simple_params_s {
@@ -504,11 +567,18 @@ typedef struct ezb_nwk_signal_permit_join_status_params_s {
 /**
  * @brief The payload of EZB_NWK_SIGNAL_NETWORK_STATUS signal
  */
- typedef struct ezb_nwk_signal_network_status_params_s {
+typedef struct ezb_nwk_signal_network_status_params_s {
     uint8_t status;                 /*!< Error code associated with the failure, refer to ezb_nwk_network_status_t */
     ezb_shortaddr_t network_addr;   /*!< Network device address associated with the status information */
     uint8_t unknown_command_id;     /*!< Unknown command ID */
 } ezb_nwk_signal_network_status_params_t;
+
+/**
+ * @brief The payload of EZB_SECUR_SIGNAL_TCLK_READY signal
+ */
+typedef struct ezb_secur_signal_tclk_ready_params_s {
+    ezb_extaddr_t device_addr;      /*!< Extended address of the device */
+} ezb_secur_signal_tclk_ready_params_t;
 
 /**
  * @brief The application signal struct for ezb_app_signal_handler

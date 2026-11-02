@@ -21,7 +21,7 @@
  * The minor version of the SDK.
  */
 #ifndef ESP_ZIGBEE_VER_MINOR
-#define ESP_ZIGBEE_VER_MINOR 0
+#define ESP_ZIGBEE_VER_MINOR 1
 #endif
 
 /**
@@ -30,7 +30,7 @@
  * The patch version of the SDK.
  */
 #ifndef ESP_ZIGBEE_VER_PATCH
-#define ESP_ZIGBEE_VER_PATCH 5
+#define ESP_ZIGBEE_VER_PATCH 0
 #endif
 
 /**

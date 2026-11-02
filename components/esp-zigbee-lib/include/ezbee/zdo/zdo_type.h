@@ -38,6 +38,11 @@ enum ezb_zdp_status_e {
                                                 *   is not authorized from this device. */
     EZB_ZDP_STATUS_BINDING_TABLE_FULL = 0x8eU, /*!< The device doesn't have binding table space to support the operation */
     EZB_ZDP_STATUS_INVALID_INDEX      = 0x8fU, /*!< The index in the received command is out of bounds. */
+
+    EZB_ZDP_STATUS_FRAME_TOO_LARGE    = 0x90U, /*!< The response was too large to fit in a single unfragmented message. */
+    EZB_ZDP_STATUS_BAD_KN_METHOD      = 0x91U, /*!< The requested Key Negotiation Method was not accepted. */
+    EZB_ZDP_STATUS_TEMPORARY_FAILURE  = 0x92U, /*!< The request encountered a temporary failure but a retry at a later time
+                                                *   should be attempted and may succeed. */
 };
 
 /**

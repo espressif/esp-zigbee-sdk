@@ -2477,9 +2477,9 @@ typedef struct esp_zb_zcl_cmd_read_report_config_resp_message_s {
  *
  */
 typedef struct esp_zb_zcl_disc_attr_variable_s {
+    struct esp_zb_zcl_disc_attr_variable_s *next; /*!< Next variable */
     uint16_t attr_id;   /*!< The field contain the identifier of a discovered attribute */
     uint8_t  data_type; /*!< The field contain the data type of the attribute in the same attribute report field */
-    struct esp_zb_zcl_disc_attr_variable_s *next; /*!< Next variable */
 } esp_zb_zcl_disc_attr_variable_t;
 
 /**
