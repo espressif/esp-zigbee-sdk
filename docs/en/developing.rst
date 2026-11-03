@@ -430,6 +430,13 @@ Please note that the Wireshark configuration provided in the link above is inten
 
 Now you can check the Zigbee packet flow in Wireshark.
 
+.. note::
+
+  Since Zigbee 4.0 (pro specification R23), the dynamic link key negotiation feature is introduced. The link key is
+  negotiated between a joiner and the trust center using ECSPEKE algorithm at runtime. To analyze the secured Zigbee
+  traffic, please use :cpp:func:`ezb_diag_expose_aps_device_key` to expose the trust center link key (TCLK) when it
+  is ready in `EZB_SECUR_SIGNAL_TCLK_READY` signal.
+
 Enable Debug Mode
 ~~~~~~~~~~~~~~~~~
 

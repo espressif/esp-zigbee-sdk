@@ -28,6 +28,8 @@ enum ezb_af_profile_id_e {
     EZB_AF_SE_PROFILE_ID  = 0x0109U, /*!< SE profile ID */
     EZB_AF_TL_PROFILE_ID  = 0xC05EU, /*!< Touchlink profile ID */
     EZB_AF_GP_PROFILE_ID  = 0xA1E0U, /*!< GreenPower profile ID */
+    EZB_AF_TP2_PROFILE_ID      = 0x7F01U, /*!< Test Profile #2 profile ID */
+    EZB_AF_WILDCARD_PROFILE_ID = 0xFFFFU, /*!< Wildcard profile ID */
 };
 
 /**
@@ -311,7 +313,8 @@ ezb_af_device_desc_t ezb_af_create_device_desc(void);
 /**
  * @brief Free a Zigbee device descriptor.
  *
- * This function frees the memory allocated for a device descriptor.
+ * This function frees the memory allocated for a device descriptor. It must not be called if the device descriptor has already
+ * been registered with the stack.
  *
  * @param[in] dev_desc The device descriptor to free.
  */
@@ -369,7 +372,8 @@ ezb_af_ep_desc_t ezb_af_create_endpoint_desc(const ezb_af_ep_config_t *ep_config
 /**
  * @brief Free a Zigbee endpoint descriptor.
  *
- * This function frees the memory allocated for a endpoint descriptor.
+ * This function frees the memory allocated for a endpoint descriptor, it must not be called if the endpoint descriptor has
+ * already been added to a device descriptor.
  *
  * @param[in] ep_desc The endpoint descriptor to free.
  */

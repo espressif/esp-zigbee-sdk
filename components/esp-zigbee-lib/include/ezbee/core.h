@@ -11,6 +11,7 @@
 
 #include <ezbee/core_types.h>
 #include <ezbee/app_signals.h>
+#include <ezbee/platform/toolchain.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -70,6 +71,8 @@ typedef struct ezb_mem_config_s {
     uint16_t aps_bind_table_src_size;
     /** The capacity of destination entries in the APS binding table */
     uint16_t aps_bind_table_dst_size;
+    /** The capacity of the APS group table */
+    uint16_t aps_group_table_size;
 } ezb_mem_config_t;
 
 /**

@@ -47,8 +47,39 @@ enum ezb_secur_ic_type_e {
     EZB_SECUR_IC_TYPE_64,            /*!< Install code total of 10 bytes length */
     EZB_SECUR_IC_TYPE_96,            /*!< Install code total of 14 bytes length */
     EZB_SECUR_IC_TYPE_128,           /*!< Install code total of 18 bytes length */
+    EZB_SECUR_IC_TYPE_PASSCODE,      /*!< Passcode */
     EZB_SECUR_IC_TYPE_MAX_NR,        /*!< Unknown type */
 };
+
+/**
+ * @brief Enum of the Zigbee key negotiation method
+ * @anchor ezb_secur_kn_method_e
+ */
+enum ezb_secur_kn_method_e {
+    EZB_SECUR_KN_METHOD_STATIC_REQUEST_KEY,        /*!< Static request key */
+    EZB_SECUR_KN_METHOD_ECSPEKE_CURVE25519_AESMMO, /*!< ECSPEKE Curve25519 AESMMO */
+    EZB_SECUR_KN_METHOD_ECSPEKE_CURVE25519_SHA256, /*!< ECSPEKE Curve25519 SHA256 */
+};
+
+/**
+ * @brief Represents the Zigbee key negotiation method, @ref ezb_secur_kn_method_e.
+ */
+typedef uint8_t ezb_secur_kn_method_t;
+
+/**
+ * @brief Enum of the Zigbee key negotiation secret (PSK)
+ * @anchor ezb_secur_kn_secret_e
+ */
+enum ezb_secur_kn_secret_e {
+    EZB_SECUR_KN_SECRET_SYMM_AUTH_TOKEN,    /*!< Symmetric authentication token */
+    EZB_SECUR_KN_SECRET_INSTALL_CODE_KEY,   /*!< Install code key */
+    EZB_SECUR_KN_SECRET_PASSCODE_KEY,       /*!< Passcode key */
+};
+
+/**
+ * @brief Represents the Zigbee key negotiation secret, @ref ezb_secur_kn_secret_e.
+ */
+typedef uint8_t ezb_secur_kn_secret_t;
 
 /**
  * @brief Represents the Zigbee install code type, @ref ezb_secur_ic_type_e
@@ -110,6 +141,40 @@ ezb_err_t ezb_secur_ic_set(ezb_secur_ic_type_t ic_type, const uint8_t *ic);
  * @return - EZB_ERR_NONE: on success; failed otherwise.
  */
 ezb_err_t ezb_secur_ic_get(uint8_t *ic, ezb_secur_ic_type_t *ic_type);
+
+/**
+ * @brief Enable/Disable the key negotiation method for the ZigBee network.
+ *
+ * @param[in] method  The key negotiation method, @ref ezb_secur_kn_method_e.
+ * @param[in] enabled True - Enable the key negotiation method; False - Disable the key negotiation method.
+ */
+void ezb_secur_set_kn_method_enabled(ezb_secur_kn_method_t method, bool enabled);
+
+/**
+ * @brief Check if the key negotiation method is enabled.
+ *
+ * @param[in] method  The key negotiation method, @ref ezb_secur_kn_method_e.
+ *
+ * @return - True: if the key negotiation method is enabled; false otherwise.
+ */
+bool ezb_secur_get_kn_method_enabled(ezb_secur_kn_method_t method);
+
+/**
+ * @brief Enable/Disable the key negotiation secret (PSK) for the ZigBee network.
+ *
+ * @param[in] secret  The key negotiation secret, @ref ezb_secur_kn_secret_e.
+ * @param[in] enabled True - Enable the key negotiation secret; False - Disable the key negotiation secret.
+ */
+void ezb_secur_set_kn_secret_enabled(ezb_secur_kn_secret_t secret, bool enabled);
+
+/**
+ * @brief Check if the key negotiation secret (PSK) is enabled.
+ *
+ * @param[in] secret  The key negotiation secret, @ref ezb_secur_kn_secret_e.
+ *
+ * @return - True: if the key negotiation secret is enabled; false otherwise.
+ */
+bool ezb_secur_get_kn_secret_enabled(ezb_secur_kn_secret_t secret);
 
 /**
  * @brief Set if the TC-link key exchange is required for joining.
@@ -216,6 +281,25 @@ void ezb_secur_tcpol_set_allow_rejoins_with_well_known_key(bool allow);
  * @return - True: if rejoins using the well-known key are allowed; false otherwise.
  */
 bool ezb_secur_tcpol_get_allow_rejoins_with_well_known_key(void);
+
+/**
+ * @brief Enable/Disable APS-encryption of TransportKey command for initial join.
+ *
+ * Some devices may require unencrypted TransportKey command for initial join.
+ * When the policy is enabled, the TransportKey command will not be protected by the link key.
+ *
+ * @param[in] enable True to enable, false to disable it.
+ */
+EZB_EXPERIMENTAL
+void ezb_secur_tcpol_set_no_link_key_join(bool enable);
+
+/**
+ * @brief Get if APS-encryption of TransportKey command is disabled for initial join.
+ *
+ * @return True if enabled; false otherwise.
+ */
+EZB_EXPERIMENTAL
+bool ezb_secur_tcpol_get_no_link_key_join(void);
 
 #ifdef __cplusplus
 } /*  extern "C" */

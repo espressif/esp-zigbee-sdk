@@ -543,6 +543,8 @@ typedef struct ezb_nwk_active_scan_result_s {
     uint8_t channel_page;              /*!< Channel page of the network */
     uint8_t channel_number;            /*!< Channel number of the network */
     uint8_t nwk_update_id;             /*!< Network update ID */
+    uint8_t lqa;                       /*!< Link quality assessment of the received beacon */
+    int8_t rssi;                       /*!< Received signal strength indicator of the received beacon */
     uint8_t stack_profile    : 4;      /*!< Stack profile */
     uint8_t protocol_version : 4;      /*!< Protocol version */
     bool permit_join : 1;              /*!< Indicate if it permits joining */

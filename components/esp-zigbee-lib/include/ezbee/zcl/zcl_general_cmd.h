@@ -142,7 +142,8 @@ typedef struct ezb_zcl_report_attr_cmd_s {
  * The response will contain a list of supported attributes starting from start_attr_id.
  */
 typedef struct ezb_zcl_disc_attr_cmd_s {
-    ezb_zcl_cmd_ctrl_t cmd_ctrl; /*!< Command control structure. See @ref ezb_zcl_cmd_ctrl_s. */
+    ezb_zcl_cmd_ctrl_t cmd_ctrl;    /*!< Command control structure. See @ref ezb_zcl_cmd_ctrl_s. */
+    bool               is_extended; /*!< Whether to use extended discovery. */
     struct {
         uint16_t start_attr_id;   /*!< Identifier of the attribute at which to begin discovery. */
         uint8_t  max_attr_number; /*!< Maximum number of attribute identifiers to return (1-255). */
@@ -380,10 +381,13 @@ typedef struct ezb_zcl_cmd_report_attr_message_s {
  * response. Multiple attributes are linked together in a list.
  */
 typedef struct ezb_zcl_disc_attr_variable_s {
-    uint16_t                             attr_id;   /*!< Identifier of the attribute discovered. */
-    uint8_t                              attr_type; /*!< Type of the attribute. See @ref ezb_zcl_attr_type_t. */
-    struct ezb_zcl_disc_attr_variable_s *next;      /*!< Pointer to the next variable in the discovery list,
-                                                         or NULL if it is the last variable. */
+    struct ezb_zcl_disc_attr_variable_s *next; /*!< Pointer to the next variable in the discovery list,
+                                                    or NULL if it is the last variable. */
+    uint16_t attr_id;                          /*!< Identifier of the attribute discovered. */
+    uint8_t  attr_type;                        /*!< Type of the attribute. See @ref ezb_zcl_attr_type_t. */
+    uint8_t  attr_access;                      /*!< Access control of the attribute, only valid in
+                                                    the DiscoverAttributesExtended response,
+                                                    See @ref ezb_zcl_attr_access_t. */
 } ezb_zcl_disc_attr_variable_t;
 
 /**
@@ -396,10 +400,12 @@ typedef struct ezb_zcl_disc_attr_variable_s {
 typedef struct ezb_zcl_cmd_discover_attributes_rsp_message_s {
     ezb_zcl_message_info_t info; /*!< Common information about the received response. See @ref ezb_zcl_message_info_s. */
     struct {
-        const ezb_zcl_cmd_hdr_t *header;         /*!< ZCL command header information. See @ref ezb_zcl_cmd_hdr_s. */
-        uint8_t                  is_completed;   /*!< Discovery is completed,
-                                                     1 if all attributes have been discovered,
-                                                     0 if more attributes exist beyond the returned list. */
+        const ezb_zcl_cmd_hdr_t *header;       /*!< ZCL command header information. See @ref ezb_zcl_cmd_hdr_s. */
+        uint8_t                  is_completed; /*!< Discovery is completed,
+                                                    1 if all attributes have been discovered,
+                                                    0 if more attributes exist beyond the returned list. */
+        bool                     is_extended;  /*!< Whether the discovery is extended.
+                                                    if true, the variables field contains access control of the attribute. */
         ezb_zcl_disc_attr_variable_t *variables; /*!< Linked list of discovered attribute variables. */
     } in;                                        /*!< Input data from the received response. */
     struct {

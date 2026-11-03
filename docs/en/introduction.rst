@@ -56,11 +56,12 @@ Supported Features
 
 The supported features in the current ESP Zigbee SDK are listed below:
 
-- Zigbee 3.0
+- Zigbee 4.0
 - Zigbee Pro R23
 - Zigbee Cluster Library (ZCL) v8
 - Home Automation Devices
 - Touchlink
+- Green Power Proxy
 - Coordinator / Router / (Sleepy) End Device roles
 - Gateway and Radio Co-Processor (RCP) example
 - Command Line Interface (CLI) example

@@ -10,3 +10,4 @@ API Reference
 .. include-build-file:: inc/core_types.inc
 .. include-build-file:: inc/core.inc
 .. include-build-file:: inc/app_signals.inc
+.. include-build-file:: inc/diag.inc
