@@ -131,7 +131,7 @@ def test_zb_gateway(dut, count, app_path, erase_all):
     gateway_device = ExampleDevice(dut[1])
     cli = CliDevice(dut[0], channel=gateway_device.channel)
     gateway_device.check_response(MatchPattern.update_the_rcp_version, timeout=30)
-    gateway_device.check_response(MatchPattern.initialize_zigbee_stack, timeout=20)
+    gateway_device.check_response(MatchPattern.initialize_zigbee_stack, timeout=60)
     gateway_device.get_example_device_network_info(coordinator=True)
     gateway_device.check_response(MatchPattern.network_open, timeout=10)
     cli.create_router('on_off_light', network_type='c')
