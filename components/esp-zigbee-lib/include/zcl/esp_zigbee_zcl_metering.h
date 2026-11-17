@@ -1914,7 +1914,7 @@ typedef enum {
 #define ESP_ZB_ZCL_METERING_UNIT_OF_MEASURE_DEFAULT_VALUE 0x00
 
 /** @brief Default value for Instantaneous Demand attribute */
-#define ESP_ZB_ZCL_METERING_INSTANTANEOUS_DEMAND_DEFAULT_VALUE ZB_INIT_UINT24(0x00, 0x0000)
+#define ESP_ZB_ZCL_METERING_INSTANTANEOUS_DEMAND_DEFAULT_VALUE ESP_ZB_INIT_UINT24(0x00, 0x0000)
 
 /** @brief Default value for DailyFreezeTime attribute */
 #define ESP_ZB_ZCL_METERING_DAILY_FREEZE_TIME_DEFAULT_VALUE ((uint16_t)0x0000)

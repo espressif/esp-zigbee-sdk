@@ -1,4 +1,4 @@
-version: "1.6.8"
+version: "1.6.9"
 description: esp-zigbee library component
 url: https://github.com/espressif/esp-zigbee-sdk
 dependencies:
