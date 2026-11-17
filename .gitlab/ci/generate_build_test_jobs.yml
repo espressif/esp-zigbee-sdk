@@ -27,7 +27,7 @@ generate_child_pipeline:
     - |
       python3 tools/ci/dynamic_pipelines/generate_child_pipeline.py \
         --result child_pipeline_idf_example.yml \
-        --idf_version v5.5.1 master \
+        --idf_version v5.5.1 \
         --chips esp32h2 esp32c6 esp32s3 esp32c5 \
         --job_templates build_pytest_template_idf_example build_pytest_gateway_template_idf_example pytest_template_idf_example \
         --manual_pytest
