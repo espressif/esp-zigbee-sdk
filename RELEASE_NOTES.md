@@ -1,5 +1,23 @@
 # Espressif Zigbee SDK Release Notes
 
+## 17-Nov-2026
+1.6.9 version release of ESP-ZIGBEE-SDK is based on esp-idf v5.5.1
+
+### Bug Fixes
+- Added the missing definitions for `ESP_ZB_INIT24()`, `ESP_ZB_UINIT24()`, `ESP_ZB_INIT48()`, and `ESP_ZB_UINIT48()`.
+- Fixed the incorrect value of `ESP_ZB_ZCL_MV_GROUP_ID`.
+- Fixed the incorrect type of `present_value` in `esp_zb_multistate_input_cluster_cfg_t` and `esp_zb_multistate_output_cluster_cfg_t`.
+- Fixed an issue where only one response was accepted for a ZDO Match Descriptor request, even when multiple devices responded.
+- Fixed an incorrect timeout issue in the ZCL OTA Upgrade client caused by truncating the `wait_for_data` duration of `ImageBlockRsp` to `uint16_t`.
+- Fixed a potential crash when the `zb_storage` partition is encrypted.
+- Fixed a crash in the ZCL Thermostat cluster when receiving a `Setpoint Raise/Lower` command if only the `Occupied Heating or Cooling Setpoint` attribute is added.
+
+### Changes
+- Updated `esp-zigbee-lib` to v1.6.9.
+- Updated `esp-zboss-lib` to v1.6.9.
+- Corrected the unexpected short duration of Energy Detection.
+
+
 ## 5-Nov-2025
 1.6.8 version release of ESP-ZIGBEE-SDK is based on esp-idf v5.5.1
 

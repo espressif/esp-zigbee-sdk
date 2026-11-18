@@ -192,6 +192,38 @@ typedef struct esp_zb_int48_s {
 esp_zb_int48_t;
 
 /**
+ * @brief Initialize a signed 24-bit integer
+ */
+#define ESP_ZB_INIT_INT24(high_val, low_val) \
+    {                                        \
+        .low = (low_val), .high = (high_val) \
+    }
+
+/**
+ * @brief Initialize an unsigned 24-bit integer
+ */
+#define ESP_ZB_INIT_UINT24(high_val, low_val) \
+    {                                         \
+        .low = (low_val), .high = (high_val)  \
+    }
+
+/**
+ * @brief Initialize a signed 48-bit integer
+ */
+#define ESP_ZB_INIT_INT48(high_val, low_val) \
+    {                                        \
+        .low = (low_val), .high = (high_val) \
+    }
+
+/**
+ * @brief Initialize an unsigned 48-bit integer
+ */
+#define ESP_ZB_INIT_UINT48(high_val, low_val) \
+    {                                         \
+        .low = (low_val), .high = (high_val)  \
+    }
+
+/**
  * @brief Union of the ZCL attribute value
  * @note Internal use
  */
@@ -819,7 +851,7 @@ typedef struct esp_zb_pm2_5_measurement_cluster_cfg_s {
 typedef struct esp_zb_multistate_input_cluster_cfg_s {
     uint16_t number_of_states;  /*!< This attribute defines the number of states that a multistate PresentValue MAY have */
     bool out_of_service;        /*!< This attribute indicates whether or not the physical input that the cluster represents is in service */
-    float_t present_value;      /*!< This attribute indicates the current value of the input as appropriate for the cluster */
+    uint16_t present_value;     /*!< This attribute indicates the current value of the input as appropriate for the cluster */
     uint8_t status_flags;       /*!< This attribute indicates the general "health" of the analog sensor */
 } esp_zb_multistate_input_cluster_cfg_t;
 
@@ -830,7 +862,7 @@ typedef struct esp_zb_multistate_input_cluster_cfg_s {
 typedef struct esp_zb_multistate_output_cluster_cfg_s {
     uint16_t number_of_states;  /*!< This attribute defines the number of states that a multistate PresentValue MAY have */
     bool out_of_service;        /*!< This attribute indicates whether or not the physical input that the cluster represents is in service */
-    float_t present_value;      /*!< This attribute indicates the current value of the input as appropriate for the cluster */
+    uint16_t present_value;     /*!< This attribute indicates the current value of the input as appropriate for the cluster */
     uint8_t status_flags;       /*!< This attribute indicates the general "health" of the analog sensor */
 } esp_zb_multistate_output_cluster_cfg_t;
 

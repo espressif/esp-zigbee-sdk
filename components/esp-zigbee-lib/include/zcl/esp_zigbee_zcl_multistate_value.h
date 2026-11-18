@@ -66,7 +66,7 @@ typedef enum {
  *        The specific application usage of the cluster.
  */
 
-#define ESP_ZB_ZCL_MV_GROUP_ID                         0x0d
+#define ESP_ZB_ZCL_MV_GROUP_ID                         0x13
 #define ESP_ZB_ZCL_MV_SET_APP_TYPE_WITH_ID(_type, _id) ((ESP_ZB_ZCL_MV_GROUP_ID << 24) | ((_type & 0xff) << 16) | (_id & 0xffff))
 
 /** @brief Values for Multistate Value cluster applications type */
