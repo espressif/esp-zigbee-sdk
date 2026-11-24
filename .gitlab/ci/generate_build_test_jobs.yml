@@ -28,14 +28,13 @@ generate_child_pipeline:
       python3 tools/ci/dynamic_pipelines/generate_child_pipeline.py \
         --result child_pipeline_lts.yml \
         --idf_version ${CI_IDF_LTS} \
-        --chips esp32h2 esp32s3 esp32c6 esp32c5 esp32p4 \
+        --chips esp32h2 esp32s3 esp32c6 esp32c5 esp32p4 esp32s31 \
         --build_templates build_non_pytest_example build_pytest_sdk_example build_pytest_gateway_sdk_example \
         --test_templates pytest_sdk_example
     - |
       python3 tools/ci/dynamic_pipelines/generate_child_pipeline.py \
         --result child_pipeline_master.yml \
         --idf_version master \
-        --chips esp32s31 esp32h4 esp32h21 \
         --build_templates build_non_pytest_example build_pytest_sdk_example build_preview_chips
 
 build_and_test_pipeline_default:
